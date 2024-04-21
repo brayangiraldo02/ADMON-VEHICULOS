@@ -1,0 +1,138 @@
+/* sidenav.component.css */
+@import '~bootstrap/dist/css/bootstrap.min.css';
+/* sidenav.component.css */
+/* sidenav.component.css */
+.sidenav {
+  height: 100%;
+  width: 250px;
+  position: fixed;
+  z-index: 1;
+  top: 0;
+  left: 0;
+  background-color: rgba(248, 248, 250, 0.8); /* Color de fondo del sidenav con transparencia */
+  padding-top: 20px; /* Espaciado superior */
+  border-radius: 10px; /* Bordes redondos */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2); /* Sombra */
+  background-image: linear-gradient(rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.7)),url('https://i.pinimg.com/originals/72/5f/eb/725feb255e6dbe4e6237e7553b166b42.jpg'); /* Cambia 'ruta_de_la_imagen.jpg' por la ruta de tu imagen */
+  background-size: cover; /* Ajusta el tamaño de la imagen para cubrir todo el contenedor */
+  background-position: center; /* Centra la imagen dentro del contenedor */
+  background-repeat: no-repeat; /* Evita que la imagen se repita */
+  padding: 20px;
+}
+
+.sidenav .logo {
+  text-align: center;
+  margin-bottom: 20px; /* Espaciado inferior del logo */
+}
+
+.sidenav .logo img {
+  width: 120px; /* Ancho del logo */
+  height: 120px; /* Alto del logo */
+  border-radius: 50%; /* Hace que la imagen tenga bordes redondeados */
+  margin-bottom: 10px; /* Espaciado inferior del logo */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2); /* Efecto de sombreado */
+}
+
+.sidenav .app-name {
+  color: #02024b; /* Color del texto */
+  font-size: 18px; /* Tamaño de la fuente */
+  margin-bottom: 10px; /* Espaciado inferior */
+  font-weight: bold; /* Negrita */
+  font-style: italic; /* Cursiva */
+}
+
+.sidenav .separator {
+  border: 1px solid #fff; /* Borde blanco */ /* Sin borde */
+  height: 2px; /* Grosor del separador */
+  background-color: #fff; /* Color del separador */
+  margin-bottom: 20px; /* Espaciado inferior */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Efecto de sombreado */
+}
+
+/* Agregar estilos para el icono si no hay imagen */
+.sidenav .logo img:not([src]) {
+  /* Estilos para el icono */
+}
+
+
+.sidenav .nav-links {
+  list-style-type: none;
+  padding: 0;
+}
+
+.sidenav .nav-links li {
+  padding: 10px 20px;
+}
+
+.sidenav .nav-links li a {
+  color: #fff; /* Color del texto de los enlaces */
+  text-decoration: none;
+  font-size: 18px;
+}
+
+.sidenav .nav-links li a:hover {
+  background-color: #555; /* Color de fondo al pasar el ratón por encima */
+}
+
+.sidenav .logo-container {
+  padding: 20px; /* Espaciado alrededor del contenedor */
+  border-bottom: 1px solid #ccc; /* Borde inferior */
+  border-radius: 10px; /* Borde redondeado */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Efecto de sombreado */
+}
+
+@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css');
+
+.nav-item {
+  margin-bottom: 10px;
+  border-radius: 10px; /* Borde redondeado */
+  overflow: hidden; /* Oculta los bordes redondeados */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Efecto de sombreado */
+}
+
+.nav-link {
+  display: block;
+  padding: 10px 15px; /* Espacio interno */
+  color: #333; /* Color del texto de los enlaces */
+  font-weight: bold; /* Texto en negrita */
+  text-decoration: none; /* Elimina el subrayado del enlace */
+}
+
+
+.nav-link:hover {
+  /*background-color: #f0f0f0; /* Color de fondo al pasar el ratón por encima */
+}
+.nav-links .nav-item a {
+  color: inherit; /* Hereda el color del texto de su elemento padre */
+  font-size: 18px; /* Tamaño de la fuente */
+  margin-bottom: 10px; /* Espaciado inferior */
+  font-weight: bold; /* Negrita */
+  font-style: italic; /* Cursiva */
+  pointer-events: none;
+}
+.nav-link i {
+  margin-right: 10px; /* Espacio entre el icono y el texto */
+
+}
+
+.nav-links .nav-item a {
+  color: #333; /* Cambia el color del texto */
+  text-decoration: none; /* Elimina el subrayado del enlace */
+  color: #0b0249; /* Color del texto */
+  font-size: 18px; /* Tamaño de la fuente */
+  margin-bottom: 10px; /* Espaciado inferior */
+  font-weight: bold; /* Negrita */
+  font-style: italic; /* Cursiva */
+}
+
+.nav-links .nav-item a i {
+  color: #0b0249; /* Cambia el color del icono */
+}
+
+.nav-item.active {
+  background-color: blue; /* Cambia el color de fondo cuando el enlace está activo */
+  color: white; /* Cambia el color del texto cuando el enlace está activo */
+}
+.nav-item:hover {
+  background-color: rgb(129, 154, 246); /* Cambia el color de fondo al pasar el cursor sobre el elemento */
+}

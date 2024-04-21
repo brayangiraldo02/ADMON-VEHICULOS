@@ -1,0 +1,54 @@
+/* styles.css o styles.scss */
+
+/* Bootstrap */
+/*@import '~bootstrap/dist/css/bootstrap.min.css';*/
+
+
+/* Materialize */
+@import '~materialize-css/dist/css/materialize.min.css';
+
+
+/* Estilos adicionales para personalizar las tarjetas en Angular */
+.card-container {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.card {
+  width: 100%;
+  height: 30%; /* Ajusta la altura automáticamente según el contenido */
+  margin-bottom: 10px;
+}
+
+.card-content {
+  padding: 15px;
+}
+
+.card-title {
+  font-size: 1.2rem;
+  font-weight: bold;
+  font-style: italic;
+  text-align: center; /* Centra el título */
+}
+
+.card-reveal {
+  padding: 150px;
+}
+
+.card-reveal p {
+  margin-bottom: 0;
+}
+.card-image img {
+  width: 200px; /* Establece un ancho fijo */
+  height: 100px; /* Establece una altura fija */
+  object-fit: cover; /* Ajusta la imagen para cubrir el contenedor manteniendo su relación de aspecto */
+}
+.card-title {
+  font-size: 1.2rem;
+  font-weight: bold;
+  font-style: italic; /* Hace que el título sea cursiva */
+  text-align: center; /* Centra el título */
+}
+
+
+

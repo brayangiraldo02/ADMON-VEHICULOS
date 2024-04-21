@@ -1,0 +1,60 @@
+<!-- sidenav.component.html -->
+
+<div class="sidenav" style="margin-top: 80px;">
+  <div class="logo logo-container">
+    <!-- Logo de la aplicación -->
+    <img src="https://i.pinimg.com/736x/79/f1/e5/79f1e556b0d29de7feb1394ad19433f3.jpg" alt="Logo de la aplicación" class="rounded-logo">
+    <!-- Nombre de la aplicación -->
+    <p class="app-name">Nombre de la Empresa</p>
+    <!-- Separador -->
+
+  </div>
+    <!-- <ul class="nav-links">
+        <li class="nav-item" routerLink="/ruta-vehiculos">
+          <a href="#" >
+            <i class="material-icons">directions_car</i> Vehículos
+          </a>
+        </li>
+        <li class="nav-item" routerLink="/ruta-vehiculos">
+          <a href="#" >
+            <i class="material-icons">person</i> Conductores
+          </a>
+        </li>
+        <li class="nav-item" routerLink="/ruta-vehiculos">
+          <a href="#">
+            <i class="material-icons">timeline</i> Estado de flota
+          </a>
+        </li>
+        <li class="nav-item" routerLink="/profile">
+          <a href="#" >
+            <i class="material-icons">home</i> Home
+          </a>
+        </li>
+    </ul> -->
+    <ul class="nav-links">
+      <li class="nav-item" [routerLink]="['/cars']">
+          <a>
+              <i class="material-icons">directions_car</i> Vehículos
+          </a>
+      </li>
+      <li class="nav-item" [routerLink]="['/drivers']">
+          <a>
+              <i class="material-icons">person</i> Conductores
+          </a>
+      </li>
+      <li class="nav-item" [routerLink]="['/fleet']">
+          <a>
+              <i class="material-icons">timeline</i> Estado de flota
+          </a>
+      </li>
+      <li class="nav-item" [routerLink]="['/profile']">
+          <a>
+              <i class="material-icons">home</i> Home
+          </a>
+      </li>
+  </ul>
+
+
+
+</div>
+
