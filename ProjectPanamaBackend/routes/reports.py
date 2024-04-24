@@ -17,8 +17,24 @@ async def get_estados():
 @reports_router.get('/vehiculos')
 async def get_vehiculos():
   db = session()
-  vehiculos = db.query(Vehiculos).all()
-  return JSONResponse(content=jsonable_encoder(vehiculos))
+  try:
+    vehiculos = db.query(Vehiculos.PLACA).all()
+    vehiculos_placas = [{'placa': placa[0]} for placa in vehiculos]
+    return JSONResponse(content=jsonable_encoder(vehiculos_placas))
+  finally:
+    db.close()
+
+@reports_router.get('/vehiculos-estados')
+async def get_vehiculos_estados():
+    db = session()
+    try:
+      vehiculos_estados = db.query(Estados.CODIGO, Estados.NOMBRE, Vehiculos.PLACA) \
+      .join(Vehiculos, Estados.CODIGO == Vehiculos.ESTADO) \
+      .all()
+      vehiculos_estados_list = [{'codigo': vehiculo.CODIGO, 'nombre': vehiculo.NOMBRE, 'placa': vehiculo.PLACA} for vehiculo in vehiculos_estados]
+      return JSONResponse(content=jsonable_encoder(vehiculos_estados_list))
+    finally:
+      db.close()
 
 @reports_router.get('/propietarios')
 async def get_propietarios():
