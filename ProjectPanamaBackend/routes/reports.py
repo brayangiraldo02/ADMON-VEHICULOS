@@ -26,15 +26,48 @@ async def get_vehiculos():
 
 @reports_router.get('/vehiculos-estados')
 async def get_vehiculos_estados():
+  db = session()
+  try:
+    vehiculos_estados = db.query(Estados.CODIGO, Estados.NOMBRE, Vehiculos.PLACA) \
+    .join(Vehiculos, Estados.CODIGO == Vehiculos.ESTADO) \
+    .all()
+    vehiculos_estados_list = [{'codigo': vehiculo.CODIGO, 'nombre': vehiculo.NOMBRE, 'placa': vehiculo.PLACA} for vehiculo in vehiculos_estados]
+    return JSONResponse(content=jsonable_encoder(vehiculos_estados_list))
+  finally:
+    db.close()
+
+@reports_router.get('/vehiculos-detalles')
+async def get_vehiculos_detalles():
     db = session()
     try:
-      vehiculos_estados = db.query(Estados.CODIGO, Estados.NOMBRE, Vehiculos.PLACA) \
-      .join(Vehiculos, Estados.CODIGO == Vehiculos.ESTADO) \
+      vehiculos_detalles = db.query(
+        Propietarios.CODIGO,
+        Propietarios.ABREVIADO,
+        Estados.CODIGO,
+        Estados.NOMBRE,
+        Vehiculos.NUMERO,
+        Vehiculos.PLACA,
+        Vehiculos.NOMMARCA,
+        Vehiculos.MODELO,
+        Vehiculos.LINEA,
+        Vehiculos.NRO_CUPO,
+        Vehiculos.CHASISNRO,
+        Conductores.NROENTREGA,
+        Conductores.CUO_DIARIA,
+        Conductores.NROENTSDO,
+         Conductores.CODIGO,
+        Conductores.NOMBRE,
+        Conductores.CEDULA,
+        Conductores.TELEFONO
+      ).join(Vehiculos, Estados.CODIGO == Vehiculos.ESTADO) \
+      .join(Conductores, Vehiculos.CONDUCTOR == Conductores.CODIGO) \
+      .join(Propietarios, Vehiculos.PROPI_IDEN == Propietarios.CODIGO) \
+      .filter(Estados.CODIGO == '01') \
       .all()
-      vehiculos_estados_list = [{'codigo': vehiculo.CODIGO, 'nombre': vehiculo.NOMBRE, 'placa': vehiculo.PLACA} for vehiculo in vehiculos_estados]
-      return JSONResponse(content=jsonable_encoder(vehiculos_estados_list))
+      vehiculos_detalles_list = [dict(row) for row in vehiculos_detalles]
+      return JSONResponse(content=jsonable_encoder(vehiculos_detalles_list))
     finally:
-      db.close()
+        db.close()
 
 @reports_router.get('/propietarios')
 async def get_propietarios():
