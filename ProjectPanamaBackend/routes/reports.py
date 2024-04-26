@@ -4,6 +4,7 @@ from config.dbconnection import session
 from models.estados import Estados
 from models.vehiculos import Vehiculos
 from models.propietarios import Propietarios
+from models.conductores import Conductores
 from fastapi.encoders import jsonable_encoder
 
 reports_router = APIRouter()
@@ -55,7 +56,7 @@ async def get_vehiculos_detalles():
         Conductores.NROENTREGA,
         Conductores.CUO_DIARIA,
         Conductores.NROENTSDO,
-         Conductores.CODIGO,
+        Conductores.CODIGO,
         Conductores.NOMBRE,
         Conductores.CEDULA,
         Conductores.TELEFONO
