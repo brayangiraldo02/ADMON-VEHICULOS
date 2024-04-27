@@ -1,0 +1,40 @@
+header {
+  display: flex; /* Establece el contenedor como un flex container */
+  justify-content: space-between; /* Alinea los elementos a los extremos */
+  align-items: center; /* Centra verticalmente los elementos */
+  padding: 15px; /* Ajusta el espacio interior del header */
+  background-color: black; /* Color de fondo del header */
+  color: white; /* Color del texto */
+}
+
+h1 {
+  margin: 0; /* Quita el margen del título */
+}
+
+.title{
+  cursor: pointer;
+}
+
+nav {
+  display: flex; /* Establece el nav como un flex container */
+}
+
+nav button {
+  margin-left: 20px; /* Agrega un margen entre los enlaces */
+  color: white; /* Color del texto */
+  text-decoration: none; /* Quita la decoración del texto */
+  background-color: black; /* Color de fondo del botón */
+  border: none; /* Quita el borde del botón */
+  cursor: pointer; /* Cambia el cursor al pasar el ratón */
+  display: flex;
+  align-items: center;
+}
+
+nav p {
+  margin-top: 2px;
+  margin-bottom: 0; /* Quita el margen inferior del párrafo */
+}
+
+nav button:hover {
+  color: #F0C200; /* Cambia el color del texto al pasar el ratón */
+}
