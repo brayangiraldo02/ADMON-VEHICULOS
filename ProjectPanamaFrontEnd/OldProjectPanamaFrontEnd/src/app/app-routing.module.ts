@@ -30,87 +30,87 @@ const routes: Routes = [
   {
     path: 'profile',
     component: ProfileComponent,
-    canActivate: [AuthGuardGuard]
+    // canActivate: [AuthGuardGuard]
   },
   {
     path: 'cardsStatus',
     component: CardsStatusComponent,
-    canActivate: [AuthGuardGuard]
+    // canActivate: [AuthGuardGuard]
   },
   {
     path: 'nav',
     component: NavbarComponent,
-    canActivate: [AuthGuardGuard]
+    // canActivate: [AuthGuardGuard]
   },
   {
     path: 'sidebar',
     component: SidebarComponent,
-    canActivate: [AuthGuardGuard]
+    // canActivate: [AuthGuardGuard]
   },
   {
     path: 'cars',
     component: CarsComponent,
-    canActivate: [AuthGuardGuard]
+    // canActivate: [AuthGuardGuard]
   },
   {
     path: 'drivers',
     component: DriversComponent,
-    canActivate: [AuthGuardGuard]
+    // canActivate: [AuthGuardGuard]
   },
   {
     path: 'fleet',
     component: FleetComponent,
-    canActivate: [AuthGuardGuard]
+    // canActivate: [AuthGuardGuard]
   },
   {
     path: 'boxs',
     component: FinancialBoxComponent,
-    canActivate: [AuthGuardGuard]
+    // canActivate: [AuthGuardGuard]
   },
   {
     path: 'taller',
     component: WorkshopComponent,
-    canActivate: [AuthGuardGuard]
+    // canActivate: [AuthGuardGuard]
   },
   {
     path: 'wallet',
     component: WalletComponent,
-    canActivate: [AuthGuardGuard]
+    // canActivate: [AuthGuardGuard]
   },
   {
     path: 'store',
     component: StoreComponent,
-    canActivate: [AuthGuardGuard]
+    // canActivate: [AuthGuardGuard]
   },
   {
     path: 'management',
     component: ManagementComponent,
-    canActivate: [AuthGuardGuard]
+    // canActivate: [AuthGuardGuard]
   },
   {
     path: 'key',
     component: KeyRingComponent,
-    canActivate: [AuthGuardGuard]
+    // canActivate: [AuthGuardGuard]
   },
   {
     path: 'tramite',
     component: FormalitiesComponent,
-    canActivate: [AuthGuardGuard]
+    // canActivate: [AuthGuardGuard]
   },
   {
     path: 'collec',
     component: CollectionComponent,
-    canActivate: [AuthGuardGuard]
+    // canActivate: [AuthGuardGuard]
   },
   {
     path: 'chapisteria',
     component: BodyworkComponent,
-    canActivate: [AuthGuardGuard]
+    // canActivate: [AuthGuardGuard]
   },
   {
     path: 'board',
     component: BoardComponent,
-    canActivate: [AuthGuardGuard]
+    // canActivate: [AuthGuardGuard]
   },
 ];
 
