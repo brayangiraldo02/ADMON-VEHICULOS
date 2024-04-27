@@ -20,7 +20,7 @@ nav {
 }
 
 nav button {
-  margin-left: 20px; /* Agrega un margen entre los enlaces */
+  margin-left: 15px; /* Agrega un margen entre los enlaces */
   color: white; /* Color del texto */
   text-decoration: none; /* Quita la decoración del texto */
   background-color: black; /* Color de fondo del botón */
@@ -31,6 +31,7 @@ nav button {
 }
 
 nav p {
+  margin-left: 1px;
   margin-top: 2px;
   margin-bottom: 0; /* Quita el margen inferior del párrafo */
 }
