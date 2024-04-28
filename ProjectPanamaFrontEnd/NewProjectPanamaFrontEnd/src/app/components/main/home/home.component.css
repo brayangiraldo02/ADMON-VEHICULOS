@@ -31,10 +31,10 @@
 /* --------------------------------------------------------------------------------- */
 
 .cards-container{
-  padding: 2%;
+  padding: 4%;
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  grid-gap: 30px;
+  grid-template-columns: repeat(4, minmax(150px, 1fr));
+  grid-gap: 60px;
   /* background-color: #FDF7DF; */
   background-color: #C0CBE1;
 }
@@ -46,16 +46,13 @@
   padding: 25px;
   background-color: #ffffffb6;
   cursor: pointer; /* Cambia el cursor al pasar el ratón */
-}
-
-.main-container:hover {
-  background-color: #e6e6e6;
-  box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1); /* Agrega una sombra al pasar el ratón */
+  width: 200px; /* Establece el ancho */
+  height: 200px; /* Establece la altura igual al ancho */
 }
 
 .image-container {
   width: 100%;
-  height: 200px; /* Altura fija */
+  height: 100%; /* Establece la altura igual al ancho del contenedor principal */
   border-radius: 30px;
   overflow: hidden; /* Oculta cualquier contenido que se desborde del contenedor */
   display: flex; /* Utiliza flexbox */
@@ -64,9 +61,14 @@
 }
 
 .image-container img {
-  width: 60%;
-  height: 60%;
+  width: 80%;
+  height: 80%;
   object-fit: contain; /* Mantiene la relación de aspecto */
+}
+
+.main-container:hover {
+  background-color: #e6e6e6;
+  box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1); /* Agrega una sombra al pasar el ratón */
 }
 
 .option-name {
