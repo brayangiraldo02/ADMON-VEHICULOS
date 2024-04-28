@@ -5,7 +5,7 @@ header {
   padding: 15px; /* Ajusta el espacio interior del header */
   background-color: white; /* Color de fondo del header */
   color: black; /* Color del texto */
-  border: #F0C200 2px solid; /* Añade un borde alrededor del header */
+  border: #002B65 2px solid; /* Añade un borde alrededor del header */
   border-radius: 5px;
 }
 
@@ -59,5 +59,5 @@ nav p {
 }
 
 nav button:hover {
-  color: #F0C200; /* Cambia el color del texto al pasar el ratón */
+  color: #FE0108; /* Cambia el color del texto al pasar el ratón */
 }

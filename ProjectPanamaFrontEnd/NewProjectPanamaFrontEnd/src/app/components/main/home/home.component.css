@@ -3,7 +3,8 @@
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
   grid-gap: 30px;
-  background-color: #FDF7DF;
+  /* background-color: #FDF7DF; */
+  background-color: #C0CBE1;
 }
 
 .main-container {
