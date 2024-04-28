@@ -1,0 +1,63 @@
+header {
+  display: flex; /* Establece el contenedor como un flex container */
+  justify-content: space-between; /* Alinea los elementos a los extremos */
+  align-items: center; /* Centra verticalmente los elementos */
+  padding: 15px; /* Ajusta el espacio interior del header */
+  background-color: white; /* Color de fondo del header */
+  color: black; /* Color del texto */
+  border: #002B65 2px solid; /* Añade un borde alrededor del header */
+  border-radius: 5px;
+}
+
+h1 {
+  margin: 0; /* Quita el margen del título */
+  font-size: 28px;
+  cursor: pointer;
+}
+
+.info-company {
+  display: flex; /* Establece el contenedor como un flex container */
+  align-items: center; /* Centra verticalmente los elementos */
+  justify-content: flex-start;
+  padding-left: 1%;
+}
+
+.info-company .logo {
+  width: 50%; /* Establece el ancho del contenedor del logo */
+  /* max-width: 100px; */
+  max-width: 50%;
+  height: auto; /* Permite que la altura se ajuste automáticamente */
+  margin-right: 15px; /* Añade un margen entre el logo y el título */
+}
+
+.info-company .logo img {
+  width: 100%; /* Ajusta el tamaño de la imagen al contenedor */
+  height: auto; /* Permite que la altura se ajuste automáticamente */
+  cursor: pointer;
+}
+
+nav {
+  display: flex; /* Establece el nav como un flex container */
+}
+
+nav button {
+  margin-left: 15px; /* Agrega un margen entre los enlaces */
+  color: black; /* Color del texto */
+  text-decoration: none; /* Quita la decoración del texto */
+  background-color: white; /* Color de fondo del botón */
+  border: none; /* Quita el borde del botón */
+  cursor: pointer; /* Cambia el cursor al pasar el ratón */
+  display: flex;
+  align-items: center;
+}
+
+nav p {
+  margin-left: 1px;
+  margin-top: 2px;
+  margin-bottom: 0; /* Quita el margen inferior del párrafo */
+  font-size: 16px;
+}
+
+nav button:hover {
+  color: #FE0108; /* Cambia el color del texto al pasar el ratón */
+}
