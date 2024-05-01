@@ -6,25 +6,9 @@ from models.vehiculos import Vehiculos
 from models.propietarios import Propietarios
 from models.conductores import Conductores
 from fastapi.encoders import jsonable_encoder
-from schemas.forms import *
+from utils.reports import *
 
 reports_router = APIRouter()
-
-@reports_router.get('/estados')
-async def get_estados():
-  db = session()
-  estados = db.query(Estados).all()
-  return JSONResponse(content=jsonable_encoder(estados))
-
-@reports_router.get('/vehiculos')
-async def get_vehiculos():
-  db = session()
-  try:
-    vehiculos = db.query(Vehiculos.PLACA).all()
-    vehiculos_placas = [{'placa': placa[0]} for placa in vehiculos]
-    return JSONResponse(content=jsonable_encoder(vehiculos_placas))
-  finally:
-    db.close()
 
 @reports_router.get('/conteo-vehiculos-estados')
 async def get_conteo_vehiculos_estados():
@@ -110,10 +94,3 @@ async def get_vehiculos_detalles():
         return JSONResponse(content=jsonable_encoder(vehiculos_detalles_list))
     finally:
         db.close()
-
-
-@reports_router.get('/propietarios')
-async def get_propietarios():
-  db = session()
-  propietarios = db.query(Propietarios).all()
-  return JSONResponse(content=jsonable_encoder(propietarios))

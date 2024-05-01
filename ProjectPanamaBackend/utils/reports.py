@@ -1,14 +1,3 @@
-from fastapi import FastAPI
-from pydantic import BaseModel
-
-app = FastAPI()
-
-# Modelo para los datos de vehículos
-class VehiculoEstado(BaseModel):
-    codigo: str
-    nombre: str
-    placa: str
-
 def fun_conteo_vehiculos_estados(data):
     if not data:
         return {"mensaje": "No hay datos"}
