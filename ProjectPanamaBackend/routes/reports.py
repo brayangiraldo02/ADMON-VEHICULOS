@@ -6,6 +6,7 @@ from models.vehiculos import Vehiculos
 from models.propietarios import Propietarios
 from models.conductores import Conductores
 from fastapi.encoders import jsonable_encoder
+from schemas.forms import *
 
 reports_router = APIRouter()
 
@@ -25,50 +26,32 @@ async def get_vehiculos():
   finally:
     db.close()
 
-@reports_router.get('/vehiculos-estados')
-async def get_vehiculos_estados():
+@reports_router.get('/conteo-vehiculos-estados')
+async def get_conteo_vehiculos_estados():
   db = session()
   try:
-    vehiculos_estados = db.query(Estados.CODIGO, Estados.NOMBRE, Vehiculos.PLACA) \
+    conteo_vehiculos_estados = db.query(Estados.CODIGO, Estados.NOMBRE, Vehiculos.PLACA) \
     .join(Vehiculos, Estados.CODIGO == Vehiculos.ESTADO) \
     .all()
-    vehiculos_estados_list = [{'codigo': vehiculo.CODIGO, 'nombre': vehiculo.NOMBRE, 'placa': vehiculo.PLACA} for vehiculo in vehiculos_estados]
-    return JSONResponse(content=jsonable_encoder(vehiculos_estados_list))
+    vehiculos_estados_list = [{'codigo': vehiculo.CODIGO, 'nombre': vehiculo.NOMBRE, 'placa': vehiculo.PLACA} for vehiculo in conteo_vehiculos_estados]
+    fun_conteo_vehiculos_estados(vehiculos_estados_list)
+    return JSONResponse(content=jsonable_encoder(fun_conteo_vehiculos_estados(vehiculos_estados_list)))
   finally:
     db.close()
 
-# @reports_router.get('/vehiculos-detalles')
-# async def get_vehiculos_detalles():
-#     db = session()
-#     try:
-#       vehiculos_detalles = db.query(
-#         Propietarios.CODIGO,
-#         Propietarios.ABREVIADO,
-#         Estados.CODIGO,
-#         Estados.NOMBRE,
-#         Vehiculos.NUMERO,
-#         Vehiculos.PLACA,
-#         Vehiculos.NOMMARCA,
-#         Vehiculos.MODELO,
-#         Vehiculos.LINEA,
-#         Vehiculos.NRO_CUPO,
-#         Vehiculos.CHASISNRO,
-#         Conductores.NROENTREGA,
-#         Conductores.CUO_DIARIA,
-#         Conductores.NROENTSDO,
-#         Conductores.CODIGO,
-#         Conductores.NOMBRE,
-#         Conductores.CEDULA,
-#         Conductores.TELEFONO
-#       ).join(Vehiculos, Estados.CODIGO == Vehiculos.ESTADO) \
-#       .join(Conductores, Vehiculos.CONDUCTOR == Conductores.CODIGO) \
-#       .join(Propietarios, Vehiculos.PROPI_IDEN == Propietarios.CODIGO) \
-#       .filter(Estados.CODIGO == '01') \
-#       .all()
-#       vehiculos_detalles_list = [dict(row) for row in vehiculos_detalles]
-#       return JSONResponse(content=jsonable_encoder(vehiculos_detalles))
-#     finally:
-#         db.close()
+@reports_router.get('/conteo-propietarios-vehiculos-estados')
+async def get_conteo_propietarios_vehiculos_estados():
+  db = session()
+  try:
+    conteo_propietarios_vehiculos_estados = db.query(Propietarios.ABREVIADO, Estados.CODIGO, Estados.NOMBRE, Vehiculos.PLACA) \
+    .join(Vehiculos, Estados.CODIGO == Vehiculos.ESTADO) \
+    .join(Propietarios, Vehiculos.PROPI_IDEN == Propietarios.CODIGO) \
+    .all()
+    vehiculos_estados_propietarios_list = [{'empresa': vehiculo.ABREVIADO, 'codigo': vehiculo.CODIGO, 'nombre': vehiculo.NOMBRE, 'placa': vehiculo.PLACA} for vehiculo in conteo_propietarios_vehiculos_estados]
+    result = obtener_conteo_por_propietario(vehiculos_estados_propietarios_list)
+    return JSONResponse(content=jsonable_encoder(result))
+  finally:
+    db.close()
 
 @reports_router.get('/vehiculos-detalles')
 async def get_vehiculos_detalles():
@@ -93,7 +76,7 @@ async def get_vehiculos_detalles():
             Conductores.NOMBRE.label('conductor_nombre'),
             Conductores.CEDULA.label('conductor_cedula'),
             Conductores.TELEFONO.label('conductor_telefono')
-        ).join(Vehiculos, Estados.CODIGO == Vehiculos.ESTADO) \
+        )   .join(Vehiculos, Estados.CODIGO == Vehiculos.ESTADO) \
             .join(Conductores, Vehiculos.CONDUCTOR == Conductores.CODIGO) \
             .join(Propietarios, Vehiculos.PROPI_IDEN == Propietarios.CODIGO) \
             .filter(Estados.CODIGO == '01') \
