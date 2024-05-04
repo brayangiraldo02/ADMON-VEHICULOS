@@ -1,123 +1,31 @@
-<!-- <div class="body-container">
-  <div class="img-body">
-    <img src="../../../../assets/img/taxi.jpg" alt="Taxi">
+<!-- <body> -->
+  <div class="container">
+    <div class="carousel-container">
+      <div class="carousel">
+        <img [src]="images[currentImageIndex]" [style.opacity]="showImage ? '1' : '0'">
+      </div>
+    </div>
+    <div class="options-container">
+      <div class="options-container">
+        <ul>
+          <!-- ng-container para aplicar ngIf sin afectar el layout -->
+          <ng-container *ngFor="let option of options">
+            <li *ngIf="option.enabled">
+              <a [href]="option.url">
+                <img [src]="option.icon" class="option-icon">
+                <span class="option-text">{{ option.name }}</span>
+              </a>
+            </li>
+          </ng-container>
+        </ul>
+      </div>
+    </div>  
   </div>
+<!-- </body> -->
 
-  <div class="cards-container">
+<!-- ------------------------------------------------------ -->
 
-    <div class="main-container" href="/hoalalalal">
-      <div class="image-container">
-        <img src="../../../../assets/icons/logout.svg" alt="Option Logo">
-      </div>
-      <div class="name-container">
-        <h1 class="option-name">Caja</h1>
-      </div>
-    </div>
-  
-    <div class="main-container" href="/hoalalalal">
-      <div class="image-container">
-        <img src="../../../../assets/icons/logout.svg" alt="Option Logo">
-      </div>
-      <div class="name-container">
-        <h1 class="option-name">Operaciones</h1>
-      </div>
-    </div>
-  
-    <div class="main-container" href="/hoalalalal">
-      <div class="image-container">
-        <img src="../../../../assets/icons/logout.svg" alt="Option logo">
-      </div>
-      <div class="name-container">
-        <h1 class="option-name">Cobros</h1>
-      </div>
-    </div>
-  
-    <div class="main-container" href="/hoalalalal">
-      <div class="image-container">
-        <img src="../../../../assets/icons/logout.svg" alt="Option logo">
-      </div>
-      <div class="name-container">
-        <h1 class="option-name">Trámites</h1>
-      </div>
-    </div>
-  
-    <div class="main-container" href="/hoalalalal">
-      <div class="image-container">
-        <img src="../../../../assets/icons/logout.svg" alt="Option logo">
-      </div>
-      <div class="name-container">
-        <h1 class="option-name">Almacén</h1>
-      </div>
-    </div>
-  
-    <div class="main-container" href="/hoalalalal">
-      <div class="image-container">
-        <img src="../../../../assets/icons/logout.svg" alt="Option logo">
-      </div>
-      <div class="name-container">
-        <h1 class="option-name">Taller</h1>
-      </div>
-    </div>
-  
-    <div class="main-container" href="/hoalalalal">
-      <div class="image-container">
-        <img src="../../../../assets/icons/logout.svg" alt="Option logo">
-      </div>
-      <div class="name-container">
-        <h1 class="option-name">Chapistería</h1>
-      </div>
-    </div>
-  
-    <div class="main-container" href="/hoalalalal">
-      <div class="image-container">
-        <img src="../../../../assets/icons/logout.svg" alt="Option logo">
-      </div>
-      <div class="name-container">
-        <h1 class="option-name">Llavero</h1>
-      </div>
-    </div>
-  
-    <div class="main-container" href="/hoalalalal">
-      <div class="image-container">
-        <img src="../../../../assets/icons/logout.svg" alt="Option logo">
-      </div>
-      <div class="name-container">
-        <h1 class="option-name">Cartera</h1>
-      </div>
-    </div>
-  
-    <div class="main-container" href="/hoalalalal">
-      <div class="image-container">
-        <img src="../../../../assets/icons/logout.svg" alt="Option logo">
-      </div>
-      <div class="name-container">
-        <h1 class="option-name">Tabla</h1>
-      </div>
-    </div>
-  
-    <div class="main-container" href="/hoalalalal">
-      <div class="image-container">
-        <img src="../../../../assets/icons/logout.svg" alt="Option logo">
-      </div>
-      <div class="name-container">
-        <h1 class="option-name">Gerencia</h1>
-      </div>
-    </div>
-  
-    <div class="main-container" href="/hoalalalal">
-      <div class="image-container">
-        <img src="../../../../assets/icons/logout.svg" alt="Option logo">
-      </div>
-      <div class="name-container">
-        <h1 class="option-name">Cerrar sesión</h1>
-      </div>
-    </div>
-  </div>
-</div> -->
-
-<!-- ------------------------------------------------------------------------------------------ -->
-
-<div class="cards-container">
+<!-- <div class="cards-container">
 
   <div class="main-container" href="/hoalalalal">
     <div class="image-container">
@@ -226,4 +134,4 @@
       <h1 class="option-name">Cerrar sesión</h1>
     </div>
   </div>
-</div>
+</div> -->
