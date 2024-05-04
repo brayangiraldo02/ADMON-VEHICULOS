@@ -1,0 +1,25 @@
+<!-- login.component.html -->
+
+<div class="login-container">
+
+  <form>
+    <h1>¡Bienvenido!</h1>
+    <div class="form-group">
+      <label for="username">Usuario</label>
+      <input type="text" id="username" name="username" placeholder="Ingrese su usuario" required>
+    </div>
+
+    <div class="form-group">
+      <label for="password">Contraseña</label>
+      <div class="password-input">
+        <input type="password" id="password" name="password" placeholder="Ingrese su contraseña" required>
+        <button type="button" class="show-password-button"><img src="{{ eyeIconPath }}" alt="Mostrar contraseña"></button>
+        <!-- <button type="button" (click)="togglePasswordVisibility()">Mostrar contraseña</button> -->
+      </div>
+    </div>
+
+    <button type="submit">Iniciar sesión</button>
+  </form>
+</div>
+
+<app-header></app-header>
