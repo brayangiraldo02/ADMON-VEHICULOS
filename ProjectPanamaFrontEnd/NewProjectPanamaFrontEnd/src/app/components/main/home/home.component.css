@@ -38,7 +38,7 @@ body {
   opacity: 0;                           /* Inicialmente las imágenes son invisibles (para transiciones). */
   transition: opacity 1s ease-in-out;   /* Transiciones suaves de opacidad al cambiar imágenes. */
   object-fit: inherit;                  /* Mantiene la relación de aspecto de la imagen sin cortarla. */
-  border-radius: 15px;                  /* Aplica bordes redondeados a las imágenes. */
+  border-radius: 5px;                  /* Aplica bordes redondeados a las imágenes. */
 }
 
 .options-container {
