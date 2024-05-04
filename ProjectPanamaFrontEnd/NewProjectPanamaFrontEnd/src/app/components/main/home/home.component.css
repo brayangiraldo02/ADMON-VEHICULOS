@@ -1,14 +1,9 @@
-body {
-  background-color: #C0CBE1; /* Establece el color de fondo para cubrir todo el fondo de la vista */
-}
-
 .container {
   display: flex;
   justify-content: center;
   /* align-items: center; */
   padding: 25px 50px;
   gap: 20px;
-  background-color: #C0CBE1;
 }
 
 /* Contenedor principal del carrusel */
