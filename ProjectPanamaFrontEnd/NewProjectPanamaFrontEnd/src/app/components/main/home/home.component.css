@@ -58,7 +58,7 @@ li {
   width: calc(33.33% - 20px); /* 33.33% para 3 elementos por fila, ajustando el margen */
   margin: 10px;
   box-sizing: border-box;
-  background: #f2f2f2; /* Fondo claro por defecto, ajustable */
+  background: #ffffff; /* Fondo claro por defecto, ajustable */
   border-radius: 10px; /* Bordes redondeados */
   padding: 10px;
   display: flex;
