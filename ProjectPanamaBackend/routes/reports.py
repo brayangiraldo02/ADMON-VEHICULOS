@@ -18,8 +18,8 @@ async def get_conteo_vehiculos_estados():
     .join(Vehiculos, Estados.CODIGO == Vehiculos.ESTADO) \
     .all()
     vehiculos_estados_list = [{'codigo': vehiculo.CODIGO, 'nombre': vehiculo.NOMBRE, 'placa': vehiculo.PLACA} for vehiculo in conteo_vehiculos_estados]
-    fun_conteo_vehiculos_estados(vehiculos_estados_list)
-    return JSONResponse(content=jsonable_encoder(fun_conteo_vehiculos_estados(vehiculos_estados_list)))
+    result = fun_conteo_vehiculos_estados(vehiculos_estados_list)
+    return JSONResponse(content=jsonable_encoder(result))
   finally:
     db.close()
 
