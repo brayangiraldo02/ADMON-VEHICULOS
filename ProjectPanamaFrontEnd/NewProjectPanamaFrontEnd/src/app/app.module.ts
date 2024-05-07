@@ -9,6 +9,7 @@ import { HeaderComponent } from './components/main/header/header.component';
 import { HomeComponent } from './components/main/home/home.component';
 import { PruebaComponent } from './components/prueba/prueba.component';
 import { LoginComponent } from './components/users/login/login.component';
+import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
   declarations: [
@@ -23,7 +24,8 @@ import { LoginComponent } from './components/users/login/login.component';
     AppRoutingModule,
     BrowserAnimationsModule,
     MatCardModule,
-    MatButtonModule
+    MatButtonModule,
+    HttpClientModule
   ],
   providers: [],
   bootstrap: [AppComponent]
