@@ -1,4 +1,4 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Request
 from fastapi.responses import JSONResponse
 from config.dbconnection import session
 from models.estados import Estados
@@ -7,21 +7,57 @@ from models.propietarios import Propietarios
 from models.conductores import Conductores
 from fastapi.encoders import jsonable_encoder
 from utils.reports import *
+from datetime import datetime
+
+from fastapi.templating import Jinja2Templates
+from fastapi.responses import HTMLResponse
+
+templateJinja = Jinja2Templates(directory="templates")
 
 reports_router = APIRouter()
 
-@reports_router.get('/conteo-vehiculos-estados')
-async def get_conteo_vehiculos_estados():
+@reports_router.get('/conteo-vehiculos-estados', response_class=HTMLResponse)
+async def get_conteo_vehiculos_estados(request: Request):
   db = session()
   try:
     conteo_vehiculos_estados = db.query(Estados.CODIGO, Estados.NOMBRE, Vehiculos.PLACA) \
     .join(Vehiculos, Estados.CODIGO == Vehiculos.ESTADO) \
     .all()
     vehiculos_estados_list = [{'codigo': vehiculo.CODIGO, 'nombre': vehiculo.NOMBRE, 'placa': vehiculo.PLACA} for vehiculo in conteo_vehiculos_estados]
-    result = fun_conteo_vehiculos_estados(vehiculos_estados_list)
-    return JSONResponse(content=jsonable_encoder(result))
+    data = fun_conteo_vehiculos_estados(vehiculos_estados_list)
+    data = data.get("conteo_placas")
+    fecha_hora_actual = datetime.now()
+    fecha_actual = fecha_hora_actual.date()
+    data_view = {"fecha": fecha_actual}
+    # Activos
+    
+    data_view["cant_activo"] = data.get("ACTIVO", 0)
+    data_view["cant_backup"] = data.get("BACUPK", 0)
+    data_view["cant_activo_backup"] = data.get("ACTIVO", 0) + data.get("BACUPK", 0)
+    data_view["cant_chap_parado"] = data.get("CHAPISTERIA PARADO", 0)
+    data_view["cant_chap_trabajando"] = data.get("CHAPISTERIA TRABAJANDO", 0)
+    data_view["cant_custodia"] = data.get("» CARROS TRASPASADOS", 0)
+    data_view["cant_esp_operador"] = data.get("ESPERANDO OPERADOR", 0)
+    data_view["cant_mecanica_parado"] = data.get("MECANICA PARADOS", 0)
+    data_view["cant_otros"] = data.get("» SIN CLASIFICAR", 0)
+    # Otros Estados
+    data_view["cant_traspasados"] = data.get("» CARROS TRASPASADOS", 0)
+    data_view["cant_fin_contrato"] = data.get("» CULMINACION DE CONTRATO", 0)
+    data_view["cant_en_tramite"] = data.get("» EN TRAMITE", 0)
+    data_view["cant_fuera_circulacion"] = data.get("» Fuera de Circulacion", 0)
+    data_view["cant_inactivos"] = data.get("» INACTIVOS", 0)
+    data_view["cant_perdida_total"] = data.get("» PERDIDA TOTAL", 0)
+    data_view["cant_retirado_empresa"] = data.get("» RETIRADO DE LA EMPRESA", 0)
+    data_view["cant_sin_calificar"] = data.get("» SIN CLASIFICAR", 0)
+    data_view["cant_vendidos"] = data.get("» VENDIDO", 0)
+    data_view["cant_para_venta"] = data.get("» Vehiculos Para la Venta", 0)
+    print(data_view)
+
+    return templateJinja.TemplateResponse("form1.html", {"request": request, "data_vehiculos": data_view})
   finally:
     db.close()
+
+#-----------------------------------------------------------------------------------------
 
 @reports_router.get('/conteo-propietarios-vehiculos-estados')
 async def get_conteo_propietarios_vehiculos_estados():

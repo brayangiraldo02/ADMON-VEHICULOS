@@ -1,0 +1,100 @@
+dl {
+    position: absolute;
+    left: 0;
+    text-align:left;
+    top: 0;
+  }
+  dr {
+    position: absolute;
+    right: 0;
+    text-align: right;
+    top: 0;
+  }
+  dt, dd {
+    display: inline;
+    margin: 0;
+  }
+  dt {
+    color: #a9a;
+  }
+  dt::before {
+    content: '';
+    display: block;
+  }
+  dt::after {
+    content: ':';
+  }
+  
+  html, body {
+    scroll-behavior: smooth;
+  }
+  
+  body {
+    display: flex;
+    flex-direction: column;
+    justify-content:center;
+    align-items: center;
+    height:auto;
+    margin: 0;
+    font-family: Calibri, sans-serif;
+    background-color: #ffffff;
+  }
+  
+  .centered-title {
+    font-size: 30px; /* Tamaño de fuente según tus preferencias */
+    text-align: center; /* Centra el título horizontalmente */
+    margin-bottom: 0px; 
+  }
+  
+  .box {
+    flex: 1; /* Distribuye el espacio disponible entre las cajas */
+    border: 1px solid #ccc;
+    padding: 10px;
+    /* Otros estilos según tus preferencias */
+  }
+  
+  
+  .title {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+  
+  .data {
+    font-size: 16px;
+    line-height: 1.5;
+  }
+  
+  .title {
+    text-align: center; /* Center the title horizontally */
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 20px;
+  }
+  
+  #activos-title {
+    color: #002B65;
+    text-align: center;
+  }
+  
+  #inactivos-title {
+    color: #FE0108;
+    text-align: center;
+  }
+  
+  p {
+    line-height: 2; /* Ajusta el valor según tus preferencias */
+    font-size: 22px;
+  }
+  
+  table {
+    border-collapse: separate; /* Asegura que border-spacing funcione */
+    border-spacing: 100px 2px; /* Espacio horizontal y vertical entre celdas */
+    text-align: left;
+    width: 100%;
+    empty-cells: hide;
+  }
+  
+  .hide {
+    display: none;
+  }

@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Organizational Chart</title>
+    <link rel="stylesheet" href="{{ url_for('static', path = '/form1.css') }}"/> 
+</head>
+<body>
+        
+        <dl>
+            <div>
+                <img src="C:/Programas/python/backend/meta/Frontend/form1/logos/logo.png" id="logo" height="50" width="150">
+            </div>
+        </dl>
+
+        <br>
+        <br>
+
+        <h1 class="centered-title">{{empresa}}</h1>
+
+        <dr id="informations">
+            <div class="box">
+                <dt>Fecha</dt>
+                <dd>{{data_vehiculos.fecha}}</dd>
+                <dt>Hora</dt>
+                <dd>{{hora}}</dd>
+            </div>
+        </dr>
+                <table margin: 0 auto;>
+                    <thead>
+                        <th</th>
+                        <th></th>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <p><img src="C:/Programas/python/backend/meta/Frontend/form1/logos/activo.png" height="26" width="26" style="margin-right: 30px;">Activo:</p>
+                                <p><img src="C:/Programas/python/backend/meta/Frontend/form1/logos/backup.png" height="26" width="26" style="margin-right: 30px;">Backup:</p>
+                                <p><img src="C:/Programas/python/backend/meta/Frontend/form1/logos/total.png" height="26" width="26" style="margin-right: 30px;">Activo+Backup: </p>
+                                <p><img src="C:/Programas/python/backend/meta/Frontend/form1/logos/parado.png" height="26" width="26" style="margin-right: 30px;">Chapisteria Parado:</p>
+                                <p><img src="C:/Programas/python/backend/meta/Frontend/form1/logos/trabajando.png" height="26" width="26" style="margin-right: 30px;">Chapisteria Trabajando:</p>
+                                <p><img src="C:/Programas/python/backend/meta/Frontend/form1/logos/custodia.png" height="26" width="26" style="margin-right: 30px;">Custodia:</p>
+                                <p><img src="C:/Programas/python/backend/meta/Frontend/form1/logos/esperando.png" height="26" width="26" style="margin-right: 30px;">Esperando Operador:</p>
+                                <p><img src="C:/Programas/python/backend/meta/Frontend/form1/logos/mecanico.png" height="26" width="26" style="margin-right: 30px;">Mecanica Parados:</p>
+                                <p><img src="C:/Programas/python/backend/meta/Frontend/form1/logos/otros.png" height="26" width="26" style="margin-right: 30px;">Otros:</p>
+                            </td>
+                            <td style="text-align: center;">
+                                    <p>{{ data_vehiculos.cant_activo }}</p>
+                                    <p>{{ data_vehiculos.cant_backup }}</p>
+                                    <p>{{ data_vehiculos.cant_activo_backup }}</p>
+                                    <p>{{ data_vehiculos.cant_chap_parado }}</p>
+                                    <p>{{ data_vehiculos.cant_chap_trabajando }}</p>
+                                    <p>{{ data_vehiculos.cant_custodia }}</p>
+                                    <p>{{ data_vehiculos.cant_esp_operador }}</p>
+                                    <p>{{ data_vehiculos.cant_mecanica_parado }}</p>
+                                    <p>{{ data_vehiculos.cant_otros }}</p>
+                            </td>                            
+                        </tr>
+                    </tbody>
+                </table>
+
+                <table style="float: left;  margin-left: 100px;">
+                    <thead>
+                        <th</th>
+                        <th></th>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <p><img src="C:/Programas/python/backend/meta/Frontend/form1/logos/traspaso.png" height="26" width="26" style="margin-right: 30px;">Traspasados:</p>
+                                <p><img src="C:/Programas/python/backend/meta/Frontend/form1/logos/contrato.png" height="26" width="26" style="margin-right: 30px;">Culminacion de Contrato:</p>
+                                <p><img src="C:/Programas/python/backend/meta/Frontend/form1/logos/tramite.png" height="26" width="26" style="margin-right: 30px;">En Tramite: </p>
+                                <p><img src="C:/Programas/python/backend/meta/Frontend/form1/logos/fuera.png" height="26" width="26" style="margin-right: 30px;">Fuera de Circulación:</p>
+                                <p><img src="C:/Programas/python/backend/meta/Frontend/form1/logos/activo.png" height="26" width="26" style="margin-right: 30px;">Inactivos:</p>
+                                <p><img src="C:/Programas/python/backend/meta/Frontend/form1/logos/perdida.png" height="26" width="26" style="margin-right: 30px;">Perdida Total:</p>
+                                <p><img src="C:/Programas/python/backend/meta/Frontend/form1/logos/retirado.png" height="26" width="26" style="margin-right: 30px;">Retirado de la Empresa:</p>
+                                <p><img src="C:/Programas/python/backend/meta/Frontend/form1/logos/sincalificar.png" height="26" width="26" style="margin-right: 30px;">Sin Calificar:</p>
+                                <p><img src="C:/Programas/python/backend/meta/Frontend/form1/logos/vendido.png" height="26" width="26" style="margin-right: 30px;">Vendidos:</p>
+                                <p><img src="C:/Programas/python/backend/meta/Frontend/form1/logos/paraventa.png" height="26" width="26" style="margin-right: 30px;">Para la Venta:</p>
+                            </td>
+                            <td style="text-align: center;">
+                                <p>{{data_vehiculos.cant_traspasados}}</p>
+                                <p>{{data_vehiculos.cant_fin_contrato}}</p>
+                                <p>{{data_vehiculos.cant_en_tramite}}</p>
+                                <p>{{data_vehiculos.cant_fuera_circulacion}}</p>
+                                <p>{{data_vehiculos.cant_inactivos}}</p>
+                                <p>{{data_vehiculos.cant_perdida_total}}</p>
+                                <p>{{data_vehiculos.cant_retirado_empresa}}</p>
+                                <p>{{data_vehiculos.cant_sin_calificar}}</p>
+                                <p>{{data_vehiculos.cant_vendidos}}</p>
+                                <p>{{data_vehiculos.cant_para_venta}}</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+        <table>
+            <thead>
+                <th>Total Flota Autos: {{data_vehiculos.total}}</th>
+                <th>Activa: {{data_vehiculos.total_activos}}</th>
+                <th>Inactiva: {{data_vehiculos.total_inactivos}}</th>
+                <th>Promedio Flota Activa: {{data_vehiculos.promedio_activos}}</th>
+                <th>Promedio Flota Parada: {{data_vehiculos.promedio_parados}}</th>
+            </thead>
+        </table>
+</body>
+</html>
