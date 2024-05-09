@@ -10,7 +10,7 @@ users_router = APIRouter()
 
 # PRUEBA DE PETICIÓN A LA BASE DE DATOS
 # ---------------------------------------------------------------------------------------------------------------
-@users_router.get('/users')
+@users_router.get('/users', tags=["Users"])
 async def get_users():
   db = session()
   try:
@@ -26,7 +26,7 @@ async def get_users():
 
 # Petición base de datos
 # ---------------------------------------------------------------------------------------------------------------
-@users_router.get('/users_2')
+@users_router.get('/users_2', tags=["Users"])
 async def get_users2():
   db = session()
   try:
@@ -40,7 +40,7 @@ async def get_users2():
     db.close()
 # ---------------------------------------------------------------------------------------------------------------
 
-@users_router.post('/login')
+@users_router.post('/login', tags=["Users"])
 async def login(data: userLogin):
   db = session()
   try:
@@ -51,8 +51,10 @@ async def login(data: userLogin):
       return JSONResponse(content=jsonable_encoder({'error': 'Contraseña incorrecta'}), status_code=404)
     if user.ESTADO == 0:
       return JSONResponse(content=jsonable_encoder({'error': 'Usuario inactivo'}), status_code=404)
-    user_data = {
+    user_data_cookie = {
       "codigo": user.CODIGO,
+    }
+    user_data_localStorage = {
       "nombre": user.NOMBRE,
       "opcion01": user.OPCION01,
       "opcion02": user.OPCION02,
@@ -72,10 +74,10 @@ async def login(data: userLogin):
       "tarea03": user.TAREA03,
       "tarea04": user.TAREA04
     }
-    token = encode_jwt(user_data)
-    # Response.set_cookie(key="access_token", value=token, httponly=True, secure=True, samesite='strict')
-    # return JSONResponse(content={"message": "Login successful"}, status_code=200)
-    return JSONResponse(content=jsonable_encoder({'token': token}), status_code=200)
+    token_cookie = encode_jwt(user_data_cookie)
+    token_localStorage = encode_jwt(user_data_localStorage)
+    Response.set_cookie(key="access_token", value=token_cookie, httponly=True, secure=True, samesite='strict')
+    return JSONResponse(content=jsonable_encoder({'token': token_localStorage}))
   except Exception as e:
     return JSONResponse(content=jsonable_encoder({'error': str(e)}), status_code=500)
   finally:
