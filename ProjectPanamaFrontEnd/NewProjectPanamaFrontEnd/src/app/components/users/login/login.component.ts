@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
 import { ApiService } from 'src/app/services/api.service';
 import { JwtService } from 'src/app/services/jwt.service';
 
@@ -8,7 +9,7 @@ import { JwtService } from 'src/app/services/jwt.service';
   styleUrls: ['./login.component.css']
 })
 export class LoginComponent {
-  constructor(private apiService: ApiService, private jwtService: JwtService) {}
+  constructor(private apiService: ApiService, private jwtService: JwtService, private router: Router) {}
   user: string = "";     
   password: string = "";
   eyeIconPath: string = '../../../../assets/icons/eye.svg'; // Ruta local del icono
@@ -25,6 +26,7 @@ export class LoginComponent {
     this.apiService.postData('login', userLogin).subscribe(
       (response) => {
         this.jwtService.setToken(response.token);
+        this.router.navigate(['/home']);
       },
       (error) => {
         console.log(error);
