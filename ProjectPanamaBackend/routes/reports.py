@@ -28,9 +28,10 @@ async def get_conteo_vehiculos_estados(request: Request):
     data = data.get("conteo_placas")
     fecha_hora_actual = datetime.now()
     fecha_actual = fecha_hora_actual.date()
-    data_view = {"fecha": fecha_actual}
+    hora = fecha_hora_actual.time()  
+    hora_actual = hora.strftime("%H:%M")
+    data_view = {"fecha": fecha_actual, "hora": hora_actual, "empresa": "WORLD TAXI ADMINISTRACION, S.A."}
     # Activos
-    
     data_view["cant_activo"] = data.get("ACTIVO", 0)
     data_view["cant_backup"] = data.get("BACUPK", 0)
     data_view["cant_activo_backup"] = data.get("ACTIVO", 0) + data.get("BACUPK", 0)
@@ -51,7 +52,16 @@ async def get_conteo_vehiculos_estados(request: Request):
     data_view["cant_sin_calificar"] = data.get("» SIN CLASIFICAR", 0)
     data_view["cant_vendidos"] = data.get("» VENDIDO", 0)
     data_view["cant_para_venta"] = data.get("» Vehiculos Para la Venta", 0)
-    print(data_view)
+    # Totales
+    data_view["total_vehiculos"] = data.get("ACTIVO", 0) + data.get("BACUPK", 0) + data.get("CHAPISTERIA PARADO", 0) + data.get("CHAPISTERIA TRABAJANDO", 0) + data.get("» CARROS TRASPASADOS", 0) + data.get("ESPERANDO OPERADOR", 0) + data.get("MECANICA PARADOS", 0) + data.get("» SIN CLASIFICAR", 0) + data.get("» CARROS TRASPASADOS", 0) + data.get("» CULMINACION DE CONTRATO", 0) + data.get("» EN TRAMITE", 0) + data.get("» Fuera de Circulacion", 0) + data.get("» INACTIVOS", 0) + data.get("» PERDIDA TOTAL", 0) + data.get("» RETIRADO DE LA EMPRESA", 0) + data.get("» SIN CLASIFICAR", 0) + data.get("» VENDIDO", 0) + data.get("» Vehiculos Para la Venta", 0)
+
+    data_view["total_activos"] = data.get("ACTIVO", 0) + data.get("BACUPK", 0) + data.get("CHAPISTERIA PARADO", 0) + data.get("CHAPISTERIA TRABAJANDO", 0) + data.get("» CARROS TRASPASADOS", 0) + data.get("ESPERANDO OPERADOR", 0) + data.get("MECANICA PARADOS", 0) + data.get("» SIN CLASIFICAR", 0)
+
+    data_view["total_parados"] = data.get("» CARROS TRASPASADOS", 0) + data.get("» CULMINACION DE CONTRATO", 0) + data.get("» EN TRAMITE", 0) + data.get("» Fuera de Circulacion", 0) + data.get("» INACTIVOS", 0) + data.get("» PERDIDA TOTAL", 0) + data.get("» RETIRADO DE LA EMPRESA", 0) + data.get("» SIN CLASIFICAR", 0) + data.get("» VENDIDO", 0) + data.get("» Vehiculos Para la Venta", 0)
+
+    data_view["promedio_activos"] = round((data_view["total_activos"] / data_view["total_vehiculos"] * 100), 2)
+
+    data_view["promedio_parados"] = round((data_view["total_parados"] / data_view["total_vehiculos"] * 100), 2)
 
     return templateJinja.TemplateResponse("form1.html", {"request": request, "data_vehiculos": data_view})
   finally:
@@ -63,12 +73,44 @@ async def get_conteo_vehiculos_estados(request: Request):
 async def get_conteo_propietarios_vehiculos_estados():
   db = session()
   try:
-    conteo_propietarios_vehiculos_estados = db.query(Propietarios.ABREVIADO, Estados.CODIGO, Estados.NOMBRE, Vehiculos.PLACA) \
+    conteo_propietarios_vehiculos_estados = db.query(Propietarios.CODIGO.label('propietario_codigo'), Propietarios.ABREVIADO.label('propietario_abreviado'), Estados.CODIGO.label('estado_codigo'),Estados.NOMBRE.label('estado_nombre'), Vehiculos.NUMERO.label('vehiculo_numero') )\
     .join(Vehiculos, Estados.CODIGO == Vehiculos.ESTADO) \
     .join(Propietarios, Vehiculos.PROPI_IDEN == Propietarios.CODIGO) \
     .all()
-    vehiculos_estados_propietarios_list = [{'empresa': vehiculo.ABREVIADO, 'codigo': vehiculo.CODIGO, 'nombre': vehiculo.NOMBRE, 'placa': vehiculo.PLACA} for vehiculo in conteo_propietarios_vehiculos_estados]
-    result = obtener_conteo_por_propietario(vehiculos_estados_propietarios_list)
+    vehiculos_estados_propietarios_list = [] 
+    for resultado in conteo_propietarios_vehiculos_estados:
+      propietarios_vehiculos_estados = {
+        'propietario_codigo': resultado.propietario_codigo,
+        'propietario_abreviado': resultado.propietario_abreviado,
+        'estado_codigo': resultado.estado_codigo,
+        'estado_nombre': resultado.estado_nombre,
+        'vehiculo_numero': resultado.vehiculo_numero
+      }
+      vehiculos_estados_propietarios_list.append(propietarios_vehiculos_estados)
+    result = obtener_conteo_por_propietario(vehiculos_estados_propietarios_list) 
+    return JSONResponse(content=jsonable_encoder(result))
+  finally:
+    db.close()
+
+@reports_router.get('/conteo-propietarios-vehiculos-estados-numeros')
+async def get_conteo_propietarios_vehiculos_estados_numeros():
+  db = session()
+  try:
+    conteo_propietarios_vehiculos_estados = db.query(Propietarios.CODIGO.label('propietario_codigo'), Propietarios.ABREVIADO.label('propietario_abreviado'), Estados.CODIGO.label('estado_codigo'),Estados.NOMBRE.label('estado_nombre'), Vehiculos.NUMERO.label('vehiculo_numero') )\
+    .join(Vehiculos, Estados.CODIGO == Vehiculos.ESTADO) \
+    .join(Propietarios, Vehiculos.PROPI_IDEN == Propietarios.CODIGO) \
+    .all()
+    vehiculos_estados_propietarios_list = [] 
+    for resultado in conteo_propietarios_vehiculos_estados:
+      propietarios_vehiculos_estados = {
+        'propietario_codigo': resultado.propietario_codigo,
+        'propietario_abreviado': resultado.propietario_abreviado,
+        'estado_codigo': resultado.estado_codigo,
+        'estado_nombre': resultado.estado_nombre,
+        'vehiculo_numero': resultado.vehiculo_numero
+      }
+    vehiculos_estados_propietarios_list.append(propietarios_vehiculos_estados)
+    result = obtener_numeros_por_propietario(vehiculos_estados_propietarios_list)
     return JSONResponse(content=jsonable_encoder(result))
   finally:
     db.close()
