@@ -14,7 +14,7 @@ export class HeaderComponent {
 
   permisos: any;
 
-  onInit() {
+  ngOnInit() {
     this.obtenerUsuario();
     console.log(this.permisos);
   }
