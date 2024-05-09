@@ -44,7 +44,7 @@ async def get_users2():
 async def login(data: userLogin):
   db = session()
   try:
-    user = db.query(PermisosUsuario.CODIGO, PermisosUsuario.NOMBRE, PermisosUsuario.PASSSWORD, PermisosUsuario.ESTADO, PermisosUsuario.OPCION01, PermisosUsuario.OPCION02, PermisosUsuario.OPCION03, PermisosUsuario.OPCION04, PermisosUsuario.OPCION05, PermisosUsuario.OPCION06, PermisosUsuario.OPCION07, PermisosUsuario.OPCION08, PermisosUsuario.OPCION09, PermisosUsuario.OPCION10, PermisosUsuario.OPCION11, PermisosUsuario.OPCION12, PermisosUsuario.OPCION13, PermisosUsuario.TAREA01, PermisosUsuario.TAREA02, PermisosUsuario.TAREA03, PermisosUsuario.TAREA04).filter(PermisosUsuario.NOMBRE == data.nombre).first()
+    user = db.query(PermisosUsuario.CODIGO, PermisosUsuario.NOMBRE, PermisosUsuario.PASSSWORD, PermisosUsuario.ESTADO, PermisosUsuario.OPCION01, PermisosUsuario.OPCION02, PermisosUsuario.OPCION03, PermisosUsuario.OPCION04, PermisosUsuario.OPCION05, PermisosUsuario.OPCION06, PermisosUsuario.OPCION07, PermisosUsuario.OPCION08, PermisosUsuario.OPCION09, PermisosUsuario.OPCION10, PermisosUsuario.OPCION11, PermisosUsuario.OPCION12, PermisosUsuario.OPCION13, PermisosUsuario.TAREA01, PermisosUsuario.TAREA02, PermisosUsuario.TAREA03, PermisosUsuario.TAREA04).filter(PermisosUsuario.NOMBRE == data.user).first()
     if user is None:
       return JSONResponse(content=jsonable_encoder({'error': 'Usuario no encontrado'}), status_code=404)
     if user.PASSSWORD != data.password:
@@ -73,8 +73,9 @@ async def login(data: userLogin):
       "tarea04": user.TAREA04
     }
     token = encode_jwt(user_data)
-    Response.set_cookie(key="access_token", value=token, httponly=True, secure=True, samesite='strict')
-    return JSONResponse(content={"message": "Login successful"}, status_code=200)
+    # Response.set_cookie(key="access_token", value=token, httponly=True, secure=True, samesite='strict')
+    # return JSONResponse(content={"message": "Login successful"}, status_code=200)
+    return JSONResponse(content=jsonable_encoder({'token': token}), status_code=200)
   except Exception as e:
     return JSONResponse(content=jsonable_encoder({'error': str(e)}), status_code=500)
   finally:

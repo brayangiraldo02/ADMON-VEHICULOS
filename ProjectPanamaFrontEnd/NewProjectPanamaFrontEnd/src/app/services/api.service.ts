@@ -22,4 +22,16 @@ export class ApiService {
       catchError(this.errorHandlerService.handleError)
     );
   }
+
+  /**
+   * Post data to a specified endpoint.
+   * @param {string} endpoint - The endpoint to post data to.
+   * @param {any} data - The data to post.
+   * @returns {Observable<any>} An Observable of the HTTP response.
+   */
+  postData(endpoint: string, data: any): Observable<any> {
+    return this.http.post<any>(`${this.baseURL}/${endpoint}/`, data).pipe(
+      catchError(this.errorHandlerService.handleError)
+    );
+  }
 }
