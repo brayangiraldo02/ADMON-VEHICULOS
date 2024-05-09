@@ -12,6 +12,21 @@ export class HeaderComponent {
 
   constructor(private apiService: ApiService, private jwtService: JwtService, private router: Router) { }
 
+  permisos: any;
+
+  onInit() {
+    this.obtenerUsuario();
+    console.log(this.permisos);
+  }
+
+  obtenerUsuario() {
+    this.permisos = this.jwtService.decodeToken();
+
+    this.convertirValoresBooleanos(this.permisos.user_data);
+
+    console.log(this.permisos.user_data);
+  }
+
   logout(): void {
     this.jwtService.removeToken();
     this.apiService.postData('logout', {}).subscribe(
@@ -23,5 +38,18 @@ export class HeaderComponent {
         console.log(error);
       }
     );
+  }
+
+  convertirValoresBooleanos(obj: any) {
+    for (const key in obj) {
+      if (Object.prototype.hasOwnProperty.call(obj, key)) {
+        const value = obj[key];
+        if (value === 'T') {
+          obj[key] = true;
+        } else if (value === 'F' || value === null) {
+          obj[key] = false;
+        }
+      }
+    }
   }
 }
