@@ -1,18 +1,18 @@
 import { Injectable } from '@angular/core';
 import { CanActivate, Router, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
-import { JwtService } from 'src/app/services/jwt.service';  // Asegúrate de actualizar esta importación según la ruta real del archivo
+import { JwtService } from 'src/app/services/jwt.service'; 
 
 @Injectable({
   providedIn: 'root'
 })
-export class AuthGuard implements CanActivate {
+export class NoAuthGuard implements CanActivate {
   constructor(private jwtService: JwtService, private router: Router) {}
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
-    if (this.jwtService.tokenExistsAndValid()) {
-      return true;
+    if (!this.jwtService.tokenExistsAndValid()) {
+      return true;  
     } else {
-      this.router.navigate(['/login']);
+      this.router.navigate(['/home']);  
       return false;
     }
   }

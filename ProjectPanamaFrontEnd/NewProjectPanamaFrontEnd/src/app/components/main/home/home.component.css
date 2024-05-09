@@ -66,6 +66,7 @@ li {
   justify-content: center; /* Centrado horizontal */
   text-align: center; /* Texto centrado */
   flex-direction: column; /* Ícono sobre el texto */
+  cursor: pointer;
 }
 
 .option-icon {
