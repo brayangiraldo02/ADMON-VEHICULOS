@@ -79,6 +79,7 @@ async def login(data: userLogin, response: Response):
     response.set_cookie(key="access_token", value=token_cookie, httponly=True, secure=True, samesite='strict')
     return JSONResponse(content=jsonable_encoder({'token': token_localStorage}), status_code=200)
   except Exception as e:
+    print(f"An error occurred: {e}")
     return JSONResponse(content=jsonable_encoder({'error': str(e)}), status_code=500)
   finally:
     db.close()
