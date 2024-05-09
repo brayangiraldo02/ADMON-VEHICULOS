@@ -10,6 +10,8 @@ import { HomeComponent } from './components/main/home/home.component';
 import { PruebaComponent } from './components/prueba/prueba.component';
 import { LoginComponent } from './components/users/login/login.component';
 import { HttpClientModule } from '@angular/common/http';
+import { FormsModule } from '@angular/forms';
+import { FooterComponent } from './components/main/footer/footer.component';
 
 @NgModule({
   declarations: [
@@ -17,7 +19,8 @@ import { HttpClientModule } from '@angular/common/http';
     HeaderComponent,
     HomeComponent,
     PruebaComponent,
-    LoginComponent
+    LoginComponent,
+    FooterComponent
   ],
   imports: [
     BrowserModule,
@@ -25,7 +28,8 @@ import { HttpClientModule } from '@angular/common/http';
     BrowserAnimationsModule,
     MatCardModule,
     MatButtonModule,
-    HttpClientModule
+    HttpClientModule,
+    FormsModule
   ],
   providers: [],
   bootstrap: [AppComponent]
