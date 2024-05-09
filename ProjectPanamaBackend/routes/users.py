@@ -41,7 +41,7 @@ async def get_users2():
 # ---------------------------------------------------------------------------------------------------------------
 
 @users_router.post('/login', tags=["Users"])
-async def login(data: userLogin):
+async def login(data: userLogin, response: Response):
   db = session()
   try:
     user = db.query(PermisosUsuario.CODIGO, PermisosUsuario.NOMBRE, PermisosUsuario.PASSSWORD, PermisosUsuario.ESTADO, PermisosUsuario.OPCION01, PermisosUsuario.OPCION02, PermisosUsuario.OPCION03, PermisosUsuario.OPCION04, PermisosUsuario.OPCION05, PermisosUsuario.OPCION06, PermisosUsuario.OPCION07, PermisosUsuario.OPCION08, PermisosUsuario.OPCION09, PermisosUsuario.OPCION10, PermisosUsuario.OPCION11, PermisosUsuario.OPCION12, PermisosUsuario.OPCION13, PermisosUsuario.TAREA01, PermisosUsuario.TAREA02, PermisosUsuario.TAREA03, PermisosUsuario.TAREA04).filter(PermisosUsuario.NOMBRE == data.user).first()
@@ -76,9 +76,14 @@ async def login(data: userLogin):
     }
     token_cookie = encode_jwt(user_data_cookie)
     token_localStorage = encode_jwt(user_data_localStorage)
-    Response.set_cookie(key="access_token", value=token_cookie, httponly=True, secure=True, samesite='strict')
-    return JSONResponse(content=jsonable_encoder({'token': token_localStorage}))
+    response.set_cookie(key="access_token", value=token_cookie, httponly=True, secure=True, samesite='strict')
+    return JSONResponse(content=jsonable_encoder({'token': token_localStorage}), status_code=200)
   except Exception as e:
     return JSONResponse(content=jsonable_encoder({'error': str(e)}), status_code=500)
   finally:
     db.close()
+
+@users_router.post('/logout', tags=["Users"])
+async def logout(response: Response):
+  response.delete_cookie(key="access_token", httponly=True, secure=True, samesite='strict')
+  return JSONResponse(content=jsonable_encoder({'message':'Sesión cerrada exitosamente'}), status_code=200)

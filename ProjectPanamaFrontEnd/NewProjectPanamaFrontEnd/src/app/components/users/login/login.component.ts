@@ -24,7 +24,6 @@ export class LoginComponent {
 
     this.apiService.postData('login', userLogin).subscribe(
       (response) => {
-        console.log(response);
         this.jwtService.setToken(response.token);
       },
       (error) => {
