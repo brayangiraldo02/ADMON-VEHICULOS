@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Request
+from fastapi import APIRouter
 from fastapi.responses import JSONResponse
 from config.dbconnection import session
 from models.estados import Estados
@@ -8,16 +8,23 @@ from models.conductores import Conductores
 from fastapi.encoders import jsonable_encoder
 from utils.reports import *
 from datetime import datetime
+fecha_hora_actual = datetime.now()
+fecha_actual = fecha_hora_actual.date()
+fecha = fecha_actual.strftime("%d/%m/%Y")
+hora = fecha_hora_actual.time()  
+hora_actual = hora.strftime("%H:%M")
 
 from fastapi.templating import Jinja2Templates
-from fastapi.responses import HTMLResponse
+from fastapi.responses import FileResponse
+import jinja2
+from utils.pdf import html2pdf
 
 templateJinja = Jinja2Templates(directory="templates")
 
 reports_router = APIRouter()
 
-@reports_router.get('/conteo-vehiculos-estados', response_class=HTMLResponse)
-async def get_conteo_vehiculos_estados(request: Request):
+@reports_router.get('/estado-vehiculos-resumen', response_class=FileResponse)
+async def get_conteo_vehiculos_estados():
   db = session()
   try:
     conteo_vehiculos_estados = db.query(Estados.CODIGO, Estados.NOMBRE, Vehiculos.PLACA) \
@@ -26,11 +33,7 @@ async def get_conteo_vehiculos_estados(request: Request):
     vehiculos_estados_list = [{'codigo': vehiculo.CODIGO, 'nombre': vehiculo.NOMBRE, 'placa': vehiculo.PLACA} for vehiculo in conteo_vehiculos_estados]
     data = fun_conteo_vehiculos_estados(vehiculos_estados_list)
     data = data.get("conteo_placas")
-    fecha_hora_actual = datetime.now()
-    fecha_actual = fecha_hora_actual.date()
-    hora = fecha_hora_actual.time()  
-    hora_actual = hora.strftime("%H:%M")
-    data_view = {"fecha": fecha_actual, "hora": hora_actual, "empresa": "WORLD TAXI ADMINISTRACION, S.A."}
+    data_view = {"fecha": fecha, "hora": hora_actual, "empresa": "WORLD TAXI ADMINISTRACION, S.A."}
     # Activos
     data_view["cant_activo"] = data.get("ACTIVO", 0)
     data_view["cant_backup"] = data.get("BACUPK", 0)
@@ -63,7 +66,26 @@ async def get_conteo_vehiculos_estados(request: Request):
 
     data_view["promedio_parados"] = round((data_view["total_parados"] / data_view["total_vehiculos"] * 100), 2)
 
-    return templateJinja.TemplateResponse("form1.html", {"request": request, "data_vehiculos": data_view})
+    headers = {
+        "Content-Disposition": "inline; estado-vehiculos-resumen.pdf"
+    }  
+
+    template_loader = jinja2.FileSystemLoader(searchpath="./templates")
+    template_env = jinja2.Environment(loader=template_loader)
+    template_file = "form1.html"
+    template = template_env.get_template(template_file)
+    output_text = template.render(data_view) 
+
+    html_path = f'./templates/output.html'
+    html_file = open(html_path, 'w')
+    html_file.write(output_text)
+    html_file.close()
+    pdf_path = 'estado-vehiculos-resumen.pdf'
+    html2pdf(html_path, pdf_path)
+
+    response =  FileResponse(pdf_path, media_type='application/pdf', filename='templates/estado-vehiculos-resumen.pdf', headers=headers)
+
+    return response
   finally:
     db.close()
 
@@ -87,10 +109,14 @@ async def get_conteo_propietarios_vehiculos_estados():
         'vehiculo_numero': resultado.vehiculo_numero
       }
       vehiculos_estados_propietarios_list.append(propietarios_vehiculos_estados)
-    result = obtener_conteo_por_propietario(vehiculos_estados_propietarios_list) 
-    return JSONResponse(content=jsonable_encoder(result))
+    data = obtener_conteo_por_propietario(vehiculos_estados_propietarios_list)
+    data = data.get("conteo_por_empresa") 
+    data_view = {"fecha": fecha, "hora": hora_actual}
+    #return JSONResponse(content=jsonable_encoder(result))
   finally:
     db.close()
+
+#-----------------------------------------------------------------------------------------
 
 @reports_router.get('/conteo-propietarios-vehiculos-estados-numeros')
 async def get_conteo_propietarios_vehiculos_estados_numeros():

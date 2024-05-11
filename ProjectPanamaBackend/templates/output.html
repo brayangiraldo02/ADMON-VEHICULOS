@@ -51,8 +51,8 @@
   }
   
   .centered-title {
-    font-size: 30px; /* TamaÃ±o de fuente segÃºn tus preferencias */
-    text-align: center; /* Centra el tÃ­tulo horizontalmente */
+    font-size: 30px; /* Tamaño de fuente según tus preferencias */
+    text-align: center; /* Centra el título horizontalmente */
     margin-bottom: 0px; 
   }
   
@@ -133,14 +133,14 @@
         <br>
         <br>
 
-        <h1 class="centered-title">{{empresa}}</h1>
+        <h1 class="centered-title">WORLD TAXI ADMINISTRACION, S.A.</h1>
 
         <dr id="informations">
             <div class="box">
                 <dt>Fecha</dt>
-                <dd>{{fecha}}</dd>
+                <dd>11/05/2024</dd>
                 <dt>Hora</dt>
-                <dd>{{hora}}</dd>
+                <dd>14:23</dd>
             </div>
         </dr>
         <hr>
@@ -164,17 +164,17 @@
                                 <p><img src="file:///D:\PanamaProject\ADMON-VEHICULOS\ProjectPanamaBackend\assets\img\otros.png" height="26" width="26" style="margin-right: 30px;">Otros:</p>
                             </td>
                             <td style="text-align: center;">
-                                    <p>{{ cant_activo }}</p>
-                                    <p>{{ cant_backup }}</p>
-                                    <p>{{ cant_chap_parado }}</p>
-                                    <p>{{ cant_chap_trabajando }}</p>
-                                    <p>{{ cant_custodia }}</p>
-                                    <p>{{ cant_esp_operador }}</p>
-                                    <p>{{ cant_mecanica_parado }}</p>
-                                    <p>{{ cant_otros }}</p>
+                                    <p>243</p>
+                                    <p>1</p>
+                                    <p>10</p>
+                                    <p>1</p>
+                                    <p>280</p>
+                                    <p>15</p>
+                                    <p>11</p>
+                                    <p>1</p>
                             </td> 
                             <td style="text-align: center; vertical-align: top;">
-                                <p><u>{{ cant_activo_backup }}</u></p>
+                                <p><u>244</u></p>
                             </td>                                                     
                         </tr>
                     </tbody>
@@ -192,7 +192,7 @@
                                 <p><img src="file:///D:\PanamaProject\ADMON-VEHICULOS\ProjectPanamaBackend\assets\img\traspaso.png" height="26" width="26" style="margin-right: 30px;">Traspasados:</p>
                                 <p><img src="file:///D:\PanamaProject\ADMON-VEHICULOS\ProjectPanamaBackend\assets\img\contrato.png" height="26" width="26" style="margin-right: 30px;">Culminacion de Contrato:</p>
                                 <p><img src="file:///D:\PanamaProject\ADMON-VEHICULOS\ProjectPanamaBackend\assets\img\tramite.png" height="26" width="26" style="margin-right: 30px;">En Tramite: </p>
-                                <p><img src="file:///D:\PanamaProject\ADMON-VEHICULOS\ProjectPanamaBackend\assets\img\fuera.png" height="26" width="26" style="margin-right: 30px;">Fuera de CirculaciÃ³n:</p>
+                                <p><img src="file:///D:\PanamaProject\ADMON-VEHICULOS\ProjectPanamaBackend\assets\img\fuera.png" height="26" width="26" style="margin-right: 30px;">Fuera de Circulación:</p>
                                 <p><img src="file:///D:\PanamaProject\ADMON-VEHICULOS\ProjectPanamaBackend\assets\img\activo.png" height="26" width="26" style="margin-right: 30px;">Inactivos:</p>
                                 <p><img src="file:///D:\PanamaProject\ADMON-VEHICULOS\ProjectPanamaBackend\assets\img\perdida.png" height="26" width="26" style="margin-right: 30px;">Perdida Total:</p>
                                 <p><img src="file:///D:\PanamaProject\ADMON-VEHICULOS\ProjectPanamaBackend\assets\img\retirado.png" height="26" width="26" style="margin-right: 30px;">Retirado de la Empresa:</p>
@@ -201,16 +201,16 @@
                                 <p><img src="file:///D:\PanamaProject\ADMON-VEHICULOS\ProjectPanamaBackend\assets\img\paraventa.png" height="26" width="26" style="margin-right: 30px;">Para la Venta:</p>
                             </td>
                             <td style="text-align: center;">
-                                <p>{{cant_traspasados}}</p>
-                                <p>{{cant_fin_contrato}}</p>
-                                <p>{{cant_en_tramite}}</p>
-                                <p>{{cant_fuera_circulacion}}</p>
-                                <p>{{cant_inactivos}}</p>
-                                <p>{{cant_perdida_total}}</p>
-                                <p>{{cant_retirado_empresa}}</p>
-                                <p>{{cant_sin_calificar}}</p>
-                                <p>{{cant_vendidos}}</p>
-                                <p>{{cant_para_venta}}</p>
+                                <p>280</p>
+                                <p>33</p>
+                                <p>34</p>
+                                <p>23</p>
+                                <p>7</p>
+                                <p>55</p>
+                                <p>485</p>
+                                <p>1</p>
+                                <p>187</p>
+                                <p>68</p>
                             </td>
                         </tr>
                     </tbody>
@@ -225,18 +225,18 @@
                 <th></th>
             </thead>
             <tbody>
-                <td>Total Flota Autos: {{total_vehiculos}}</td>
-                <td>Activa: {{total_activos}}</td>
-                <td>Parada: {{total_parados}}</td>
-                <td>Promedio Flota Activa: {{promedio_activos}}%</td>
-                <td>Promedio Flota Parada: {{promedio_parados}}%</td>
+                <td>Total Flota Autos: 1735</td>
+                <td>Activa: 562</td>
+                <td>Parada: 1173</td>
+                <td>Promedio Flota Activa: 32.39%</td>
+                <td>Promedio Flota Parada: 67.61%</td>
             </tbody>
         </table>
 
         <footer>
             <hr>
             <p style="float: left; margin-left: 50px;">Sistemas Alfa</p>
-            <p style="float: right; margin-right: 50px;">Usuario: {{usuario}}</p>
+            <p style="float: right; margin-right: 50px;">Usuario: </p>
         </footer>   
 </body>
 </html>
