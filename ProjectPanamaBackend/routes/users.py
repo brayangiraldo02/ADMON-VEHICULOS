@@ -44,7 +44,7 @@ async def get_users2():
 async def login(data: userLogin, response: Response):
   db = session()
   try:
-    user = db.query(PermisosUsuario.CODIGO, PermisosUsuario.NOMBRE, PermisosUsuario.PASSSWORD, PermisosUsuario.ESTADO, PermisosUsuario.OPCION01, PermisosUsuario.OPCION02, PermisosUsuario.OPCION03, PermisosUsuario.OPCION04, PermisosUsuario.OPCION05, PermisosUsuario.OPCION06, PermisosUsuario.OPCION07, PermisosUsuario.OPCION08, PermisosUsuario.OPCION09, PermisosUsuario.OPCION10, PermisosUsuario.OPCION11, PermisosUsuario.OPCION12, PermisosUsuario.OPCION13, PermisosUsuario.TAREA01, PermisosUsuario.TAREA02, PermisosUsuario.TAREA03, PermisosUsuario.TAREA04).filter(PermisosUsuario.NOMBRE == data.user).first()
+    user = db.query(PermisosUsuario.CODIGO, PermisosUsuario.NOMBRE, PermisosUsuario.PASSSWORD, PermisosUsuario.ESTADO, PermisosUsuario.OPCION01, PermisosUsuario.OPCION02, PermisosUsuario.OPCION03, PermisosUsuario.OPCION04, PermisosUsuario.OPCION05, PermisosUsuario.OPCION06, PermisosUsuario.OPCION07, PermisosUsuario.OPCION08, PermisosUsuario.OPCION09, PermisosUsuario.OPCION10, PermisosUsuario.OPCION11, PermisosUsuario.OPCION12, PermisosUsuario.OPCION13, PermisosUsuario.TAREA01, PermisosUsuario.TAREA02, PermisosUsuario.TAREA03, PermisosUsuario.TAREA04).filter(PermisosUsuario.CODIGO == data.user).first()
     if user is None:
       return JSONResponse(content=jsonable_encoder({'error': 'Usuario no encontrado'}), status_code=404)
     if user.PASSSWORD != data.password:
