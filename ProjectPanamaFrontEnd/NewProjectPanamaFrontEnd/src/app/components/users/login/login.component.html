@@ -3,7 +3,12 @@
 <div class="login-container">
 
   <form (ngSubmit)="onSubmit(form)" #form="ngForm">
-    <h1>¡Bienvenido!</h1>
+    <div class="info-container">
+      <h1>¡Bienvenido!</h1>
+      <div class="logo">
+        <img src="https://uploads-ssl.webflow.com/6291afaf5676f4664ddf0566/6291afaf5676f4542adf05db_logo.png" alt="Logo de AlfaSoft">
+      </div>
+    </div>
     <div class="form-group">
       <label for="username">Usuario</label>
       <input type="text" id="username" name="username" [(ngModel)]="user" placeholder="Ingrese su usuario" required>

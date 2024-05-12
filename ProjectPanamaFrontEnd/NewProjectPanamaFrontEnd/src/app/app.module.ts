@@ -12,6 +12,7 @@ import { LoginComponent } from './components/users/login/login.component';
 import { HttpClientModule } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { FooterComponent } from './components/main/footer/footer.component';
+import { StatevehiclefleetComponent } from './components/tasks/statevehiclefleet/statevehiclefleet.component';
 
 @NgModule({
   declarations: [
@@ -20,7 +21,8 @@ import { FooterComponent } from './components/main/footer/footer.component';
     HomeComponent,
     PruebaComponent,
     LoginComponent,
-    FooterComponent
+    FooterComponent,
+    StatevehiclefleetComponent
   ],
   imports: [
     BrowserModule,

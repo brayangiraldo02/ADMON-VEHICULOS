@@ -7,6 +7,26 @@
   height: 84.5vh;
 }
 
+.info-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.login-container .logo {
+  width: 30%; /* Establece el ancho del contenedor del logo */
+  /* max-width: 100px; */
+  max-width: 30%;
+  height: auto; /* Permite que la altura se ajuste automáticamente */
+  margin-right: 15px; /* Añade un margen entre el logo y el título */
+}
+
+.login-container .logo img {
+  width: 100%; /* Ajusta el tamaño de la imagen al contenedor */
+  height: auto; /* Permite que la altura se ajuste automáticamente */
+}
+
 form {
   width: 600px;
   padding: 20px;

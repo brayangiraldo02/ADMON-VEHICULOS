@@ -17,7 +17,10 @@ if DATABASE_URL is None:
   raise ValueError("No se ha definido la variable de entorno 'DB_URL'")
 
 # database motor
-engine = create_engine(DATABASE_URL)
+engine = create_engine(DATABASE_URL,
+                      pool_recycle=3600,  # Recicla cada 1 hora
+                      pool_pre_ping=True  # Habilita pre-ping para evitar 'server has gone away'
+)
 
 # Session generator
 session = sessionmaker(autocommit=False, autoflush=False, bind=engine)
