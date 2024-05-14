@@ -35,12 +35,7 @@ def obtener_conteo_por_propietario(data):
         total_por_empresa = sum(int(conteo_estado.get(estado, 0)) for estado in conteo_estado if estado != "nombre_empresa")
         conteo_total_por_empresa[empresa] = {"Total": total_por_empresa, **conteo_estado}
 
-    # Modificar las claves en el nuevo diccionario
-    conteo_total_por_empresa_con_codigo = {}
-    for codigo, conteo_estado in conteo_total_por_empresa.items():
-        conteo_total_por_empresa_con_codigo[f"Código {codigo}"] = conteo_estado
-
-    return {"conteo_por_empresa": conteo_total_por_empresa_con_codigo}
+    return {"conteo_por_empresa": conteo_total_por_empresa}
 
 def obtener_numeros_por_propietario(data):
     if not data:

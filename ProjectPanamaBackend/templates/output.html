@@ -83,12 +83,13 @@
   
   p {
     line-height: 1.5; 
-    font-size: 22px;
+    font-size: 24px;
+    margin-bottom: 6px;
+		margin-top: 15px;
   }
   
   table {
-    border-collapse: separate; /* Asegura que border-spacing funcione */
-    border-spacing: 90px 1.5px; /* Espacio horizontal y vertical entre celdas */
+    border-spacing: 90px 0px; /* Espacio horizontal y vertical entre celdas */
     text-align: left;
     width: 100%;
     empty-cells: hide;
@@ -96,9 +97,15 @@
     margin-top: 0px;
     top: 0%;
   }
-  
-  .hide {
-    display: none;
+
+  td {
+        padding: 0.5px;
+        line-height: 1;
+  }
+
+  tr {
+    padding: 0.5px;
+    line-height: 1;
   }
 
   header {
@@ -133,50 +140,58 @@
         <br>
         <br>
 
-        <h1 class="centered-title">WORLD TAXI ADMINISTRACION, S.A.</h1>
+        <h1 class="centered-title">Total Taxi Panama S.</h1>
 
         <dr id="informations">
             <div class="box">
                 <dt>Fecha</dt>
-                <dd>11/05/2024</dd>
+                <dd>13/05/2024</dd>
                 <dt>Hora</dt>
-                <dd>14:23</dd>
+                <dd>18:50</dd>
             </div>
         </dr>
         <hr>
     </header>
-                <table margin: 0 auto;>
+                <table style="margin: 0 auto;">
                     <thead>
                         <th></th>
                         <th></th>
                         <th></th>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td>
-                                <p><img src="file:///D:\PanamaProject\ADMON-VEHICULOS\ProjectPanamaBackend\assets\img\activo.png" height="26" width="26" style="margin-right: 30px;">Activo:</p>
-                                <p><img src="file:///D:\PanamaProject\ADMON-VEHICULOS\ProjectPanamaBackend\assets\img\backup.png" height="26" width="26" style="margin-right: 30px;">Backup:</p>
-                                <p><img src="file:///D:\PanamaProject\ADMON-VEHICULOS\ProjectPanamaBackend\assets\img\parado.png" height="26" width="26" style="margin-right: 30px;">Chapisteria Parado:</p>
-                                <p><img src="file:///D:\PanamaProject\ADMON-VEHICULOS\ProjectPanamaBackend\assets\img\trabajando.png" height="26" width="26" style="margin-right: 30px;">Chapisteria Trabajando:</p>
-                                <p><img src="file:///D:\PanamaProject\ADMON-VEHICULOS\ProjectPanamaBackend\assets\img\custodia.png" height="26" width="26" style="margin-right: 30px;">Custodia:</p>
-                                <p><img src="file:///D:\PanamaProject\ADMON-VEHICULOS\ProjectPanamaBackend\assets\img\esperando.png" height="26" width="26" style="margin-right: 30px;">Esperando Operador:</p>
-                                <p><img src="file:///D:\PanamaProject\ADMON-VEHICULOS\ProjectPanamaBackend\assets\img\mecanico.png" height="26" width="26" style="margin-right: 30px;">Mecanica Parados:</p>
-                                <p><img src="file:///D:\PanamaProject\ADMON-VEHICULOS\ProjectPanamaBackend\assets\img\otros.png" height="26" width="26" style="margin-right: 30px;">Otros:</p>
-                            </td>
-                            <td style="text-align: center;">
-                                    <p>243</p>
-                                    <p>1</p>
-                                    <p>10</p>
-                                    <p>1</p>
-                                    <p>280</p>
-                                    <p>15</p>
-                                    <p>11</p>
-                                    <p>1</p>
-                            </td> 
-                            <td style="text-align: center; vertical-align: top;">
-                                <p><u>244</u></p>
-                            </td>                                                     
-                        </tr>
+                      
+                      <tr>
+                          <td><p><img src="file:///D:\PanamaProject\ADMON-VEHICULOS\ProjectPanamaBackend\assets\img\activo.png" height="30" width="30" style="margin-right: 30px;">Activo:</p></td>
+                          <td style="text-align: center;"><p>42</p></td>
+                          <td style="text-align: center; vertical-align: top;">
+                            <p><u>42</u></p></td>
+                      </tr>
+                      
+                      
+                      
+                      <tr>
+                          <td><p><img src="file:///D:\PanamaProject\ADMON-VEHICULOS\ProjectPanamaBackend\assets\img\parado.png" height="30" width="30" style="margin-right: 30px;">Chapisteria Parado:</p></td>
+                          <td style="text-align: center;"><p>1</p></td>
+                      </tr>
+                      
+                      
+                      
+                      
+                      
+                      <tr>
+                          <td><p><img src="file:///D:\PanamaProject\ADMON-VEHICULOS\ProjectPanamaBackend\assets\img\esperando.png" height="30" width="30" style="margin-right: 30px;">Esperando Operador:</p></td>
+                          <td style="text-align: center;"><p>5</p></td>
+                      </tr>
+                      
+                      
+                      
+                      <tr>
+                          <td><p><img src="file:///D:\PanamaProject\ADMON-VEHICULOS\ProjectPanamaBackend\assets\img\mecanico.png" height="30" width="30" style="margin-right: 30px;">Mecanica Parados:</p></td>
+                          <td style="text-align: center;"><p>2</p></td>
+                      </tr>
+                      
+                      
+                      
                     </tbody>
                 </table>
 
@@ -187,35 +202,49 @@
                         <th></th>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td>
-                                <p><img src="file:///D:\PanamaProject\ADMON-VEHICULOS\ProjectPanamaBackend\assets\img\traspaso.png" height="26" width="26" style="margin-right: 30px;">Traspasados:</p>
-                                <p><img src="file:///D:\PanamaProject\ADMON-VEHICULOS\ProjectPanamaBackend\assets\img\contrato.png" height="26" width="26" style="margin-right: 30px;">Culminacion de Contrato:</p>
-                                <p><img src="file:///D:\PanamaProject\ADMON-VEHICULOS\ProjectPanamaBackend\assets\img\tramite.png" height="26" width="26" style="margin-right: 30px;">En Tramite: </p>
-                                <p><img src="file:///D:\PanamaProject\ADMON-VEHICULOS\ProjectPanamaBackend\assets\img\fuera.png" height="26" width="26" style="margin-right: 30px;">Fuera de Circulación:</p>
-                                <p><img src="file:///D:\PanamaProject\ADMON-VEHICULOS\ProjectPanamaBackend\assets\img\activo.png" height="26" width="26" style="margin-right: 30px;">Inactivos:</p>
-                                <p><img src="file:///D:\PanamaProject\ADMON-VEHICULOS\ProjectPanamaBackend\assets\img\perdida.png" height="26" width="26" style="margin-right: 30px;">Perdida Total:</p>
-                                <p><img src="file:///D:\PanamaProject\ADMON-VEHICULOS\ProjectPanamaBackend\assets\img\retirado.png" height="26" width="26" style="margin-right: 30px;">Retirado de la Empresa:</p>
-                                <p><img src="file:///D:\PanamaProject\ADMON-VEHICULOS\ProjectPanamaBackend\assets\img\sincalificar.png" height="26" width="26" style="margin-right: 30px;">Sin Calificar:</p>
-                                <p><img src="file:///D:\PanamaProject\ADMON-VEHICULOS\ProjectPanamaBackend\assets\img\vendido.png" height="26" width="26" style="margin-right: 30px;">Vendidos:</p>
-                                <p><img src="file:///D:\PanamaProject\ADMON-VEHICULOS\ProjectPanamaBackend\assets\img\paraventa.png" height="26" width="26" style="margin-right: 30px;">Para la Venta:</p>
-                            </td>
-                            <td style="text-align: center;">
-                                <p>280</p>
-                                <p>33</p>
-                                <p>34</p>
-                                <p>23</p>
-                                <p>7</p>
-                                <p>55</p>
-                                <p>485</p>
-                                <p>1</p>
-                                <p>187</p>
-                                <p>68</p>
-                            </td>
-                        </tr>
+                      
+                      <tr>
+                          <td><p><img src="file:///D:\PanamaProject\ADMON-VEHICULOS\ProjectPanamaBackend\assets\img\traspaso.png" height="30" width="30" style="margin-right: 30px;">Traspasados:</p></td>
+                          <td style="text-align: center;"><p>103</p></td>
+                      </tr>
+                      
+                      
+                      
+                      <tr>
+                          <td><p><img src="file:///D:\PanamaProject\ADMON-VEHICULOS\ProjectPanamaBackend\assets\img\tramite.png" height="30" width="30" style="margin-right: 30px;">En Tramite:</p></td>
+                          <td style="text-align: center;"><p>12</p></td>
+                      </tr>
+                      
+                      
+                      <tr>
+                          <td><p><img src="file:///D:\PanamaProject\ADMON-VEHICULOS\ProjectPanamaBackend\assets\img\fuera.png" height="30" width="30" style="margin-right: 30px;">Fuera de Circulación:</p></td>
+                          <td style="text-align: center;"><p>14</p></td>
+                      </tr>
+                      
+                      
+                      
+                      <tr>
+                          <td><p><img src="file:///D:\PanamaProject\ADMON-VEHICULOS\ProjectPanamaBackend\assets\img\perdida.png" height="30" width="30" style="margin-right: 30px;">Perdida Total:</p></td>
+                          <td style="text-align: center;"><p>14</p></td>
+                      </tr>
+                      
+                      
+                      
+                      
+                      <tr>
+                          <td><p><img src="file:///D:\PanamaProject\ADMON-VEHICULOS\ProjectPanamaBackend\assets\img\vendido.png" height="30" width="30" style="margin-right: 30px;">Vendidos:</p></td>
+                          <td style="text-align: center;"><p>37</p></td>
+                      </tr>
+                      
+                      
+                      <tr>
+                          <td><p><img src="file:///D:\PanamaProject\ADMON-VEHICULOS\ProjectPanamaBackend\assets\img\paraventa.png" height="30" width="30" style="margin-right: 30px;">Para la Venta:</p></td>
+                          <td style="text-align: center;"><p>9</p></td>
+                      </tr>
+                      
                     </tbody>
                 </table>
-
+              <hr>
         <table>
             <thead>
                 <th></th>
@@ -225,11 +254,11 @@
                 <th></th>
             </thead>
             <tbody>
-                <td>Total Flota Autos: 1735</td>
-                <td>Activa: 562</td>
-                <td>Parada: 1173</td>
-                <td>Promedio Flota Activa: 32.39%</td>
-                <td>Promedio Flota Parada: 67.61%</td>
+                <td>Total Flota Autos: 342</td>
+                <td>Activa: 153</td>
+                <td>Parada: 189</td>
+                <td>Promedio Flota Activa: 44.74%</td>
+                <td>Promedio Flota Parada: 55.26%</td>
             </tbody>
         </table>
 

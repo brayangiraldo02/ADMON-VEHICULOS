@@ -40,10 +40,13 @@ async def get_conteo_vehiculos_estados():
     data_view["cant_activo_backup"] = data.get("ACTIVO", 0) + data.get("BACUPK", 0)
     data_view["cant_chap_parado"] = data.get("CHAPISTERIA PARADO", 0)
     data_view["cant_chap_trabajando"] = data.get("CHAPISTERIA TRABAJANDO", 0)
-    data_view["cant_custodia"] = data.get("» CARROS TRASPASADOS", 0)
+    data_view["cant_custodia"] = data.get("» CUSTODIA", 0)
+    data_view["cant_detenido"] = data.get("DETENIDO", 0)
     data_view["cant_esp_operador"] = data.get("ESPERANDO OPERADOR", 0)
+    data_view["cant_mecanica_mantenimiento"] = data.get("MECANICA MANTENIMIENTO", 0)
     data_view["cant_mecanica_parado"] = data.get("MECANICA PARADOS", 0)
     data_view["cant_otros"] = data.get("» SIN CLASIFICAR", 0)
+    data_view["cant_vehiculos_pendientes_arraijan"] = data.get("VEHICULOS PENDIENTES ARRAIJAN", 0)
     # Otros Estados
     data_view["cant_traspasados"] = data.get("» CARROS TRASPASADOS", 0)
     data_view["cant_fin_contrato"] = data.get("» CULMINACION DE CONTRATO", 0)
@@ -56,7 +59,7 @@ async def get_conteo_vehiculos_estados():
     data_view["cant_vendidos"] = data.get("» VENDIDO", 0)
     data_view["cant_para_venta"] = data.get("» Vehiculos Para la Venta", 0)
     # Totales
-    data_view["total_vehiculos"] = data.get("ACTIVO", 0) + data.get("BACUPK", 0) + data.get("CHAPISTERIA PARADO", 0) + data.get("CHAPISTERIA TRABAJANDO", 0) + data.get("» CARROS TRASPASADOS", 0) + data.get("ESPERANDO OPERADOR", 0) + data.get("MECANICA PARADOS", 0) + data.get("» SIN CLASIFICAR", 0) + data.get("» CARROS TRASPASADOS", 0) + data.get("» CULMINACION DE CONTRATO", 0) + data.get("» EN TRAMITE", 0) + data.get("» Fuera de Circulacion", 0) + data.get("» INACTIVOS", 0) + data.get("» PERDIDA TOTAL", 0) + data.get("» RETIRADO DE LA EMPRESA", 0) + data.get("» SIN CLASIFICAR", 0) + data.get("» VENDIDO", 0) + data.get("» Vehiculos Para la Venta", 0)
+    data_view["total_vehiculos"] = data.get("ACTIVO", 0) + data.get("BACUPK", 0) + data.get("CHAPISTERIA PARADO", 0) + data.get("CHAPISTERIA TRABAJANDO", 0) + data.get("» CARROS TRASPASADOS", 0) + data.get("ESPERANDO OPERADOR", 0) + data.get("MECANICA PARADOS", 0) + data.get("» SIN CLASIFICAR", 0) + data.get("» CARROS TRASPASADOS", 0) + data.get("» CULMINACION DE CONTRATO", 0) + data.get("» EN TRAMITE", 0) + data.get("» Fuera de Circulacion", 0) + data.get("» INACTIVOS", 0) + data.get("» PERDIDA TOTAL", 0) + data.get("» RETIRADO DE LA EMPRESA", 0) + data.get("» SIN CLASIFICAR", 0) + data.get("» VENDIDO", 0) + data.get("» Vehiculos Para la Venta", 0) + data.get("» CUSTODIA", 0) + data.get("DETENIDO", 0) + data.get("MECANICA MANTENIMIENTO", 0) + data.get("VEHICULOS PENDIENTES ARRAIJAN", 0)
 
     data_view["total_activos"] = data.get("ACTIVO", 0) + data.get("BACUPK", 0) + data.get("CHAPISTERIA PARADO", 0) + data.get("CHAPISTERIA TRABAJANDO", 0) + data.get("» CARROS TRASPASADOS", 0) + data.get("ESPERANDO OPERADOR", 0) + data.get("MECANICA PARADOS", 0) + data.get("» SIN CLASIFICAR", 0)
 
@@ -91,7 +94,7 @@ async def get_conteo_vehiculos_estados():
 
 #-----------------------------------------------------------------------------------------
 
-@reports_router.get('/conteo-propietarios-vehiculos-estados')
+@reports_router.get('/estado-vehiculos-resumen-empresa', response_class=FileResponse)
 async def get_conteo_propietarios_vehiculos_estados():
   db = session()
   try:
@@ -110,9 +113,66 @@ async def get_conteo_propietarios_vehiculos_estados():
       }
       vehiculos_estados_propietarios_list.append(propietarios_vehiculos_estados)
     data = obtener_conteo_por_propietario(vehiculos_estados_propietarios_list)
-    data = data.get("conteo_por_empresa") 
+    data = data.get("conteo_por_empresa")
+    data = data.get("26") 
     data_view = {"fecha": fecha, "hora": hora_actual}
-    #return JSONResponse(content=jsonable_encoder(result))
+    data_view["empresa"] = data.get("nombre_empresa", 0)
+     # Activos
+    data_view["cant_activo"] = data.get("ACTIVO", 0)
+    data_view["cant_backup"] = data.get("BACUPK", 0)
+    data_view["cant_activo_backup"] = data.get("ACTIVO", 0) + data.get("BACUPK", 0)
+    data_view["cant_chap_parado"] = data.get("CHAPISTERIA PARADO", 0)
+    data_view["cant_chap_trabajando"] = data.get("CHAPISTERIA TRABAJANDO", 0)
+    data_view["cant_custodia"] = data.get("» CUSTODIA", 0)
+    data_view["cant_detenido"] = data.get("DETENIDO", 0)
+    data_view["cant_esp_operador"] = data.get("ESPERANDO OPERADOR", 0)
+    data_view["cant_mecanica_mantenimiento"] = data.get("MECANICA MANTENIMIENTO", 0)
+    data_view["cant_mecanica_parado"] = data.get("MECANICA PARADOS", 0)
+    data_view["cant_otros"] = data.get("» SIN CLASIFICAR", 0)
+    data_view["cant_vehiculos_pendientes_arraijan"] = data.get("VEHICULOS PENDIENTES ARRAIJAN", 0)
+    # Otros Estados
+    data_view["cant_traspasados"] = data.get("» CARROS TRASPASADOS", 0)
+    data_view["cant_fin_contrato"] = data.get("» CULMINACION DE CONTRATO", 0)
+    data_view["cant_en_tramite"] = data.get("» EN TRAMITE", 0)
+    data_view["cant_fuera_circulacion"] = data.get("» Fuera de Circulacion", 0)
+    data_view["cant_inactivos"] = data.get("» INACTIVOS", 0)
+    data_view["cant_perdida_total"] = data.get("» PERDIDA TOTAL", 0)
+    data_view["cant_retirado_empresa"] = data.get("» RETIRADO DE LA EMPRESA", 0)
+    data_view["cant_sin_calificar"] = data.get("» SIN CLASIFICAR", 0)
+    data_view["cant_vendidos"] = data.get("» VENDIDO", 0)
+    data_view["cant_para_venta"] = data.get("» Vehiculos Para la Venta", 0)
+    # Totales
+    data_view["total_vehiculos"] = data.get("ACTIVO", 0) + data.get("BACUPK", 0) + data.get("CHAPISTERIA PARADO", 0) + data.get("CHAPISTERIA TRABAJANDO", 0) + data.get("» CARROS TRASPASADOS", 0) + data.get("ESPERANDO OPERADOR", 0) + data.get("MECANICA PARADOS", 0) + data.get("» SIN CLASIFICAR", 0) + data.get("» CARROS TRASPASADOS", 0) + data.get("» CULMINACION DE CONTRATO", 0) + data.get("» EN TRAMITE", 0) + data.get("» Fuera de Circulacion", 0) + data.get("» INACTIVOS", 0) + data.get("» PERDIDA TOTAL", 0) + data.get("» RETIRADO DE LA EMPRESA", 0) + data.get("» SIN CLASIFICAR", 0) + data.get("» VENDIDO", 0) + data.get("» Vehiculos Para la Venta", 0) + data.get("» CUSTODIA", 0) + data.get("DETENIDO", 0) + data.get("MECANICA MANTENIMIENTO", 0) + data.get("VEHICULOS PENDIENTES ARRAIJAN", 0)
+
+    data_view["total_activos"] = data.get("ACTIVO", 0) + data.get("BACUPK", 0) + data.get("CHAPISTERIA PARADO", 0) + data.get("CHAPISTERIA TRABAJANDO", 0) + data.get("» CARROS TRASPASADOS", 0) + data.get("ESPERANDO OPERADOR", 0) + data.get("MECANICA PARADOS", 0) + data.get("» SIN CLASIFICAR", 0)
+
+    data_view["total_parados"] = data.get("» CARROS TRASPASADOS", 0) + data.get("» CULMINACION DE CONTRATO", 0) + data.get("» EN TRAMITE", 0) + data.get("» Fuera de Circulacion", 0) + data.get("» INACTIVOS", 0) + data.get("» PERDIDA TOTAL", 0) + data.get("» RETIRADO DE LA EMPRESA", 0) + data.get("» SIN CLASIFICAR", 0) + data.get("» VENDIDO", 0) + data.get("» Vehiculos Para la Venta", 0)
+
+    data_view["promedio_activos"] = round((data_view["total_activos"] / data_view["total_vehiculos"] * 100), 2)
+
+    data_view["promedio_parados"] = round((data_view["total_parados"] / data_view["total_vehiculos"] * 100), 2)
+
+    headers = {
+        "Content-Disposition": "inline; estado-vehiculos-resumen-empresa.pdf"
+    }  
+
+    template_loader = jinja2.FileSystemLoader(searchpath="./templates")
+    template_env = jinja2.Environment(loader=template_loader)
+    template_file = "form1.html"
+    template = template_env.get_template(template_file)
+    output_text = template.render(data_view) 
+
+    html_path = f'./templates/output.html'
+    html_file = open(html_path, 'w')
+    html_file.write(output_text)
+    html_file.close()
+    pdf_path = 'estado-vehiculos-resumen-empresa.pdf'
+    html2pdf(html_path, pdf_path)
+
+    response =  FileResponse(pdf_path, media_type='application/pdf', filename='templates/estado-vehiculos-resumen-empresa.pdf', headers=headers)
+
+    return response
+    #return JSONResponse(content=jsonable_encoder(data))
   finally:
     db.close()
 
