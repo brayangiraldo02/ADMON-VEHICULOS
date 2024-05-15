@@ -27,7 +27,7 @@
 }
 
 /* Estilos específicos para cada imagen en el carrusel */
-.carousel img {
+.carousel .media-container {
   width: 100%;                          /* Hace que la imagen ocupe el 100% del ancho del contenedor. */
   height: 100%;                     /* Asegura que la altura no exceda la del contenedor. */
   opacity: 0;                           /* Inicialmente las imágenes son invisibles (para transiciones). */
@@ -52,9 +52,10 @@ ul {
   margin: 0;
   display: flex; /* Flexbox para un mejor control del layout */
   flex-wrap: wrap; /* Permite elementos de lista envolvente */
+  justify-content: center; /* Centra los elementos horizontalmente */
 }
 
-li {
+.options-if{
   width: calc(33.33% - 20px); /* 33.33% para 3 elementos por fila, ajustando el margen */
   margin: 10px;
   box-sizing: border-box;
@@ -69,6 +70,10 @@ li {
   cursor: pointer;
 }
 
+.options-if:hover {
+  background: #fff8b4; 
+}
+
 .option-icon {
   width: 40px;
   height: 40px;
@@ -79,6 +84,43 @@ li {
   font-size: 16px; /* Ajuste según necesidad */
   color: #333; /* Color del texto */
 }
+
+.logout-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.logout{
+  width: 30%; /* 33.33% para 3 elementos por fila, ajustando el margen */
+  margin: 10px;
+  box-sizing: border-box;
+  background: #ffffff; /* Fondo claro por defecto, ajustable */
+  border-radius: 10px; /* Bordes redondeados */
+  padding: 10px;
+  display: flex;
+  align-items: center; /* Centrado vertical */
+  justify-content: center; /* Centrado horizontal */
+  text-align: center; /* Texto centrado */
+  flex-direction: column; /* Ícono sobre el texto */
+  cursor: pointer;
+}
+
+.logout:hover {
+  background: #ffcdcd; 
+}
+
+.logout-icon {
+  width: 25px;
+  height: 25px;
+  margin-bottom: 5px;
+}
+
+.logout-text {
+  font-size: 16px; /* Ajuste según necesidad */
+  color: #333; /* Color del texto */
+}
+
 
 /*------------------------------------------------------*/
 
