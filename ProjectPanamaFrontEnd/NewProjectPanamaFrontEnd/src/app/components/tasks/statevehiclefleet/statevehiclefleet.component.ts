@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-statevehiclefleet',
@@ -7,4 +8,9 @@ import { Component } from '@angular/core';
 })
 export class StatevehiclefleetComponent {
 
+  constructor(private router: Router) { }
+
+  home(): void {
+    this.router.navigate(['/home']);
+  }
 }

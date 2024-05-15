@@ -1,0 +1,42 @@
+.report-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 40px;
+  margin: 10px;
+}
+
+.report{
+  width: 40%; /* 33.33% para 3 elementos por fila, ajustando el margen */
+  margin: 10px;
+  box-sizing: border-box;
+  background: #ffffff; /* Fondo claro por defecto, ajustable */
+  border-radius: 10px; /* Bordes redondeados */
+  padding: 30px;
+  display: flex;
+  align-items: center; /* Centrado vertical */
+  justify-content: center; /* Centrado horizontal */
+  text-align: center; /* Texto centrado */
+  flex-direction: column; /* Ícono sobre el texto */
+  cursor: pointer;
+}
+
+.report:hover {
+  background: #fff8b4; 
+}
+
+.home:hover {
+  background: #ffcdcd; 
+}
+
+.report-icon {
+  width: 40px;
+  height: 40px;
+  margin-bottom: 5px;
+}
+
+.report-text {
+  font-size: 20px; /* Ajuste según necesidad */
+  color: #333; /* Color del texto */
+}

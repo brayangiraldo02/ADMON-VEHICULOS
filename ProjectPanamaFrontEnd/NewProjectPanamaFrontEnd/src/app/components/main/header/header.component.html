@@ -6,7 +6,7 @@
     <!-- <h1>Total Taxi</h1> -->
   </div>  
   <nav>
-    <button>
+    <button routerLink="/home">
       <span class="material-symbols-outlined">
         home
       </span>
@@ -24,7 +24,7 @@
       </span>
       <p>Conductores</p>
     </button>
-    <button *ngIf="this.permisos.user_data.tarea03">
+    <button *ngIf="this.permisos.user_data.tarea03" routerLink="/statevehiclefleet">
       <span class="material-symbols-outlined">
         garage
       </span>
