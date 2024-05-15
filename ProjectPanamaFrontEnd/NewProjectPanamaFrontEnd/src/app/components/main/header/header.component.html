@@ -12,25 +12,25 @@
       </span>
       <p>Inicio</p>
     </button>
-    <button *ngIf="this.permisos.user_data.tarea01">
+    <button *ngIf="this.isHome && this.permisos.user_data.tarea01">
       <span class="material-symbols-outlined">
         local_taxi
       </span>
       <p>Vehículos</p>
     </button>
-    <button *ngIf="this.permisos.user_data.tarea02">
+    <button *ngIf="this.isHome && this.permisos.user_data.tarea02">
       <span class="material-symbols-outlined">
         badge
       </span>
       <p>Conductores</p>
     </button>
-    <button *ngIf="this.permisos.user_data.tarea03" routerLink="/statevehiclefleet">
+    <button *ngIf="this.isHome && this.permisos.user_data.tarea03" routerLink="/statevehiclefleet">
       <span class="material-symbols-outlined">
         garage
       </span>
       <p>Estado de flota</p>
     </button>
-    <button *ngIf="this.permisos.user_data.tarea04">
+    <button *ngIf="this.isHome && this.permisos.user_data.tarea04">
       <span class="material-symbols-outlined">
         garage
       </span>
