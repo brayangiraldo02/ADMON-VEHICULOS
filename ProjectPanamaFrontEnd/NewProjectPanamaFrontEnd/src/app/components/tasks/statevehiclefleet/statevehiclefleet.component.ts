@@ -7,10 +7,45 @@ import { Router } from '@angular/router';
   styleUrls: ['./statevehiclefleet.component.css']
 })
 export class StatevehiclefleetComponent {
+  selectedOption: string | null = null;
+  titles: { [key: string]: string } = {
+    'summary': 'Informe resumen de vehículos',
+    'detail': 'Informe detalle de vehículos',
+    'company-units': 'Informe unidades por empresa'
+  };
+
+  // URLs para las opciones generales y por empresa
+  externalLinks: { [key: string]: { [key: string]: string } } = {
+    'summary': {
+      'general': 'http://example.com/summary-general',
+      'company': 'http://example.com/summary-company'
+    },
+    'detail': {
+      'general': 'http://example.com/detail-general',
+      'company': 'http://example.com/detail-company'
+    },
+    'company-units': {
+      'general': 'http://example.com/company-units-general',
+      'company': 'http://example.com/company-units-company'
+    }
+  };
 
   constructor(private router: Router) { }
 
-  home(): void {
-    this.router.navigate(['/home']);
+  selectOption(option: string): void {
+    if (this.selectedOption === option || option === 'return') {
+      this.selectedOption = null;
+    } else {
+      this.selectedOption = option;
+    }
+  }
+
+  openExternalLink(option: string, type: string): void {
+    const url = this.externalLinks[option][type];
+    if (url) {
+      window.open(url, '_blank');
+    } else {
+      console.error('URL no encontrada para la opción seleccionada.');
+    }
   }
 }
