@@ -27,7 +27,7 @@
 }
 
 /* Estilos específicos para cada imagen en el carrusel */
-.carousel img {
+.carousel .media-container {
   width: 100%;                          /* Hace que la imagen ocupe el 100% del ancho del contenedor. */
   height: 100%;                     /* Asegura que la altura no exceda la del contenedor. */
   opacity: 0;                           /* Inicialmente las imágenes son invisibles (para transiciones). */
