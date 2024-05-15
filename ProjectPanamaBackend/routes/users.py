@@ -5,6 +5,10 @@ from config.dbconnection import session
 from models.permisosusuario import PermisosUsuario
 from security.jwt_handler import encode_jwt, decode_jwt
 from schemas.users import userLogin
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
 
 users_router = APIRouter()
 
@@ -43,7 +47,39 @@ async def get_users2():
 @users_router.post('/login', tags=["Users"])
 async def login(data: userLogin, response: Response):
   db = session()
+  user_admin = os.getenv('USER_ADMIN')
+  password_admin = os.getenv('PASSWORD_ADMIN')
   try:
+    
+    if data.user == user_admin and data.password == password_admin:
+      user_data_cookie = {
+        "codigo": user_admin,
+      }
+      user_data_localStorage = {
+        "nombre": "Administrador",
+        "opcion01": "T",
+        "opcion02": "T",
+        "opcion03": "T",
+        "opcion04": "T",
+        "opcion05": "T",
+        "opcion06": "T",
+        "opcion07": "T",
+        "opcion08": "T",
+        "opcion09": "T",
+        "opcion10": "T",
+        "opcion11": "T",
+        "opcion12": "T",
+        "opcion13": "T",
+        "tarea01": "T",
+        "tarea02": "T",
+        "tarea03": "T",
+        "tarea04": "T"
+      }
+      token_cookie = encode_jwt(user_data_cookie)
+      token_localStorage = encode_jwt(user_data_localStorage)
+      response.set_cookie(key="access_token", value=token_cookie, httponly=True, secure=True, samesite='strict')
+      return JSONResponse(content=jsonable_encoder({'token': token_localStorage}), status_code=200)
+    
     user = db.query(PermisosUsuario.CODIGO, PermisosUsuario.NOMBRE, PermisosUsuario.PASSSWORD, PermisosUsuario.ESTADO, PermisosUsuario.OPCION01, PermisosUsuario.OPCION02, PermisosUsuario.OPCION03, PermisosUsuario.OPCION04, PermisosUsuario.OPCION05, PermisosUsuario.OPCION06, PermisosUsuario.OPCION07, PermisosUsuario.OPCION08, PermisosUsuario.OPCION09, PermisosUsuario.OPCION10, PermisosUsuario.OPCION11, PermisosUsuario.OPCION12, PermisosUsuario.OPCION13, PermisosUsuario.TAREA01, PermisosUsuario.TAREA02, PermisosUsuario.TAREA03, PermisosUsuario.TAREA04).filter(PermisosUsuario.CODIGO == data.user).first()
     if user is None:
       return JSONResponse(content=jsonable_encoder({'error': 'Usuario no encontrado'}), status_code=404)
