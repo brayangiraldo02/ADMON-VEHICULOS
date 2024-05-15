@@ -7,7 +7,7 @@ import os
 load_dotenv()
 
 # Establece una clave secreta
-SECRET_KEY = os.getenv('SECRET_KEY') 
+SECRET_KEY = os.getenv('SECRET_KEY_JWT') 
 ALGORITHM = "HS256"
 
 def encode_jwt(user_data: Dict) -> str:
