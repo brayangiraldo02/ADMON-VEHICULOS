@@ -17,8 +17,8 @@ export class StatevehiclefleetComponent {
   // URLs para las opciones generales y por empresa
   externalLinks: { [key: string]: { [key: string]: string } } = {
     'summary': {
-      'general': 'http://example.com/summary-general',
-      'company': 'http://example.com/summary-company'
+      'general': 'http://localhost:8000/estado-vehiculos-resumen',
+      'company': 'http://localhost:8000/estado-vehiculos-resumen-empresa'
     },
     'detail': {
       'general': 'http://example.com/detail-general',
