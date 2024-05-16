@@ -1,0 +1,59 @@
+<app-header></app-header>
+<div class="report-container">
+  <h1>{{ selectedOption ? titles[selectedOption] : 'Informes estados de flota' }}</h1>
+  <li class="report" *ngIf="!selectedOption" (click)="selectOption('summary')">
+    <a>
+      <span class="report-text">Informe resumen de vehículos</span>
+    </a>
+  </li>
+  <li class="report" *ngIf="selectedOption === 'summary'"  (click)="openExternalLink(selectedOption, 'general')">
+    <a>
+      <span class="report-text">General</span>
+    </a>
+  </li>
+  <li class="report" *ngIf="selectedOption === 'summary'"  (click)="openExternalLink(selectedOption, 'company')">
+    <a>
+      <span class="report-text">Por empresa</span>
+    </a>
+  </li>
+  <li class="report" *ngIf="!selectedOption" (click)="selectOption('detail')">
+    <a>
+      <span class="report-text">Informe detalle de vehículos</span>
+    </a>
+  </li>
+  <li class="report" *ngIf="selectedOption === 'detail'"  (click)="openExternalLink(selectedOption, 'general')">
+    <a>
+      <span class="report-text">General</span>
+    </a>
+  </li>
+  <li class="report" *ngIf="selectedOption === 'detail'"  (click)="openExternalLink(selectedOption, 'company')">
+    <a>
+      <span class="report-text">Por empresa</span>
+    </a>
+  </li>
+  <li class="report" *ngIf="!selectedOption" (click)="selectOption('company-units')">
+    <a>
+      <span class="report-text">Informe unidades por empresa</span>
+    </a>
+  </li>
+  <li class="report" *ngIf="selectedOption === 'company-units'" (click)="openExternalLink(selectedOption, 'general')">
+    <a>
+      <span class="report-text">General</span>
+    </a>
+  </li>
+  <li class="report" *ngIf="selectedOption === 'company-units'"  (click)="openExternalLink(selectedOption, 'company')">
+    <a>
+      <span class="report-text">Por empresa</span>
+    </a>
+  </li>
+  <li class="report home" *ngIf="selectedOption" (click)="selectOption('return')">
+    <a>
+      <span class="report-text">Regresar</span>
+    </a>
+  </li>
+  <li class="report home" *ngIf="!selectedOption" routerLink="/home">
+    <a>
+      <span class="report-text">Regresar al inicio</span>
+    </a>
+  </li>
+</div>

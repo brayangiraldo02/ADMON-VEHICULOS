@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
-import { Router } from '@angular/router'
+import { Component, OnInit } from '@angular/core';
+import { Router, NavigationEnd } from '@angular/router';
+import { ChangeDetectorRef } from '@angular/core';
 import { ApiService } from 'src/app/services/api.service';
 import { JwtService } from 'src/app/services/jwt.service';
 
@@ -8,22 +9,43 @@ import { JwtService } from 'src/app/services/jwt.service';
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.css']
 })
-export class HeaderComponent {
-
-  constructor(private apiService: ApiService, private jwtService: JwtService, private router: Router) { }
-
+export class HeaderComponent implements OnInit {
   permisos: any;
+  isHome: boolean = true;
+
+  constructor(
+    private apiService: ApiService,
+    private jwtService: JwtService,
+    private router: Router,
+    private cdr: ChangeDetectorRef // Importante para detectar cambios
+  ) { }
 
   ngOnInit() {
     this.obtenerUsuario();
-    console.log(this.permisos);
+  }
+
+  private subscribirEventosDeRuta() {
+    this.router.events.subscribe(event => {
+      if (event instanceof NavigationEnd) {
+        this.isHome = this.router.url === '/home';
+        if (this.router.url === '/home') {
+          this.isHome = true;
+        }
+        else {
+          this.isHome = false;
+        }
+        console.log('NavigationEnd event detected');
+        console.log(`URL changed: ${this.router.url}`);
+        console.log(`isHome: ${this.isHome}`);
+        this.cdr.detectChanges(); 
+      }
+    });
   }
 
   obtenerUsuario() {
     this.permisos = this.jwtService.decodeToken();
-
     this.convertirValoresBooleanos(this.permisos.user_data);
-
+    this.subscribirEventosDeRuta();
     console.log(this.permisos.user_data);
   }
 
@@ -31,7 +53,6 @@ export class HeaderComponent {
     this.jwtService.removeToken();
     this.apiService.postData('logout', {}).subscribe(
       (response) => {
-        console.log(response);
         this.router.navigate(['/login']);
       },
       (error) => {

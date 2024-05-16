@@ -3,28 +3,29 @@
   <div class="container">
     <div class="carousel-container">
       <div class="carousel">
-        <img [src]="images[currentImageIndex]" [style.opacity]="showImage ? '1' : '0'">
+        <!-- <img class="media-container" [src]="images[currentImageIndex]" [style.opacity]="showImage ? '1' : '0'"> -->
+        <video src="../../../../assets/video/conduccion.mp4" autoplay loop muted></video>
       </div>
     </div>
     <div class="options-container">
-      <div class="options-container">
-        <ul>
-          <!-- ng-container para aplicar ngIf sin afectar el layout -->
-          <ng-container *ngFor="let option of options">
-            <li *ngIf="option.enabled">
-              <a [href]="option.url">
-                <img [src]="option.icon" class="option-icon">
-                <span class="option-text">{{ option.name }}</span>
-              </a>
-            </li>
-          </ng-container>
-          <li class="logout">
-            <a (click)="logout()">
-              <img [src]="this.logoutIcon" class="option-icon">
-              <span class="option-text">Cerrar sesión</span>
+      <ul>
+        <!-- ng-container para aplicar ngIf sin afectar el layout -->
+        <ng-container *ngFor="let option of options">
+          <li class="options-if" *ngIf="option.enabled">
+            <a [href]="option.url">
+              <img [src]="option.icon" class="option-icon">
+              <span class="option-text">{{ option.name }}</span>
             </a>
           </li>
-        </ul>
+        </ng-container>
+      </ul>
+      <div class="logout-container">
+        <li class="logout"  (click)="logout()">
+          <a>
+            <img [src]="this.logoutIcon" class="logout-icon">
+            <span class="logout-text">Cerrar sesión</span>
+          </a>
+        </li>
       </div>
     </div>  
   </div>

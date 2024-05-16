@@ -5,8 +5,6 @@ header {
   padding: 15px; /* Ajusta el espacio interior del header */
   background-color: white; /* Color de fondo del header */
   color: black; /* Color del texto */
-  border: #002B65 2px solid; /* Añade un borde alrededor del header */
-  border-radius: 5px;
 }
 
 h1 {

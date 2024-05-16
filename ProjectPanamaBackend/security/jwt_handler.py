@@ -7,13 +7,13 @@ import os
 load_dotenv()
 
 # Establece una clave secreta
-SECRET_KEY = os.getenv('SECRET_KEY') 
+SECRET_KEY = os.getenv('SECRET_KEY_JWT') 
 ALGORITHM = "HS256"
 
 def encode_jwt(user_data: Dict) -> str:
   """ Codifica un token JWT basado en los datos del usuario """
   payload = {
-    "exp": datetime.datetime.utcnow() + datetime.timedelta(days=0, minutes=720),  # Token expira en 12 hora
+    "exp": datetime.datetime.utcnow() + datetime.timedelta(days=0, minutes=5),  # Token expira en 12 hora
     "iat": datetime.datetime.utcnow(),
     "user_data": user_data
   }
