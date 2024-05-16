@@ -25,7 +25,6 @@ Base.metadata.create_all(bind=engine)
 
 app.include_router(reports_router)
 app.include_router(users_router)
-app.mount("/static", StaticFiles(directory="static", html=True), name ="static")
 app.mount("/assets", StaticFiles(directory="assets"), name="assets")
 
 @app.get("/")

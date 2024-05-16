@@ -172,7 +172,6 @@ async def get_conteo_propietarios_vehiculos_estados():
     response =  FileResponse(pdf_path, media_type='application/pdf', filename='templates/estado-vehiculos-resumen-empresa.pdf', headers=headers)
 
     return response
-    #return JSONResponse(content=jsonable_encoder(data))
   finally:
     db.close()
 
@@ -182,24 +181,30 @@ async def get_conteo_propietarios_vehiculos_estados():
 async def get_conteo_propietarios_vehiculos_estados_numeros():
   db = session()
   try:
-    conteo_propietarios_vehiculos_estados = db.query(Propietarios.CODIGO.label('propietario_codigo'), Propietarios.ABREVIADO.label('propietario_abreviado'), Estados.CODIGO.label('estado_codigo'),Estados.NOMBRE.label('estado_nombre'), Vehiculos.NUMERO.label('vehiculo_numero') )\
-    .join(Vehiculos, Estados.CODIGO == Vehiculos.ESTADO) \
-    .join(Propietarios, Vehiculos.PROPI_IDEN == Propietarios.CODIGO) \
-    .all()
-    vehiculos_estados_propietarios_list = [] 
+    conteo_propietarios_vehiculos_estados = db.query(
+        Propietarios.CODIGO.label('propietario_codigo'),
+        Propietarios.ABREVIADO.label('propietario_abreviado'),
+        Estados.CODIGO.label('estado_codigo'),
+        Estados.NOMBRE.label('estado_nombre'),
+        Vehiculos.NUMERO.label('vehiculo_numero')
+    ).join(Vehiculos, Estados.CODIGO == Vehiculos.ESTADO).join(Propietarios, Vehiculos.PROPI_IDEN == Propietarios.CODIGO).all()
+
+    vehiculos_estados_propietarios_list = []
     for resultado in conteo_propietarios_vehiculos_estados:
-      propietarios_vehiculos_estados = {
-        'propietario_codigo': resultado.propietario_codigo,
-        'propietario_abreviado': resultado.propietario_abreviado,
-        'estado_codigo': resultado.estado_codigo,
-        'estado_nombre': resultado.estado_nombre,
-        'vehiculo_numero': resultado.vehiculo_numero
-      }
-    vehiculos_estados_propietarios_list.append(propietarios_vehiculos_estados)
+        propietarios_vehiculos_estados = {
+            'propietario_codigo': resultado.propietario_codigo,
+            'propietario_abreviado': resultado.propietario_abreviado,
+            'estado_codigo': resultado.estado_codigo,
+            'estado_nombre': resultado.estado_nombre,
+            'vehiculo_numero': resultado.vehiculo_numero
+        }
+        vehiculos_estados_propietarios_list.append(propietarios_vehiculos_estados)
     result = obtener_numeros_por_propietario(vehiculos_estados_propietarios_list)
     return JSONResponse(content=jsonable_encoder(result))
   finally:
     db.close()
+
+#-----------------------------------------------------------------------------------------
 
 @reports_router.get('/vehiculos-detalles')
 async def get_vehiculos_detalles():
