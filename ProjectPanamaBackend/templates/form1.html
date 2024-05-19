@@ -99,8 +99,8 @@
   }
 
   td {
-        padding: 0.5px;
-        line-height: 1;
+    padding: 0.5px;
+    line-height: 1;
   }
 
   tr {
@@ -239,7 +239,7 @@
                     <tbody>
                       {% if cant_traspasados > 0 %}
                       <tr>
-                          <td><p><img src="file:///D:\PanamaProject\ADMON-VEHICULOS\ProjectPanamaBackend\assets\img\traspaso.png" height="30" width="30" style="margin-right: 30px;">Traspasados:</p></td>
+                          <td><p><img src="file:///D:\PanamaProject\ADMON-VEHICULOS\ProjectPanamaBackend\assets\img\traspaso.png" height="30" width="30" style="margin-right: 30px;">Carros Traspasados:</p></td>
                           <td style="text-align: center;"><p>{{ cant_traspasados }}</p></td>
                       </tr>
                       {% endif %}
@@ -293,7 +293,7 @@
                       {% endif %}
                       {% if cant_para_venta > 0 %}
                       <tr>
-                          <td><p><img src="file:///D:\PanamaProject\ADMON-VEHICULOS\ProjectPanamaBackend\assets\img\paraventa.png" height="30" width="30" style="margin-right: 30px;">Para la Venta:</p></td>
+                          <td><p><img src="file:///D:\PanamaProject\ADMON-VEHICULOS\ProjectPanamaBackend\assets\img\paraventa.png" height="30" width="30" style="margin-right: 30px;">Vehiculos Para la Venta:</p></td>
                           <td style="text-align: center;"><p>{{ cant_para_venta }}</p></td>
                       </tr>
                       {% endif %}
@@ -311,7 +311,7 @@
             <tbody>
                 <td>Total Flota Autos: {{total_vehiculos}}</td>
                 <td>Activa: {{total_activos}}</td>
-                <td>Parada: {{total_parados}}</td>
+                <td>Inactiva: {{total_parados}}</td>
                 <td>Promedio Flota Activa: {{promedio_activos}}%</td>
                 <td>Promedio Flota Parada: {{promedio_parados}}%</td>
             </tbody>
