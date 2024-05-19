@@ -3,12 +3,13 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { ErrorHandlerService } from './error-handler.service';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ApiService {
-  private baseURL: string = 'http://localhost:8000'; // MOVER A VARIABLES DE ENTORNO
+  private baseURL: string = environment.url;
 
   constructor(private http: HttpClient, private errorHandlerService: ErrorHandlerService) {}
 

@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-statevehiclefleet',
@@ -17,8 +18,8 @@ export class StatevehiclefleetComponent {
   // URLs para las opciones generales y por empresa
   externalLinks: { [key: string]: { [key: string]: string } } = {
     'summary': {
-      'general': 'http://localhost:8000/estado-vehiculos-resumen',
-      'company': 'http://localhost:8000/estado-vehiculos-resumen-empresa'
+      'general': `${environment.url}/estado-vehiculos-resumen`,
+      'company': `${environment.url}/estado-vehiculos-resumen-empresa`
     },
     'detail': {
       'general': 'http://example.com/detail-general',
