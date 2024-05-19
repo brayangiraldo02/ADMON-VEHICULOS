@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Estado Vehiculos Detalle</title>
+    <link rel="stylesheet" href="invoice copy.css"> 
+    <style type="text/css">
+        dl {
+    position: absolute;
+    left: 0;
+    text-align:left;
+    top: 0;
+  }
+  dr {
+    position: absolute;
+    right: 0;
+    text-align: right;
+    top: 0;
+  }
+  dt, dd {
+    display: inline;
+    margin: 0;
+  }
+  dt {
+    color: #a9a;
+  }
+  dt::before {
+    content: '';
+    display: block;
+  }
+  dt::after {
+    content: ':';
+  }
+  
+  html, body {
+    scroll-behavior: smooth;
+    margin: 0; 
+  padding: 0;
+  }
+  
+  body {
+    display: flex;
+    flex-direction: column;
+    justify-content:center;
+    align-items: center;
+    height:auto;
+    margin: 0;
+    font-family: Calibri, sans-serif;
+    background-color: #ffffff;
+    position: relative;
+  }
+  
+  .centered-title {
+    font-size: 30px; /* Tamaño de fuente según tus preferencias */
+    text-align: center; /* Centra el título horizontalmente */
+    margin-bottom: 0px; 
+  }
+  
+  .box {
+    flex: 1; /* Distribuye el espacio disponible entre las cajas */
+    border: 1px solid #ccc;
+    padding: 10px;
+  }
+  
+  
+  .title {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+  
+  .data {
+    font-size: 16px;
+    line-height: 1.5;
+  }
+  
+  .title {
+    text-align: center; /* Center the title horizontally */
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 20px;
+  }
+  
+  p {
+    line-height: 1.5; 
+    font-size: 24px;
+    margin-bottom: 6px;
+		margin-top: 15px;
+  }
+  
+  table {
+    border-spacing: 90px 0px; /* Espacio horizontal y vertical entre celdas */
+    text-align: left;
+    width: 100%;
+    empty-cells: hide;
+    margin-bottom: 0px;
+    margin-top: 0px;
+    top: 0%;
+  }
+
+  td {
+    padding: 0.5px;
+    line-height: 1;
+  }
+
+  tr {
+    padding: 0.5px;
+    line-height: 1;
+  }
+
+  header {
+    top: 0;
+    width: 100%;
+    text-align: center;
+    font-family: Arial, sans-serif;
+    margin-top: 0%;
+  }
+
+  footer {
+  bottom: 0;
+  width: 100%;
+  text-align: center;
+  font-family: Arial, sans-serif;
+  }
+
+  footer p {
+  font-size: 12px; 
+  }
+    </style>
+</head>
+<body>
+
+    <header>
+        
+        <dl>
+            <div>
+                <img src="C:/Programas/python/backend/meta/Frontend/form1/logos/logo.png" id="logo" height="50" width="150">
+            </div>
+        </dl>
+
+        <br>
+        <br>
+
+        <h1 class="centered-title">{{empresa}}</h1>
+
+        <dr id="informations">
+            <div class="box">
+                <dt>Fecha</dt>
+                <dd>{{fecha}}</dd>
+                <dt>Hora</dt>
+                <dd>{{hora}}</dd>
+            </div>
+        </dr>
+
+    </header>
+                <table style = "margin: 0 auto;">
+                    <thead>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                    </thead>
+                    <tbody>
+                        {%if cant_activo > 0%}
+                        <tr>
+                            <td>
+                                <p><img src="C:/Programas/python/backend/meta/Frontend/form1/logos/activo.png" height="26" width="26" style="margin-right: 30px;">Activo:</p>
+                            </td>
+                            <td style="text-align: center;"><p>{{ cant_activo }}</p></td>
+                            <td style="text-align: center; vertical-align: top;"><p><u>{{ cant_activo_backup }}</u></p></td>
+                        </tr>
+                        {% for numero in activos %}
+                        <tr>
+                            <td><p>{{ numero }}</p></td>          
+                        </tr>
+                        {%endif%}
+                        <hr>
+                        {%if cant_backup > 0%}
+                        <tr>
+                            <td>
+                                <p><img src="C:/Programas/python/backend/meta/Frontend/form1/logos/backup.png" height="26" width="26" style="margin-right: 30px;">Backup:</p>
+                            </td>
+                            <td style="text-align: center;"><p>{{ cant_backup }}</p></td>
+
+                        </tr>
+                        {% for numero in backup %}
+                        <tr>
+                            <td><p>{{ numero }}</p></td>
+                        </tr>
+                        {%endif%}
+                        <hr>
+                        {%if cant_chap_parado > 0%}
+                        <tr>
+                            <td>
+                                <p><img src="C:/Programas/python/backend/meta/Frontend/form1/logos/parado.png" height="26" width="26" style="margin-right: 30px;">Chapisteria Parado:</p>
+                            </td>
+                            <td style="text-align: center;"><p>{{ cant_chap_parado }}</p></td>
+                        </tr>
+                        {% for numero in chap_parado %}
+                        <tr>
+                            <td><p>{{ numero }}</p></td>
+                        </tr>
+                        {%endif%}
+                        <hr>
+                        {%if cant_chap_trabajando > 0%}
+                        <tr>
+                            <td>
+                                <p><img src="C:/Programas/python/backend/meta/Frontend/form1/logos/trabajando.png" height="26" width="26" style="margin-right: 30px;">Chapisteria Trabajando:</p>
+                            </td>
+                            <td style="text-align: center;"><p>{{ cant_chap_trabajando }}</p></td>
+                        </tr>
+                        {% for numero in chap_trabajando %}
+                        <tr>
+                            <td><p>{{ numero }}</p></td>
+                        </tr>
+                        {%endif%}
+                        <hr>
+                        {%if cant_custodia > 0%}
+                        <tr>
+                            <td>
+                                <p><img src="C:/Programas/python/backend/meta/Frontend/form1/logos/custodia.png" height="26" width="26" style="margin-right: 30px;">Custodia:</p>
+                            </td>
+                            <td style="text-align: center;"><p>{{ cant_custodia }}</p></td>
+                        </tr>
+                        {% for numero in custodia %}
+                        <tr>
+                            <td><p>{{ numero }}</p></td>
+                        </tr>
+                        {%endif%}
+                        <hr>
+                        {%if cant_esp_operador > 0%}
+                        <tr>
+                            <td>
+                                <p><img src="C:/Programas/python/backend/meta/Frontend/form1/logos/esperando.png" height="26" width="26" style="margin-right: 30px;">Esperando Operador:</p>
+                            </td>
+                            <td style="text-align: center;"><p>{{ cant_esp_operador }}</p></td>
+                        </tr>
+                        {% for numero in esp_operador %}
+                        <tr>
+                            <td><p>{{ numero }}</p></td>
+                        </tr>
+                        {%endif%}
+                        <hr>
+                        {%if cant_mecanica_parado > 0%}
+                        <tr>
+                            <td>
+                                <p><img src="C:/Programas/python/backend/meta/Frontend/form1/logos/mecanico.png" height="26" width="26" style="margin-right: 30px;">Mecanica Parados:</p>
+                            </td>
+                            <td style="text-align: center;"><p>{{ cant_mecanica_parado }}</p></td>
+                        </tr>
+                        {% for numero in mecanica_parado %}
+                        <tr>
+                            <td><p>{{ numero }}</p></td>
+                        </tr>
+                        {%endif%}
+                        <hr>
+                        {%if cant_otros > 0%}
+                        <tr>
+                            <td>
+                                <p><img src="C:/Programas/python/backend/meta/Frontend/form1/logos/otros.png" height="26" width="26" style="margin-right: 30px;">Otros:</p>
+                            </td>
+                            <td style="text-align: center;"><p>{{ cant_otros }}</p></td>
+                        </tr>
+                        {% for numero in otros %}
+                        <tr>
+                            <td><p>{{ numero }}</p></td>
+                        </tr>
+                        {%endif%}
+                        <hr>
+                    </tbody>
+                </table>
+
+                <!-- --------------------------------------------------------------------------- -->
+
+                <table style="float: left;  margin-left: 100px;">
+                    <thead>
+                        <th</th>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <p><img src="C:/Programas/python/backend/meta/Frontend/form1/logos/traspaso.png" height="26" width="26" style="margin-right: 30px;">Traspasados:</p>
+                            </td>
+                            <td style="text-align: center;"><p>{{ cant_traspasados }}</p></td>
+                        </tr>
+                        {% for numero in traspasados %}
+                        <tr>
+                            <td><p>{{ numero }}</p></td>
+                        </tr>
+                        {%endif%}
+                        <hr>
+                        {%if cant_fin_contrato > 0%}
+                        <tr>
+                            <td>
+                                <p><img src="C:/Programas/python/backend/meta/Frontend/form1/logos/contrato.png" height="26" width="26" style="margin-right: 30px;">Culminacion de Contrato:</p>
+                            </td>
+                            <td style="text-align: center;"><p>{{ cant_fin_contrato }}</p></td>
+                        </tr>
+                        {% for numero in fin_contrato %}
+                        <tr>
+                            <td><p>{{ numero }}</p></td>
+                        </tr>
+                        {%endif%}
+                        <hr>
+                        {%if cant_en_tramite > 0%}
+                        <tr>
+                            <td>
+                                <p><img src="C:/Programas/python/backend/meta/Frontend/form1/logos/tramite.png" height="26" width="26" style="margin-right: 30px;">En Tramite:</p>
+                            </td>
+                            <td style="text-align: center;"><p>{{ cant_en_tramite }}</p></td>
+                        </tr>
+                        {% for numero in en_tramite %}
+                        <tr>
+                            <td><p>{{ numero }}</p></td>
+                        </tr>
+                        {%endif%}
+                        <hr>
+                        {%if cant_fuera_circulacion > 0%}
+                        <tr>
+                            <td>
+                                <p><img src="C:/Programas/python/backend/meta/Frontend/form1/logos/fuera.png" height="26" width="26" style="margin-right: 30px;">Fuera de Circulación:</p>
+                            </td>
+                            <td style="text-align: center;"><p>{{ cant_fuera_circulacion }}</p></td>
+                        </tr>
+                        {% for numero in fuera_circulacion %}
+                        <tr>
+                            <td><p>{{ numero }}</p></td>
+                        </tr>
+                        {%endif%}
+                        <hr>
+                        {%if cant_inactivos > 0%}
+                        <tr>
+                            <td>
+                                <p><img src="C:/Programas/python/backend/meta/Frontend/form1/logos/activo.png" height="26" width="26" style="margin-right: 30px;">Inactivos:</p>
+                            </td>
+                            <td style="text-align: center;"><p>{{ cant_inactivos }}</p></td>
+                        </tr>
+                        {% for numero in inactivos %}
+                        <tr>
+                            <td><p>{{ numero }}</p></td>
+                        </tr>
+                        {%endif%}
+                        <hr>
+                        {%if cant_perdida_total > 0%}
+                        <tr>
+                            <td>
+                                <p><img src="C:/Programas/python/backend/meta/Frontend/form1/logos/perdida.png" height="26" width="26" style="margin-right: 30px;">Perdida Total:</p>
+                            </td>
+                            <td style="text-align: center;"><p>{{ cant_perdida_total }}</p></td>
+                        </tr>
+                        {% for numero in perdida_total %}
+                        <tr>
+                            <td><p>{{ numero }}</p></td>
+                        </tr>
+                        {%endif%}
+                        <hr>
+                        {%if cant_retirado_empresa > 0%}
+                        <tr>
+                            <td>
+                                <p><img src="C:/Programas/python/backend/meta/Frontend/form1/logos/retirado.png" height="26" width="26" style="margin-right: 30px;">Retirado de la Empresa:</p>
+                            </td>
+                            <td style="text-align: center;"><p>{{ cant_retirado_empresa }}</p></td>
+                        </tr>
+                        {% for numero in retirado_empresa %}
+                        <tr>
+                            <td><p>{{ numero }}</p></td>
+                        </tr>
+                        {%endif%}
+                        <hr>
+                        {%if cant_sin_calificar > 0%}
+                        <tr>
+                            <td>
+                                <p><img src="C:/Programas/python/backend/meta/Frontend/form1/logos/sincalificar.png" height="26" width="26" style="margin-right: 30px;">Sin Calificar:</p>
+                            </td>
+                            <td style="text-align: center;"><p>{{ cant_sin_calificar }}</p></td>
+                        </tr>
+                        {% for numero in sin_calificar %}
+                        <tr>
+                            <td><p>{{ numero }}</p></td>
+                        </tr>
+                        {%endif%}
+                        <hr>
+                        {%if cant_vendidos > 0%}
+                        <tr>
+                            <td>
+                                <p><img src="C:/Programas/python/backend/meta/Frontend/form1/logos/vendido.png" height="26" width="26" style="margin-right: 30px;">Vendidos:</p>
+                            </td>
+                            <td style="text-align: center;"><p>{{ cant_vendidos }}</p></td>
+                        </tr>
+                        {% for numero in vendidos %}
+                        <tr>
+                            <td><p>{{ numero }}</p></td>
+                        </tr>
+                        {%endif%}
+                        <hr>
+                        {%if cant_para_venta > 0%}
+                        <tr>
+                            <td>
+                                <p><img src="C:/Programas/python/backend/meta/Frontend/form1/logos/paraventa.png" height="26" width="26" style="margin-right: 30px;">Para la Venta:</p>
+                            </td>
+                            <td style="text-align: center;"><p>{{ cant_para_venta }}</p></td>
+                        </tr>
+                        {% for numero in para_venta %}
+                        <tr>
+                            <td><p>{{ numero }}</p></td>
+                        </tr>
+                        {%endif%}
+                        <hr>
+                    </tbody>
+                </table>
+
+<!--                                 <p><img src="C:/Programas/python/backend/meta/Frontend/form1/logos/trabajando.png" height="26" width="26" style="margin-right: 30px;">Chapisteria Trabajando: {{cant_chap_trabajando}}</p>
+                                <p>{{chap_trabajando}}</p>
+                                <hr>
+                                <p><img src="C:/Programas/python/backend/meta/Frontend/form1/logos/custodia.png" height="26" width="26" style="margin-right: 30px;">Custodia: {{cant_custodia}}</p>
+                                <p>{{custodia}}</p>
+                                <hr>
+                                <p><img src="C:/Programas/python/backend/meta/Frontend/form1/logos/esperando.png" height="26" width="26" style="margin-right: 30px;">Esperando Operador: {{cant_esp_operador}}</p>
+                                <p>{{esp_operador}}</p>
+                                <hr>
+                                <p><img src="C:/Programas/python/backend/meta/Frontend/form1/logos/mecanico.png" height="26" width="26" style="margin-right: 30px;">Mecanica Parados: {{cant_mecanica_parado}}</p>
+                                <p>{{mecanica_parado}}</p>
+                                <hr>
+                                <p><img src="C:/Programas/python/backend/meta/Frontend/form1/logos/otros.png" height="26" width="26" style="margin-right: 30px;">Otros: {{cant_otros}}</p>
+                                <p>{{otros}}</p>
+                                <hr>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table> -->
+
+                <!-- <table style="float: left;  margin-left: 100px;">
+                    <thead>
+                        <th</th>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <p><img src="C:/Programas/python/backend/meta/Frontend/form1/logos/traspaso.png" height="26" width="26" style="margin-right: 30px;">Traspasados: {{cant_traspasados}}</p>
+                                <p>{{traspasados}}</p>
+                                <hr>
+                                <p><img src="C:/Programas/python/backend/meta/Frontend/form1/logos/contrato.png" height="26" width="26" style="margin-right: 30px;">Culminacion de Contrato: {{cant_fin_contrato}}</p>
+                                <p>{{fin_contrato}}</p>
+                                <hr>
+                                <p><img src="C:/Programas/python/backend/meta/Frontend/form1/logos/tramite.png" height="26" width="26" style="margin-right: 30px;">En Tramite: {{cant_en_tramite}}</p>
+                                <p>{{en_tramite}}</p>
+                                <hr>
+                                <p><img src="C:/Programas/python/backend/meta/Frontend/form1/logos/fuera.png" height="26" width="26" style="margin-right: 30px;">Fuera de Circulación: {{cant_fuera_circulacion}}</p>
+                                <p>{{fuera_circulacion}}</p>
+                                <hr>
+                                <p><img src="C:/Programas/python/backend/meta/Frontend/form1/logos/activo.png" height="26" width="26" style="margin-right: 30px;">Inactivos: {{cant_inactivos}}</p>
+                                <p>{{inactivos}}</p>
+                                <hr>
+                                <p><img src="C:/Programas/python/backend/meta/Frontend/form1/logos/perdida.png" height="26" width="26" style="margin-right: 30px;">Perdida Total: {{cant_perdida_total}}</p>
+                                <p>{{perdida_total}}</p>
+                                <hr>
+                                <p><img src="C:/Programas/python/backend/meta/Frontend/form1/logos/retirado.png" height="26" width="26" style="margin-right: 30px;">Retirado de la Empresa: {{cant_retirado_empresa}}</p>
+                                <p>{{retirado_empresa}}</p>
+                                <hr>
+                                <p><img src="C:/Programas/python/backend/meta/Frontend/form1/logos/sincalificar.png" height="26" width="26" style="margin-right: 30px;">Sin Calificar: {{cant_sin_calificar}}</p>
+                                <p>{{sin_calificar}}</p>
+                                <hr>
+                                <p><img src="C:/Programas/python/backend/meta/Frontend/form1/logos/vendido.png" height="26" width="26" style="margin-right: 30px;">Vendidos: {{cant_vendidos}}</p>
+                                <p>{{vendidos}}</p>
+                                <hr>
+                                <p><img src="C:/Programas/python/backend/meta/Frontend/form1/logos/paraventa.png" height="26" width="26" style="margin-right: 30px;">Para la Venta: {{cant_para_venta}}</p>
+                                <p>{{para_venta}}</p>
+                                <hr>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table> -->
+
+                <table>
+                    <thead>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                    </thead>
+                    <tbody>
+                        <td>Total Flota Autos: {{total_vehiculos}}</td>
+                        <td>Activa: {{total_activos}}</td>
+                        <td>Parada: {{total_parados}}</td>
+                        <td>Promedio Flota Activa: {{promedio_activos}}%</td>
+                        <td>Promedio Flota Parada: {{promedio_parados}}%</td>
+                    </tbody>
+                </table>
+
+        <footer>
+            <hr>
+            <p style="float: left; margin-left: 50px;">Sistemas Alfa</p>
+            <p style="float: right; margin-right: 50px;">Usuario: {{usuario}}</p>
+        </footer>        
+</body>
+</html>
