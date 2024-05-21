@@ -14,14 +14,22 @@ export class HomeComponent implements OnInit {
   options: any[] = []
 
   logoutIcon: string = '../../../../assets/icons/logout.svg';
+  rightIcon: string = '../../../../assets/icons/rightArrow.svg';
 
   images: string[] = [
-    '../../../assets/img/taxi1.jpg',
-    '../../../assets/img/taxi2.jpg',
-    '../../../assets/img/taxi3.jpg'
+    '../../../../assets/img/taxi1.jpg',
+    '../../../../assets/img/taxi2.jpg',
+    '../../../../assets/img/taxi3.jpg'
   ];
+
+  videos: string[] = [
+    '../../../../assets/video/calle.mp4',
+    '../../../../assets/video/conduccion.mp4',
+  ]
+
   currentImageIndex: number = 0;
   showImage: boolean = true;
+  changeVideo: boolean = false;
   permisos: any;
 
   ngOnInit() {
@@ -63,6 +71,10 @@ export class HomeComponent implements OnInit {
         console.log(error);
       }
     );
+  }
+
+  changeVideoState() {
+    this.changeVideo = !this.changeVideo;
   }
 
   changeImagesPeriodically() {
