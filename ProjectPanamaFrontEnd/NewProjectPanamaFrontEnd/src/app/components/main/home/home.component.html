@@ -9,7 +9,7 @@
           </a>
         </div>
         <img class="media-container" *ngIf="changeVideo" [src]="images[currentImageIndex]" [style.opacity]="showImage ? '1' : '0'">
-        <video *ngIf="!changeVideo" src="../../../../assets/video/conduccion.mp4" autoplay loop muted></video>
+        <video #videoPlayer *ngIf="!changeVideo" [src]="currentVideo" (ended)="onVideoEnded()" autoplay></video>
         <div class="right-container">
           <a class="alternate-media" (click)="changeVideoState()">
             <img [src]="this.rightIcon" class="media-icon">

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { JwtService } from 'src/app/services/jwt.service';
 import { ApiService } from 'src/app/services/api.service';
 import { Router } from '@angular/router';
@@ -10,6 +10,7 @@ import { Router } from '@angular/router';
 })
 export class HomeComponent implements OnInit {
   constructor(private jwtService: JwtService, private apiService: ApiService, private router: Router) { }
+  @ViewChild('videoPlayer') videoPlayer!: ElementRef<HTMLVideoElement>;
 
   options: any[] = []
 
@@ -29,12 +30,16 @@ export class HomeComponent implements OnInit {
 
   currentImageIndex: number = 0;
   showImage: boolean = true;
+  currentVideoIndex: number = 0;
+  currentVideo: string = '';
   changeVideo: boolean = false;
   permisos: any;
 
   ngOnInit() {
     this.changeImagesPeriodically();
     this.obtenerUsuario();
+    this.currentVideo = this.videos[this.currentVideoIndex];
+    this.ngAfterViewInit()
   }
 
   obtenerUsuario() {
@@ -85,6 +90,17 @@ export class HomeComponent implements OnInit {
         this.showImage = true; // Muestra la siguiente imagen
       }, 1000); // Espera 1 segundo para comenzar a mostrar la siguiente imagen
     }, 5000); // Intervalo total entre cambios de imagen
+  }
+
+  ngAfterViewInit() {
+    this.videoPlayer.nativeElement.muted = true;
+  }
+
+  onVideoEnded() {
+    this.currentVideoIndex = (this.currentVideoIndex + 1) % this.videos.length;
+    this.currentVideo = this.videos[this.currentVideoIndex];
+    this.videoPlayer.nativeElement.load(); // Cargar el nuevo video
+    this.videoPlayer.nativeElement.muted = true;
   }
 
   convertirValoresBooleanos(obj: any) {
