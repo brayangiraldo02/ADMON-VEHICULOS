@@ -6,45 +6,67 @@
       <span class="report-text">Informe resumen de vehículos</span>
     </a>
   </li>
-  <li class="report" *ngIf="selectedOption === 'summary'"  (click)="openExternalLink(selectedOption, 'general')">
+  
+  <li class="report" *ngIf="selectedOption === 'summary' && !showCompanySelect" (click)="openExternalLink(selectedOption, 'general')">
     <a>
       <span class="report-text">General</span>
     </a>
   </li>
-  <li class="report" *ngIf="selectedOption === 'summary'"  (click)="openExternalLink(selectedOption, 'company')">
+  
+  <li class="report" *ngIf="selectedOption === 'summary' && !showCompanySelect" (click)="selectCompanyOption()">
     <a>
       <span class="report-text">Por empresa</span>
     </a>
   </li>
+  
+  <li class="select-owner" *ngIf="showCompanySelect && selectedOption === 'summary'">
+    <select (change)="onCompanyChange($event)" class="full-width">
+      <option *ngFor="let owner of owners" [value]="owner.id">{{ owner.name }}</option>
+    </select>
+  </li>
+
   <li class="report" *ngIf="!selectedOption" (click)="selectOption('detail')">
     <a>
       <span class="report-text">Informe detalle de vehículos</span>
     </a>
   </li>
-  <li class="report" *ngIf="selectedOption === 'detail'"  (click)="openExternalLink(selectedOption, 'general')">
+  <li class="report" *ngIf="selectedOption === 'detail' && !showCompanySelect"  (click)="openExternalLink(selectedOption, 'general')">
     <a>
       <span class="report-text">General</span>
     </a>
   </li>
-  <li class="report" *ngIf="selectedOption === 'detail'"  (click)="openExternalLink(selectedOption, 'company')">
+  <li class="report" *ngIf="selectedOption === 'detail' && !showCompanySelect" (click)="selectCompanyOption()">
     <a>
       <span class="report-text">Por empresa</span>
     </a>
   </li>
+  
+  <li class="select-owner" *ngIf="showCompanySelect && selectedOption === 'detail'">
+    <select (change)="onCompanyChange($event)" class="full-width">
+      <option *ngFor="let owner of owners" [value]="owner.id">{{ owner.name }}</option>
+    </select>
+  </li>
+
   <li class="report" *ngIf="!selectedOption" (click)="selectOption('company-units')">
     <a>
       <span class="report-text">Informe unidades por empresa</span>
     </a>
   </li>
-  <li class="report" *ngIf="selectedOption === 'company-units'" (click)="openExternalLink(selectedOption, 'general')">
+
+  <li class="report" *ngIf="selectedOption === 'company-units' && !showCompanySelect" (click)="openExternalLink(selectedOption, 'general')">
     <a>
       <span class="report-text">General</span>
     </a>
   </li>
-  <li class="report" *ngIf="selectedOption === 'company-units'"  (click)="openExternalLink(selectedOption, 'company')">
+  <li class="report" *ngIf="selectedOption === 'company-units' && !showCompanySelect" (click)="selectCompanyOption()">
     <a>
       <span class="report-text">Por empresa</span>
     </a>
+  </li>
+  <li class="select-owner" *ngIf="showCompanySelect && selectedOption === 'company-units'">
+    <select (change)="onCompanyChange($event)" class="full-width">
+      <option *ngFor="let owner of owners" [value]="owner.id">{{ owner.name }}</option>
+    </select>
   </li>
   <li class="report home" *ngIf="selectedOption" (click)="selectOption('return')">
     <a>
