@@ -24,7 +24,8 @@
 }
 
 .report:hover {
-  background: #fff8b4; 
+  /* background: #fff8b4;  */
+  background: #bcd1ec;
 }
 
 .select-owner {
