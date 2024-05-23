@@ -1,9 +1,9 @@
 .report-container {
-  height: 75%;
+  height: 80vh;
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
+  padding-top: 3vh;
   /* padding: 40px; */
   margin: 10px;
 }
