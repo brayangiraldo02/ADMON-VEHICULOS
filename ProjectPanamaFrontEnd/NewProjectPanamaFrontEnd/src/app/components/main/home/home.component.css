@@ -1,9 +1,10 @@
 .container {
-  height: 64%;
+  height: 80vh;
   display: flex;
   justify-content: center;
   /* align-items: center; */
-  padding: 25px 50px;
+  /* padding: 10vh ; */
+  padding: 10vh 5vh 0vh 5vh;
   gap: 20px;
 }
 
@@ -11,7 +12,7 @@
 .carousel-container {
   padding-top: 10px;
   width: 100%;
-  height: 425px;
+  height: 425px;  
   display: flex;
   justify-content: center;
   align-items: center;
