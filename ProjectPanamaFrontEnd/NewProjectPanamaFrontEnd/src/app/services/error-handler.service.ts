@@ -20,6 +20,6 @@ export class ErrorHandlerService {
     }
 
     console.error(errorMessage);
-    return throwError(() => new Error(errorMessage));
+    return throwError({ status: error.status, message: errorMessage });
   }
 }
