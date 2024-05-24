@@ -29,10 +29,15 @@ export class LoginComponent {
         this.router.navigate(['/home']);
       },
       (error) => {
+        console.log('Error object:', error); // Añadido para depuración
+        if (error.status === 404) {
+          window.alert("Usuario o contraseña incorrectos.");
+        } else {
+          window.alert("Ha ocurrido un error inesperado, por favor intenta de nuevo.");
+        }
         console.log(error);
       }
     );
-
   }
 
   togglePasswordVisibility(): void {

@@ -1,8 +1,9 @@
 .report-container {
+  height: 80vh;
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
+  padding-top: 3vh;
   /* padding: 40px; */
   margin: 10px;
 }
@@ -23,8 +24,34 @@
 }
 
 .report:hover {
-  background: #fff8b4; 
+  /* background: #fff8b4;  */
+  background: #bcd1ec;
 }
+
+.select-owner {
+  width: 40%; /* Cambia el ancho al 100% para que ocupe todo el contenedor padre */
+  margin: 10px;
+  box-sizing: border-box;
+  background: #ffffff;
+  border-radius: 10px;
+  padding: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  flex-direction: column;
+}
+
+/* Añade esta clase para que el <select> ocupe todo el ancho disponible */
+.full-width {
+  width: 100%; /* Asegura que el <select> ocupe todo el ancho del contenedor */
+  padding: 10px; /* Ajuste de padding para mejor apariencia */
+  box-sizing: border-box; /* Incluye el padding y el borde en el ancho total */
+  border: 1px solid #ccc; /* Borde ligero para mejor visibilidad */
+  border-radius: 5px; /* Bordes ligeramente redondeados */
+  background-color: #f9f9f9; /* Fondo claro */
+}
+
 
 .home:hover {
   background: #ffcdcd; 
