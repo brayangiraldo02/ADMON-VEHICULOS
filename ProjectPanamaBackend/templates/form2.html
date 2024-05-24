@@ -161,7 +161,7 @@
                         <th></th>
                     </thead>
                     <tbody>
-                        {%if cant_activo > 0%}
+                        {% if cant_activo > 0 %}
                         <tr>
                             <td>
                                 <p><img src="C:/Programas/python/backend/meta/Frontend/form1/logos/activo.png" height="26" width="26" style="margin-right: 30px;">Activo:</p>
@@ -169,51 +169,73 @@
                             <td style="text-align: center;"><p>{{ cant_activo }}</p></td>
                             <td style="text-align: center; vertical-align: top;"><p><u>{{ cant_activo_backup }}</u></p></td>
                         </tr>
-                        {% for numero in activos %}
                         <tr>
-                            <td><p>{{ numero }}</p></td>          
+                            <td colspan="3">
+                                <p>
+                                    {% for numero in activos %}
+                                        {{ numero }}&nbsp;
+                                    {% endfor %}
+                                </p>
+                            </td>
                         </tr>
-                        {%endif%}
-                        <hr>
-                        {%if cant_backup > 0%}
+                        {% endif %}
+                        <tr>
+                            <td colspan="3">
+                                <hr>
+                            </td>
+                        </tr>
+                        {% if cant_backup > 0 %}
                         <tr>
                             <td>
                                 <p><img src="C:/Programas/python/backend/meta/Frontend/form1/logos/backup.png" height="26" width="26" style="margin-right: 30px;">Backup:</p>
                             </td>
                             <td style="text-align: center;"><p>{{ cant_backup }}</p></td>
-
+                            <td></td>
                         </tr>
-                        {% for numero in backup %}
                         <tr>
-                            <td><p>{{ numero }}</p></td>
+                            <td colspan="3">
+                                <p>{{ backup|join("     ") }}</p>
+                            </td>
                         </tr>
-                        {%endif%}
-                        <hr>
-                        {%if cant_chap_parado > 0%}
+                        {% endif %}
+                        <tr>
+                            <td colspan="3">
+                                <hr>
+                            </td>
+                        </tr>
+                        {% if cant_chap_parado > 0 %}
                         <tr>
                             <td>
                                 <p><img src="C:/Programas/python/backend/meta/Frontend/form1/logos/parado.png" height="26" width="26" style="margin-right: 30px;">Chapisteria Parado:</p>
                             </td>
                             <td style="text-align: center;"><p>{{ cant_chap_parado }}</p></td>
+                            <td></td>
                         </tr>
-                        {% for numero in chap_parado %}
                         <tr>
-                            <td><p>{{ numero }}</p></td>
+                            <td colspan="3">
+                                <p>{{ chap_parado|join("        ") }}</p>
+                            </td>
                         </tr>
-                        {%endif%}
-                        <hr>
-                        {%if cant_chap_trabajando > 0%}
+                        {% endif %}
+                        <tr>
+                            <td colspan="3">
+                                <hr>
+                            </td>
+                        </tr>
+                        {% if cant_chap_trabajando > 0 %}
                         <tr>
                             <td>
                                 <p><img src="C:/Programas/python/backend/meta/Frontend/form1/logos/trabajando.png" height="26" width="26" style="margin-right: 30px;">Chapisteria Trabajando:</p>
                             </td>
                             <td style="text-align: center;"><p>{{ cant_chap_trabajando }}</p></td>
+                            <td></td>
                         </tr>
-                        {% for numero in chap_trabajando %}
                         <tr>
-                            <td><p>{{ numero }}</p></td>
+                            <td colspan="3">
+                                <p>{{ chap_trabajando|join("        ") }}</p>
+                            </td>
                         </tr>
-                        {%endif%}
+                        {% endif %}
                         <hr>
                         {%if cant_custodia > 0%}
                         <tr>
@@ -226,6 +248,7 @@
                         <tr>
                             <td><p>{{ numero }}</p></td>
                         </tr>
+                        {%endfor%}
                         {%endif%}
                         <hr>
                         {%if cant_esp_operador > 0%}
@@ -239,6 +262,7 @@
                         <tr>
                             <td><p>{{ numero }}</p></td>
                         </tr>
+                        {%endfor%}
                         {%endif%}
                         <hr>
                         {%if cant_mecanica_parado > 0%}
@@ -252,6 +276,7 @@
                         <tr>
                             <td><p>{{ numero }}</p></td>
                         </tr>
+                        {%endfor%}
                         {%endif%}
                         <hr>
                         {%if cant_otros > 0%}
@@ -265,6 +290,7 @@
                         <tr>
                             <td><p>{{ numero }}</p></td>
                         </tr>
+                        {%endfor%}
                         {%endif%}
                         <hr>
                     </tbody>
@@ -277,6 +303,7 @@
                         <th</th>
                     </thead>
                     <tbody>
+                        {%if cant_traspasados > 0%}
                         <tr>
                             <td>
                                 <p><img src="C:/Programas/python/backend/meta/Frontend/form1/logos/traspaso.png" height="26" width="26" style="margin-right: 30px;">Traspasados:</p>
@@ -287,6 +314,7 @@
                         <tr>
                             <td><p>{{ numero }}</p></td>
                         </tr>
+                        {%endfor%}
                         {%endif%}
                         <hr>
                         {%if cant_fin_contrato > 0%}
@@ -300,6 +328,7 @@
                         <tr>
                             <td><p>{{ numero }}</p></td>
                         </tr>
+                        {%endfor%}
                         {%endif%}
                         <hr>
                         {%if cant_en_tramite > 0%}
@@ -313,6 +342,7 @@
                         <tr>
                             <td><p>{{ numero }}</p></td>
                         </tr>
+                        {%endfor%}
                         {%endif%}
                         <hr>
                         {%if cant_fuera_circulacion > 0%}
@@ -326,6 +356,7 @@
                         <tr>
                             <td><p>{{ numero }}</p></td>
                         </tr>
+                        {%endfor%}
                         {%endif%}
                         <hr>
                         {%if cant_inactivos > 0%}
@@ -339,6 +370,7 @@
                         <tr>
                             <td><p>{{ numero }}</p></td>
                         </tr>
+                        {%endfor%}
                         {%endif%}
                         <hr>
                         {%if cant_perdida_total > 0%}
@@ -352,6 +384,7 @@
                         <tr>
                             <td><p>{{ numero }}</p></td>
                         </tr>
+                        {%endfor%}
                         {%endif%}
                         <hr>
                         {%if cant_retirado_empresa > 0%}
@@ -365,6 +398,7 @@
                         <tr>
                             <td><p>{{ numero }}</p></td>
                         </tr>
+                        {%endfor%}
                         {%endif%}
                         <hr>
                         {%if cant_sin_calificar > 0%}
@@ -378,6 +412,7 @@
                         <tr>
                             <td><p>{{ numero }}</p></td>
                         </tr>
+                        {%endfor%}
                         {%endif%}
                         <hr>
                         {%if cant_vendidos > 0%}
@@ -391,6 +426,7 @@
                         <tr>
                             <td><p>{{ numero }}</p></td>
                         </tr>
+                        {%endfor%}
                         {%endif%}
                         <hr>
                         {%if cant_para_venta > 0%}
@@ -404,72 +440,11 @@
                         <tr>
                             <td><p>{{ numero }}</p></td>
                         </tr>
+                        {%endfor%}
                         {%endif%}
                         <hr>
                     </tbody>
                 </table>
-
-<!--                                 <p><img src="C:/Programas/python/backend/meta/Frontend/form1/logos/trabajando.png" height="26" width="26" style="margin-right: 30px;">Chapisteria Trabajando: {{cant_chap_trabajando}}</p>
-                                <p>{{chap_trabajando}}</p>
-                                <hr>
-                                <p><img src="C:/Programas/python/backend/meta/Frontend/form1/logos/custodia.png" height="26" width="26" style="margin-right: 30px;">Custodia: {{cant_custodia}}</p>
-                                <p>{{custodia}}</p>
-                                <hr>
-                                <p><img src="C:/Programas/python/backend/meta/Frontend/form1/logos/esperando.png" height="26" width="26" style="margin-right: 30px;">Esperando Operador: {{cant_esp_operador}}</p>
-                                <p>{{esp_operador}}</p>
-                                <hr>
-                                <p><img src="C:/Programas/python/backend/meta/Frontend/form1/logos/mecanico.png" height="26" width="26" style="margin-right: 30px;">Mecanica Parados: {{cant_mecanica_parado}}</p>
-                                <p>{{mecanica_parado}}</p>
-                                <hr>
-                                <p><img src="C:/Programas/python/backend/meta/Frontend/form1/logos/otros.png" height="26" width="26" style="margin-right: 30px;">Otros: {{cant_otros}}</p>
-                                <p>{{otros}}</p>
-                                <hr>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table> -->
-
-                <!-- <table style="float: left;  margin-left: 100px;">
-                    <thead>
-                        <th</th>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>
-                                <p><img src="C:/Programas/python/backend/meta/Frontend/form1/logos/traspaso.png" height="26" width="26" style="margin-right: 30px;">Traspasados: {{cant_traspasados}}</p>
-                                <p>{{traspasados}}</p>
-                                <hr>
-                                <p><img src="C:/Programas/python/backend/meta/Frontend/form1/logos/contrato.png" height="26" width="26" style="margin-right: 30px;">Culminacion de Contrato: {{cant_fin_contrato}}</p>
-                                <p>{{fin_contrato}}</p>
-                                <hr>
-                                <p><img src="C:/Programas/python/backend/meta/Frontend/form1/logos/tramite.png" height="26" width="26" style="margin-right: 30px;">En Tramite: {{cant_en_tramite}}</p>
-                                <p>{{en_tramite}}</p>
-                                <hr>
-                                <p><img src="C:/Programas/python/backend/meta/Frontend/form1/logos/fuera.png" height="26" width="26" style="margin-right: 30px;">Fuera de Circulación: {{cant_fuera_circulacion}}</p>
-                                <p>{{fuera_circulacion}}</p>
-                                <hr>
-                                <p><img src="C:/Programas/python/backend/meta/Frontend/form1/logos/activo.png" height="26" width="26" style="margin-right: 30px;">Inactivos: {{cant_inactivos}}</p>
-                                <p>{{inactivos}}</p>
-                                <hr>
-                                <p><img src="C:/Programas/python/backend/meta/Frontend/form1/logos/perdida.png" height="26" width="26" style="margin-right: 30px;">Perdida Total: {{cant_perdida_total}}</p>
-                                <p>{{perdida_total}}</p>
-                                <hr>
-                                <p><img src="C:/Programas/python/backend/meta/Frontend/form1/logos/retirado.png" height="26" width="26" style="margin-right: 30px;">Retirado de la Empresa: {{cant_retirado_empresa}}</p>
-                                <p>{{retirado_empresa}}</p>
-                                <hr>
-                                <p><img src="C:/Programas/python/backend/meta/Frontend/form1/logos/sincalificar.png" height="26" width="26" style="margin-right: 30px;">Sin Calificar: {{cant_sin_calificar}}</p>
-                                <p>{{sin_calificar}}</p>
-                                <hr>
-                                <p><img src="C:/Programas/python/backend/meta/Frontend/form1/logos/vendido.png" height="26" width="26" style="margin-right: 30px;">Vendidos: {{cant_vendidos}}</p>
-                                <p>{{vendidos}}</p>
-                                <hr>
-                                <p><img src="C:/Programas/python/backend/meta/Frontend/form1/logos/paraventa.png" height="26" width="26" style="margin-right: 30px;">Para la Venta: {{cant_para_venta}}</p>
-                                <p>{{para_venta}}</p>
-                                <hr>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table> -->
 
                 <table>
                     <thead>
