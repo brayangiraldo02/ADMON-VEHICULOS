@@ -25,7 +25,7 @@ export class StatevehiclefleetComponent implements OnInit {
   externalLinks: { [key: string]: { [key: string]: string } } = {
     'summary': {
       'general': `${environment.url}/estado-vehiculos-resumen`,
-      'company': `${environment.url}/estado-vehiculos-resumen-empresa2/`
+      'company': `${environment.url}/estado-vehiculos-resumen-empresa/`
     },
     'detail': {
       'general': 'http://example.com/detail-general',
