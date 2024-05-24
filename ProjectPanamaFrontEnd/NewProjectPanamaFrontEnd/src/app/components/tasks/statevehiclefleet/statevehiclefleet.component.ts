@@ -28,8 +28,8 @@ export class StatevehiclefleetComponent implements OnInit {
       'company': `${environment.url}/estado-vehiculos-resumen-empresa/`
     },
     'detail': {
-      'general': 'http://example.com/detail-general',
-      'company': 'http://example.com/detail-company/'
+      'general': `${environment.url}/conteo-vehiculos-estados-numeros`,
+      'company': `${environment.url}/conteo-propietarios-vehiculos-estados-numeros/`
     },
     'company-units': {
       'general': 'http://example.com/company-units-general',
