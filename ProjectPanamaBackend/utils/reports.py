@@ -13,6 +13,8 @@ def fun_conteo_vehiculos_estados(data):
     # Devolver solo el conteo de placas
     return {"conteo_placas": conteo_placas}
 
+#------------------------------------------------------------
+
 def obtener_conteo_por_propietario(data):
     if not data:
         return {"mensaje": "No hay datos"}
@@ -37,6 +39,25 @@ def obtener_conteo_por_propietario(data):
 
     return {"conteo_por_empresa": conteo_total_por_empresa}
 
+#------------------------------------------------------------
+
+def obtener_numeros_por_estado(data):
+    if not data:
+        return {"mensaje": "No hay datos"}
+
+    conteo_por_estado = {}
+    for vehiculo in data:
+        estado = vehiculo.get("estado_nombre")
+        numero_vehiculo = vehiculo.get("vehiculo_numero")
+        if estado in conteo_por_estado:
+            conteo_por_estado[estado].append(numero_vehiculo)
+        else:
+            conteo_por_estado[estado] = [numero_vehiculo]
+
+    return {"numeros_por_estado": conteo_por_estado}
+
+#------------------------------------------------------------
+
 def obtener_numeros_por_propietario(data):
     if not data:
         return {"mensaje": "No hay datos"}
@@ -56,3 +77,5 @@ def obtener_numeros_por_propietario(data):
             conteo_por_empresa[codigo_empresa][estado] = [numero_vehiculo]
 
     return {"conteo_por_empresa": conteo_por_empresa}
+
+#------------------------------------------------------------
