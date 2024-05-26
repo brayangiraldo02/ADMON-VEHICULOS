@@ -13,7 +13,7 @@ ALGORITHM = "HS256"
 def encode_jwt(user_data: Dict) -> str:
   """ Codifica un token JWT basado en los datos del usuario """
   payload = {
-    "exp": datetime.datetime.utcnow() + datetime.timedelta(days=0, minutes=5),  # Token expira en 12 hora
+    "exp": datetime.datetime.utcnow() + datetime.timedelta(days=0, minutes=600),  # Token expira en 12 hora
     "iat": datetime.datetime.utcnow(),
     "user_data": user_data
   }

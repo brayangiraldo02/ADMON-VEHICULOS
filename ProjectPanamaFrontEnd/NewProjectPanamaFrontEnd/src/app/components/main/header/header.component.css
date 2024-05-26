@@ -3,7 +3,7 @@ header {
   justify-content: space-between; /* Alinea los elementos a los extremos */
   align-items: center; /* Centra verticalmente los elementos */
   /* arriba | derecha | abajo | izquierda */
-  padding: 2vh 5vh 2vh 2vh;
+  padding: 2vh 2vh 2vh 2vh;
   background-color: white; /* Color de fondo del header */
   color: black; /* Color del texto */
 }
@@ -19,18 +19,15 @@ h1 {
   align-items: center; /* Centra verticalmente los elementos */
   justify-content: flex-start;
   padding-left: 1%;
+  padding-right: 6vh;
 }
 
 .info-company .logo {
-  width: 50%; /* Establece el ancho del contenedor del logo */
-  /* max-width: 100px; */
-  max-width: 50%;
   height: auto; /* Permite que la altura se ajuste automáticamente */
-  margin-right: 15px; /* Añade un margen entre el logo y el título */
 }
 
 .info-company .logo img {
-  width: 100%; /* Ajusta el tamaño de la imagen al contenedor */
+  width: 20vh; /* Ajusta el tamaño de la imagen al contenedor */
   height: auto; /* Permite que la altura se ajuste automáticamente */
   cursor: pointer;
 }
@@ -45,6 +42,7 @@ nav span {
 
 nav button {
   margin-left: 15px; /* Agrega un margen entre los enlaces */
+  margin-right: 15px; /* Agrega un margen entre los enlaces */
   color: black; /* Color del texto */
   text-decoration: none; /* Quita la decoración del texto */
   background-color: white; /* Color de fondo del botón */
@@ -82,4 +80,19 @@ nav button:hover p {
   display: block;
   opacity: 1; /* Muestra el texto */
   transform: translateX(-50%) translateY(10px); /* Mueve el texto hacia abajo */
+}
+
+.user-info {
+  display: flex;
+}
+
+.user-info p {
+  font-size: 2.5vh;
+  padding-right: 1vh;
+}
+
+.user-info img {
+  width: 8vh;
+  height: 8vh;
+  border-radius: 50%;
 }
