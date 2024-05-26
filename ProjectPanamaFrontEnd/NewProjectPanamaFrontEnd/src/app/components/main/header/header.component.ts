@@ -12,6 +12,7 @@ import { JwtService } from 'src/app/services/jwt.service';
 export class HeaderComponent implements OnInit {
   permisos: any;
   isHome: boolean = true;
+  imgUser: string = "../../../../assets/img/taxi.jpg";
 
   constructor(
     private apiService: ApiService,
@@ -44,6 +45,7 @@ export class HeaderComponent implements OnInit {
 
   obtenerUsuario() {
     this.permisos = this.jwtService.decodeToken();
+    // this.imgUser = this.permisos.user_data.foto; // Cuando se tengan las rutas de las imágenes
     this.convertirValoresBooleanos(this.permisos.user_data);
     this.subscribirEventosDeRuta();
     console.log(this.permisos.user_data);
