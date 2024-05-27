@@ -13,6 +13,9 @@ import { HttpClientModule } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { FooterComponent } from './components/main/footer/footer.component';
 import { StatevehiclefleetComponent } from './components/tasks/statevehiclefleet/statevehiclefleet.component';
+import { PdfViewerComponent } from './components/others/pdf-viewer/pdf-viewer.component';
+import { VehiclesComponent } from './components/tasks/vehicles/vehicles.component';
+import { FeespaidComponent } from './components/tasks/feespaid/feespaid.component';
 
 @NgModule({
   declarations: [
@@ -22,7 +25,10 @@ import { StatevehiclefleetComponent } from './components/tasks/statevehiclefleet
     PruebaComponent,
     LoginComponent,
     FooterComponent,
-    StatevehiclefleetComponent
+    StatevehiclefleetComponent,
+    PdfViewerComponent,
+    VehiclesComponent,
+    FeespaidComponent
   ],
   imports: [
     BrowserModule,
