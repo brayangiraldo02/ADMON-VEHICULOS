@@ -1,6 +1,7 @@
 .main-container{
   background-color: #002B65;
   padding: 20px;
+  padding-bottom: 0;
   color: white;
   display: flex;
   justify-content: space-between;
@@ -25,6 +26,12 @@
 
 .alfa-logo h2 {
   justify-content: center;
+}
+
+.copyright-container {
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
 }
 
 .contact-container{
