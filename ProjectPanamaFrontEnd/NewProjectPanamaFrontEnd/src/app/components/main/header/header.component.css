@@ -89,7 +89,7 @@ nav button:hover p {
 .user-info p {
   font-size: 2.5vh;
   padding-right: 1vh;
-  cursor: none;
+  cursor: default;
 }
 
 .user-info p:hover {
