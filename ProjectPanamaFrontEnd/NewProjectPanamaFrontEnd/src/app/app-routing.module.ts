@@ -6,12 +6,14 @@ import { PruebaComponent } from './components/prueba/prueba.component';
 import { AuthGuard } from './guards/auth.guard';
 import { NoAuthGuard } from './guards/no-auth.guard';
 import { StatevehiclefleetComponent } from './components/tasks/statevehiclefleet/statevehiclefleet.component';
+import { PdfViewerComponent } from './components/others/pdf-viewer/pdf-viewer.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
   { path: 'login', component: LoginComponent, canActivate: [NoAuthGuard]},
   { path: 'home', component: HomeComponent, canActivate: [AuthGuard]},
   { path: 'statevehiclefleet', component: StatevehiclefleetComponent, canActivate: [AuthGuard]},
+  { path: 'pdf', component: PdfViewerComponent, canActivate: [AuthGuard]}
 ];
 
 @NgModule({

@@ -24,12 +24,12 @@ export class StatevehiclefleetComponent implements OnInit {
 
   externalLinks: { [key: string]: { [key: string]: string } } = {
     'summary': {
-      'general': `${environment.url}/estado-vehiculos-resumen`,
-      'company': `${environment.url}/estado-vehiculos-resumen-empresa/`
+      'general': `estado-vehiculos-resumen`,
+      'company': `estado-vehiculos-resumen-empresa/`
     },
     'detail': {
-      'general': `${environment.url}/conteo-vehiculos-estados-numeros`,
-      'company': `${environment.url}/conteo-propietarios-vehiculos-estados-numeros/`
+      'general': `conteo-vehiculos-estados-numeros`,
+      'company': `conteo-propietarios-vehiculos-estados-numeros/`
     },
     'company-units': {
       'general': 'http://example.com/company-units-general',
@@ -77,10 +77,15 @@ export class StatevehiclefleetComponent implements OnInit {
     if (type === 'company' && this.selectedCompany) {
       url += this.selectedCompany;
     }
-    if (url) {
-      window.open(url, '_blank');
+    if (option === 'company-units') {
+      window.alert("Informe no disponible.");
     } else {
-      console.error('URL no encontrada para la opción seleccionada.');
+      if (url) {
+        const viewerUrl = this.router.serializeUrl(this.router.createUrlTree(['/pdf', { url }]));
+        window.open(viewerUrl, '_blank');
+      } else {
+        console.error('URL no encontrada para la opción seleccionada.');
+      }
     }
   }
 }

@@ -1,0 +1,5 @@
+<!-- <app-header></app-header> -->
+<div class="pdf" >
+  <h1 *ngIf="!pdfUrl">Su pdf se mostrará en un momento...</h1>
+  <iframe *ngIf="pdfUrl" [src]="pdfUrl" class="pdf-viewer"></iframe>
+</div>
