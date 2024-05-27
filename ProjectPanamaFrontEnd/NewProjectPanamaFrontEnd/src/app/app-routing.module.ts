@@ -8,6 +8,7 @@ import { NoAuthGuard } from './guards/no-auth.guard';
 import { StatevehiclefleetComponent } from './components/tasks/statevehiclefleet/statevehiclefleet.component';
 import { PdfViewerComponent } from './components/others/pdf-viewer/pdf-viewer.component';
 import { VehiclesComponent } from './components/tasks/vehicles/vehicles.component';
+import { FeespaidComponent } from './components/tasks/feespaid/feespaid.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -15,6 +16,7 @@ const routes: Routes = [
   { path: 'home', component: HomeComponent, canActivate: [AuthGuard]},
   { path: 'statevehiclefleet', component: StatevehiclefleetComponent, canActivate: [AuthGuard]},
   { path: 'vehicles', component: VehiclesComponent, canActivate: [AuthGuard]},
+  { path: 'feespaid', component: FeespaidComponent, canActivate: [AuthGuard]},
   { path: 'pdf', component: PdfViewerComponent, canActivate: [AuthGuard]}
 ];
 

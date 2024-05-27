@@ -15,6 +15,7 @@ import { FooterComponent } from './components/main/footer/footer.component';
 import { StatevehiclefleetComponent } from './components/tasks/statevehiclefleet/statevehiclefleet.component';
 import { PdfViewerComponent } from './components/others/pdf-viewer/pdf-viewer.component';
 import { VehiclesComponent } from './components/tasks/vehicles/vehicles.component';
+import { FeespaidComponent } from './components/tasks/feespaid/feespaid.component';
 
 @NgModule({
   declarations: [
@@ -26,7 +27,8 @@ import { VehiclesComponent } from './components/tasks/vehicles/vehicles.componen
     FooterComponent,
     StatevehiclefleetComponent,
     PdfViewerComponent,
-    VehiclesComponent
+    VehiclesComponent,
+    FeespaidComponent
   ],
   imports: [
     BrowserModule,
