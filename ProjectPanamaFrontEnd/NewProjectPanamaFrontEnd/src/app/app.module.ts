@@ -14,6 +14,7 @@ import { FormsModule } from '@angular/forms';
 import { FooterComponent } from './components/main/footer/footer.component';
 import { StatevehiclefleetComponent } from './components/tasks/statevehiclefleet/statevehiclefleet.component';
 import { PdfViewerComponent } from './components/others/pdf-viewer/pdf-viewer.component';
+import { VehiclesComponent } from './components/tasks/vehicles/vehicles.component';
 
 @NgModule({
   declarations: [
@@ -24,7 +25,8 @@ import { PdfViewerComponent } from './components/others/pdf-viewer/pdf-viewer.co
     LoginComponent,
     FooterComponent,
     StatevehiclefleetComponent,
-    PdfViewerComponent
+    PdfViewerComponent,
+    VehiclesComponent
   ],
   imports: [
     BrowserModule,
