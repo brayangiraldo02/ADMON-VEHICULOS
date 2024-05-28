@@ -44,7 +44,7 @@ export class HomeComponent implements OnInit {
 
   obtenerUsuario() {
     this.permisos = this.jwtService.decodeToken();
-    console.log(this.permisos.user_data);
+    // console.log(this.permisos.user_data);
 
     this.convertirValoresBooleanos(this.permisos.user_data);
 
