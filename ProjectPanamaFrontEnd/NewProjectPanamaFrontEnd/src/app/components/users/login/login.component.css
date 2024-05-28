@@ -55,6 +55,14 @@ input[type="password"] {
   border-radius: 5px;
 }
 
+.validators p {
+  color: #FE0108;
+  text-decoration: underline;
+  cursor: default;
+  margin: 0;
+  font-size:small;
+}
+
 button {
   width: 100%; /* Ajustamos el ancho restando el padding */
   padding: 10px;
