@@ -379,3 +379,99 @@ async def get_vehiculos_detalles():
         return JSONResponse(content=jsonable_encoder(vehiculos_detalles_list))
     finally:
         db.close()
+
+#-----------------------------------------------------------------------------------------
+
+@reports_router.get('/conductores-detalles-propietario')
+async def get_vehiculos_detalles():
+    db = session()
+    try:
+        vehiculos_detalles = db.query(
+            Propietarios.CODIGO.label('propietario_codigo'),
+            Propietarios.ABREVIADO.label('propietario_abreviado'),
+            Conductores.CODIGO.label('conductor_codigo'),
+            Conductores.NOMBRE.label('conductor_nombre'),
+            Conductores.FEC_INGRES.label('conductor_fecha_ingreso'),
+            Vehiculos.NUMERO.label('vehiculo_numero'),
+            Conductores.UND_PRE.label('conductor_und_pre'),
+            Estados.NOMBRE.label('estado_nombre'),
+            Conductores.CUO_DIARIA.label('conductor_vlr_cuo_diaria'),
+            Conductores.NROENTREGA.label('conductor_nro_cuotas'),
+            Conductores.NROENTPAGO.label('conductor_nro_cuotas_pagas'),
+            Conductores.NROENTSDO.label('conductor_nro_ent_sdo'),   
+        )   .join(Vehiculos, Estados.CODIGO == Vehiculos.ESTADO) \
+            .join(Conductores, Vehiculos.CONDUCTOR == Conductores.CODIGO) \
+            .join(Propietarios, Vehiculos.PROPI_IDEN == Propietarios.CODIGO) \
+            .all()            
+        
+        # Convertir los resultados en un formato JSON
+        vehiculos_detalles_list = []
+        for resultado in vehiculos_detalles:
+            vehiculo_detalle = {
+                'propietario_codigo': resultado.propietario_codigo,
+                'propietario_abreviado': resultado.propietario_abreviado,
+                'conductor_codigo': resultado.conductor_codigo,
+                'conductor_nombre': resultado.conductor_nombre,
+                'conductor_fecha_ingreso': resultado.conductor_fecha_ingreso,
+                'vehiculo_numero': resultado.vehiculo_numero,
+                'conductor_und_pre': resultado.conductor_und_pre,
+                'estado_nombre': resultado.estado_nombre,
+                'conductor_vlr_cuo_diaria': resultado.conductor_vlr_cuo_diaria,
+                'conductor_nro_cuotas': resultado.conductor_nro_cuotas,
+                'conductor_nro_cuotas_pagas': resultado.conductor_nro_cuotas_pagas,
+                'conductor_nro_ent_sdo': resultado.conductor_nro_ent_sdo
+            }
+            vehiculos_detalles_list.append(vehiculo_detalle)
+    
+        data = obtener_conductores_por_propietario(vehiculos_detalles_list)
+        data = data.get("26")
+
+        # Datos de la fecha y hora actual
+        fecha = datetime.now().strftime("%Y-%m-%d")
+        hora_actual = datetime.now().strftime("%H:%M:%S")
+        consecutivo = -1
+        data_view = {"fecha": fecha, "hora": hora_actual, "codigo_empresa": data.get("propietario_codigo", 0), "nombre_empresa": data.get("propietario_abreviado", 0)}
+
+        for vehiculo, info in data.items():
+            if isinstance(info, dict):
+                data_view[vehiculo] = {
+                    "consecutivo": consecutivo,
+                    "codigo_conductor": info.get("conductor_codigo", 0),
+                    "nombre": info.get("conductor_nombre", 0),
+                    "fecha_ingreso": info.get("conductor_fecha_ingreso", 0),
+                    "numero": info.get("vehiculo_numero", 0),
+                    "prestado": info.get("conductor_und_pre", 0),
+                    "estado": info.get("estado_nombre", 0),
+                    "valor": info.get("conductor_vlr_cuo_diaria", 0),
+                    "num_cuotas": info.get("conductor_nro_cuotas", 0),
+                    "num_cuotas_pagas": info.get("conductor_nro_cuotas_pagas", 0),
+                    "num_cuotas_pendientes": info.get("conductor_nro_ent_sdo", 0)
+                }
+            consecutivo += 1
+        else:
+            print(f"¡Error! La información para el vehículo {vehiculo} no es un diccionario.")
+
+        headers = {
+            "Content-Disposition": "inline; informe-cuotas-pagas.pdf"
+        }  
+
+        template_loader = jinja2.FileSystemLoader(searchpath="./templates")
+        template_env = jinja2.Environment(loader=template_loader)
+        template_file = "InformeCuotas.html"
+        template = template_env.get_template(template_file)
+        output_text = template.render(data_view=data_view)
+
+        html_path = f'./templates/output3.html'
+        html_file = open(html_path, 'w')
+        html_file.write(output_text)
+        html_file.close()
+        pdf_path = 'informe-cuotas-pagas.pdf'
+        html2pdf(html_path, pdf_path)
+
+        response = FileResponse(pdf_path, media_type='application/pdf', filename='templates/informe-cuotas-pagas0.pdf', headers=headers)
+        
+        return response
+
+        #return JSONResponse(content=jsonable_encoder(data))
+    finally:
+        db.close()

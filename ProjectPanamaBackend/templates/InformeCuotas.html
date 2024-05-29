@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Informe Cuotas Pagas</title>
+    <link rel="stylesheet" href="invoice copy.css"> 
+    <style type="text/css">
+        .container {
+            display: flex; 
+            align-items: center;
+        }
+        #logo {
+            margin-right: 5px; /* Espacio entre la imagen y el texto */
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            text-align: center;
+        }
+        tr:first-child th, tr:first-child td {
+            background-color: #ccc;
+            border: 1px solid #000000;
+            padding: 10px;
+            text-align: center;
+        }
+        td{
+            white-space: nowrap;
+        }
+        tr {
+            padding: 15px;
+            line-height: 1.8;
+            margin-bottom: 20px;
+        }
+        .box-propietario {
+            text-align: left;
+            margin-top: 20px;
+            border: 2px solid #000;
+            border-radius: 10px; /* Bordes redondeados */
+            padding: 10px; /* Espaciado interno */
+        }
+        dl {
+            position: absolute;
+            left: 0;
+            text-align:left;
+            top: 0;
+        }
+         dr {
+            position: absolute;
+            right: 0;
+            text-align: right;
+            top: 0;
+        }
+        dt, dd {
+            display: inline;
+            margin: 0;
+        }
+        dt {
+            color: #a9a;
+        }
+        dt::before {
+            content: '';
+            display: block;
+        }
+        dt::after {
+            content: ':';
+        }
+        html, body {
+            scroll-behavior: smooth;
+        }
+        .title {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .centered-title {
+            font-size: 30px; /* Tamaño de fuente según tus preferencias */
+            text-align: center; /* Centra el título horizontalmente */
+            margin-bottom: 0px; 
+        }
+        .box {
+            flex: 1; /* Distribuye el espacio disponible entre las cajas */
+            border: 1px solid #ccc;
+            padding: 10px;
+        }
+        p {
+            line-height: 1; 
+            font-size: 12px;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+        footer {
+        bottom: 0;
+        width: 100%;
+        text-align: center;
+        font-family: Arial, sans-serif;
+        }
+        footer p {
+        font-size: 12px; 
+        }
+    </style>
+</head>
+<body>
+    <dl>
+        <div class="container">
+            <img src="C:/Programas/python/backend/meta/Frontend/form1/logos/logo.png" id="logo" height="70" width="180">
+        </div>
+    </dl>
+
+    <br>
+    <br>
+    <br>
+    <br>
+    <h1 class="centered-title">Informe Cuotas Pagas de Conductores</h1>
+
+    <dr id="informations">
+        <div>
+            <h4 style="margin-bottom: -20px;">WORLD TAXI ADMINISTRACIÓN, S.A.</h1>  
+            <h5 style="margin-bottom: 0px;">RUC: 2321389-1-793035</h2>
+        </div>
+        <div class="box">
+            <dt>Fecha</dt>
+            <dd>{{ data_view['fecha'] }}</dd>
+            <dt>Hora</dt>
+            <dd>{{ data_view['hora'] }}</dd>
+        </div>        
+    </dr>
+    <hr>
+
+    <table>
+        <tr>
+            <th>N°</th>
+            <th>Código</th>
+            <th>Nombre Conductor</th>
+            <th>Ingreso</th>
+            <th>Unidad</th>
+            <th>Presta</th>
+            <th>Estado</th>
+            <th>Vlr</th>
+            <th>N°Ctas</th>
+            <th>Pagas</th>
+            <th>Pendiente</th>
+        </tr>
+        <tr>
+            <th colspan="7">
+                <div class="box-propietario">
+                    Propietario: {{ data_view['codigo_empresa'] }} {{ data_view['nombre_empresa'] }}
+                </div>
+            </th>
+        </tr>      
+        {% for vehiculo, info in data_view.items() %}
+            <tr>
+                <td>{{ info['consecutivo'] }}</td>
+                <td>{{ info['codigo_conductor'] }}</td>
+                <td>{{ info['nombre'] }}</td>
+                <td>{{ info['fecha_ingreso'] }}</td>
+                <td>{{ info['numero'] }}</td>
+                <td>{{ info['prestado'] }}</td>
+                <td>{{ info['estado'] }}</td>
+                <td>{{ info['valor'] }}</td>
+                <td>{{ info['num_cuotas'] }}</td>
+                <td>{{ info['num_cuotas_pagas'] }}</td>
+                <td>{{ info['num_cuotas_pendientes'] }}</td>
+            </tr>
+        {% endfor %}
+        <tr>
+            <th colspan="3">
+                <div class="box-propietario">
+                    Total Vehiculos: {{ total }}
+                </div>
+            </th>
+        </tr>
+    </table>
+    
+      <footer>
+        <hr>
+        <p style="float: left; margin-left: 50px;">Sistemas Alfa</p>
+        <p style="float: right; margin-right: 50px;">Usuario: {{usuario}}</p>
+    </footer>   
+</body>
+</html>
