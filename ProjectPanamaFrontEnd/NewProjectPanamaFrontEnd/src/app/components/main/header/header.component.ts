@@ -12,6 +12,7 @@ import { JwtService } from 'src/app/services/jwt.service';
 export class HeaderComponent implements OnInit {
   permisos: any;
   isHome: boolean = true;
+  imgUser: string = "../../../../assets/img/taxi.jpg";
 
   constructor(
     private apiService: ApiService,
@@ -24,29 +25,31 @@ export class HeaderComponent implements OnInit {
     this.obtenerUsuario();
   }
 
-  private subscribirEventosDeRuta() {
-    this.router.events.subscribe(event => {
-      if (event instanceof NavigationEnd) {
-        this.isHome = this.router.url === '/home';
-        if (this.router.url === '/home') {
-          this.isHome = true;
-        }
-        else {
-          this.isHome = false;
-        }
-        console.log('NavigationEnd event detected');
-        console.log(`URL changed: ${this.router.url}`);
-        console.log(`isHome: ${this.isHome}`);
-        this.cdr.detectChanges(); 
-      }
-    });
-  }
+  // FUTURA FUNCIÓN, QUE CUANDO ESTÉ EN UNA RUTA DIFERENTE DEL HOME, NO MUESTRE LAS TAREAS.
+  // private subscribirEventosDeRuta() {
+  //   this.router.events.subscribe(event => {
+  //     if (event instanceof NavigationEnd) {
+  //       this.isHome = this.router.url === '/home';
+  //       if (this.router.url === '/home') {
+  //         this.isHome = true;
+  //       }
+  //       else {
+  //         this.isHome = false;
+  //       }
+  //       console.log('NavigationEnd event detected');
+  //       console.log(`URL changed: ${this.router.url}`);
+  //       console.log(`isHome: ${this.isHome}`);
+  //       this.cdr.detectChanges(); 
+  //     }
+  //   });
+  // }
 
   obtenerUsuario() {
     this.permisos = this.jwtService.decodeToken();
+    // this.imgUser = this.permisos.user_data.foto; // Cuando se tengan las rutas de las imágenes
     this.convertirValoresBooleanos(this.permisos.user_data);
-    this.subscribirEventosDeRuta();
-    console.log(this.permisos.user_data);
+    // this.subscribirEventosDeRuta();
+    // console.log(this.permisos.user_data);
   }
 
   logout(): void {

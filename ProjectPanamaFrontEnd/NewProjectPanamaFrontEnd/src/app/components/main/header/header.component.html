@@ -1,6 +1,6 @@
 <header>
   <div class="info-company">
-    <div class="logo">
+    <div class="logo" routerLink="/home">
       <img src="https://uploads-ssl.webflow.com/6291afaf5676f4664ddf0566/6291afaf5676f4542adf05db_logo.png" alt="Logo de AlfaSoft">
     </div>
     <!-- <h1>Total Taxi</h1> -->
@@ -12,7 +12,7 @@
       </span>
       <p>Inicio</p>
     </button>
-    <button *ngIf="this.isHome && this.permisos.user_data.tarea01">
+    <button *ngIf="this.isHome && this.permisos.user_data.tarea01" routerLink="/vehicles">
       <span class="material-symbols-outlined">
         local_taxi
       </span>
@@ -30,9 +30,9 @@
       </span>
       <p>Estado de flota</p>
     </button>
-    <button *ngIf="this.isHome && this.permisos.user_data.tarea04">
+    <button *ngIf="this.isHome && this.permisos.user_data.tarea04" routerLink="/feespaid">
       <span class="material-symbols-outlined">
-        garage
+        payments
       </span>
       <p>Informe de cuotas pagas</p>
     </button>
@@ -43,4 +43,8 @@
       <p>Cerrar sesión</p>
     </button>
   </nav>
+  <div class="user-info">
+    <p>{{this.permisos.user_data.nombre}}</p>
+    <img [src]="imgUser" alt="Foto de perfil">
+  </div>
 </header>

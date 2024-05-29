@@ -10,9 +10,12 @@ import { HomeComponent } from './components/main/home/home.component';
 import { PruebaComponent } from './components/prueba/prueba.component';
 import { LoginComponent } from './components/users/login/login.component';
 import { HttpClientModule } from '@angular/common/http';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { FooterComponent } from './components/main/footer/footer.component';
 import { StatevehiclefleetComponent } from './components/tasks/statevehiclefleet/statevehiclefleet.component';
+import { PdfViewerComponent } from './components/others/pdf-viewer/pdf-viewer.component';
+import { VehiclesComponent } from './components/tasks/vehicles/vehicles.component';
+import { FeespaidComponent } from './components/tasks/feespaid/feespaid.component';
 
 @NgModule({
   declarations: [
@@ -22,7 +25,10 @@ import { StatevehiclefleetComponent } from './components/tasks/statevehiclefleet
     PruebaComponent,
     LoginComponent,
     FooterComponent,
-    StatevehiclefleetComponent
+    StatevehiclefleetComponent,
+    PdfViewerComponent,
+    VehiclesComponent,
+    FeespaidComponent
   ],
   imports: [
     BrowserModule,
@@ -31,7 +37,8 @@ import { StatevehiclefleetComponent } from './components/tasks/statevehiclefleet
     MatCardModule,
     MatButtonModule,
     HttpClientModule,
-    FormsModule
+    FormsModule,
+    ReactiveFormsModule
   ],
   providers: [],
   bootstrap: [AppComponent]

@@ -1,0 +1,10 @@
+.message {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 86vh;
+}
+
+.message h1 {
+  margin: 0;
+}

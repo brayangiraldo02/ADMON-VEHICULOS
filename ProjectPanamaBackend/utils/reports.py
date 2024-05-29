@@ -54,7 +54,12 @@ def obtener_numeros_por_estado(data):
         else:
             conteo_por_estado[estado] = [numero_vehiculo]
 
+    # Ordenar las listas de números de vehículos para cada estado
+    for estado in conteo_por_estado:
+        conteo_por_estado[estado].sort()
+
     return {"numeros_por_estado": conteo_por_estado}
+
 
 #------------------------------------------------------------
 
@@ -76,7 +81,7 @@ def obtener_numeros_por_propietario(data):
         else:
             conteo_por_empresa[codigo_empresa][estado] = [numero_vehiculo]
 
-    return {"conteo_por_empresa": conteo_por_empresa}
+    return {"numeros_por_propietario": conteo_por_empresa}
 
 #------------------------------------------------------------
 
