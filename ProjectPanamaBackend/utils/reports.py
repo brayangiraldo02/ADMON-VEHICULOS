@@ -84,3 +84,15 @@ def obtener_numeros_por_propietario(data):
     return {"numeros_por_propietario": conteo_por_empresa}
 
 #------------------------------------------------------------
+
+def obtener_conductores_por_propietario(data):
+    cuotas_por_propietario = {}
+    for vehiculo in data:
+        codigo_propietario = vehiculo["propietario_codigo"]
+        if codigo_propietario not in cuotas_por_propietario:
+            cuotas_por_propietario[codigo_propietario] = {
+                "propietario_codigo": vehiculo["propietario_codigo"],
+                "propietario_abreviado": vehiculo["propietario_abreviado"]
+            }
+        cuotas_por_propietario[codigo_propietario][vehiculo["vehiculo_numero"]] = vehiculo
+    return cuotas_por_propietario
