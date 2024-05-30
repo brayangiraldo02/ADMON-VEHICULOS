@@ -2,5 +2,7 @@
 __pycache__/
 .env
 output.html
+output2.html
+output3.html
 estado-vehiculos-resumen-empresa.pdf
 estado-vehiculos-resumen.pdf
