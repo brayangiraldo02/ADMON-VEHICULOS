@@ -8,8 +8,6 @@ dist/
 tmp/
 app/**/*.js
 app/**/*.js.map
-environment.production.ts
-environment.development.ts
 
 # dependencies
 node_modules/
