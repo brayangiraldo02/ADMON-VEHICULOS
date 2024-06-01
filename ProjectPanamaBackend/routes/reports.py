@@ -507,32 +507,50 @@ async def get_vehiculos_detalles():
             vehiculos_detalles_list.append(vehiculo_detalle)
     
         data = obtener_conductores_por_propietario(vehiculos_detalles_list)
-        data = data.get("26")
+
+        claves_deseadas = ["26", "36"]
+
+        # Crear un nuevo diccionario con los datos de las claves deseadas
+        datos = {clave: data.get(clave, {}) for clave in claves_deseadas}
 
         # Datos de la fecha y hora actual
         fecha = datetime.now().strftime("%Y-%m-%d")
         hora_actual = datetime.now().strftime("%H:%M:%S")
-        consecutivo = -1
-        data_view = {"fecha": fecha, "hora": hora_actual, "codigo_empresa": data.get("propietario_codigo", 0), "nombre_empresa": data.get("propietario_abreviado", 0)}
 
-        for vehiculo, info in data.items():
+        # Inicializar el diccionario data_view con información común
+        data_view = {
+            "fecha": fecha,
+            "hora": hora_actual
+        }
+
+        # Iterar sobre las empresas y vehículos
+        consecutivo = 1
+        for empresa, info in datos.items():
             if isinstance(info, dict):
-                data_view[vehiculo] = {
-                    "consecutivo": consecutivo,
-                    "codigo_conductor": info.get("conductor_codigo", 0),
-                    "nombre": info.get("conductor_nombre", 0),
-                    "fecha_ingreso": info.get("conductor_fecha_ingreso", 0),
-                    "numero": info.get("vehiculo_numero", 0),
-                    "prestado": info.get("conductor_und_pre", 0),
-                    "estado": info.get("estado_nombre", 0),
-                    "valor": info.get("conductor_vlr_cuo_diaria", 0),
-                    "num_cuotas": info.get("conductor_nro_cuotas", 0),
-                    "num_cuotas_pagas": info.get("conductor_nro_cuotas_pagas", 0),
-                    "num_cuotas_pendientes": info.get("conductor_nro_ent_sdo", 0)
+                data_view[empresa] = {
+                    "codigo_empresa": info.get("propietario_codigo", 0),
+                    "nombre_empresa": info.get("propietario_abreviado", 0),
                 }
-            consecutivo += 1
-        else:
-            print(f"¡Error! La información para el vehículo {vehiculo} no es un diccionario.")
+                for vehiculo, vehiculo_info in info.items():
+                    if isinstance(vehiculo_info, dict):
+                        data_view[vehiculo] = {
+                            "consecutivo": consecutivo,
+                            "codigo_empresa": info.get("propietario_codigo", 0),
+                            "codigo_conductor": vehiculo_info.get("conductor_codigo", 0),
+                            "nombre": vehiculo_info.get("conductor_nombre", 0),
+                            "fecha_ingreso": vehiculo_info.get("conductor_fecha_ingreso", 0),
+                            "numero": vehiculo_info.get("vehiculo_numero", 0),
+                            "prestado": vehiculo_info.get("conductor_und_pre", 0),
+                            "estado": vehiculo_info.get("estado_nombre", 0),
+                            "valor": vehiculo_info.get("conductor_vlr_cuo_diaria", 0),
+                            "num_cuotas": vehiculo_info.get("conductor_nro_cuotas", 0),
+                            "num_cuotas_pagas": vehiculo_info.get("conductor_nro_cuotas_pagas", 0),
+                            "num_cuotas_pendientes": vehiculo_info.get("conductor_nro_ent_sdo", 0),
+                        }
+                        consecutivo += 1
+                    else:
+                        print(f"¡Error! La información para el vehículo {vehiculo} no es un diccionario.")
+
 
         headers = {
             "Content-Disposition": "inline; informe-cuotas-pagas.pdf"
@@ -555,6 +573,6 @@ async def get_vehiculos_detalles():
         
         return response
 
-        #return JSONResponse(content=jsonable_encoder(data))
+        #return JSONResponse(content=jsonable_encoder(datos))
     finally:
         db.close()

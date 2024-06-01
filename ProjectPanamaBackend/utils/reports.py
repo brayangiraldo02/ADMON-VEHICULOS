@@ -94,5 +94,6 @@ def obtener_conductores_por_propietario(data):
                 "propietario_codigo": vehiculo["propietario_codigo"],
                 "propietario_abreviado": vehiculo["propietario_abreviado"]
             }
-        cuotas_por_propietario[codigo_propietario][vehiculo["vehiculo_numero"]] = vehiculo
+        if vehiculo["conductor_codigo"]:
+            cuotas_por_propietario[codigo_propietario][vehiculo["vehiculo_numero"]] = vehiculo
     return cuotas_por_propietario
