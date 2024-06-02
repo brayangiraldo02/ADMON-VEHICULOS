@@ -129,27 +129,29 @@
             <th>Vlr</th>
             <th>N°Ctas</th>
             <th>Pagas</th>
-            <th>Pendiente</th>
+            <th>Pend</th>
         </tr>
         {% for empresa, info in data_view.items() %}
         {% if info['codigo_empresa'] == empresa %}
+            {% if info['empty'] == '0' %}
             <tr>
                 <th colspan="7">
                     <div class="box-propietario">
                         Propietario: {{ info['codigo_empresa'] }} {{ info['nombre_empresa'] }}
                     </div>
                 </th>
-            </tr>      
+            </tr>
+            {% endif %}      
             {% for vehiculo, info in data_view.items() %}
             {% if info['codigo_empresa'] == empresa %}
                 <tr>
                     <td>{{ info['consecutivo'] }}</td>
                     <td>{{ info['codigo_conductor'] }}</td>
-                    <td>{{ info['nombre'] }}</td>
+                    <td style = "text-align: left;">{{ info['nombre'] }}</td>
                     <td>{{ info['fecha_ingreso'] }}</td>
                     <td>{{ info['numero'] }}</td>
                     <td>{{ info['prestado'] }}</td>
-                    <td>{{ info['estado'] }}</td>
+                    <td style = "text-align: left;">{{ info['estado'] }}</td>
                     <td>{{ info['valor'] }}</td>
                     <td>{{ info['num_cuotas'] }}</td>
                     <td>{{ info['num_cuotas_pagas'] }}</td>

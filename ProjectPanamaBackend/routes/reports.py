@@ -477,6 +477,7 @@ async def get_vehiculos_detalles():
             Conductores.FEC_INGRES.label('conductor_fecha_ingreso'),
             Vehiculos.NUMERO.label('vehiculo_numero'),
             Conductores.UND_PRE.label('conductor_und_pre'),
+            Estados.CODIGO.label('estado_codigo'),
             Estados.NOMBRE.label('estado_nombre'),
             Conductores.CUO_DIARIA.label('conductor_vlr_cuo_diaria'),
             Conductores.NROENTREGA.label('conductor_nro_cuotas'),
@@ -498,6 +499,7 @@ async def get_vehiculos_detalles():
                 'conductor_fecha_ingreso': resultado.conductor_fecha_ingreso,
                 'vehiculo_numero': resultado.vehiculo_numero,
                 'conductor_und_pre': resultado.conductor_und_pre,
+                'estado_codigo': resultado.estado_codigo,
                 'estado_nombre': resultado.estado_nombre,
                 'conductor_vlr_cuo_diaria': resultado.conductor_vlr_cuo_diaria,
                 'conductor_nro_cuotas': resultado.conductor_nro_cuotas,
@@ -505,10 +507,12 @@ async def get_vehiculos_detalles():
                 'conductor_nro_ent_sdo': resultado.conductor_nro_ent_sdo
             }
             vehiculos_detalles_list.append(vehiculo_detalle)
-    
-        data = obtener_conductores_por_propietario(vehiculos_detalles_list)
 
-        claves_deseadas = ["26", "36"]
+        codigos_estados_deseados = []
+    
+        data = obtener_conductores_por_propietario(vehiculos_detalles_list, codigos_estados_deseados)
+
+        claves_deseadas = ["1", "13", "17", "26", "36"]
 
         # Crear un nuevo diccionario con los datos de las claves deseadas
         datos = {clave: data.get(clave, {}) for clave in claves_deseadas}
@@ -524,13 +528,15 @@ async def get_vehiculos_detalles():
         }
 
         # Iterar sobre las empresas y vehículos
-        consecutivo = 1
+        total = 0
         for empresa, info in datos.items():
             if isinstance(info, dict):
                 data_view[empresa] = {
                     "codigo_empresa": info.get("propietario_codigo", 0),
                     "nombre_empresa": info.get("propietario_abreviado", 0),
+                    "empty": info.get("empty", 0)
                 }
+                consecutivo = 1
                 for vehiculo, vehiculo_info in info.items():
                     if isinstance(vehiculo_info, dict):
                         data_view[vehiculo] = {
@@ -548,8 +554,11 @@ async def get_vehiculos_detalles():
                             "num_cuotas_pendientes": vehiculo_info.get("conductor_nro_ent_sdo", 0),
                         }
                         consecutivo += 1
+                        total += 1
                     else:
-                        print(f"¡Error! La información para el vehículo {vehiculo} no es un diccionario.")
+                        pass
+        
+        data_view["total"] = total
 
 
         headers = {
