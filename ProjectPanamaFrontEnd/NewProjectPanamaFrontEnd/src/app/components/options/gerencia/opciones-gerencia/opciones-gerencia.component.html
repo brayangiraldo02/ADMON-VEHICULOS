@@ -1,0 +1,11 @@
+<app-header></app-header>
+<div class="container">
+  <h1>Informes de Gerencia</h1>
+  <div class="options-container">
+    <ng-container *ngFor="let option of options">
+      <a class="option" [href]="option.url">
+        <span class="option-text">{{ option.name }}</span>
+      </a>
+    </ng-container>
+  </div>
+</div>
