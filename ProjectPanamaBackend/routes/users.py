@@ -70,6 +70,8 @@ async def login(data: userLogin, response: Response):
         "opcion11": "T",
         "opcion12": "T",
         "opcion13": "T",
+        "opcion14": "T",
+        "opcion15": "T",
         "tarea01": "T",
         "tarea02": "T",
         "tarea03": "T",
