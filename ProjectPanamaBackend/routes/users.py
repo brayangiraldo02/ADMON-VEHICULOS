@@ -76,6 +76,7 @@ async def login(data: userLogin, response: Response):
         "tarea02": "T",
         "tarea03": "T",
         "tarea04": "T",
+        "tarea05": "T",
         "foto": "../../../../assets/img/taxi.jpg"
       }
       token_cookie = encode_jwt(user_data_cookie)
@@ -108,10 +109,13 @@ async def login(data: userLogin, response: Response):
       "opcion11": user.OPCION11,
       "opcion12": user.OPCION12,
       "opcion13": user.OPCION13,
+      "opcion14": user.OPCION14,
+      "opcion15": user.OPCION15,
       "tarea01": user.TAREA01,
       "tarea02": user.TAREA02,
       "tarea03": user.TAREA03,
       "tarea04": user.TAREA04,
+      "tarea05": user.TAREA05,
       "foto": user.FOTO if user.FOTO else "../../../../assets/img/taxi.jpg"
     }
     token_cookie = encode_jwt(user_data_cookie)

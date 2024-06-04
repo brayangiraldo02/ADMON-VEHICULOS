@@ -12,11 +12,11 @@
       </span>
       <p>Inicio</p>
     </button>
-    <button *ngIf="this.isHome && this.permisos.user_data.tarea01" routerLink="/vehicles">
+    <button *ngIf="this.isHome && this.permisos.user_data.tarea01">
       <span class="material-symbols-outlined">
-        local_taxi
+        apartment
       </span>
-      <p>Vehículos</p>
+      <p>Propietarios</p>
     </button>
     <button *ngIf="this.isHome && this.permisos.user_data.tarea02">
       <span class="material-symbols-outlined">
@@ -24,13 +24,19 @@
       </span>
       <p>Conductores</p>
     </button>
-    <button *ngIf="this.isHome && this.permisos.user_data.tarea03" routerLink="/statevehiclefleet">
+    <button *ngIf="this.isHome && this.permisos.user_data.tarea03" routerLink="/vehicles">
+      <span class="material-symbols-outlined">
+        local_taxi
+      </span>
+      <p>Vehículos</p>
+    </button>
+    <button *ngIf="this.isHome && this.permisos.user_data.tarea04" routerLink="/statevehiclefleet">
       <span class="material-symbols-outlined">
         garage
       </span>
       <p>Estado de flota</p>
     </button>
-    <button *ngIf="this.isHome && this.permisos.user_data.tarea04" routerLink="/feespaid">
+    <button *ngIf="this.isHome && this.permisos.user_data.tarea05" routerLink="/feespaid">
       <span class="material-symbols-outlined">
         payments
       </span>
