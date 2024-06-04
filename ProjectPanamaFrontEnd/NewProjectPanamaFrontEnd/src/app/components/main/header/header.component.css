@@ -19,7 +19,7 @@ h1 {
   align-items: center; /* Centra verticalmente los elementos */
   justify-content: flex-start;
   padding-left: 1%;
-  padding-right: 6vh;
+  /* padding-right: 6vh;  */
 }
 
 .info-company .logo {
