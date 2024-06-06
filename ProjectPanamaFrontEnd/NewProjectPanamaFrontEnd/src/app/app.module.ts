@@ -16,6 +16,7 @@ import { PdfViewerComponent } from './components/others/pdf-viewer/pdf-viewer.co
 import { VehiclesComponent } from './components/tasks/vehicles/vehicles.component';
 import { FeespaidComponent } from './components/tasks/feespaid/feespaid.component';
 import { OpcionesGerenciaComponent } from './components/options/gerencia/opciones-gerencia/opciones-gerencia.component';
+import { OpcionesTramitesComponent } from './components/options/tramites/opciones-tramites/opciones-tramites.component';
 
 @NgModule({
   declarations: [
@@ -28,7 +29,8 @@ import { OpcionesGerenciaComponent } from './components/options/gerencia/opcione
     PdfViewerComponent,
     VehiclesComponent,
     FeespaidComponent,
-    OpcionesGerenciaComponent
+    OpcionesGerenciaComponent,
+    OpcionesTramitesComponent
   ],
   imports: [
     BrowserModule,

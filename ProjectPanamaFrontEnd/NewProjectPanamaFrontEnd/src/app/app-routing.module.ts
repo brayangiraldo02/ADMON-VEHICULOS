@@ -9,6 +9,7 @@ import { PdfViewerComponent } from './components/others/pdf-viewer/pdf-viewer.co
 import { VehiclesComponent } from './components/tasks/vehicles/vehicles.component';
 import { FeespaidComponent } from './components/tasks/feespaid/feespaid.component';
 import { OpcionesGerenciaComponent } from './components/options/gerencia/opciones-gerencia/opciones-gerencia.component';
+import { OpcionesTramitesComponent } from './components/options/tramites/opciones-tramites/opciones-tramites.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -18,6 +19,7 @@ const routes: Routes = [
   { path: 'vehicles', component: VehiclesComponent, canActivate: [AuthGuard]},
   { path: 'feespaid', component: FeespaidComponent, canActivate: [AuthGuard]},
   { path: 'management', component: OpcionesGerenciaComponent, canActivate: [AuthGuard]},
+  { path: 'procedures', component: OpcionesTramitesComponent, canActivate: [AuthGuard]},
   { path: 'pdf', component: PdfViewerComponent, canActivate: [AuthGuard]}
 ];
 

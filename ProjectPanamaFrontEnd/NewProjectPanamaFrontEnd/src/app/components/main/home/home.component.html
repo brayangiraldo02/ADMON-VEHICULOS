@@ -22,7 +22,7 @@
         <!-- ng-container para aplicar ngIf sin afectar el layout -->
         <ng-container *ngFor="let option of options">
           <li class="options-if" *ngIf="option.enabled">
-            <a [href]="option.url">
+            <a [routerLink]="option.url">
               <img [src]="option.icon" class="option-icon">
               <span class="option-text">{{ option.name }}</span>
             </a>
