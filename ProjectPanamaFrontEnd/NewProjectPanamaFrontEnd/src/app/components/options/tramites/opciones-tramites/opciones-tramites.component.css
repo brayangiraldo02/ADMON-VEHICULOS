@@ -12,6 +12,10 @@
   justify-content: center;
 }
 
+.two-container .section-container{
+  width: 100%;
+}
+
 .section-container {
   display: flex;
   flex-direction: column;
@@ -39,12 +43,21 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  text-align: center;
-  flex-direction: column;
   cursor: pointer;
   text-decoration: none;
   color: black;
   font-size: 18px;
+  position: relative;  /* Permite posicionamiento absoluto de elementos hijos */
+}
+
+.option span.material-symbols-outlined {
+  margin-right: auto;  /* Empuja el icono a la izquierda */
+  font-size: 4vh;
+}
+
+.option-text {
+  flex-grow: 1;
+  text-align: center;  /* Asegura que el texto esté centrado */
 }
 
 .option:hover {

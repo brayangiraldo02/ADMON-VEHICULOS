@@ -17,6 +17,13 @@ import { VehiclesComponent } from './components/tasks/vehicles/vehicles.componen
 import { FeespaidComponent } from './components/tasks/feespaid/feespaid.component';
 import { OpcionesGerenciaComponent } from './components/options/gerencia/opciones-gerencia/opciones-gerencia.component';
 import { OpcionesTramitesComponent } from './components/options/tramites/opciones-tramites/opciones-tramites.component';
+import { OpcionesChapisteriaComponent } from './components/options/chapisteria/opciones-chapisteria/opciones-chapisteria.component';
+import { OpcionesGastosComponent } from './components/options/gastos/opciones-gastos/opciones-gastos.component';
+import { OpcionesTallerComponent } from './components/options/taller/opciones-taller/opciones-taller.component';
+import { OpcionesOperacionesComponent } from './components/options/operaciones/opciones-operaciones/opciones-operaciones.component';
+import { OpcionesLlaveroComponent } from './components/options/llavero/opciones-llavero/opciones-llavero.component';
+import { OpcionesReclamosComponent } from './components/options/reclamos/opciones-reclamos/opciones-reclamos.component';
+import { OpcionesCntComponent } from './components/options/cnt/opciones-cnt/opciones-cnt.component';
 
 @NgModule({
   declarations: [
@@ -30,7 +37,14 @@ import { OpcionesTramitesComponent } from './components/options/tramites/opcione
     VehiclesComponent,
     FeespaidComponent,
     OpcionesGerenciaComponent,
-    OpcionesTramitesComponent
+    OpcionesTramitesComponent,
+    OpcionesChapisteriaComponent,
+    OpcionesGastosComponent,
+    OpcionesTallerComponent,
+    OpcionesOperacionesComponent,
+    OpcionesLlaveroComponent,
+    OpcionesReclamosComponent,
+    OpcionesCntComponent
   ],
   imports: [
     BrowserModule,

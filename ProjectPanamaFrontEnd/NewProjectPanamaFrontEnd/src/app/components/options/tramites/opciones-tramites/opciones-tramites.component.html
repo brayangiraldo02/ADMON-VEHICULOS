@@ -1,9 +1,12 @@
 <app-header></app-header>
 <div class="container">
   <h1>TRÁMITES</h1>
-  <a class="option">
+  <!-- <a class="option">
+    <span class="material-symbols-outlined">
+      info
+    </span>
     <span class="option-text">Estado Trámite</span>
-  </a>
+  </a> -->
   <div class="sections-container">
     
     <div class="section-container">
@@ -11,6 +14,53 @@
       <div class="options-container">
         <ng-container *ngFor="let option of operaciones">
           <a class="option" [href]="option.url">
+            <span class="material-symbols-outlined">
+              {{ option.icon }}
+            </span>
+            <span class="option-text">{{ option.name }}</span>
+          </a>
+        </ng-container>
+      </div>
+    </div>
+
+    <div class="two-container">
+      <div class="section-container">
+        <h2>CONTROL CUPOS</h2>
+        <div class="options-container">
+          <ng-container *ngFor="let option of control_cupos">
+            <a class="option" [href]="option.url">
+              <span class="material-symbols-outlined">
+                {{ option.icon }}
+              </span>
+              <span class="option-text">{{ option.name }}</span>
+            </a>
+          </ng-container>
+        </div>
+      </div>
+  
+      <div class="section-container">
+        <h2>SEGUROS</h2>
+        <div class="options-container">
+          <ng-container *ngFor="let option of seguros">
+            <a class="option" [href]="option.url">
+              <span class="material-symbols-outlined">
+                {{ option.icon }}
+              </span>
+              <span class="option-text">{{ option.name }}</span>
+            </a>
+          </ng-container>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-container">
+      <h2>SEGUIMIENTO DE TRASPASOS</h2>
+      <div class="options-container">
+        <ng-container *ngFor="let option of seguimiento_traspasos">
+          <a class="option" [href]="option.url">
+            <span class="material-symbols-outlined">
+              {{ option.icon }}
+            </span>
             <span class="option-text">{{ option.name }}</span>
           </a>
         </ng-container>
@@ -22,39 +72,9 @@
       <div class="options-container">
         <ng-container *ngFor="let option of formatos_tramites">
           <a class="option" [href]="option.url">
-            <span class="option-text">{{ option.name }}</span>
-          </a>
-        </ng-container>
-      </div>
-    </div>
-
-    <div class="section-container">
-      <h2>CONTROL CUPOS</h2>
-      <div class="options-container">
-        <ng-container *ngFor="let option of control_cupos">
-          <a class="option" [href]="option.url">
-            <span class="option-text">{{ option.name }}</span>
-          </a>
-        </ng-container>
-      </div>
-    </div>
-
-    <div class="section-container">
-      <h2>SEGUROS</h2>
-      <div class="options-container">
-        <ng-container *ngFor="let option of seguros">
-          <a class="option" [href]="option.url">
-            <span class="option-text">{{ option.name }}</span>
-          </a>
-        </ng-container>
-      </div>
-    </div>
-
-    <div class="section-container">
-      <h2>SEGUIMIENTO DE TRASPASOS</h2>
-      <div class="options-container">
-        <ng-container *ngFor="let option of seguimiento_traspasos">
-          <a class="option" [href]="option.url">
+            <span class="material-symbols-outlined">
+              {{ option.icon }}
+            </span>
             <span class="option-text">{{ option.name }}</span>
           </a>
         </ng-container>

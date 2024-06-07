@@ -10,6 +10,13 @@ import { VehiclesComponent } from './components/tasks/vehicles/vehicles.componen
 import { FeespaidComponent } from './components/tasks/feespaid/feespaid.component';
 import { OpcionesGerenciaComponent } from './components/options/gerencia/opciones-gerencia/opciones-gerencia.component';
 import { OpcionesTramitesComponent } from './components/options/tramites/opciones-tramites/opciones-tramites.component';
+import { OpcionesChapisteriaComponent } from './components/options/chapisteria/opciones-chapisteria/opciones-chapisteria.component';
+import { OpcionesGastosComponent } from './components/options/gastos/opciones-gastos/opciones-gastos.component';
+import { OpcionesTallerComponent } from './components/options/taller/opciones-taller/opciones-taller.component';
+import { OpcionesOperacionesComponent } from './components/options/operaciones/opciones-operaciones/opciones-operaciones.component';
+import { OpcionesLlaveroComponent } from './components/options/llavero/opciones-llavero/opciones-llavero.component';
+import { OpcionesReclamosComponent } from './components/options/reclamos/opciones-reclamos/opciones-reclamos.component';
+import { OpcionesCntComponent } from './components/options/cnt/opciones-cnt/opciones-cnt.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -18,8 +25,15 @@ const routes: Routes = [
   { path: 'statevehiclefleet', component: StatevehiclefleetComponent, canActivate: [AuthGuard]},
   { path: 'vehicles', component: VehiclesComponent, canActivate: [AuthGuard]},
   { path: 'feespaid', component: FeespaidComponent, canActivate: [AuthGuard]},
-  { path: 'management', component: OpcionesGerenciaComponent, canActivate: [AuthGuard]},
+  { path: 'operations', component: OpcionesOperacionesComponent, canActivate: [AuthGuard]},
   { path: 'procedures', component: OpcionesTramitesComponent, canActivate: [AuthGuard]},
+  { path: 'workshop', component: OpcionesTallerComponent, canActivate: [AuthGuard]},
+  { path: 'sheet-metal-work', component: OpcionesChapisteriaComponent, canActivate: [AuthGuard]},
+  { path: 'keychain', component: OpcionesLlaveroComponent, canActivate: [AuthGuard]},
+  { path: 'claims', component: OpcionesReclamosComponent, canActivate: [AuthGuard]},
+  { path: 'management', component: OpcionesGerenciaComponent, canActivate: [AuthGuard]},
+  { path: 'expenses', component: OpcionesGastosComponent, canActivate: [AuthGuard]},
+  { path: 'cnt', component: OpcionesCntComponent, canActivate: [AuthGuard]},
   { path: 'pdf', component: PdfViewerComponent, canActivate: [AuthGuard]}
 ];
 

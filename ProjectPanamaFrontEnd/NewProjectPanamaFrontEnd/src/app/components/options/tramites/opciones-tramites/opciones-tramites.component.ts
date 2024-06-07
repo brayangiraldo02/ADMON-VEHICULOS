@@ -8,37 +8,37 @@ import { Component } from '@angular/core';
 export class OpcionesTramitesComponent {
 
   operaciones = [
-    { name: 'Entrega de Vehículos a Conductores', icon: '../../../../assets/icons/gerencia.svg', url: 'hoalalalal' },
-    { name: 'Generar Contrato y Declaración Jurada', icon: '../../../../assets/icons/gastos.svg', url: 'hoalalalal' },
-    { name: 'Cambiar de Estado a un Vehículo', icon: '../../../../assets/icons/cnt.svg', url: 'hoalalalal' },
-    { name: 'Bajar Conductor del Vehículo (Culminación del contrato)', icon: '../../../../assets/icons/cnt.svg', url: 'hoalalalal' },
-    { name: 'Corregir Kilometraje Actual al Vehículo', icon: '../../../../assets/icons/cnt.svg', url: 'hoalalalal' },
-    { name: 'Apertura de Cuenta por Cobrar a un Conductor', icon: '../../../../assets/icons/gastos.svg', url: 'hoalalalal' },
+    { name: 'Entrega de Vehículos a Conductores', icon: 'info', url: 'hoalalalal' },
+    { name: 'Generar Contrato y Declaración Jurada', icon: 'info', url: 'hoalalalal' },
+    { name: 'Cambiar de Estado a un Vehículo', icon: 'info', url: 'hoalalalal' },
+    { name: 'Bajar Conductor del Vehículo (Culminación del contrato)', icon: 'info', url: 'hoalalalal' },
+    { name: 'Corregir Kilometraje Actual al Vehículo', icon: 'info', url: 'hoalalalal' },
+    { name: 'Apertura de Cuenta por Cobrar a un Conductor', icon: 'info', url: 'hoalalalal' },
   ];
 
   formatos_tramites = [
-    { name: 'Cambio de Unidad', icon: '../../../../assets/icons/gerencia.svg', url: 'hoalalalal' },
-    { name: 'Memorial de Transferencia', icon: '../../../../assets/icons/gastos.svg', url: 'hoalalalal' },
-    { name: 'Liberación y Retención', icon: '../../../../assets/icons/cnt.svg', url: 'hoalalalal' },
-    { name: 'Actualización', icon: '../../../../assets/icons/cnt.svg', url: 'hoalalalal' }
+    { name: 'Cambio de Unidad', icon: 'info', url: 'hoalalalal' },
+    { name: 'Memorial de Transferencia', icon: 'info', url: 'hoalalalal' },
+    { name: 'Liberación y Retención', icon: 'info', url: 'hoalalalal' },
+    { name: 'Actualización', icon: 'info', url: 'hoalalalal' }
   ];
 
   control_cupos = [
-    { name: 'Organizaciones (Piqueras)', icon: '../../../../assets/icons/gerencia.svg', url: 'hoalalalal' },
-    { name: 'Revisión General de Cupos', icon: '../../../../assets/icons/gastos.svg', url: 'hoalalalal' }
+    { name: 'Organizaciones (Piqueras)', icon: 'info', url: 'hoalalalal' },
+    { name: 'Revisión General de Cupos', icon: 'info', url: 'hoalalalal' }
   ];
 
   seguros = [
-    { name: 'Tabla Aseguradoras', icon: '../../../../assets/icons/gerencia.svg', url: 'hoalalalal' },
-    { name: 'Actualización de Polizas', icon: '../../../../assets/icons/gastos.svg', url: 'hoalalalal' }
+    { name: 'Tabla Aseguradoras', icon: 'info', url: 'hoalalalal' },
+    { name: 'Actualización de Polizas', icon: 'info', url: 'hoalalalal' }
   ];
 
   seguimiento_traspasos = [
-    { name: 'Generar Documento Finiquito', icon: '../../../../assets/icons/gerencia.svg', url: 'hoalalalal' },
-    { name: 'Firma y Escaneo Documentos después de Pagos', icon: '../../../../assets/icons/gastos.svg', url: 'hoalalalal' },
-    { name: 'Preparar y Escaneo Documentos para Notariar', icon: '../../../../assets/icons/cnt.svg', url: 'hoalalalal' },
-    { name: 'Reparar Documentos Originales para Traspaso', icon: '../../../../assets/icons/cnt.svg', url: 'hoalalalal' },
-    { name: 'Realizar Trámite Traspaso (Municipio y Transito)', icon: '../../../../assets/icons/cnt.svg', url: 'hoalalalal' },
-    { name: 'Entrega de Documentos (Nuevo Propietario)', icon: '../../../../assets/icons/gastos.svg', url: 'hoalalalal' }
+    { name: 'Generar Documento Finiquito', icon: 'info', url: 'hoalalalal' },
+    { name: 'Firma y Escaneo Documentos después de Pagos', icon: 'info', url: 'hoalalalal' },
+    { name: 'Preparar y Escaneo Documentos para Notariar', icon: 'info', url: 'hoalalalal' },
+    { name: 'Reparar Documentos Originales para Traspaso', icon: 'info', url: 'hoalalalal' },
+    { name: 'Realizar Trámite Traspaso (Municipio y Transito)', icon: 'info', url: 'hoalalalal' },
+    { name: 'Entrega de Documentos (Nuevo Propietario)', icon: 'info', url: 'hoalalalal' }
   ];
 }
