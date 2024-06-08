@@ -1,18 +1,25 @@
 import pdfkit
 
-def html2pdf(html_path, pdf_path):
+def html2pdf(titulo, html_path, pdf_path, footer_path):
     """
-    Convert html to pdf using pdfkit which is a wrapper of wkhtmltopdf
+    Convertir HTML a PDF utilizando pdfkit, que es un envoltorio de wkhtmltopdf.
     """
     options = {
         'page-size': 'Letter',
-        'margin-top': '0.35in',
-        'margin-right': '0.75in',
-        'margin-bottom': '0.75in',
-        'margin-left': '0.75in',
+        'margin-top': '1.2in',
+        'margin-right': '0.6in',
+        'margin-bottom': '0.50in',
+        'margin-left': '0.6in',
         'encoding': "UTF-8",
         'no-outline': None,
-        'enable-local-file-access': None
+        'enable-local-file-access': None,
+        'footer-center': '[page]',  # Agrega el número de página en la esquina superior derecha
+        'header-html': 'D:/PanamaProject/ADMON-VEHICULOS/ProjectPanamaBackend/templates/header.html',
+        'header-center': titulo,
+        '--header-font-name': 'Times New Roman', 
+        '--header-font-size': '14',
+        'footer-html': 'D:/PanamaProject/ADMON-VEHICULOS/ProjectPanamaBackend/templates/footer.html',
+        'header-spacing': '3',
     }
     with open(html_path) as f:
         pdfkit.from_file(f, pdf_path, options=options)
