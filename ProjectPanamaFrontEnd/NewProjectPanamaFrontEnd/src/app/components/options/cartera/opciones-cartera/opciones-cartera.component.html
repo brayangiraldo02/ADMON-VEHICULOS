@@ -8,20 +8,6 @@
     <span class="option-text">Estado Trámite</span>
   </a> -->
   <div class="sections-container">
-    
-    <div class="section-container">
-      <h2>CONSULTAS</h2>
-      <div class="options-container">
-        <ng-container *ngFor="let option of consultas">
-          <a class="option" [href]="option.url">
-            <span class="material-symbols-outlined">
-              {{ option.icon }}
-            </span>
-            <span class="option-text">{{ option.name }}</span>
-          </a>
-        </ng-container>
-      </div>
-    </div>
 
     <div class="two-container">
       <div class="section-container">
@@ -50,6 +36,20 @@
             </a>
           </ng-container>
         </div>
+      </div>
+    </div>
+
+    <div class="section-container">
+      <h2>CONSULTAS</h2>
+      <div class="options-container">
+        <ng-container *ngFor="let option of consultas">
+          <a class="option" [href]="option.url">
+            <span class="material-symbols-outlined">
+              {{ option.icon }}
+            </span>
+            <span class="option-text">{{ option.name }}</span>
+          </a>
+        </ng-container>
       </div>
     </div>
 
