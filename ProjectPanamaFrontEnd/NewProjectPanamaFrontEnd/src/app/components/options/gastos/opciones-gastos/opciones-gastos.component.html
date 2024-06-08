@@ -1,0 +1,36 @@
+<app-header></app-header>
+<div class="container">
+  <h1>GASTOS GENERALES</h1>
+
+  <div class="sections-container">
+    
+    <div class="section-container">
+      <h2>GASTOS GENERALES</h2>
+      <div class="options-container">
+        <ng-container *ngFor="let option of gastos_generales">
+          <a class="option" [href]="option.url">
+            <span class="material-symbols-outlined">
+              {{ option.icon }}
+            </span>
+            <span class="option-text">{{ option.name }}</span>
+          </a>
+        </ng-container>
+      </div>
+    </div>
+
+    <div class="section-container">
+      <h2>GASTOS CON CHEQUE</h2>
+      <div class="options-container">
+        <ng-container *ngFor="let option of gastos_cheque">
+          <a class="option" [href]="option.url">
+            <span class="material-symbols-outlined">
+              {{ option.icon }}
+            </span>
+            <span class="option-text">{{ option.name }}</span>
+          </a>
+        </ng-container>
+      </div>
+    </div>
+
+  </div>
+</div>
