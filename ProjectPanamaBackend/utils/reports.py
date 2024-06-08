@@ -84,8 +84,27 @@ def obtener_numeros_por_propietario(data):
     return {"numeros_por_propietario": conteo_por_empresa}
 
 #------------------------------------------------------------
-
 def obtener_conductores_por_propietario(data, codigos_estados_deseados=None):
+    cuotas_por_propietario = {}
+    for vehiculo in data:
+        codigo_propietario = vehiculo["propietario_codigo"]
+        if codigo_propietario not in cuotas_por_propietario:
+            cuotas_por_propietario[codigo_propietario] = {
+                "propietario_codigo": vehiculo["propietario_codigo"],
+                "propietario_abreviado": vehiculo["propietario_abreviado"],
+                "empty": "1"  # Inicialmente, asumimos que solo hay "propietario_codigo" y "propietario_abreviado"
+            }
+        if vehiculo["conductor_codigo"]:
+            if codigos_estados_deseados is None or not codigos_estados_deseados:
+                cuotas_por_propietario[codigo_propietario][vehiculo["vehiculo_numero"]] = vehiculo
+                cuotas_por_propietario[codigo_propietario]["empty"] = "0"  # Hay más datos además de "propietario_codigo" y "propietario_abreviado"
+            elif vehiculo["estado_codigo"] in codigos_estados_deseados:
+                cuotas_por_propietario[codigo_propietario][vehiculo["vehiculo_numero"]] = vehiculo
+                cuotas_por_propietario[codigo_propietario]["empty"] = "0"  # Hay más datos además de "propietario_codigo" y "propietario_abreviado"
+    return cuotas_por_propietario
+#------------------------------------------------------------
+
+def cuotas_pagas(data, codigos_estados_deseados=None):
     cuotas_por_propietario = {}
     for vehiculo in data:
         codigo_propietario = vehiculo["propietario_codigo"]

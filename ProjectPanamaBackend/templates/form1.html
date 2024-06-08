@@ -5,153 +5,84 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Estado Vehiculos Resumen</title>
     <style type="text/css">
-        dl {
-    position: absolute;
-    left: 0;
-    text-align:left;
-    top: 0;
-  }
-  dr {
-    position: absolute;
-    right: 0;
-    text-align: right;
-    top: 0;
-  }
-  dt, dd {
-    display: inline;
-    margin: 0;
-  }
-  dt {
-    color: #a9a;
-  }
-  dt::before {
-    content: '';
-    display: block;
-  }
-  dt::after {
-    content: ':';
-  }
-  
-  html, body {
-    scroll-behavior: smooth;
-    margin: 0; 
-    padding: 0;
-  }
-  
-  body {
-    display: flex;
-    flex-direction: column;
-    justify-content:center;
-    align-items: center;
-    height:auto;
-    margin: 0;
-    font-family: Calibri, sans-serif;
-    background-color: #ffffff;
-    position: relative;
-  }
-  
-  .centered-title {
-    font-size: 30px; /* Tamaño de fuente según tus preferencias */
-    text-align: center; /* Centra el título horizontalmente */
-    margin-bottom: 0px; 
-  }
-  
-  .box {
-    flex: 1; /* Distribuye el espacio disponible entre las cajas */
-    border: 1px solid #ccc;
-    padding: 10px;
-  }
-  
-  
-  .title {
-    font-size: 24px;
-    font-weight: bold;
-    margin-bottom: 10px;
-  }
-  
-  .data {
-    font-size: 16px;
-    line-height: 1.5;
-  }
-  
-  .title {
-    text-align: center; /* Center the title horizontally */
-    font-size: 24px;
-    font-weight: bold;
-    margin-bottom: 20px;
-  }
-  
-  p {
-    line-height: 1.5; 
-    font-size: 24px;
-    margin-bottom: 6px;
-		margin-top: 15px;
-  }
-  
-  table {
-    border-spacing: 90px 0px; /* Espacio horizontal y vertical entre celdas */
-    text-align: left;
-    width: 100%;
-    empty-cells: hide;
-    margin-bottom: 0px;
-    margin-top: 0px;
-    top: 0%;
-  }
+      html, body {
+        scroll-behavior: smooth;
+        margin: 0; 
+        padding: 0;
+      }
+      body {
+        display: flex;
+        flex-direction: column;
+        justify-content:center;
+        align-items: center;
+        height:auto;
+        margin: 0;
+        font-family: Calibri, sans-serif;
+        background-color: #ffffff;
+        position: relative;
+      }
+      
+      .centered-title {
+        font-size: 26px; /* Tamaño de fuente según tus preferencias */
+        text-align: center; /* Centra el título horizontalmente */
+        margin-bottom: 0px; 
+      }
+      
+      .box {
+        flex: 1; /* Distribuye el espacio disponible entre las cajas */
+        border: 1px solid #ccc;
+        padding: 10px;
+      }
+    
+      .title {
+        font-size: 24px;
+        font-weight: bold;
+        margin-bottom: 10px;
+      }
+      
+      .data {
+        font-size: 16px;
+        line-height: 1.5;
+      }
+      
+      .title {
+        text-align: center; /* Center the title horizontally */
+        font-size: 24px;
+        font-weight: bold;
+        margin-bottom: 20px;
+      }
+      
+      p {
+        line-height: 1; 
+        font-size: 24px;
+        margin-bottom: 6px;
+        margin-top: 15px;
+      }
+      
+      table {
+        border-spacing: 90px 0px; /* Espacio horizontal y vertical entre celdas */
+        text-align: left;
+        width: 100%;
+        empty-cells: hide;
+        margin-bottom: 0px;
+        margin-top: 0px;
+        top: 0%;
+      }
 
-  td {
-    padding: 0.5px;
-    line-height: 1;
-  }
+      td {
+        padding: 0.5px;
+        line-height: 1;
+      }
 
-  tr {
-    padding: 0.5px;
-    line-height: 1;
-  }
-
-  header {
-    top: 0;
-    width: 100%;
-    text-align: center;
-    font-family: Arial, sans-serif;
-    margin-top: 0%;
-  }
-
-  footer {
-  bottom: 0;
-  width: 100%;
-  text-align: center;
-  font-family: Arial, sans-serif;
-  }
-
-  footer p {
-  font-size: 10px; 
-  }
+      tr {
+        padding: 0.5px;
+        line-height: 1;
+      }
     </style>
 </head>
 <body>
-    <header>
-        
-        <dl>
-            <div>
-                <img src="https://res.cloudinary.com/dhry2v8qz/image/upload/v1716101365/AlfaSoft/templates-backend/logo/bojo3n5fq1zpqxpxvvy5.png" id="logo" height="50" width="150">
-            </div>
-        </dl>
+        <h1 class="centered-title">{{codigo_empresa}} {{empresa}}</h1>
 
-        <br>
-        <br>
-
-        <h1 class="centered-title">{{empresa}}</h1>
-
-        <dr id="informations">
-            <div class="box">
-                <dt>Fecha</dt>
-                <dd>{{fecha}}</dd>
-                <dt>Hora</dt>
-                <dd>{{hora}}</dd>
-            </div>
-        </dr>
-        <hr>
-    </header>
                 <table style="margin: 0 auto;">
                     <thead>
                         <th></th>
@@ -299,28 +230,15 @@
                       {% endif %}
                     </tbody>
                 </table>
-              <hr>
-        <table>
-            <thead>
-                <th></th>
-                <th></th>
-                <th></th>
-                <th></th>
-                <th></th>
-            </thead>
-            <tbody>
-                <td>Total Flota Autos: {{total_vehiculos}}</td>
-                <td>Activa: {{total_activos}}</td>
-                <td>Inactiva: {{total_parados}}</td>
-                <td>Promedio Flota Activa: {{promedio_activos}}%</td>
-                <td>Promedio Flota Parada: {{promedio_parados}}%</td>
-            </tbody>
+        <table style="border: 1px solid #ccc;
+        padding: 10px;
+        text-align: center;">
+          <tr>
+            <th>Total Flota Autos: {{total_vehiculos}}</th>
+            <th>Activa: {{total_activos}}</th>
+            <th>Inactiva: {{total_parados}}</th>
+            <th>Promedio Flota Activa: {{promedio_activos}}%</th>
+            <th>Promedio Flota Parada: {{promedio_parados}}%</th>
         </table>
-
-        <footer>
-            <hr>
-            <p style="float: left; margin-left: 50px;">Sistemas Alfa</p>
-            <p style="float: right; margin-right: 50px;">Usuario: {{usuario}}</p>
-        </footer>   
 </body>
 </html>

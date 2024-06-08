@@ -5,142 +5,66 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Estado Vehiculos Detalle</title> 
     <style type="text/css">
-        dl {
-    position: absolute;
-    left: 0;
-    text-align:left;
-    top: 0;
-  }
-  dr {
-    position: absolute;
-    right: 0;
-    text-align: right;
-    top: 0;
-  }
-  dt, dd {
-    display: inline;
-    margin: 0;
-  }
-  dt {
-    color: #a9a;
-  }
-  dt::before {
-    content: '';
-    display: block;
-  }
-  dt::after {
-    content: ':';
-  }
-  
-  html, body {
-    scroll-behavior: smooth;
-    margin: 0; 
-    padding: 0;
-  }
-  
-  body {
-    display: flex;
-    flex-direction: column;
-    justify-content:center;
-    align-items: center;
-    height:auto;
-    margin: 0;
-    font-family: Calibri, sans-serif;
-    background-color: #ffffff;
-    position: relative;
-  }
-  
-  .centered-title {
-    font-size: 30px; /* Tamaño de fuente según tus preferencias */
-    text-align: center; /* Centra el título horizontalmente */
-    margin-bottom: 0px; 
-  }
-  
-  .box {
-    flex: 1; /* Distribuye el espacio disponible entre las cajas */
-    border: 1px solid #ccc;
-    padding: 10px;
-  }
-  
-  p {
-    line-height: 1.5; 
-    font-size: 24px;
-    margin-bottom: 6px;
-	margin-top: 15px;
-  }
+        
+        html, body {
+            scroll-behavior: smooth;
+            margin: 0; 
+            padding: 0;
+        }
+        
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content:center;
+            align-items: center;
+            height:auto;
+            margin: 0;
+            font-family: Calibri, sans-serif;
+            background-color: #ffffff;
+            position: relative;
+        }
+        
+        .centered-title {
+            font-size: 34px; /* Tamaño de fuente según tus preferencias */
+            text-align: center; /* Centra el título horizontalmente */
+            margin-bottom: 0px; 
+        }
+        
+        .box {
+            flex: 1; /* Distribuye el espacio disponible entre las cajas */
+            border: 1px solid #ccc;
+            padding: 10px;
+        }
+        
+        p {
+            line-height: 1; 
+            font-size: 30px;
+            margin-bottom: 6px;
+            margin-top: 15px;
+        }
+        
+        table {
+            border-spacing: 90px 0px; /* Espacio horizontal y vertical entre celdas */
+            text-align: left;
+            width: 100%;
+            empty-cells: hide;
+            margin-bottom: 0px;
+            margin-top: 0px;
+            top: 0%;
+        }
 
-    p2 {
-        line-height: 2; 
-        font-size: 24px;
-        color: #a9a;
-    }
-  
-  table {
-    border-spacing: 90px 0px; /* Espacio horizontal y vertical entre celdas */
-    text-align: left;
-    width: 100%;
-    empty-cells: hide;
-    margin-bottom: 0px;
-    margin-top: 0px;
-    top: 0%;
-  }
+        td {
+            padding: 0.5px;
+            line-height: 1;
+        }
 
-  td {
-    padding: 0.5px;
-    line-height: 1;
-  }
-
-  tr {
-    padding: 0.5px;
-    line-height: 1;
-  }
-
-  header {
-    top: 0;
-    width: 100%;
-    text-align: center;
-    font-family: Arial, sans-serif;
-    margin-top: 0%;
-  }
-
-  footer {
-  bottom: 0;
-  width: 100%;
-  text-align: center;
-  font-family: Arial, sans-serif;
-  }
-
-  footer p {
-  font-size: 12px; 
-  }
+        tr {
+            line-height: 1;
+        }
     </style>
 </head>
 <body>
-
-    <header>
-        
-        <dl>
-            <div>
-                <img src="https://res.cloudinary.com/dhry2v8qz/image/upload/v1716101365/AlfaSoft/templates-backend/logo/bojo3n5fq1zpqxpxvvy5.png" id="logo" height="50" width="150">
-            </div>
-        </dl>
-
-        <br>
-        <br>
-
-        <h1 class="centered-title">{{empresa}}</h1>
-
-        <dr id="informations">
-            <div class="box">
-                <dt>Fecha</dt>
-                <dd>{{fecha}}</dd>
-                <dt>Hora</dt>
-                <dd>{{hora}}</dd>
-            </div>
-        </dr>
-        <hr>
-
-    </header>
+    <h1 class="centered-title">{{codigo_empresa}} {{empresa}}</h1>
                 <table style = "margin: 0 auto;">
                     <thead>
                         <th></th>
@@ -148,21 +72,27 @@
                         <th></th>
                     </thead>
                     <tbody>
+                        <td style="text-align: right;"><p><u>{{ cant_activo_backup }}</u></p></td>
                         {% if cant_activo > 0 %}
                         <tr>
                             <td>
-                                <p><img src="https://res.cloudinary.com/dhry2v8qz/image/upload/v1716101516/AlfaSoft/templates-backend/img/swgfbppvzzyigrmvwmia.png" height="26" width="26" style="margin-right: 30px;">Activo:</p>
+                                <p><img src="https://res.cloudinary.com/dhry2v8qz/image/upload/v1716101516/AlfaSoft/templates-backend/img/swgfbppvzzyigrmvwmia.png" height="26" width="26" style="margin-right: 30px;">Activo: &nbsp; {{cant_activo}}</p>
                             </td>
-                            <td style="text-align: center;"><p>{{ cant_activo }}</p></td>
-                            <td style="text-align: center; vertical-align: top;"><p><u>{{ cant_activo_backup }}</u></p></td>
                         </tr>
                         <tr>
-                            <td colspan="3">
-                                <p2>
+                            <td>
+                                <table>
+                                    <tr>
                                     {% for numero in activos %}
-                                        {{ numero }}&nbsp;
+                                        <td style="width: 14.28%; line-height: 1.3; 
+                                        font-size: 24px;
+                                        color: #a9a;">{{ numero }}</td>
+                                        {% if loop.index % 7 == 0 %}
+                                            </tr><tr>
+                                        {% endif %}
                                     {% endfor %}
-                                </p2>
+                                    </tr>
+                                </table>
                             </td>
                         </tr>
                         <tr>
@@ -175,18 +105,23 @@
                         {% if cant_backup > 0 %}
                         <tr>
                             <td>
-                                <p><img src="https://res.cloudinary.com/dhry2v8qz/image/upload/v1716101571/AlfaSoft/templates-backend/img/rcsniapnkkou1o1jznob.png" height="26" width="26" style="margin-right: 30px;">Backup:</p>
+                                <p><img src="https://res.cloudinary.com/dhry2v8qz/image/upload/v1716101571/AlfaSoft/templates-backend/img/rcsniapnkkou1o1jznob.png" height="26" width="26" style="margin-right: 30px;">Backup: &nbsp; {{cant_backup}} </p>
                             </td>
-                            <td style="text-align: center;"><p>{{ cant_backup }}</p></td>
-                            <td></td>
                         </tr>
                         <tr>
-                            <td colspan="3">
-                                <p2>
+                            <td>
+                                <table>
+                                    <tr>
                                     {% for numero in backup %}
-                                        {{ numero }}&nbsp;
+                                        <td style="width: 14.28%; line-height: 1.3; 
+                                        font-size: 24px;
+                                        color: #a9a;">{{ numero }}</td>
+                                        {% if loop.index % 7 == 0 %}
+                                            </tr><tr>
+                                        {% endif %}
                                     {% endfor %}
-                                </p2>
+                                    </tr>
+                                </table>
                             </td>
                         </tr>
                         <tr>
@@ -199,18 +134,23 @@
                         {% if cant_chap_parado > 0 %}
                         <tr>
                             <td>
-                                <p><img src="https://res.cloudinary.com/dhry2v8qz/image/upload/v1716101609/AlfaSoft/templates-backend/img/ttnjmuqb3jrdnzcmhljg.png" height="26" width="26" style="margin-right: 30px;">Chapisteria Parado:</p>
+                                <p><img src="https://res.cloudinary.com/dhry2v8qz/image/upload/v1716101609/AlfaSoft/templates-backend/img/ttnjmuqb3jrdnzcmhljg.png" height="26" width="26" style="margin-right: 30px;">Chapisteria Parado: &nbsp; {{cant_chap_parado}}</p>
                             </td>
-                            <td style="text-align: center;"><p>{{ cant_chap_parado }}</p></td>
-                            <td></td>
                         </tr>
                         <tr>
-                            <td colspan="3">
-                                <p2>
+                            <td>
+                                <table>
+                                    <tr>
                                     {% for numero in chap_parado %}
-                                        {{ numero }}&nbsp;
+                                        <td style="width: 14.28%; line-height: 1.3; 
+                                        font-size: 24px;
+                                        color: #a9a;">{{ numero }}</td>
+                                        {% if loop.index % 7 == 0 %}
+                                            </tr><tr>
+                                        {% endif %}
                                     {% endfor %}
-                                </p2>
+                                    </tr>
+                                </table>
                             </td>
                         </tr>
                         <tr>
@@ -224,18 +164,23 @@
                         {% if cant_chap_trabajando > 0 %}
                         <tr>
                             <td>
-                                <p><img src="https://res.cloudinary.com/dhry2v8qz/image/upload/v1716101690/AlfaSoft/templates-backend/img/sqn0x2wgpkbtkrc1vefi.png" height="26" width="26" style="margin-right: 30px;">Chapisteria Trabajando:</p>
+                                <p><img src="https://res.cloudinary.com/dhry2v8qz/image/upload/v1716101690/AlfaSoft/templates-backend/img/sqn0x2wgpkbtkrc1vefi.png" height="26" width="26" style="margin-right: 30px;">Chapisteria Trabajando: &nbsp; {{cant_chap_trabajando}}</p>
                             </td>
-                            <td style="text-align: center;"><p>{{ cant_chap_trabajando }}</p></td>
-                            <td></td>
                         </tr>
                         <tr>
-                            <td colspan="3">
-                                <p2>
+                            <td>
+                                <table>
+                                    <tr>
                                     {% for numero in chap_trabajando %}
-                                        {{ numero }}&nbsp;
+                                        <td style="width: 14.28%; line-height: 1.3; 
+                                        font-size: 24px;
+                                        color: #a9a;">{{ numero }}</td>
+                                        {% if loop.index % 7 == 0 %}
+                                            </tr><tr>
+                                        {% endif %}
                                     {% endfor %}
-                                </p2>
+                                    </tr>
+                                </table>
                             </td>
                         </tr>
                         <tr>
@@ -249,17 +194,23 @@
                         {%if cant_custodia > 0%}
                         <tr>
                             <td>
-                                <p><img src="https://res.cloudinary.com/dhry2v8qz/image/upload/v1716101734/AlfaSoft/templates-backend/img/gngatj9ywlrn1kwewy22.png" height="26" width="26" style="margin-right: 30px;">Custodia:</p>
+                                <p><img src="https://res.cloudinary.com/dhry2v8qz/image/upload/v1716101734/AlfaSoft/templates-backend/img/gngatj9ywlrn1kwewy22.png" height="26" width="26" style="margin-right: 30px;">Custodia: &nbsp; {{cant_custodia}}</p>
                             </td>
-                            <td style="text-align: center;"><p>{{ cant_custodia }}</p></td>
                         </tr>
                         <tr>
-                            <td colspan="3">
-                                <p2>
+                            <td>
+                                <table>
+                                    <tr>
                                     {% for numero in custodia %}
-                                        {{ numero }}&nbsp;
+                                        <td style="width: 14.28%; line-height: 1.3; 
+                                        font-size: 24px;
+                                        color: #a9a;">{{ numero }}</td>
+                                        {% if loop.index % 7 == 0 %}
+                                            </tr><tr>
+                                        {% endif %}
                                     {% endfor %}
-                                </p2>
+                                    </tr>
+                                </table>
                             </td>
                         </tr>
                         {%endif%}
@@ -267,17 +218,23 @@
                         {%if cant_esp_operador > 0%}
                         <tr>
                             <td>
-                                <p><img src="https://res.cloudinary.com/dhry2v8qz/image/upload/v1716101779/AlfaSoft/templates-backend/img/pyfhpkgzp42qygr9q2de.png" height="26" width="26" style="margin-right: 30px;">Esperando Operador:</p>
+                                <p><img src="https://res.cloudinary.com/dhry2v8qz/image/upload/v1716101779/AlfaSoft/templates-backend/img/pyfhpkgzp42qygr9q2de.png" height="26" width="26" style="margin-right: 30px;">Esperando Operador: &nbsp; {{cant_esp_operador}}</p>
                             </td>
-                            <td style="text-align: center;"><p>{{ cant_esp_operador }}</p></td>
                         </tr>
                         <tr>
-                            <td colspan="3">
-                                <p2>
+                            <td>
+                                <table>
+                                    <tr>
                                     {% for numero in esp_operador %}
-                                        {{ numero }}&nbsp;
+                                        <td style="width: 14.28%; line-height: 1.3; 
+                                        font-size: 24px;
+                                        color: #a9a;">{{ numero }}</td>
+                                        {% if loop.index % 7 == 0 %}
+                                            </tr><tr>
+                                        {% endif %}
                                     {% endfor %}
-                                </p2>
+                                    </tr>
+                                </table>
                             </td>
                         </tr>
                         <tr>
@@ -290,17 +247,23 @@
                         {%if cant_mecanica_parado > 0%}
                         <tr>
                             <td>
-                                <p><img src="https://res.cloudinary.com/dhry2v8qz/image/upload/v1716101822/AlfaSoft/templates-backend/img/bp3ovo4hgiwu8fz3mbj5.png" height="26" width="26" style="margin-right: 30px;">Mecanica Parados:</p>
+                                <p><img src="https://res.cloudinary.com/dhry2v8qz/image/upload/v1716101822/AlfaSoft/templates-backend/img/bp3ovo4hgiwu8fz3mbj5.png" height="26" width="26" style="margin-right: 30px;">Mecanica Parados: &nbsp; {{cant_mecanica_parado}}</p>
                             </td>
-                            <td style="text-align: center;"><p>{{ cant_mecanica_parado }}</p></td>
                         </tr>
                         <tr>
-                            <td colspan="3">
-                                <p2>
+                            <td>
+                                <table>
+                                    <tr>
                                     {% for numero in mecanica_parado %}
-                                        {{ numero }}&nbsp;
+                                        <td style="width: 14.28%; line-height: 1.3; 
+                                        font-size: 24px;
+                                        color: #a9a;">{{ numero }}</td>
+                                        {% if loop.index % 7 == 0 %}
+                                            </tr><tr>
+                                        {% endif %}
                                     {% endfor %}
-                                </p2>
+                                    </tr>
+                                </table>
                             </td>
                         </tr>
                         <tr>
@@ -313,17 +276,23 @@
                         {%if cant_otros > 0%}
                         <tr>
                             <td>
-                                <p><img src="https://res.cloudinary.com/dhry2v8qz/image/upload/v1716101842/AlfaSoft/templates-backend/img/zehrnc5rcgfe2z4ylwmh.png" height="26" width="26" style="margin-right: 30px;">Otros:</p>
+                                <p><img src="https://res.cloudinary.com/dhry2v8qz/image/upload/v1716101842/AlfaSoft/templates-backend/img/zehrnc5rcgfe2z4ylwmh.png" height="26" width="26" style="margin-right: 30px;">Otros: &nbsp; {{cant_otros}}</p>
                             </td>
-                            <td style="text-align: center;"><p>{{ cant_otros }}</p></td>
                         </tr>
                         <tr>
-                            <td colspan="3">
-                                <p2>
+                            <td>
+                                <table>
+                                    <tr>
                                     {% for numero in otros %}
-                                        {{ numero }}&nbsp;
+                                        <td style="width: 14.28%; line-height: 1.3; 
+                                        font-size: 24px;
+                                        color: #a9a;">{{ numero }}</td>
+                                        {% if loop.index % 7 == 0 %}
+                                            </tr><tr>
+                                        {% endif %}
                                     {% endfor %}
-                                </p2>
+                                    </tr>
+                                </table>
                             </td>
                         </tr>
                         <tr>
@@ -340,68 +309,77 @@
                         </td>
                         <td style="text-align: center;"><p>{{ cant_vehiculos_pendientes_arraijan }}</p></td>
                       </tr>
-                        <tr>
-                            <td colspan="3">
-                            <p2>
-                                {% for numero in vehiculos_pendientes_arraijan %}
-                                {{ numero }}&nbsp;
-                                {% endfor %}
-                            </p2>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td colspan="3">
-                                <hr>
-                            </td>
-                        </tr>
-                        {% endif %}
-                    </tbody>
-                </table>
-
-                <!-- --------------------------------------------------------------------------- -->
-
-                <table style="float: left;  margin-left: 100px;">
-                    <thead>
-                        <th</th>
-                    </thead>
-                    <tbody>
-                        {% if cant_traspasados > 0 %}               
                       <tr>
                         <td>
-                          <p><img src="https://res.cloudinary.com/dhry2v8qz/image/upload/v1716101894/AlfaSoft/templates-backend/img/fox0keze58gd81l8zo7d.png" height="26" width="26" style="margin-right: 30px;">Carros Traspasados:</p>
-                        </td>
-                        <td style="text-align: center;"><p>{{ cant_traspasados }}</p></td>
-                      </tr>
-                        <tr>
-                            <td colspan="3">
-                            <p2>
-                                {% for numero in traspasados %}
-                                {{ numero }}&nbsp;
+                            <table>
+                                <tr>
+                                {% for numero in vehiculos_pendientes_arraijan %}
+                                    <td style="width: 14.28%; line-height: 1.3; 
+                                    font-size: 24px;
+                                    color: #a9a;">{{ numero }}</td>
+                                    {% if loop.index % 7 == 0 %}
+                                        </tr><tr>
+                                    {% endif %}
                                 {% endfor %}
-                            </p2>
-                            </td>
-                        </tr>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
                         <tr>
                             <td colspan="3">
                                 <hr>
                             </td>
                         </tr>
                         {% endif %}
-                        
+
+                        {% if cant_traspasados > 0 %}               
+                      <tr style="float: left;  margin-left: 100px;">
+                        <td>
+                          <p><img src="https://res.cloudinary.com/dhry2v8qz/image/upload/v1716101894/AlfaSoft/templates-backend/img/fox0keze58gd81l8zo7d.png" height="26" width="26" style="margin-right: 30px;">Carros Traspasados: &nbsp; {{cant_traspasados}}</p>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>
+                            <table>
+                                <tr>
+                                {% for numero in traspasados %}
+                                    <td style="width: 14.28%; line-height: 1.3; 
+                                    font-size: 24px;
+                                    color: #a9a;">{{ numero }}</td>
+                                    {% if loop.index % 7 == 0 %}
+                                        </tr><tr>
+                                    {% endif %}
+                                {% endfor %}
+                                </tr>
+                            </table>
+                        </td>
+                      </tr>
+                            <td colspan="3">
+                                <hr>
+                            </td>
+                        </tr>
+                        {% endif %}
+
                         {% if cant_fin_contrato > 0 %}
-                        <tr>
+                        <tr style="float: left;  margin-left: 100px;">
                             <td>
-                                <p><img src="https://res.cloudinary.com/dhry2v8qz/image/upload/v1716101913/AlfaSoft/templates-backend/img/pw5gxvq8znam6sorzaot.png" height="26" width="26" style="margin-right: 30px;">Culminacion de Contrato:</p>
+                                <p><img src="https://res.cloudinary.com/dhry2v8qz/image/upload/v1716101913/AlfaSoft/templates-backend/img/pw5gxvq8znam6sorzaot.png" height="26" width="26" style="margin-right: 30px;">Culminacion de Contrato: &nbsp; {{cant_fin_contrato}}</p>
                             </td>
-                            <td style="text-align: center;"><p>{{ cant_fin_contrato }}</p></td>
                         </tr>
                         <tr>
-                            <td colspan="3">
-                                <p2>
+                            <td>
+                                <table>
+                                    <tr>
                                     {% for numero in fin_contrato %}
-                                        {{ numero }}&nbsp;
+                                        <td style="width: 14.28%; line-height: 1.3; 
+                                        font-size: 24px;
+                                        color: #a9a;">{{ numero }}</td>
+                                        {% if loop.index % 7 == 0 %}
+                                            </tr><tr>
+                                        {% endif %}
                                     {% endfor %}
-                                </p2>
+                                    </tr>
+                                </table>
                             </td>
                         </tr>
                         <tr>
@@ -410,21 +388,27 @@
                             </td>
                         </tr>
                         {% endif %}
-                        
+
                         {% if cant_en_tramite > 0 %}
-                        <tr>
+                        <tr style="float: left;  margin-left: 100px;">
                             <td>
-                                <p><img src="https://res.cloudinary.com/dhry2v8qz/image/upload/v1716101934/AlfaSoft/templates-backend/img/tjuh2apofmeygcjjogvk.png" height="26" width="26" style="margin-right: 30px;">En Tramite:</p>
+                                <p><img src="https://res.cloudinary.com/dhry2v8qz/image/upload/v1716101934/AlfaSoft/templates-backend/img/tjuh2apofmeygcjjogvk.png" height="26" width="26" style="margin-right: 30px;">En Tramite: &nbsp; {{cant_en_tramite}}</p>
                             </td>
-                            <td style="text-align: center;"><p>{{ cant_en_tramite }}</p></td>
                         </tr>
                         <tr>
-                            <td colspan="3">
-                                <p2>
+                            <td>
+                                <table>
+                                    <tr>
                                     {% for numero in en_tramite %}
-                                        {{ numero }}&nbsp;
+                                        <td style="width: 14.28%; line-height: 1.3; 
+                                        font-size: 24px;
+                                        color: #a9a;">{{ numero }}</td>
+                                        {% if loop.index % 7 == 0 %}
+                                            </tr><tr>
+                                        {% endif %}
                                     {% endfor %}
-                                </p2>
+                                    </tr>
+                                </table>
                             </td>
                         </tr>
                         <tr>
@@ -433,21 +417,27 @@
                             </td>
                         </tr>
                         {% endif %}
-                        
+
                         {% if cant_fuera_circulacion > 0 %}
-                        <tr>
+                        <tr style="float: left;  margin-left: 100px;">
                             <td>
-                                <p><img src="https://res.cloudinary.com/dhry2v8qz/image/upload/v1716101992/AlfaSoft/templates-backend/img/fusi0b0y1cmulvqh2o1p.png" height="26" width="26" style="margin-right: 30px;">Fuera de Circulación:</p>
+                                <p><img src="https://res.cloudinary.com/dhry2v8qz/image/upload/v1716101992/AlfaSoft/templates-backend/img/fusi0b0y1cmulvqh2o1p.png" height="26" width="26" style="margin-right: 30px;">Fuera de Circulación: &nbsp; {{cant_fuera_circulacion}}</p>
                             </td>
-                            <td style="text-align: center;"><p>{{ cant_fuera_circulacion }}</p></td>
                         </tr>
                         <tr>
-                            <td colspan="3">
-                                <p2>
+                            <td>
+                                <table>
+                                    <tr>
                                     {% for numero in fuera_circulacion %}
-                                        {{ numero }}&nbsp;
+                                        <td style="width: 14.28%; line-height: 1.3; 
+                                        font-size: 24px;
+                                        color: #a9a;">{{ numero }}</td>
+                                        {% if loop.index % 7 == 0 %}
+                                            </tr><tr>
+                                        {% endif %}
                                     {% endfor %}
-                                </p2>
+                                    </tr>
+                                </table>
                             </td>
                         </tr>
                         <tr>
@@ -456,21 +446,27 @@
                             </td>
                         </tr>
                         {% endif %}
-                        
+
                         {% if cant_inactivos > 0 %}
-                        <tr>
+                        <tr style="float: left;  margin-left: 100px;">
                             <td>
-                                <p><img src="https://res.cloudinary.com/dhry2v8qz/image/upload/v1716101516/AlfaSoft/templates-backend/img/swgfbppvzzyigrmvwmia.png" height="26" width="26" style="margin-right: 30px;">Inactivos:</p>
+                                <p><img src="https://res.cloudinary.com/dhry2v8qz/image/upload/v1716101516/AlfaSoft/templates-backend/img/swgfbppvzzyigrmvwmia.png" height="26" width="26" style="margin-right: 30px;">Inactivos: &nbsp; {{cant_inactivos}}</p>
                             </td>
-                            <td style="text-align: center;"><p>{{ cant_inactivos }}</p></td>
                         </tr>
                         <tr>
-                            <td colspan="3">
-                                <p2>
+                            <td>
+                                <table>
+                                    <tr>
                                     {% for numero in inactivos %}
-                                        {{ numero }}&nbsp;
+                                        <td style="width: 14.28%; line-height: 1.3; 
+                                        font-size: 24px;
+                                        color: #a9a;">{{ numero }}</td>
+                                        {% if loop.index % 7 == 0 %}
+                                            </tr><tr>
+                                        {% endif %}
                                     {% endfor %}
-                                </p2>
+                                    </tr>
+                                </table>
                             </td>
                         </tr>
                         <tr>
@@ -479,21 +475,27 @@
                             </td>
                         </tr>
                         {% endif %}
-                        
+
                         {% if cant_perdida_total > 0 %}
-                        <tr>
+                        <tr style="float: left;  margin-left: 100px;">
                             <td>
-                                <p><img src="https://res.cloudinary.com/dhry2v8qz/image/upload/v1716102049/AlfaSoft/templates-backend/img/on282c42xboaysl7zxlc.png" height="26" width="26" style="margin-right: 30px;">Perdida Total:</p>
+                                <p><img src="https://res.cloudinary.com/dhry2v8qz/image/upload/v1716102049/AlfaSoft/templates-backend/img/on282c42xboaysl7zxlc.png" height="26" width="26" style="margin-right: 30px;">Perdida Total: &nbsp; {{cant_perdida_total}}</p>
                             </td>
-                            <td style="text-align: center;"><p>{{ cant_perdida_total }}</p></td>
                         </tr>
                         <tr>
-                            <td colspan="3">
-                                <p2>
+                            <td>
+                                <table>
+                                    <tr>
                                     {% for numero in perdida_total %}
-                                        {{ numero }}&nbsp;
+                                        <td style="width: 14.28%; line-height: 1.3; 
+                                        font-size: 24px;
+                                        color: #a9a;">{{ numero }}</td>
+                                        {% if loop.index % 7 == 0 %}
+                                            </tr><tr>
+                                        {% endif %}
                                     {% endfor %}
-                                </p2>
+                                    </tr>
+                                </table>
                             </td>
                         </tr>
                         <tr>
@@ -502,44 +504,56 @@
                             </td>
                         </tr>
                         {% endif %}
-                        
+
                         {% if cant_retirado_empresa > 0 %}
-                        <tr>
-                            <td>
-                                <p><img src="https://res.cloudinary.com/dhry2v8qz/image/upload/v1716102070/AlfaSoft/templates-backend/img/nbqvccinvqymxiwb0ijb.png" height="26" width="26" style="margin-right: 30px;">Retirado de la Empresa:</p>
-                            </td>
-                            <td style="text-align: center;"><p>{{ cant_retirado_empresa }}</p></td>
-                        </tr>
-                        <tr>
-                            <td colspan="3">
-                                <p2>
-                                    {% for numero in retirado_empresa %}
-                                        {{ numero }}&nbsp;
-                                    {% endfor %}
-                                </p2>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td colspan="3">
-                                <hr>
-                            </td>
-                        </tr>
+                            <tr style="float: left;  margin-left: 100px;">
+                                <td>
+                                    <p><img src="https://res.cloudinary.com/dhry2v8qz/image/upload/v1716102070/AlfaSoft/templates-backend/img/nbqvccinvqymxiwb0ijb.png" height="26" width="26" style="margin-right: 30px;">Retirado de la Empresa: &nbsp; {{cant_retirado_empresa}}</p>
+                                </td>
+                            </tr>   
+                            <tr>
+                                <td>
+                                    <table>
+                                        <tr>
+                                        {% for numero in retirado_empresa %}
+                                            <td style="width: 16.66%; line-height: 1.3; 
+                                            font-size: 24px;
+                                            color: #a9a;">{{ numero }}</td>
+                                            {% if loop.index % 6 == 0 %}
+                                                </tr><tr>
+                                            {% endif %}
+                                        {% endfor %}
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="3">
+                                    <hr>
+                                </td>
+                            </tr>
                         {% endif %}
-                        
+
                         {% if cant_sin_calificar > 0 %}
-                        <tr>
+                        <tr style="float: left;  margin-left: 100px;">
                             <td>
-                                <p><img src="https://res.cloudinary.com/dhry2v8qz/image/upload/v1716102085/AlfaSoft/templates-backend/img/o8lzccrmf2kmaztdxzja.png" height="26" width="26" style="margin-right: 30px;">Sin Calificar:</p>
+                                <p><img src="https://res.cloudinary.com/dhry2v8qz/image/upload/v1716102085/AlfaSoft/templates-backend/img/o8lzccrmf2kmaztdxzja.png" height="26" width="26" style="margin-right: 30px;">Sin Calificar: &nbsp; {{cant_sin_calificar}}</p>
                             </td>
-                            <td style="text-align: center;"><p>{{ cant_sin_calificar }}</p></td>
                         </tr>
                         <tr>
-                            <td colspan="3">
-                                <p2>
+                            <td>
+                                <table>
+                                    <tr>
                                     {% for numero in sin_calificar %}
-                                        {{ numero }}&nbsp;
+                                        <td style="width: 14.28%; line-height: 1.3; 
+                                        font-size: 24px;
+                                        color: #a9a;">{{ numero }}</td>
+                                        {% if loop.index % 7 == 0 %}
+                                            </tr><tr>
+                                        {% endif %}
                                     {% endfor %}
-                                </p2>
+                                    </tr>
+                                </table>
                             </td>
                         </tr>
                         <tr>
@@ -550,19 +564,25 @@
                         {% endif %}
                         
                         {% if cant_vendidos > 0 %}
-                        <tr>
+                        <tr style="float: left;  margin-left: 100px;">
                             <td>
-                                <p><img src="https://res.cloudinary.com/dhry2v8qz/image/upload/v1716102103/AlfaSoft/templates-backend/img/utajy8eakhxrdk2ntrzb.png" height="26" width="26" style="margin-right: 30px;">Vendidos:</p>
+                                <p><img src="https://res.cloudinary.com/dhry2v8qz/image/upload/v1716102103/AlfaSoft/templates-backend/img/utajy8eakhxrdk2ntrzb.png" height="26" width="26" style="margin-right: 30px;">Vendidos: &nbsp; {{cant_vendidos}}</p>
                             </td>
-                            <td style="text-align: center;"><p>{{ cant_vendidos }}</p></td>
                         </tr>
                         <tr>
-                            <td colspan="3">
-                                <p2>
+                            <td>
+                                <table>
+                                    <tr>
                                     {% for numero in vendidos %}
-                                        {{ numero }}&nbsp;
+                                        <td style="width: 14.28%; line-height: 1.3; 
+                                        font-size: 24px;
+                                        color: #a9a;">{{ numero }}</td>
+                                        {% if loop.index % 7 == 0 %}
+                                            </tr><tr>
+                                        {% endif %}
                                     {% endfor %}
-                                </p2>
+                                    </tr>
+                                </table>
                             </td>
                         </tr>
                         <tr>
@@ -573,48 +593,42 @@
                         {% endif %}
                         
                         {% if cant_para_venta > 0 %}
+                        <tr style="float: left;  margin-left: 100px;">
+                            <td>
+                                <p><img src="https://res.cloudinary.com/dhry2v8qz/image/upload/v1716102122/AlfaSoft/templates-backend/img/xwvtihxjwkn22nvtebnr.png" height="26" width="26" style="margin-right: 30px;">Vehículos Para la Venta: &nbsp; {{cant_para_venta}}</p>
+                            </td>
+                        </tr>
                         <tr>
                             <td>
-                                <p><img src="https://res.cloudinary.com/dhry2v8qz/image/upload/v1716102122/AlfaSoft/templates-backend/img/xwvtihxjwkn22nvtebnr.png" height="26" width="26" style="margin-right: 30px;">Vehículos Para la Venta:</p>
-                            </td>
-                            <td style="text-align: center;"><p>{{ cant_para_venta }}</p></td>
-                        </tr>
-                        <tr>
-                            <td colspan="3">
-                                <p2>
+                                <table>
+                                    <tr>
                                     {% for numero in para_venta %}
-                                        {{ numero }}&nbsp;
+                                        <td style="width: 14.28%; line-height: 1.3; 
+                                        font-size: 24px;
+                                        color: #a9a;">{{ numero }}</td>
+                                        {% if loop.index % 7 == 0 %}
+                                            </tr><tr>
+                                        {% endif %}
                                     {% endfor %}
-                                </p2>
+                                    </tr>
+                                </table>
                             </td>
                         </tr>
-                        {% endif %}
+                        {% endif %} 
                     </tbody>
                 </table>
 
-                <hr>
-
-                <table>
-                    <thead>
-                        <th></th>
-                        <th></th>
-                        <th></th>
-                        <th></th>
-                        <th></th>
-                    </thead>
-                    <tbody>
-                        <td>Total Flota Autos: {{total_vehiculos}}</td>
-                        <td>Activa: {{total_activos}}</td>
-                        <td>Parada: {{total_parados}}</td>
-                        <td>Promedio Flota Activa: {{promedio_activos}}%</td>
-                        <td>Promedio Flota Parada: {{promedio_parados}}%</td>
-                    </tbody>
-                </table>
-
-        <footer>
-            <hr>
-            <p style="float: left; margin-left: 50px;">Sistemas Alfa</p>
-            <p style="float: right; margin-right: 50px;">Usuario: {{usuario}}</p>
-        </footer>        
+                <br>
+                
+                <table style="border: 1px solid #ccc;
+        padding: 10px;
+        text-align: center;">
+          <tr>
+            <th>Total Flota Autos: {{total_vehiculos}}</th>
+            <th>Activa: {{total_activos}}</th>
+            <th>Inactiva: {{total_parados}}</th>
+            <th>Promedio Flota Activa: {{promedio_activos}}%</th>
+            <th>Promedio Flota Parada: {{promedio_parados}}%</th>
+        </table>   
 </body>
 </html>
