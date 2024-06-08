@@ -1,0 +1,57 @@
+<app-header></app-header>
+<div class="container">
+  <h1>CARTERA</h1>
+  <!-- <a class="option">
+    <span class="material-symbols-outlined">
+      info
+    </span>
+    <span class="option-text">Estado Trámite</span>
+  </a> -->
+  <div class="sections-container">
+    
+    <div class="section-container">
+      <h2>CONSULTAS</h2>
+      <div class="options-container">
+        <ng-container *ngFor="let option of consultas">
+          <a class="option" [href]="option.url">
+            <span class="material-symbols-outlined">
+              {{ option.icon }}
+            </span>
+            <span class="option-text">{{ option.name }}</span>
+          </a>
+        </ng-container>
+      </div>
+    </div>
+
+    <div class="two-container">
+      <div class="section-container">
+        <h2>DOCUMENTOS</h2>
+        <div class="options-container">
+          <ng-container *ngFor="let option of documentos">
+            <a class="option" [href]="option.url">
+              <span class="material-symbols-outlined">
+                {{ option.icon }}
+              </span>
+              <span class="option-text">{{ option.name }}</span>
+            </a>
+          </ng-container>
+        </div>
+      </div>
+  
+      <div class="section-container">
+        <h2>CRUCES</h2>
+        <div class="options-container">
+          <ng-container *ngFor="let option of cruces">
+            <a class="option" [href]="option.url">
+              <span class="material-symbols-outlined">
+                {{ option.icon }}
+              </span>
+              <span class="option-text">{{ option.name }}</span>
+            </a>
+          </ng-container>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>

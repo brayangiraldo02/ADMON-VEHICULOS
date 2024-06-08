@@ -1,0 +1,36 @@
+<app-header></app-header>
+<div class="container">
+  <h1>CONTABILIDAD</h1>
+
+  <div class="sections-container">
+    
+    <div class="section-container">
+      <h2>ALMACEN</h2>
+      <div class="options-container">
+        <ng-container *ngFor="let option of almacen">
+          <a class="option" [href]="option.url">
+            <span class="material-symbols-outlined">
+              {{ option.icon }}
+            </span>
+            <span class="option-text">{{ option.name }}</span>
+          </a>
+        </ng-container>
+      </div>
+    </div>
+
+    <div class="section-container">
+      <h2>PROPIETARIOS</h2>
+      <div class="options-container">
+        <ng-container *ngFor="let option of propietarios">
+          <a class="option" [href]="option.url">
+            <span class="material-symbols-outlined">
+              {{ option.icon }}
+            </span>
+            <span class="option-text">{{ option.name }}</span>
+          </a>
+        </ng-container>
+      </div>
+    </div>
+
+  </div>
+</div>

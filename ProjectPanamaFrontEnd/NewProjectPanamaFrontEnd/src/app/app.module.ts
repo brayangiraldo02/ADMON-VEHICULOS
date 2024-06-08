@@ -16,6 +16,16 @@ import { PdfViewerComponent } from './components/others/pdf-viewer/pdf-viewer.co
 import { VehiclesComponent } from './components/tasks/vehicles/vehicles.component';
 import { FeespaidComponent } from './components/tasks/feespaid/feespaid.component';
 import { OpcionesGerenciaComponent } from './components/options/gerencia/opciones-gerencia/opciones-gerencia.component';
+import { OpcionesTramitesComponent } from './components/options/tramites/opciones-tramites/opciones-tramites.component';
+import { OpcionesChapisteriaComponent } from './components/options/chapisteria/opciones-chapisteria/opciones-chapisteria.component';
+import { OpcionesGastosComponent } from './components/options/gastos/opciones-gastos/opciones-gastos.component';
+import { OpcionesTallerComponent } from './components/options/taller/opciones-taller/opciones-taller.component';
+import { OpcionesOperacionesComponent } from './components/options/operaciones/opciones-operaciones/opciones-operaciones.component';
+import { OpcionesLlaveroComponent } from './components/options/llavero/opciones-llavero/opciones-llavero.component';
+import { OpcionesReclamosComponent } from './components/options/reclamos/opciones-reclamos/opciones-reclamos.component';
+import { OpcionesCntComponent } from './components/options/cnt/opciones-cnt/opciones-cnt.component';
+import { OpcionesUtilidadesComponent } from './components/options/utilidades/opciones-utilidades/opciones-utilidades.component';
+import { OpcionesCarteraComponent } from './components/options/cartera/opciones-cartera/opciones-cartera.component';
 
 @NgModule({
   declarations: [
@@ -28,7 +38,17 @@ import { OpcionesGerenciaComponent } from './components/options/gerencia/opcione
     PdfViewerComponent,
     VehiclesComponent,
     FeespaidComponent,
-    OpcionesGerenciaComponent
+    OpcionesGerenciaComponent,
+    OpcionesTramitesComponent,
+    OpcionesChapisteriaComponent,
+    OpcionesGastosComponent,
+    OpcionesTallerComponent,
+    OpcionesOperacionesComponent,
+    OpcionesLlaveroComponent,
+    OpcionesReclamosComponent,
+    OpcionesCntComponent,
+    OpcionesUtilidadesComponent,
+    OpcionesCarteraComponent
   ],
   imports: [
     BrowserModule,

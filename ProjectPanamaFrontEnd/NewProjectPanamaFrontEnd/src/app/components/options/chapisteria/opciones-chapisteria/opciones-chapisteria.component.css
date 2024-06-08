@@ -33,7 +33,8 @@
   cursor: pointer;
   text-decoration: none;
   color: black;
-  font-size: 18px;position: relative;  /* Permite posicionamiento absoluto de elementos hijos */
+  font-size: 18px;
+  position: relative;  /* Permite posicionamiento absoluto de elementos hijos */
 }
 
 .option span.material-symbols-outlined {

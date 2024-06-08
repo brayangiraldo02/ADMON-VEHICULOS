@@ -8,14 +8,14 @@ import { Component } from '@angular/core';
 export class OpcionesGerenciaComponent {
 
   options = [
-    { name: 'Estado General de la Flota', icon: '../../../../assets/icons/gerencia.svg', url: 'hoalalalal' },
-    { name: 'Consolidado Estado de la Flota', icon: '../../../../assets/icons/gastos.svg', url: 'hoalalalal' },
-    { name: 'Inventario por Grupo', icon: '../../../../assets/icons/cnt.svg', url: 'hoalalalal' },
-    { name: 'Resumen Cierre de Caja', icon: '../../../../assets/icons/cnt.svg', url: 'hoalalalal' },
-    { name: 'Informe de Ingresos y Egresos (PyG)', icon: '../../../../assets/icons/cnt.svg', url: 'hoalalalal' },
-    { name: 'Informe de Recaudos por Empresa', icon: '../../../../assets/icons/gastos.svg', url: 'hoalalalal' },
-    { name: 'Informe de Transferencia ADS a Empresas', icon: '../../../../assets/icons/cnt.svg', url: 'hoalalalal' },
-    { name: 'Informe de Recaudos Día a Día', icon: '../../../../assets/icons/cnt.svg', url: 'hoalalalal' },
-    { name: 'Informe de Recaudos Mes a Mes', icon: '../../../../assets/icons/cnt.svg', url: 'hoalalalal' }
+    { name: 'Estado General de la Flota', icon: 'info', url: 'hoalalalal' },
+    { name: 'Consolidado Estado de la Flota', icon: 'info', url: 'hoalalalal' },
+    { name: 'Inventario por Grupo', icon: 'info', url: 'hoalalalal' },
+    { name: 'Resumen Cierre de Caja', icon: 'info', url: 'hoalalalal' },
+    { name: 'Informe de Ingresos y Egresos (PyG)', icon: 'info', url: 'hoalalalal' },
+    { name: 'Informe de Recaudos por Empresa', icon: 'info', url: 'hoalalalal' },
+    { name: 'Informe de Transferencia ADS a Empresas', icon: 'info', url: 'hoalalalal' },
+    { name: 'Informe de Recaudos Día a Día', icon: 'info', url: 'hoalalalal' },
+    { name: 'Informe de Recaudos Mes a Mes', icon: 'info', url: 'hoalalalal' }
   ];
 }
