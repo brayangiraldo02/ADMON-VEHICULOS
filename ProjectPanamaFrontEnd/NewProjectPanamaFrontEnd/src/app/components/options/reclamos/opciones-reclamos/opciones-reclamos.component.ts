@@ -14,7 +14,7 @@ export class OpcionesReclamosComponent {
     { name: 'Detalle de Documentos Entregados', icon: 'info', url: 'hoalalalal' },
     { name: 'Hacer Seguimiento del Pago', icon: 'info', url: 'hoalalalal' },
     { name: 'Recibir Pago de la Aseguradora (Cerrar Caso)', icon: 'info', url: 'hoalalalal' },
-    { name: 'TConsultar Estado de un Caso', icon: 'info', url: 'hoalalalal' },
+    { name: 'Consultar Estado de un Caso', icon: 'info', url: 'hoalalalal' },
   ];
 
   panapass = [
