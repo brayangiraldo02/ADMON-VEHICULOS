@@ -24,6 +24,8 @@ import { OpcionesOperacionesComponent } from './components/options/operaciones/o
 import { OpcionesLlaveroComponent } from './components/options/llavero/opciones-llavero/opciones-llavero.component';
 import { OpcionesReclamosComponent } from './components/options/reclamos/opciones-reclamos/opciones-reclamos.component';
 import { OpcionesCntComponent } from './components/options/cnt/opciones-cnt/opciones-cnt.component';
+import { OpcionesUtilidadesComponent } from './components/options/utilidades/opciones-utilidades/opciones-utilidades.component';
+import { OpcionesCarteraComponent } from './components/options/cartera/opciones-cartera/opciones-cartera.component';
 
 @NgModule({
   declarations: [
@@ -44,7 +46,9 @@ import { OpcionesCntComponent } from './components/options/cnt/opciones-cnt/opci
     OpcionesOperacionesComponent,
     OpcionesLlaveroComponent,
     OpcionesReclamosComponent,
-    OpcionesCntComponent
+    OpcionesCntComponent,
+    OpcionesUtilidadesComponent,
+    OpcionesCarteraComponent
   ],
   imports: [
     BrowserModule,

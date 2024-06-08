@@ -17,6 +17,8 @@ import { OpcionesOperacionesComponent } from './components/options/operaciones/o
 import { OpcionesLlaveroComponent } from './components/options/llavero/opciones-llavero/opciones-llavero.component';
 import { OpcionesReclamosComponent } from './components/options/reclamos/opciones-reclamos/opciones-reclamos.component';
 import { OpcionesCntComponent } from './components/options/cnt/opciones-cnt/opciones-cnt.component';
+import { OpcionesUtilidadesComponent } from './components/options/utilidades/opciones-utilidades/opciones-utilidades.component';
+import { OpcionesCarteraComponent } from './components/options/cartera/opciones-cartera/opciones-cartera.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -31,9 +33,11 @@ const routes: Routes = [
   { path: 'sheet-metal-work', component: OpcionesChapisteriaComponent, canActivate: [AuthGuard]},
   { path: 'keychain', component: OpcionesLlaveroComponent, canActivate: [AuthGuard]},
   { path: 'claims', component: OpcionesReclamosComponent, canActivate: [AuthGuard]},
+  { path: 'wallet', component: OpcionesCarteraComponent, canActivate: [AuthGuard]},
   { path: 'management', component: OpcionesGerenciaComponent, canActivate: [AuthGuard]},
   { path: 'expenses', component: OpcionesGastosComponent, canActivate: [AuthGuard]},
   { path: 'cnt', component: OpcionesCntComponent, canActivate: [AuthGuard]},
+  { path: 'utilities', component: OpcionesUtilidadesComponent, canActivate: [AuthGuard]},
   { path: 'pdf', component: PdfViewerComponent, canActivate: [AuthGuard]}
 ];
 

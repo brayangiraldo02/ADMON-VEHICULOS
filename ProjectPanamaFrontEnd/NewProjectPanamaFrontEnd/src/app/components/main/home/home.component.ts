@@ -58,12 +58,12 @@ export class HomeComponent implements OnInit {
       { name: 'Chapistería', icon: '../../../../assets/icons/chapisteria.svg', url: '/sheet-metal-work', enabled: this.permisos.user_data.opcion07 },
       { name: 'Llavero', icon: '../../../../assets/icons/llavero.svg', url: '/keychain', enabled: this.permisos.user_data.opcion08 },
       { name: 'Reclamos', icon: '../../../../assets/icons/reclamos.svg', url: '/claims', enabled: this.permisos.user_data.opcion09 },
-      { name: 'Cartera', icon: '../../../../assets/icons/cartera.svg', url: 'hoalalalal', enabled: this.permisos.user_data.opcion10 },
+      { name: 'Cartera', icon: '../../../../assets/icons/cartera.svg', url: '/wallet', enabled: this.permisos.user_data.opcion10 },
       { name: 'Gerencia', icon: '../../../../assets/icons/gerencia.svg', url: '/management', enabled: this.permisos.user_data.opcion11 },
       { name: 'Gastos', icon: '../../../../assets/icons/gastos.svg', url: '/expenses', enabled: this.permisos.user_data.opcion12 },
       { name: 'CNT', icon: '../../../../assets/icons/cnt.svg', url: '/cnt', enabled: this.permisos.user_data.opcion13 },
       { name: 'Contado', icon: '../../../../assets/icons/contado.svg', url: 'hoalalalal', enabled: this.permisos.user_data.opcion14 },
-      { name: 'Utilidades', icon: '../../../../assets/icons/utilidades1.svg', url: 'hoalalalal', enabled: this.permisos.user_data.opcion15 }
+      { name: 'Utilidades', icon: '../../../../assets/icons/utilidades1.svg', url: '/utilities', enabled: this.permisos.user_data.opcion15 }
     ];
   }
 
