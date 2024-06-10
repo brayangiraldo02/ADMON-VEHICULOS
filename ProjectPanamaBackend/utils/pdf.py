@@ -1,9 +1,15 @@
 import pdfkit
+import os
 
 def html2pdf(titulo, html_path, pdf_path, footer_path):
     """
     Convertir HTML a PDF utilizando pdfkit, que es un envoltorio de wkhtmltopdf.
     """
+    current_directory = os.path.dirname(os.path.abspath(__file__))
+    header_path = os.path.join(current_directory, 'templates', 'header.html')
+    footer_p = os.path.join(current_directory, 'templates', 'footer.html')
+    print("Header path:", header_path)
+    print("Footer path:", footer_path)
     options = {
         'page-size': 'Letter',
         'margin-top': '1.2in',
@@ -14,11 +20,11 @@ def html2pdf(titulo, html_path, pdf_path, footer_path):
         'no-outline': None,
         'enable-local-file-access': None,
         'footer-center': '[page]',  # Agrega el número de página en la esquina superior derecha
-        'header-html': './templates/header.html',
+        'header-html': header_path,
         'header-center': titulo,
         '--header-font-name': 'Times New Roman', 
         '--header-font-size': '14',
-        'footer-html': './templates/footer.html',
+        'footer-html': footer_p,
         'header-spacing': '3',
     }
     with open(html_path) as f:
