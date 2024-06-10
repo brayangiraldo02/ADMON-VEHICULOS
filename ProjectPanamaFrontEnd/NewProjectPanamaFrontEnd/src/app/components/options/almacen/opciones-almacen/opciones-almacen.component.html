@@ -1,0 +1,97 @@
+<app-header></app-header>
+<div class="container">
+  <h1>ALMACÉN</h1>
+
+  <div class="sections-container">
+    
+    <div class="two-container">
+      <div class="section-container">
+        <h2>CONTEOS ALEATORIOS</h2>
+        <div class="options-container">
+          <ng-container *ngFor="let option of conteos_aleatorios">
+            <a class="option" [href]="option.url">
+              <span class="material-symbols-outlined">
+                {{ option.icon }}
+              </span>
+              <span class="option-text">{{ option.name }}</span>
+            </a>
+          </ng-container>
+        </div>
+      </div>
+
+      <div class="section-container">
+        <h2>MOVIMIENTOS</h2>
+        <div class="options-container">
+          <ng-container *ngFor="let option of movimientos">
+            <a class="option" [href]="option.url">
+              <span class="material-symbols-outlined">
+                {{ option.icon }}
+              </span>
+              <span class="option-text">{{ option.name }}</span>
+            </a>
+          </ng-container>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="two-container">
+      <div class="section-container">
+        <h2>INVENTARIO FÍSICO</h2>
+        <div class="options-container">
+          <ng-container *ngFor="let option of inventario_fisico">
+            <a class="option" [href]="option.url">
+              <span class="material-symbols-outlined">
+                {{ option.icon }}
+              </span>
+              <span class="option-text">{{ option.name }}</span>
+            </a>
+          </ng-container>
+        </div>
+      </div>
+
+      <div class="section-container">
+        <h2>ESPECIALES</h2>
+        <div class="options-container">
+          <ng-container *ngFor="let option of especiales">
+            <a class="option" [href]="option.url">
+              <span class="material-symbols-outlined">
+                {{ option.icon }}
+              </span>
+              <span class="option-text">{{ option.name }}</span>
+            </a>
+          </ng-container>
+        </div>
+      </div>
+
+      <div class="section-container">
+        <h2>CONSULTAS</h2>
+        <div class="options-container">
+          <ng-container *ngFor="let option of consultas">
+            <a class="option" [href]="option.url">
+              <span class="material-symbols-outlined">
+                {{ option.icon }}
+              </span>
+              <span class="option-text">{{ option.name }}</span>
+            </a>
+          </ng-container>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-container">
+      <h2>GENERALES</h2>
+      <div class="options-container">
+        <ng-container *ngFor="let option of generales">
+          <a class="option" [href]="option.url">
+            <span class="material-symbols-outlined">
+              {{ option.icon }}
+            </span>
+            <span class="option-text">{{ option.name }}</span>
+          </a>
+        </ng-container>
+      </div>
+    </div>
+
+  </div>
+</div>
