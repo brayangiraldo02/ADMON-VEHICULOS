@@ -14,11 +14,11 @@ def html2pdf(titulo, html_path, pdf_path, footer_path):
         'no-outline': None,
         'enable-local-file-access': None,
         'footer-center': '[page]',  # Agrega el número de página en la esquina superior derecha
-        'header-html': 'D:/PanamaProject/ADMON-VEHICULOS/ProjectPanamaBackend/templates/header.html',
+        'header-html': '../templates/header.html',
         'header-center': titulo,
         '--header-font-name': 'Times New Roman', 
         '--header-font-size': '14',
-        'footer-html': 'D:/PanamaProject/ADMON-VEHICULOS/ProjectPanamaBackend/templates/footer.html',
+        'footer-html': '../templates/footer.html',
         'header-spacing': '3',
     }
     with open(html_path) as f:
