@@ -8,11 +8,6 @@ from models.conductores import Conductores
 from fastapi.encoders import jsonable_encoder
 from utils.reports import *
 from datetime import datetime
-fecha_hora_actual = datetime.now()
-fecha_actual = fecha_hora_actual.date()
-fecha = fecha_actual.strftime("%d/%m/%Y")
-hora = fecha_hora_actual.time()  
-hora_actual = hora.strftime("%H:%M")
 
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import FileResponse
@@ -33,7 +28,18 @@ async def get_conteo_vehiculos_estados():
     vehiculos_estados_list = [{'codigo': vehiculo.CODIGO, 'nombre': vehiculo.NOMBRE, 'numero': vehiculo.NUMERO} for vehiculo in conteo_vehiculos_estados]
     data = fun_conteo_vehiculos_estados(vehiculos_estados_list)
     data = data.get("conteo_placas")
-    data_view = {"fecha": fecha, "hora": hora_actual, "empresa": "WORLD TAXI ADMINISTRACION, S.A."}
+    # Datos de la fecha y hora actual
+    fecha = datetime.now().strftime("%Y-%m-%d")
+    hora_actual = datetime.now().strftime("%H:%M:%S")
+    usuario = "admin" 
+    titulo = 'Informe Por Estados General'
+
+    # Inicializar el diccionario data_view con información común
+    data_view = {
+        "fecha": fecha,
+        "hora": hora_actual
+    }
+
     # Activos
     data_view["cant_activo"] = data.get("ACTIVO", 0)
     data_view["cant_backup"] = data.get("BACUPK", 0)
@@ -74,20 +80,34 @@ async def get_conteo_vehiculos_estados():
         "Content-Disposition": "inline; estado-vehiculos-resumen.pdf"
     }  
 
-    titulo = 'Informe Por Estados General'
+    data_view["usuario"] = usuario
 
     template_loader = jinja2.FileSystemLoader(searchpath="./templates")
     template_env = jinja2.Environment(loader=template_loader)
     template_file = "form1.html"
+    header_file = "header1.html"
+    footer_file = "footer1.html"
     template = template_env.get_template(template_file)
+    header = template_env.get_template(header_file)
+    footer = template_env.get_template(footer_file)
     output_text = template.render(data_view) 
+    output_header = header.render(data_view)
+    output_footer = footer.render(data_view)
 
-    html_path = f'./templates/output.html'
+    html_path = f'./templates/renderform1.html'
+    header_path = f'./templates/renderheader1.html'
+    footer_path = f'./templates/renderfooter1.html'
     html_file = open(html_path, 'w')
+    header_file = open(header_path, 'w')
+    html_footer = open(footer_path, 'w')
     html_file.write(output_text)
+    header_file.write(output_header)
+    html_footer.write(output_footer)
     html_file.close()
+    header_file.close()
+    html_footer.close()
     pdf_path = 'estado-vehiculos-resumen.pdf'
-    html2pdf(titulo,html_path, pdf_path, 'footer.html')
+    html2pdf(titulo,html_path, pdf_path, header_path=header_path, footer_path=footer_path)
 
     response =  FileResponse(pdf_path, media_type='application/pdf', filename='templates/estado-vehiculos-resumen.pdf', headers=headers)
     #response = JSONResponse(content=jsonable_encoder(data))
@@ -132,8 +152,16 @@ async def get_conteo_propietarios_vehiculos_estados(id: int):
         # Datos de la fecha y hora actual
         fecha = datetime.now().strftime("%Y-%m-%d")
         hora_actual = datetime.now().strftime("%H:%M:%S")
+        usuario = "admin" 
+        titulo = 'Informe Por Estados General'
 
-        data_view = {"fecha": fecha, "hora": hora_actual, "codigo_empresa": id}
+        # Inicializar el diccionario data_view con información común
+        data_view = {
+            "fecha": fecha,
+            "hora": hora_actual,
+            "codigo_empresa": id
+        }
+        
         data_view["empresa"] = data.get("nombre_empresa", 0)
         data_view["cant_activo"] = data.get("ACTIVO", 0)
         data_view["cant_backup"] = data.get("BACUPK", 0)
@@ -164,26 +192,43 @@ async def get_conteo_propietarios_vehiculos_estados(id: int):
             data_view["promedio_activos"] = 0
         else:
            data_view["promedio_activos"] = round((data_view["cant_activo_backup"] / data_view["total_activos"] * 100), 2)
-        data_view["promedio_parados"] = round((100 - data_view["promedio_activos"]), 2)
+        data_view["promedio_parados"] = round((100 - data_view["promedio_activos"]), 2) 
+
+        titulo = 'Informe Por Estados General'
+        usuario = 'Usuario de Prueba'
+
+        data_view["usuario"] = usuario
 
         headers = {
             "Content-Disposition": "inline; estado-vehiculos-resumen-empresa.pdf"
         }  
 
-        titulo = 'Informe Por Estados General'
-
         template_loader = jinja2.FileSystemLoader(searchpath="./templates")
         template_env = jinja2.Environment(loader=template_loader)
         template_file = "form1.html"
+        header_file = "header1.html"
+        footer_file = "footer1.html"
         template = template_env.get_template(template_file)
+        header = template_env.get_template(header_file)
+        footer = template_env.get_template(footer_file)
         output_text = template.render(data_view) 
+        output_header = header.render(data_view)
+        output_footer = footer.render(data_view)
 
-        html_path = f'./templates/output.html'
+        html_path = f'./templates/renderform1.html'
+        header_path = f'./templates/renderheader1.html'
+        footer_path = f'./templates/renderfooter1.html'
         html_file = open(html_path, 'w')
+        header_file = open(header_path, 'w')
+        html_footer = open(footer_path, 'w')
         html_file.write(output_text)
+        header_file.write(output_header)
+        html_footer.write(output_footer)
         html_file.close()
+        header_file.close()
+        html_footer.close()
         pdf_path = 'estado-vehiculos-resumen.pdf'
-        html2pdf(titulo,html_path, pdf_path, 'footer.html')
+        html2pdf(titulo,html_path, pdf_path, header_path=header_path, footer_path=footer_path)
 
         response = FileResponse(pdf_path, media_type='application/pdf', filename='templates/estado-vehiculos-resumen-empresa.pdf', headers=headers)
 
@@ -213,7 +258,15 @@ async def get_conteo_vehiculos_estados_numeros():
         vehiculos_estados_list.append(vehiculos_estados)
     data = obtener_numeros_por_estado(vehiculos_estados_list)
     data = data.get("numeros_por_estado")
-    data_view = {"fecha": fecha, "hora": hora_actual, "empresa": "WORLD TAXI ADMINISTRACION, S.A."}
+    # Datos de la fecha y hora actual
+    fecha = datetime.now().strftime("%Y-%m-%d")
+    hora_actual = datetime.now().strftime("%H:%M:%S")
+
+    # Inicializar el diccionario data_view con información común
+    data_view = {
+        "fecha": fecha,
+        "hora": hora_actual
+    }
     # Activos
     data_view["cant_activo"] = len(data.get("ACTIVO", []))
     data_view["activos"] = data.get("ACTIVO", [])
@@ -276,21 +329,42 @@ async def get_conteo_vehiculos_estados_numeros():
     }  
 
     titulo = 'Informe Por Estados Detallado'
+    usuario = 'Usuario de Prueba'
+
+    data_view["usuario"] = usuario
+
+    headers = {
+        "Content-Disposition": "inline; informe-estados-detallado.pdf"
+    }  
 
     template_loader = jinja2.FileSystemLoader(searchpath="./templates")
     template_env = jinja2.Environment(loader=template_loader)
     template_file = "form2.html"
+    header_file = "header1.html"
+    footer_file = "footer1.html"
     template = template_env.get_template(template_file)
+    header = template_env.get_template(header_file)
+    footer = template_env.get_template(footer_file)
     output_text = template.render(data_view) 
+    output_header = header.render(data_view)
+    output_footer = footer.render(data_view)
 
-    html_path = f'./templates/output2.html'
+    html_path = f'./templates/renderform2.html'
+    header_path = f'./templates/renderheader1.html'
+    footer_path = f'./templates/renderfooter1.html'
     html_file = open(html_path, 'w')
+    header_file = open(header_path, 'w')
+    html_footer = open(footer_path, 'w')
     html_file.write(output_text)
+    header_file.write(output_header)
+    html_footer.write(output_footer)
     html_file.close()
-    pdf_path = 'estado-vehiculos-numeros.pdf'
-    html2pdf(titulo, html_path, pdf_path, 'footer.html')
+    header_file.close()
+    html_footer.close()
+    pdf_path = 'informe-estados-detallado.pdf'
+    html2pdf(titulo,html_path, pdf_path, header_path=header_path, footer_path=footer_path)
 
-    response =  FileResponse(pdf_path, media_type='application/pdf', filename='templates/estado-vehiculos-numeros.pdf', headers=headers)
+    response =  FileResponse(pdf_path, media_type='application/pdf', filename='templates/informe-estados-detallado.pdf', headers=headers)
 
     return response
     #return JSONResponse(content=jsonable_encoder(data))
@@ -324,7 +398,16 @@ async def get_conteo_propietarios_vehiculos_estados_numeros(id: int):
     data = obtener_numeros_por_propietario(vehiculos_estados_propietarios_list)
     data = data.get("numeros_por_propietario")
     data = data.get(str(id))  
-    data_view = {"fecha": fecha, "hora": hora_actual}
+    # Datos de la fecha y hora actual
+    fecha = datetime.now().strftime("%Y-%m-%d")
+    hora_actual = datetime.now().strftime("%H:%M:%S")
+
+    # Inicializar el diccionario data_view con información común
+    data_view = {
+        "fecha": fecha,
+        "hora": hora_actual, 
+        "codigo_empresa": id
+    }
     data_view["empresa"] = data.get("nombre_empresa", 0)
     # Activos
     data_view["cant_activo"] = len(data.get("ACTIVO", []))
@@ -385,26 +468,43 @@ async def get_conteo_propietarios_vehiculos_estados_numeros(id: int):
         data_view["promedio_activos"] = round((data_view["cant_activo_backup"] / data_view["total_activos"] * 100), 2)
     data_view["promedio_parados"] = round((100 - data_view["promedio_activos"]), 2)
 
-    headers = {
-        "Content-Disposition": "inline; propietario-estado-vehiculos-numeros.pdf"
-    }  
-
     titulo = 'Informe Por Estados Detallado'
+    usuario = 'Usuario de Prueba'
+
+    data_view["usuario"] = usuario
+
+    headers = {
+        "Content-Disposition": "inline; informe-estados-detallado-empresa.pdf"
+    }  
 
     template_loader = jinja2.FileSystemLoader(searchpath="./templates")
     template_env = jinja2.Environment(loader=template_loader)
     template_file = "form2.html"
+    header_file = "header1.html"
+    footer_file = "footer1.html"
     template = template_env.get_template(template_file)
+    header = template_env.get_template(header_file)
+    footer = template_env.get_template(footer_file)
     output_text = template.render(data_view) 
+    output_header = header.render(data_view)
+    output_footer = footer.render(data_view)
 
-    html_path = f'./templates/output2.html'
+    html_path = f'./templates/renderform2.html'
+    header_path = f'./templates/renderheader1.html'
+    footer_path = f'./templates/renderfooter1.html'
     html_file = open(html_path, 'w')
+    header_file = open(header_path, 'w')
+    html_footer = open(footer_path, 'w')
     html_file.write(output_text)
+    header_file.write(output_header)
+    html_footer.write(output_footer)
     html_file.close()
-    pdf_path = 'estado-vehiculos-numeros.pdf'
-    html2pdf(titulo, html_path, pdf_path, 'footer.html')
+    header_file.close()
+    html_footer.close()
+    pdf_path = 'informe-estados-detallado-empresa.pdf'
+    html2pdf(titulo,html_path, pdf_path, header_path=header_path, footer_path=footer_path)
 
-    response =  FileResponse(pdf_path, media_type='application/pdf', filename='templates/propietario-estado-vehiculos-numeros.pdf', headers=headers)
+    response =  FileResponse(pdf_path, media_type='application/pdf', filename='templates/informe-estados-detallado-empresa.pdf', headers=headers)
 
     return response
     #return JSONResponse(content=jsonable_encoder(data))
@@ -440,8 +540,7 @@ async def get_vehiculos_detalles():
         )   .join(Vehiculos, Estados.CODIGO == Vehiculos.ESTADO) \
             .join(Conductores, Vehiculos.CONDUCTOR == Conductores.CODIGO) \
             .join(Propietarios, Vehiculos.PROPI_IDEN == Propietarios.CODIGO) \
-            .filter(Estados.CODIGO == '01') \
-            .all()
+            .all()   
         
         # Convertir los resultados en un formato JSON
         vehiculos_detalles_list = []
@@ -469,11 +568,11 @@ async def get_vehiculos_detalles():
             }
             vehiculos_detalles_list.append(vehiculo_detalle)
 
-        codigos_estados_deseados = ["01", "03"]
+        codigos_estados_deseados = ["01", "07"]
 
         data = obtener_conductores_por_propietario(vehiculos_detalles_list, codigos_estados_deseados)
 
-        claves_deseadas = ["55"]
+        """claves_deseadas = ["26"]
 
         datos = {clave: data.get(clave, {}) for clave in claves_deseadas}
 
@@ -530,34 +629,41 @@ async def get_vehiculos_detalles():
         data_view["usuario"] = usuario
 
         headers = {
-            "Content-Disposition": "inline; relacion-vehiculos-estados.pdf"
+            "Content-Disposition": "inline; relacion-vehiculos-empresa.pdf"
         }  
 
         template_loader = jinja2.FileSystemLoader(searchpath="./templates")
         template_env = jinja2.Environment(loader=template_loader)
         template_file = "RelacionVehiculos.html"
+        header_file = "header.html"
         footer_file = "footer.html"
         template = template_env.get_template(template_file)
+        header = template_env.get_template(header_file)
         footer = template_env.get_template(footer_file)
         output_text = template.render(data_view=data_view)
+        output_header = header.render(data_view=data_view)
         output_footer = footer.render(data_view=data_view)
 
-        html_path = f'./templates/output3.html'
+        html_path = f'./templates/renderRelacionVehiculos.html'
+        header_path = f'./templates/renderheader.html'
         footer_path = f'./templates/renderfooter.html'
         html_file = open(html_path, 'w')
+        header_file = open(header_path, 'w')
         html_footer = open(footer_path, 'w') 
         html_file.write(output_text)
+        header_file.write(output_header)
         html_footer.write(output_footer) 
         html_file.close()
-        pdf_path = 'relacion-vehiculos-estados.pdf'
-        html2pdf(titulo, html_path, pdf_path, footer_path)
+        header_file.close()
+        html_footer.close()
+        pdf_path = 'relacion-vehiculos-empresa.pdf'
+        html2pdf(titulo, html_path, pdf_path, header_path=header_path, footer_path=footer_path)
 
-        response = FileResponse(pdf_path, media_type='application/pdf', filename='templates/relacion-vehiculos-estados.pdf', headers=headers)
+        response = FileResponse(pdf_path, media_type='application/pdf', filename='templates/relacion-vehiculos-empresa.pdf', headers=headers) """
         
-        
-        return response
+        #return response
     
-        #return JSONResponse(content=jsonable_encoder(datos))
+        return JSONResponse(content=jsonable_encoder(data))
     finally:
         db.close()
 
@@ -606,7 +712,7 @@ async def get_vehiculos_detalles():
             }
             vehiculos_detalles_list.append(vehiculo_detalle)
 
-        codigos_estados_deseados = []
+        codigos_estados_deseados = ["01"]
     
         data = cuotas_pagas(vehiculos_detalles_list, codigos_estados_deseados)
 
@@ -668,21 +774,29 @@ async def get_vehiculos_detalles():
         template_loader = jinja2.FileSystemLoader(searchpath="./templates")
         template_env = jinja2.Environment(loader=template_loader)
         template_file = "InformeCuotas.html"
+        header_file = "header.html"
         footer_file = "footer.html"
         template = template_env.get_template(template_file)
+        header = template_env.get_template(header_file)
         footer = template_env.get_template(footer_file)
         output_text = template.render(data_view=data_view)
+        output_header = header.render(data_view=data_view)
         output_footer = footer.render(data_view=data_view)
 
-        html_path = f'./templates/output3.html'
+        html_path = f'./templates/renderInformeCuotas.html'
+        header_path = f'./templates/renderheader.html'
         footer_path = f'./templates/renderfooter.html'
         html_file = open(html_path, 'w')
+        header_file = open(header_path, 'w')
         html_footer = open(footer_path, 'w') 
         html_file.write(output_text)
+        header_file.write(output_header)
         html_footer.write(output_footer) 
         html_file.close()
+        header_file.close()
+        html_footer.close()
         pdf_path = 'informe-cuotas-pagas.pdf'
-        html2pdf(titulo, html_path, pdf_path, footer_path)
+        html2pdf(titulo, html_path, pdf_path, header_path=header_path, footer_path=footer_path)
 
         response = FileResponse(pdf_path, media_type='application/pdf', filename='templates/informe-cuotas-pagas.pdf', headers=headers)
         

@@ -126,8 +126,8 @@
                         Propietario: {{ info['codigo_empresa'] }} <span style="text-transform: uppercase;">{{ info['nombre_empresa'] }}</span>
                     </div>
                 </th>
-            </tr>            
-            {% endif %}      
+            </tr>           
+            {% endif %}
             {% for vehiculo, info in data_view.items() %}
             {% if info['codigo_empresa'] == empresa %}
                 <tr style="white-space: nowrap;">

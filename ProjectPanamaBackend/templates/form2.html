@@ -72,7 +72,7 @@
                         <th></th>
                     </thead>
                     <tbody>
-                        <td style="text-align: right;"><p><u>{{ cant_activo_backup }}</u></p></td>
+                        <td style="text-align: center;"><p><u>{{ cant_activo_backup }}</u></p></td>
                         {% if cant_activo > 0 %}
                         <tr>
                             <td>
@@ -620,15 +620,15 @@
 
                 <br>
                 
-                <table style="border: 1px solid #ccc;
+        <table style="border: 1px solid #ccc;
         padding: 10px;
         text-align: center;">
           <tr>
-            <th>Total Flota Autos: {{total_vehiculos}}</th>
-            <th>Activa: {{total_activos}}</th>
-            <th>Inactiva: {{total_parados}}</th>
-            <th>Promedio Flota Activa: {{promedio_activos}}%</th>
-            <th>Promedio Flota Parada: {{promedio_parados}}%</th>
+            <th style="font-size: 18px;">Total Flota Autos: {{total_vehiculos}}</th>
+            <th style="font-size: 18px;">Activa: {{total_activos}}</th>
+            <th style="font-size: 18px;">Inactiva: {{total_parados}}</th>
+            <th style="font-size: 18px;">Promedio Flota Activa: {{promedio_activos}}%</th>
+            <th style="font-size: 18px;">Promedio Flota Parada: {{promedio_parados}}%</th>
         </table>   
 </body>
 </html>
