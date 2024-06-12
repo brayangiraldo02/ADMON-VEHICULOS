@@ -92,16 +92,22 @@ def obtener_conductores_por_propietario(data, codigos_estados_deseados=None):
             cuotas_por_propietario[codigo_propietario] = {
                 "propietario_codigo": vehiculo["propietario_codigo"],
                 "propietario_abreviado": vehiculo["propietario_abreviado"],
-                "empty": "1"  # Inicialmente, asumimos que solo hay "propietario_codigo" y "propietario_abreviado"
+                "empty": "1",
+                "estados": {}  # Nuevo diccionario para almacenar los estados
             }
         if vehiculo["conductor_codigo"]:
-            if codigos_estados_deseados is None or not codigos_estados_deseados:
-                cuotas_por_propietario[codigo_propietario][vehiculo["vehiculo_numero"]] = vehiculo
-                cuotas_por_propietario[codigo_propietario]["empty"] = "0"  # Hay más datos además de "propietario_codigo" y "propietario_abreviado"
-            elif vehiculo["estado_codigo"] in codigos_estados_deseados:
-                cuotas_por_propietario[codigo_propietario][vehiculo["vehiculo_numero"]] = vehiculo
-                cuotas_por_propietario[codigo_propietario]["empty"] = "0"  # Hay más datos además de "propietario_codigo" y "propietario_abreviado"
+            estado = vehiculo["estado_nombre"]
+            if codigos_estados_deseados is None or not codigos_estados_deseados or vehiculo["estado_codigo"] in codigos_estados_deseados:
+                if estado not in cuotas_por_propietario[codigo_propietario]["estados"]:
+                    cuotas_por_propietario[codigo_propietario]["estados"][estado] = {
+                        "estado_codigo": vehiculo["estado_codigo"],
+                        "estado_nombre": estado,
+                        "empty": "0"
+                    }  # Crea un diccionario para el estado si aún no existe
+                cuotas_por_propietario[codigo_propietario]["estados"][estado][vehiculo["vehiculo_numero"]] = vehiculo
+                cuotas_por_propietario[codigo_propietario]["empty"] = "0"
     return cuotas_por_propietario
+
 #------------------------------------------------------------
 
 def cuotas_pagas(data, codigos_estados_deseados=None):

@@ -29,7 +29,7 @@
         }
         td{
             white-space: nowrap;
-            font-size: 13px;
+            font-size: 15px;
         }
         tr {
             padding: 15px;
@@ -38,13 +38,21 @@
         }
         .box-propietario {
             text-align: left;
-            font-size: 17px;
+            font-size: 23px;
             margin-top: 10px;
             border: 2px solid #000;
             border-radius: 10px; /* Bordes redondeados */
-            padding: 10px; /* Espaciado interno */
+            padding: 5px; /* Espaciado interno */
         }
-         dr {
+        .box-propietario2 {
+            text-align: left;
+            font-size: 17px;
+            margin-top: 10px;
+            position: sticky;
+            left: 0;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+        dr {
             position: absolute;
             right: 0;
             text-align: right;
@@ -117,46 +125,52 @@
             <th>Cedula</th>
             <th>Telefono</th>   
         </tr>
-        {% for empresa, info in data_view.items() %}
-        {% if info['codigo_empresa'] == empresa %}
-            {% if info['empty'] == '0' %}
-            <tr>
-                <th colspan="10">
-                    <div class="box-propietario">
-                        Propietario: {{ info['codigo_empresa'] }} <span style="text-transform: uppercase;">{{ info['nombre_empresa'] }}</span>
-                    </div>
-                </th>
-            </tr>           
-            {% endif %}
-            {% for vehiculo, info in data_view.items() %}
-            {% if info['codigo_empresa'] == empresa %}
-                <tr style="white-space: nowrap;">
-                    <td>{{ info['consecutivo'] }}</td>
-                    <td>{{ info['unidad'] }}</td>
-                    <td>{{ info['placa'] }}</td>
-                    <td>{{ info['marca'] }} {{ info['linea'] }}</td>
-                    <td>{{ info['modelo'] }}</td>
-                    <td>{{ info['nro_cupo'] }}</td>
-                    <td>{{ info['motor'] }}</td>
-                    <td>{{ info['chasis'] }}</td>
-                    <td>{{ info['nro_ent_sdo'] }}</td>
-                    <td>{{ info['cuota_diaria'] }}</td>
-                    <td>{{ info['codigo_conductor'] }}</td>
-                    <td style = "text-align: left;">{{ info['nombre'] }}</td>
-                    <td>{{ info['cedula'] }}</td>
-                    <td>{{ info['telefono'] }}</td>
+        {% for empresa, empresa_info in data_view.items() %}
+            {% if empresa_info['empty'] == '0' %}
+                <tr>
+                    <th colspan="8">
+                        <div class="box-propietario">
+                            Propietario: {{ empresa_info['codigo_empresa'] }} <span style="text-transform: uppercase;">{{ empresa_info['nombre_empresa'] }}</span>
+                        </div>
+                    </th>
                 </tr>
+                {% for estado, vehiculos in empresa_info['estados'].items() %}
+                    <tr style="white-space: nowrap;">
+                        <th colspan="6">
+                            <div class="box-propietario2">
+                                Estado:  <span style="text-transform: uppercase;">{{ estado }}</span>
+                            </div>
+                        </th>
+                    </tr>
+                    {% for vehiculo in vehiculos %}
+                        <tr style="white-space: nowrap;">
+                            <td>{{ vehiculo['consecutivo'] }}</td>
+                            <td>{{ vehiculo['unidad'] }}</td>
+                            <td>{{ vehiculo['placa'] }}</td>
+                            <td>{{ vehiculo['marca'] }}</td>
+                            <td>{{ vehiculo['modelo'] }}</td>
+                            <td>{{ vehiculo['nro_cupo'] }}</td>
+                            <td style = "text-align: left;">{{ vehiculo['motor'] }}</td>
+                            <td>{{ vehiculo['chasis'] }}</td>
+                            <td>{{ vehiculo['nro_ent_sdo'] }}</td>
+                            <td>{{ vehiculo['cuota_diaria'] }}</td>
+                            <td>{{ vehiculo['codigo_conductor'] }}</td>
+                            <td style = "text-align: left;">{{ vehiculo['nombre'] }}</td>
+                            <td>{{ vehiculo['cedula'] }}</td>
+                            <td>{{ vehiculo['telefono'] }}</td>
+                        </tr>
+                    {% endfor %}
+                {% endfor %}
             {% endif %}
-            {% endfor %}
-        {% endif %}
         {% endfor %}
         <tr>
             <th colspan="6">
                 <div class="box-propietario">
-                    Total Vehiculos: {{ data_view [ 'total' ] }}
+                    Total Vehiculos: {{ data_view['total'] }}
                 </div>
             </th>
         </tr>
-    </table>  
+    </table>
+      
 </body>
 </html>

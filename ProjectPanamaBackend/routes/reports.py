@@ -513,7 +513,7 @@ async def get_conteo_propietarios_vehiculos_estados_numeros(id: int):
 
 #-----------------------------------------------------------------------------------------
 
-@reports_router.get('/vehiculos-detalles')
+@reports_router.get('/relacion-vehiculos-propietario')
 async def get_vehiculos_detalles():
     db = session()
     try:
@@ -568,11 +568,11 @@ async def get_vehiculos_detalles():
             }
             vehiculos_detalles_list.append(vehiculo_detalle)
 
-        codigos_estados_deseados = ["01", "07"]
+        codigos_estados_deseados = []
 
         data = obtener_conductores_por_propietario(vehiculos_detalles_list, codigos_estados_deseados)
 
-        """claves_deseadas = ["26"]
+        claves_deseadas = ["1", "13", "17", "26", "36"]
 
         datos = {clave: data.get(clave, {}) for clave in claves_deseadas}
 
@@ -582,7 +582,6 @@ async def get_vehiculos_detalles():
         usuario = "admin" 
         titulo = 'Relación Vehículos por Propietario'
 
-        # Inicializar el diccionario data_view con información común
         data_view = {
             "fecha": fecha,
             "hora": hora_actual
@@ -592,44 +591,46 @@ async def get_vehiculos_detalles():
         total = 0
         for empresa, info in datos.items():
             if isinstance(info, dict):
+                # Agregar información de la empresa
                 data_view[empresa] = {
                     "codigo_empresa": info.get("propietario_codigo", 0),
                     "nombre_empresa": info.get("propietario_abreviado", 0),
-                    "empty": info.get("empty", 0)
+                    "empty": info.get("empty", 0),
+                    "estados": {}  # Aquí almacenaremos los vehículos organizados por estado
                 }
-                consecutivo = 1
-                for vehiculo, vehiculo_info in info.items():
-                    if isinstance(vehiculo_info, dict):
-                        data_view[vehiculo] = {
-                            "consecutivo": consecutivo,
-                            "codigo_empresa": info.get("propietario_codigo", 0),
-                            "nombre_empresa": info.get("propietario_abreviado", 0),
-                            "unidad": vehiculo_info.get("vehiculo_numero", 0),
-                            "placa": vehiculo_info.get("vehiculo_placa", 0),
-                            "marca": vehiculo_info.get("vehiculo_marca", 0),
-                            "modelo": vehiculo_info.get("vehiculo_modelo", 0),
-                            "linea": vehiculo_info.get("vehiculo_linea", 0),
-                            "nro_cupo": vehiculo_info.get("vehiculo_nro_cupo", 0),
-                            "motor": vehiculo_info.get("vehiculo_motor", 0),
-                            "chasis": vehiculo_info.get("vehiculo_chasis", 0),
-                            "nro_entrega": vehiculo_info.get("conductor_nro_entrega", 0),
-                            "cuota_diaria": vehiculo_info.get("conductor_cuo_diaria", 0),
-                            "nro_ent_sdo": vehiculo_info.get("conductor_nro_ent_sdo", 0),
-                            "codigo_conductor": vehiculo_info.get("conductor_codigo", 0),
-                            "nombre": vehiculo_info.get("conductor_nombre", 0),
-                            "cedula": vehiculo_info.get("conductor_cedula", 0),
-                            "telefono": vehiculo_info.get("conductor_telefono", 0),
-                        }
-                        consecutivo += 1
-                        total += 1
-                    else:
-                        pass
-        
+                for estado, estado_info in info.get("estados", {}).items():
+                    if isinstance(estado_info, dict):
+                        data_view[empresa]["estados"][estado] = []  # Lista para almacenar vehículos por estado
+                        consecutivo = 1
+                        for vehiculo, vehiculo_info in estado_info.items():
+                            if isinstance(vehiculo_info, dict):
+                                # Agregar información del vehículo
+                                data_view[empresa]["estados"][estado].append({
+                                    "consecutivo": consecutivo,
+                                    "unidad": vehiculo_info.get("vehiculo_numero", 0),
+                                    "placa": vehiculo_info.get("vehiculo_placa", 0),
+                                    "marca": vehiculo_info.get("vehiculo_marca", 0),
+                                    "modelo": vehiculo_info.get("vehiculo_modelo", 0),
+                                    "linea": vehiculo_info.get("vehiculo_linea", 0),
+                                    "nro_cupo": vehiculo_info.get("vehiculo_nro_cupo", 0),
+                                    "motor": vehiculo_info.get("vehiculo_motor", 0),
+                                    "chasis": vehiculo_info.get("vehiculo_chasis", 0),
+                                    "nro_entrega": vehiculo_info.get("conductor_nro_entrega", 0),
+                                    "cuota_diaria": vehiculo_info.get("conductor_cuo_diaria", 0),
+                                    "nro_ent_sdo": vehiculo_info.get("conductor_nro_ent_sdo", 0),
+                                    "codigo_conductor": vehiculo_info.get("conductor_codigo", 0),
+                                    "nombre": vehiculo_info.get("conductor_nombre", 0),
+                                    "cedula": vehiculo_info.get("conductor_cedula", 0),
+                                    "telefono": vehiculo_info.get("conductor_telefono", 0),
+                                })
+                                consecutivo += 1
+                                total += 1
+                                
         data_view["total"] = total
         data_view["usuario"] = usuario
 
         headers = {
-            "Content-Disposition": "inline; relacion-vehiculos-empresa.pdf"
+            "Content-Disposition": "inline; relacion-vehiculos-propietario.pdf"
         }  
 
         template_loader = jinja2.FileSystemLoader(searchpath="./templates")
@@ -656,14 +657,14 @@ async def get_vehiculos_detalles():
         html_file.close()
         header_file.close()
         html_footer.close()
-        pdf_path = 'relacion-vehiculos-empresa.pdf'
+        pdf_path = 'relacion-vehiculos-propietario.pdf'
         html2pdf(titulo, html_path, pdf_path, header_path=header_path, footer_path=footer_path)
 
-        response = FileResponse(pdf_path, media_type='application/pdf', filename='templates/relacion-vehiculos-empresa.pdf', headers=headers) """
+        response = FileResponse(pdf_path, media_type='application/pdf', filename='templates/relacion-vehiculos-propietario.pdf', headers=headers) 
         
-        #return response
+        return response
     
-        return JSONResponse(content=jsonable_encoder(data))
+        #return JSONResponse(content=jsonable_encoder(datos))
     finally:
         db.close()
 
@@ -712,7 +713,7 @@ async def get_vehiculos_detalles():
             }
             vehiculos_detalles_list.append(vehiculo_detalle)
 
-        codigos_estados_deseados = ["01"]
+        codigos_estados_deseados = []
     
         data = cuotas_pagas(vehiculos_detalles_list, codigos_estados_deseados)
 
@@ -735,7 +736,7 @@ async def get_vehiculos_detalles():
 
         # Iterar sobre las empresas y vehículos
         total = 0
-        for empresa, info in datos.items():
+        for empresa, info in datos.items(): 
             if isinstance(info, dict):
                 data_view[empresa] = {
                     "codigo_empresa": info.get("propietario_codigo", 0),
