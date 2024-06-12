@@ -22,7 +22,7 @@ def obtener_conteo_por_propietario(data):
     conteo_por_empresa = {}
     for vehiculo in data:
         codigo_empresa = vehiculo.get("propietario_codigo")
-        nombre_empresa = vehiculo.get("propietario_abreviado")
+        nombre_empresa = vehiculo.get("propietario_nombre")
         if codigo_empresa not in conteo_por_empresa:
             conteo_por_empresa[codigo_empresa] = {"nombre_empresa": nombre_empresa}
         estado = vehiculo.get("estado_nombre")
@@ -70,7 +70,7 @@ def obtener_numeros_por_propietario(data):
     conteo_por_empresa = {}
     for vehiculo in data:
         codigo_empresa = vehiculo.get("propietario_codigo")
-        nombre_empresa = vehiculo.get("propietario_abreviado")
+        nombre_empresa = vehiculo.get("propietario_nombre")
         numero_vehiculo = vehiculo.get("vehiculo_numero")
 
         if codigo_empresa not in conteo_por_empresa:
@@ -91,17 +91,23 @@ def obtener_conductores_por_propietario(data, codigos_estados_deseados=None):
         if codigo_propietario not in cuotas_por_propietario:
             cuotas_por_propietario[codigo_propietario] = {
                 "propietario_codigo": vehiculo["propietario_codigo"],
-                "propietario_abreviado": vehiculo["propietario_abreviado"],
-                "empty": "1"  # Inicialmente, asumimos que solo hay "propietario_codigo" y "propietario_abreviado"
+                "propietario_nombre": vehiculo["propietario_nombre"],
+                "empty": "1",
+                "estados": {}  # Nuevo diccionario para almacenar los estados
             }
         if vehiculo["conductor_codigo"]:
-            if codigos_estados_deseados is None or not codigos_estados_deseados:
-                cuotas_por_propietario[codigo_propietario][vehiculo["vehiculo_numero"]] = vehiculo
-                cuotas_por_propietario[codigo_propietario]["empty"] = "0"  # Hay más datos además de "propietario_codigo" y "propietario_abreviado"
-            elif vehiculo["estado_codigo"] in codigos_estados_deseados:
-                cuotas_por_propietario[codigo_propietario][vehiculo["vehiculo_numero"]] = vehiculo
-                cuotas_por_propietario[codigo_propietario]["empty"] = "0"  # Hay más datos además de "propietario_codigo" y "propietario_abreviado"
+            estado = vehiculo["estado_nombre"]
+            if codigos_estados_deseados is None or not codigos_estados_deseados or vehiculo["estado_codigo"] in codigos_estados_deseados:
+                if estado not in cuotas_por_propietario[codigo_propietario]["estados"]:
+                    cuotas_por_propietario[codigo_propietario]["estados"][estado] = {
+                        "estado_codigo": vehiculo["estado_codigo"],
+                        "estado_nombre": estado,
+                        "empty": "0"
+                    }  # Crea un diccionario para el estado si aún no existe
+                cuotas_por_propietario[codigo_propietario]["estados"][estado][vehiculo["vehiculo_numero"]] = vehiculo
+                cuotas_por_propietario[codigo_propietario]["empty"] = "0"
     return cuotas_por_propietario
+
 #------------------------------------------------------------
 
 def cuotas_pagas(data, codigos_estados_deseados=None):
@@ -111,14 +117,31 @@ def cuotas_pagas(data, codigos_estados_deseados=None):
         if codigo_propietario not in cuotas_por_propietario:
             cuotas_por_propietario[codigo_propietario] = {
                 "propietario_codigo": vehiculo["propietario_codigo"],
-                "propietario_abreviado": vehiculo["propietario_abreviado"],
-                "empty": "1"  # Inicialmente, asumimos que solo hay "propietario_codigo" y "propietario_abreviado"
+                "propietario_nombre": vehiculo["propietario_nombre"],
+                "empty": "1"  # Inicialmente, asumimos que solo hay "propietario_codigo" y "propietario_nombre"
             }
         if vehiculo["conductor_codigo"]:
             if codigos_estados_deseados is None or not codigos_estados_deseados:
                 cuotas_por_propietario[codigo_propietario][vehiculo["vehiculo_numero"]] = vehiculo
-                cuotas_por_propietario[codigo_propietario]["empty"] = "0"  # Hay más datos además de "propietario_codigo" y "propietario_abreviado"
+                cuotas_por_propietario[codigo_propietario]["empty"] = "0"  # Hay más datos además de "propietario_codigo" y "propietario_nombre"
             elif vehiculo["estado_codigo"] in codigos_estados_deseados:
                 cuotas_por_propietario[codigo_propietario][vehiculo["vehiculo_numero"]] = vehiculo
-                cuotas_por_propietario[codigo_propietario]["empty"] = "0"  # Hay más datos además de "propietario_codigo" y "propietario_abreviado"
+                cuotas_por_propietario[codigo_propietario]["empty"] = "0"  # Hay más datos además de "propietario_codigo" y "propietario_nombre"
     return cuotas_por_propietario
+
+#------------------------------------------------------------
+
+def agrupar_empresas(data):
+    empresas = {}
+    for vehiculo in data:
+        codigo_empresa = vehiculo["propietario_codigo"]
+        if codigo_empresa not in empresas:
+            empresas[codigo_empresa] = {
+                "propietario_codigo": vehiculo["propietario_codigo"],
+                "propietario_nombre": vehiculo["propietario_nombre"],
+                "empty": "1"
+            }
+        if vehiculo["conductor_codigo"]:
+            empresas[codigo_empresa][vehiculo["vehiculo_numero"]] = vehiculo
+            empresas[codigo_empresa]["empty"] = "0"
+    return empresas
