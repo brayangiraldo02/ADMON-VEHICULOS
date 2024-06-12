@@ -11,8 +11,6 @@ def html2pdf(titulo, html_path, pdf_path, header_path, footer_path):
     header_p = os.path.join(templates_directory, 'renderheader.html')
     footer_p = os.path.join(templates_directory, 'renderfooter.html')
 
-    print("Header path:", header_path)
-    print("Footer path:", footer_p)
     options = {
         'page-size': 'Letter',
         'margin-top': '1.2in',

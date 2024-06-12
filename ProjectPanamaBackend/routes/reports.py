@@ -8,6 +8,7 @@ from models.conductores import Conductores
 from fastapi.encoders import jsonable_encoder
 from utils.reports import *
 from datetime import datetime
+from schemas.reports import info
 
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import FileResponse
@@ -18,8 +19,8 @@ templateJinja = Jinja2Templates(directory="templates")
 
 reports_router = APIRouter()
 
-@reports_router.get('/estado-vehiculos-resumen', response_class=FileResponse)
-async def get_conteo_vehiculos_estados():
+@reports_router.post('/estado-vehiculos-resumen', response_class=FileResponse)
+async def get_conteo_vehiculos_estados(info: info):
   db = session()
   try:
     conteo_vehiculos_estados = db.query(Estados.CODIGO, Estados.NOMBRE, Vehiculos.NUMERO) \
@@ -31,7 +32,7 @@ async def get_conteo_vehiculos_estados():
     # Datos de la fecha y hora actual
     fecha = datetime.now().strftime("%Y-%m-%d")
     hora_actual = datetime.now().strftime("%H:%M:%S")
-    usuario = "admin" 
+    usuario = info.user
     titulo = 'Informe Por Estados General'
 
     # Inicializar el diccionario data_view con información común
