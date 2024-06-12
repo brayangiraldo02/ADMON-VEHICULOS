@@ -1,4 +1,95 @@
 <app-header></app-header>
-<div class="message">
-  <h1>Función en desarrollo.</h1>
+<div class="main-container">
+  <h1>Informe de Cuotas Pagas</h1>
+
+  <!-- EMPRESAS -->
+  <!-- -------------------------------------------------------------------------- -->
+  <div class="option" *ngIf="!mostrarOpcionesEstados">
+    <li class="select" [class.selected]="selectedEmpresasOptions['empresas']" (click)="toggleOpcionesEmpresas()">
+      <a>
+        <span class="select-text">Seleccionar Empresas</span>
+      </a>
+    </li>
+    <div class="option" *ngIf="!mostrarOpcionesPorNombre && mostrarOpcionesEmpresas">
+      <li class="select" [class.selected]="selectedEmpresasOptions['codigo']" (click)="toggleOpcionesPorCodigo()">
+        <a>
+          <span class="select-text">Seleccionar por Código</span>
+        </a>
+      </li>
+      <div *ngIf="mostrarOpcionesPorCodigo" class="cuadro-seleccion">
+        <div *ngFor="let opcion of owners" class="checkbox-container" (click)="onCheckboxEmpresaContainerClick(opcion.id, $event)">
+          <input type="checkbox" [id]="opcion.id" [value]="opcion.id" 
+                  [checked]="isEmpresaSeleccionada(opcion.id)" 
+                  (change)="onCheckboxEmpresaChange(opcion.id, $event)">
+          <label [for]="opcion.id">{{ opcion.id }} - {{ opcion.name }}</label>
+        </div>
+      </div>
+    </div>
+    
+    <div class="option" *ngIf="!mostrarOpcionesPorCodigo && mostrarOpcionesEmpresas">
+      <li class="select" [class.selected]="selectedEmpresasOptions['nombre']" (click)="toggleOpcionesPorNombre()">
+        <a>
+          <span class="select-text">Seleccionar por Nombre</span>
+        </a>
+      </li>
+      <div *ngIf="mostrarOpcionesPorNombre" class="cuadro-seleccion">
+        <div *ngFor="let opcion of owners" class="checkbox-container" (click)="onCheckboxEmpresaContainerClick(opcion.id, $event)">
+          <input type="checkbox" [id]="opcion.id" [value]="opcion.id" 
+                  [checked]="isEmpresaSeleccionada(opcion.id)" 
+                  (change)="onCheckboxEmpresaChange(opcion.id, $event)">
+          <label [for]="opcion.id">{{ opcion.name }} - {{ opcion.id }}</label>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="option" *ngIf="(mostrarOpcionesPorCodigo || mostrarOpcionesPorNombre) && mostrarOpcionesEmpresas">
+    <li class="select" (click)="onEmpresaSeleccionar()">
+      <a>
+        <span class="select-text">Aceptar Empresas</span>
+      </a>
+    </li>
+  </div>
+  <!-- -------------------------------------------------------------------------- -->
+
+  <!-- ESTADOS -->
+  <!-- -------------------------------------------------------------------------- -->
+  <div class="option" *ngIf="!mostrarOpcionesEmpresas">
+    <li class="select" [class.selected]="selectedEstadosOptions['estados']" (click)="toggleOpcionesEstados()">
+      <a>
+        <span class="select-text">Seleccionar Estados</span>
+      </a>
+    </li>
+    <div *ngIf="mostrarOpcionesEstados" class="cuadro-seleccion">
+      <div *ngFor="let opcion of states" class="checkbox-container" (click)="onCheckboxEstadoContainerClick(opcion.id, $event)">
+        <input type="checkbox" [id]="opcion.id" [value]="opcion.id" 
+                [checked]="isEstadoSeleccionado(opcion.id)" 
+                (change)="onCheckboxEstadoChange(opcion.id, $event)">
+        <label [for]="opcion.id">{{ opcion.name }}</label>
+      </div>
+    </div>
+  </div>
+
+  <div class="option" *ngIf="mostrarOpcionesEstados">
+    <li class="select" (click)="onEstadoSeleccionar()">
+      <a>
+        <span class="select-text">Aceptar Estados</span>
+      </a>
+    </li>
+  </div>
+  <!-- -------------------------------------------------------------------------- -->
+
+  <!-- GENERAR INFORME -->
+  <!-- -------------------------------------------------------------------------- -->
+  <div class="option" *ngIf="!mostrarOpcionesEstados && !mostrarOpcionesEmpresas">
+    <li class="select">
+      <a>
+        <span class="select-text">Generar Informe</span>
+      </a>
+    </li>
+  </div>
+  <!-- -------------------------------------------------------------------------- -->
+
+  <p>Empresas seleccionadas: {{ empresasSeleccionadas.join(', ') }}</p>
+  <p>Estados seleccionadas: {{ estadosSeleccionados.join(', ') }}</p>
 </div>

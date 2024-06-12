@@ -50,7 +50,7 @@ import { OpcionesAlmacenComponent } from './components/options/almacen/opciones-
     OpcionesCntComponent,
     OpcionesUtilidadesComponent,
     OpcionesCarteraComponent,
-    OpcionesAlmacenComponent
+    OpcionesAlmacenComponent,
   ],
   imports: [
     BrowserModule,
