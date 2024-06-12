@@ -119,8 +119,8 @@ async def get_conteo_vehiculos_estados(info: info):
 
 #-----------------------------------------------------------------------------------------
 
-@reports_router.get('/estado-vehiculos-resumen-empresa/{id}', response_class=FileResponse)
-async def get_conteo_propietarios_vehiculos_estados(id: int):
+@reports_router.post('/estado-vehiculos-resumen-empresa/{id}', response_class=FileResponse)
+async def get_conteo_propietarios_vehiculos_estados(id: int, info: info):
     db = session()
     try:
         conteo_propietarios_vehiculos_estados = db.query(
@@ -153,7 +153,7 @@ async def get_conteo_propietarios_vehiculos_estados(id: int):
         # Datos de la fecha y hora actual
         fecha = datetime.now().strftime("%Y-%m-%d")
         hora_actual = datetime.now().strftime("%H:%M:%S")
-        usuario = "admin" 
+        usuario = info.user
         titulo = 'Informe Por Estados General'
 
         # Inicializar el diccionario data_view con información común
@@ -196,7 +196,6 @@ async def get_conteo_propietarios_vehiculos_estados(id: int):
         data_view["promedio_parados"] = round((100 - data_view["promedio_activos"]), 2) 
 
         titulo = 'Informe Por Estados General'
-        usuario = 'Usuario de Prueba'
 
         data_view["usuario"] = usuario
 
@@ -239,8 +238,8 @@ async def get_conteo_propietarios_vehiculos_estados(id: int):
 #-----------------------------------------------------------------------------------------
 
 
-@reports_router.get('/informe-estados-detallado', response_class=FileResponse)
-async def get_conteo_vehiculos_estados_numeros():
+@reports_router.post('/informe-estados-detallado', response_class=FileResponse)
+async def get_conteo_vehiculos_estados_numeros(info: info):
   db = session()
   try:
     conteo_propietarios_vehiculos_estados = db.query(
@@ -330,7 +329,7 @@ async def get_conteo_vehiculos_estados_numeros():
     }  
 
     titulo = 'Informe Por Estados Detallado'
-    usuario = 'Usuario de Prueba'
+    usuario = info.user
 
     data_view["usuario"] = usuario
 
@@ -374,8 +373,8 @@ async def get_conteo_vehiculos_estados_numeros():
 
 # -----------------------------------------------------------------------------------------
 
-@reports_router.get('/informe-estados-detallado-empresa/{id}', response_class=FileResponse)
-async def get_conteo_propietarios_vehiculos_estados_numeros(id: int):
+@reports_router.post('/informe-estados-detallado-empresa/{id}', response_class=FileResponse)
+async def get_conteo_propietarios_vehiculos_estados_numeros(id: int, info: info):
   db = session()
   try:
     conteo_propietarios_vehiculos_estados = db.query(
@@ -470,7 +469,7 @@ async def get_conteo_propietarios_vehiculos_estados_numeros(id: int):
     data_view["promedio_parados"] = round((100 - data_view["promedio_activos"]), 2)
 
     titulo = 'Informe Por Estados Detallado'
-    usuario = 'Usuario de Prueba'
+    usuario = info.user
 
     data_view["usuario"] = usuario
 

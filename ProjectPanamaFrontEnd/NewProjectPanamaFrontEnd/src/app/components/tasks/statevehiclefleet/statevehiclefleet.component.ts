@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { ApiService } from 'src/app/services/api.service';
 import { JwtService } from 'src/app/services/jwt.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-statevehiclefleet',
@@ -9,7 +10,11 @@ import { JwtService } from 'src/app/services/jwt.service';
   styleUrls: ['./statevehiclefleet.component.css']
 })
 export class StatevehiclefleetComponent implements OnInit {
-  constructor(private router: Router, private apiService: ApiService, private jwtService: JwtService) { }
+  constructor(
+    private router: Router, 
+    private apiService: ApiService, 
+    private jwtService: JwtService, 
+    private snack:MatSnackBar) { }
 
   selectedOption: string | null = null;
   showCompanySelect: boolean = false;
@@ -29,8 +34,8 @@ export class StatevehiclefleetComponent implements OnInit {
       'company': `estado-vehiculos-resumen-empresa/`
     },
     'detail': {
-      'general': `conteo-vehiculos-estados-numeros`,
-      'company': `conteo-propietarios-vehiculos-estados-numeros/`
+      'general': `informe-estados-detallado`,
+      'company': `informe-estados-detallado-empresa/`
     },
     'company-units': {
       'general': 'http://example.com/company-units-general',
@@ -41,6 +46,12 @@ export class StatevehiclefleetComponent implements OnInit {
   ngOnInit(): void {
     this.listOwners();
     this.obtenerUsuario();
+  }
+
+  openSnack() {
+    this.snack.open("Un momento...", "Aceptar"),{
+      duration:3000
+    }
   }
 
   obtenerUsuario() {
@@ -80,6 +91,7 @@ export class StatevehiclefleetComponent implements OnInit {
   }
 
   openExternalLink(option: string, type: string): void {
+    this.openSnack();
     let endpoint = this.externalLinks[option][type];
     if (type === 'company' && this.selectedCompany) {
       endpoint += this.selectedCompany;
