@@ -26,6 +26,7 @@ import { OpcionesReclamosComponent } from './components/options/reclamos/opcione
 import { OpcionesCntComponent } from './components/options/cnt/opciones-cnt/opciones-cnt.component';
 import { OpcionesUtilidadesComponent } from './components/options/utilidades/opciones-utilidades/opciones-utilidades.component';
 import { OpcionesCarteraComponent } from './components/options/cartera/opciones-cartera/opciones-cartera.component';
+import { OpcionesAlmacenComponent } from './components/options/almacen/opciones-almacen/opciones-almacen.component';
 
 @NgModule({
   declarations: [
@@ -48,7 +49,8 @@ import { OpcionesCarteraComponent } from './components/options/cartera/opciones-
     OpcionesReclamosComponent,
     OpcionesCntComponent,
     OpcionesUtilidadesComponent,
-    OpcionesCarteraComponent
+    OpcionesCarteraComponent,
+    OpcionesAlmacenComponent,
   ],
   imports: [
     BrowserModule,

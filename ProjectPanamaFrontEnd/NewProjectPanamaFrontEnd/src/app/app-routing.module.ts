@@ -19,6 +19,7 @@ import { OpcionesReclamosComponent } from './components/options/reclamos/opcione
 import { OpcionesCntComponent } from './components/options/cnt/opciones-cnt/opciones-cnt.component';
 import { OpcionesUtilidadesComponent } from './components/options/utilidades/opciones-utilidades/opciones-utilidades.component';
 import { OpcionesCarteraComponent } from './components/options/cartera/opciones-cartera/opciones-cartera.component';
+import { OpcionesAlmacenComponent } from './components/options/almacen/opciones-almacen/opciones-almacen.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -29,6 +30,7 @@ const routes: Routes = [
   { path: 'feespaid', component: FeespaidComponent, canActivate: [AuthGuard]},
   { path: 'operations', component: OpcionesOperacionesComponent, canActivate: [AuthGuard]},
   { path: 'procedures', component: OpcionesTramitesComponent, canActivate: [AuthGuard]},
+  { path: 'warehouse', component: OpcionesAlmacenComponent, canActivate: [AuthGuard]},
   { path: 'workshop', component: OpcionesTallerComponent, canActivate: [AuthGuard]},
   { path: 'sheet-metal-work', component: OpcionesChapisteriaComponent, canActivate: [AuthGuard]},
   { path: 'keychain', component: OpcionesLlaveroComponent, canActivate: [AuthGuard]},
