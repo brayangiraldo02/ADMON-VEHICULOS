@@ -6,6 +6,7 @@
   padding-top: 3vh;
   /* padding: 40px; */
   margin: 10px;
+  user-select: none;
 }
 
 .report{

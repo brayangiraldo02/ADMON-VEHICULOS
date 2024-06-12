@@ -21,7 +21,7 @@
     <div class="section-container">
       <h2>CONSULTAS</h2>
       <div class="options-container">
-        <ng-container *ngFor="let option of propietarios">
+        <ng-container *ngFor="let option of consultas">
           <a class="option" [href]="option.url">
             <span class="material-symbols-outlined">
               {{ option.icon }}
@@ -34,3 +34,4 @@
 
   </div>
 </div>
+<app-footer></app-footer>

@@ -53,7 +53,7 @@ export class HomeComponent implements OnInit {
       { name: 'Operaciones', icon: '../../../../assets/icons/operaciones.svg', url: '/operations', enabled: this.permisos.user_data.opcion02 },
       { name: 'Cobros', icon: '../../../../assets/icons/cobros.svg', url: 'hoalalalal', enabled: this.permisos.user_data.opcion03 },
       { name: 'Trámites', icon: '../../../../assets/icons/tramites.svg', url: '/procedures', enabled: this.permisos.user_data.opcion04 },
-      { name: 'Almacén', icon: '../../../../assets/icons/almacen.svg', url: 'hoalalalal', enabled: this.permisos.user_data.opcion05 },
+      { name: 'Almacén', icon: '../../../../assets/icons/almacen.svg', url: '/warehouse', enabled: this.permisos.user_data.opcion05 },
       { name: 'Sucursal', icon: '../../../../assets/icons/taller.svg', url: '/workshop', enabled: this.permisos.user_data.opcion06 },
       { name: 'Chapistería', icon: '../../../../assets/icons/chapisteria.svg', url: '/sheet-metal-work', enabled: this.permisos.user_data.opcion07 },
       { name: 'Llavero', icon: '../../../../assets/icons/llavero.svg', url: '/keychain', enabled: this.permisos.user_data.opcion08 },

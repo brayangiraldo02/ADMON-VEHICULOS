@@ -16,9 +16,18 @@ export class OpcionesCntComponent {
     { name: 'Generar Documentos Contables (Peachtree)', icon: 'info', url: 'hoalalalal' }
   ];
 
-  propietarios = [
-    { name: 'Relación de Vehículos por Propietario', icon: 'info', url: 'hoalalalal' },
-    { name: 'Estado de la Flota por Propietario', icon: 'info', url: 'hoalalalal' },
-    { name: 'Reporte de Ingresos y Egresos (PyG)', icon: 'info', url: 'hoalalalal' }
+  consultas = [
+    { name: 'Provisional', icon: 'info', url: 'hoalalalal' },
+    { name: 'Copia Recibo', icon: 'info', url: 'hoalalalal' },
+    { name: 'Ventas Contado', icon: 'info', url: 'hoalalalal' },
+    { name: 'Consecutivo', icon: 'info', url: 'hoalalalal' },
+    { name: 'Detalle General', icon: 'info', url: 'hoalalalal' },
+    { name: 'Resumen Empresa', icon: 'info', url: 'hoalalalal' },
+    { name: 'Resumen Cajero', icon: 'info', url: 'hoalalalal' },
+    { name: 'Cajero/Empresa', icon: 'info', url: 'hoalalalal' },
+    { name: 'Transferencias', icon: 'info', url: 'hoalalalal' },
+    { name: 'Resumen Cierre', icon: 'info', url: 'hoalalalal' },
+    { name: 'Cuadre Caja', icon: 'info', url: 'hoalalalal' },
+    { name: 'Cierre Caja', icon: 'info', url: 'hoalalalal' }
   ];
 }

@@ -1,8 +1,8 @@
-// pdf-viewer.component.ts
 import { Component, OnInit } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
 import { ApiService } from 'src/app/services/api.service';
+
 
 @Component({
   selector: 'app-pdf-viewer',
@@ -11,6 +11,7 @@ import { ApiService } from 'src/app/services/api.service';
 })
 export class PdfViewerComponent implements OnInit {
   pdfUrl: SafeResourceUrl | null = null;
+  user: any;
 
   constructor(
     private apiService: ApiService,
@@ -23,15 +24,11 @@ export class PdfViewerComponent implements OnInit {
     if (pdfUrl) {
       this.loadPdf(pdfUrl);
     } else {
-      console.log('No pdfUrl');
+      console.log('No pdfUrl found');
     }
   }
 
-  loadPdf(endpoint: string) {
-    this.apiService.getPdf(endpoint).subscribe(response => {
-      const blob = new Blob([response], { type: 'application/pdf' });
-      const url = window.URL.createObjectURL(blob);
-      this.pdfUrl = this.sanitizer.bypassSecurityTrustResourceUrl(url);
-    });
+  loadPdf(url: string) {
+    this.pdfUrl = this.sanitizer.bypassSecurityTrustResourceUrl(url);
   }
 }

@@ -41,6 +41,18 @@ export class ApiService {
    * @param {any} data - The data to post.
    * @returns {Observable<any>} An Observable of the HTTP response.
    */
+  postPdf(endpoint: string, data: any): Observable<any> {
+    return this.http.post<any>(`${this.baseURL}/${endpoint}/`, data, { responseType: 'blob' as 'json', withCredentials: true }).pipe(
+      catchError(this.errorHandlerService.handleError)
+    );
+  }
+
+  /**
+   * Post data to a specified endpoint.
+   * @param {string} endpoint - The endpoint to post data to.
+   * @param {any} data - The data to post.
+   * @returns {Observable<any>} An Observable of the HTTP response.
+   */
   postData(endpoint: string, data: any): Observable<any> {
     return this.http.post<any>(`${this.baseURL}/${endpoint}/`, data, { withCredentials: true }).pipe(
       catchError(this.errorHandlerService.handleError)
