@@ -44,7 +44,7 @@ export class StatevehiclefleetComponent implements OnInit {
     this.apiService.getData("owners").subscribe(
       (response) => {
         this.owners = response;
-        console.log(this.owners);
+        // console.log(this.owners);
       },
       (error) => {
         console.log(error);
