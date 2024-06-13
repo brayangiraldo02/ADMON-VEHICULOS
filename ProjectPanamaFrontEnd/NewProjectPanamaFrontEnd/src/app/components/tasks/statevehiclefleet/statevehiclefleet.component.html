@@ -53,26 +53,67 @@
     </a>
   </li>
 
-  <li class="report" *ngIf="selectedOption === 'company-units' && !showCompanySelect" (click)="openExternalLink(selectedOption, 'general')">
+  <div class="option" *ngIf="!mostrarOpcionesEstados && selectedOption === 'company-units'">
+    <li class="report" [class.selected]="mostrarOpcionesEmpresas" (click)="toggleOpcionesEmpresas()">
+      <a>
+        <span class="report-text">Seleccionar Empresas</span>
+      </a>
+    </li>
+    <div *ngIf="mostrarOpcionesEmpresas" class="cuadro-seleccion">
+      <div *ngFor="let opcion of owners" class="checkbox-container" (click)="onCheckboxEmpresaContainerClick(opcion.id, $event)">
+        <input type="checkbox" [id]="opcion.id" [value]="opcion.id" 
+                [checked]="isEmpresaSeleccionada(opcion.id)" 
+                (change)="onCheckboxEmpresaChange(opcion.id, $event)">
+        <label [for]="opcion.id">{{ opcion.name }} - {{ opcion.id }}</label>
+      </div>
+    </div>
+  </div>  
+
+  <div class="option" *ngIf="mostrarOpcionesEmpresas">
+    <li class="report" (click)="onEmpresaSeleccionar()">
+      <a>
+        <span class="report-text">Aceptar Empresas</span>
+      </a>
+    </li>
+  </div>
+
+  <div class="option" *ngIf="!mostrarOpcionesEmpresas && selectedOption === 'company-units'">
+    <li class="report" [class.selected]="mostrarOpcionesEstados" (click)="toggleOpcionesEstados()">
+      <a>
+        <span class="report-text">Seleccionar Estados</span>
+      </a>
+    </li>
+    <div *ngIf="mostrarOpcionesEstados" class="cuadro-seleccion">
+      <div *ngFor="let opcion of states" class="checkbox-container" (click)="onCheckboxEstadoContainerClick(opcion.id, $event)">
+        <input type="checkbox" [id]="opcion.id" [value]="opcion.id" 
+                [checked]="isEstadoSeleccionado(opcion.id)" 
+                (change)="onCheckboxEstadoChange(opcion.id, $event)">
+        <label [for]="opcion.id">{{ opcion.name }}</label>
+      </div>
+    </div>
+  </div>
+
+  <div class="option" *ngIf="mostrarOpcionesEstados">
+    <li class="report" (click)="onEstadoSeleccionar()">
+      <a>
+        <span class="report-text">Aceptar Estados</span>
+      </a>
+    </li>
+  </div>
+
+  <li class="report" *ngIf="selectedOption === 'company-units' && (!mostrarOpcionesEstados && !mostrarOpcionesEmpresas)" (click)="generarInforme()">
     <a>
-      <span class="report-text">General</span>
+      <span class="report-text">Generar Informe</span>
     </a>
   </li>
-  <li class="report" *ngIf="selectedOption === 'company-units' && !showCompanySelect" (click)="selectCompanyOption()">
-    <a>
-      <span class="report-text">Por Empresa</span>
-    </a>
-  </li>
-  <li class="select-owner" *ngIf="showCompanySelect && selectedOption === 'company-units'">
-    <select (change)="onCompanyChange($event)" class="full-width">
-      <option *ngFor="let owner of owners" [value]="owner.id">{{ owner.id }} - {{ owner.name }}</option>
-    </select>
-  </li>
-  <li class="report home" *ngIf="selectedOption" (click)="selectOption('return')">
+
+  
+  <li class="report home" *ngIf="selectedOption && (!mostrarOpcionesEstados && !mostrarOpcionesEmpresas)" (click)="selectOption('return')">
     <a>
       <span class="report-text">Regresar</span>
     </a>
   </li>
+
   <li class="report home" *ngIf="!selectedOption" routerLink="/home">
     <a>
       <span class="report-text">Regresar Al Inicio</span>

@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { ApiService } from 'src/app/services/api.service';
 import { JwtService } from 'src/app/services/jwt.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-statevehiclefleet',
@@ -9,18 +10,29 @@ import { JwtService } from 'src/app/services/jwt.service';
   styleUrls: ['./statevehiclefleet.component.css']
 })
 export class StatevehiclefleetComponent implements OnInit {
-  constructor(private router: Router, private apiService: ApiService, private jwtService: JwtService) { }
+  constructor(
+    private router: Router, 
+    private apiService: ApiService, 
+    private jwtService: JwtService, 
+    private snack:MatSnackBar) { }
 
   selectedOption: string | null = null;
   showCompanySelect: boolean = false;
   owners: any[] = [];
+  states: any[] = [];
+  empresasSeleccionadas: string[] = [];
+  estadosSeleccionados: string[] = [];
   selectedCompany: string = '';
   user: any;
+  mostrarOpcionesEmpresas: boolean = false;
+  mostrarOpcionesEstados: boolean = false;
+  selectedEmpresasOptions: { [key: string]: boolean } = {};
+  selectedEstadosOptions: { [key: string]: boolean } = {};
 
   titles: { [key: string]: string } = {
     'summary': 'Informe resumen de vehículos',
     'detail': 'Informe detalle de vehículos',
-    'company-units': 'Informe unidades por empresa'
+    'company-units': 'Relación Unidad/Estado Empresa'
   };
 
   externalLinks: { [key: string]: { [key: string]: string } } = {
@@ -29,8 +41,8 @@ export class StatevehiclefleetComponent implements OnInit {
       'company': `estado-vehiculos-resumen-empresa/`
     },
     'detail': {
-      'general': `conteo-vehiculos-estados-numeros`,
-      'company': `conteo-propietarios-vehiculos-estados-numeros/`
+      'general': `informe-estados-detallado`,
+      'company': `informe-estados-detallado-empresa/`
     },
     'company-units': {
       'general': 'http://example.com/company-units-general',
@@ -40,7 +52,14 @@ export class StatevehiclefleetComponent implements OnInit {
 
   ngOnInit(): void {
     this.listOwners();
+    this.listStates();
     this.obtenerUsuario();
+  }
+
+  openSnack() {
+    this.snack.open("Un momento...", "Aceptar"),{
+      duration:3000
+    }
   }
 
   obtenerUsuario() {
@@ -52,7 +71,19 @@ export class StatevehiclefleetComponent implements OnInit {
   listOwners(): void {
     this.apiService.getData("owners").subscribe(
       (response) => {
-        this.owners = response;
+        this.owners = response.filter((owner: any) => owner.id);
+      },
+      (error) => {
+        console.log(error);
+      }
+    );
+  }
+
+  listStates(): void {
+    this.apiService.getData("states").subscribe(
+      (response) => {
+        this.states = response.filter((state: any) => state.id);
+        console.log(response);
       },
       (error) => {
         console.log(error);
@@ -79,7 +110,92 @@ export class StatevehiclefleetComponent implements OnInit {
     this.openExternalLink(this.selectedOption!, 'company');
   }
 
+  isEmpresaSeleccionada(opcionId: string): boolean {
+    return this.empresasSeleccionadas.includes(opcionId);
+  }
+
+  onCheckboxEmpresaChange(opcionId: string, event: any) {
+    if (event.target.checked) {
+      if (!this.empresasSeleccionadas.includes(opcionId)) {
+        this.empresasSeleccionadas.push(opcionId);
+      }
+    } else {
+      this.empresasSeleccionadas = this.empresasSeleccionadas.filter(id => id !== opcionId);
+    }
+  }
+
+  onCheckboxEmpresaContainerClick(opcionId: string, event: any) {
+    const checkbox = event.currentTarget.querySelector('input[type="checkbox"]');
+    checkbox.checked = !checkbox.checked;
+    this.onCheckboxEmpresaChange(opcionId, { target: checkbox });
+    event.stopPropagation(); // Evita que el evento de clic se propague
+  }
+
+  onEmpresaSeleccionar() {
+    this.empresasSeleccionadas.sort((a, b) => parseInt(a) - parseInt(b));
+    console.log('Empresas seleccionadas:', this.empresasSeleccionadas);
+    this.mostrarOpcionesEmpresas = false; // Cierra el cuadro después de la selección
+    this.clearEmpresasSelections();
+  }
+
+  toggleEmpresaSelect(option: string) {
+    this.selectedEmpresasOptions[option] = !this.selectedEmpresasOptions[option];
+  }
+
+  clearEmpresasSelections() {
+    this.selectedEmpresasOptions = {};
+  }
+
+  onEstadoSeleccionar() {
+    this.estadosSeleccionados.sort((a, b) => parseInt(a) - parseInt(b));
+    console.log('Estados seleccionadas:', this.estadosSeleccionados);
+    this.mostrarOpcionesEstados = false; 
+    this.clearEstadosSelections();
+  }
+
+  clearEstadosSelections() {
+    this.selectedEstadosOptions = {};
+  }
+
+  toggleOpcionesEmpresas() {
+    this.mostrarOpcionesEmpresas = !this.mostrarOpcionesEmpresas;
+    if (!this.mostrarOpcionesEmpresas) {
+      this.clearEmpresasSelections();
+      this.onEmpresaSeleccionar();
+    }
+  }
+  
+  toggleOpcionesEstados() {
+    this.mostrarOpcionesEstados = !this.mostrarOpcionesEstados;
+    if (!this.mostrarOpcionesEstados) {
+      this.clearEstadosSelections();
+      this.onEstadoSeleccionar();
+    }
+  }
+
+  isEstadoSeleccionado(opcionId: string): boolean {
+    return this.estadosSeleccionados.includes(opcionId);
+  }
+
+  onCheckboxEstadoChange(opcionId: string, event: any) {
+    if (event.target.checked) {
+      if (!this.estadosSeleccionados.includes(opcionId)) {
+        this.estadosSeleccionados.push(opcionId);
+      }
+    } else {
+      this.estadosSeleccionados = this.estadosSeleccionados.filter(id => id !== opcionId);
+    }
+  }
+
+  onCheckboxEstadoContainerClick(opcionId: string, event: any) {
+    const checkbox = event.currentTarget.querySelector('input[type="checkbox"]');
+    checkbox.checked = !checkbox.checked;
+    this.onCheckboxEstadoChange(opcionId, { target: checkbox });
+    event.stopPropagation(); // Evita que el evento de clic se propague
+  }
+
   openExternalLink(option: string, type: string): void {
+    // this.openSnack();
     let endpoint = this.externalLinks[option][type];
     if (type === 'company' && this.selectedCompany) {
       endpoint += this.selectedCompany;
@@ -106,5 +222,41 @@ export class StatevehiclefleetComponent implements OnInit {
         console.error('URL no encontrada para la opción seleccionada.');
       }
     }
+  }
+
+  obtenerIdsEmpresas(): string[] {
+    return this.owners.map(owner => owner.id).filter(id => id);
+  }
+
+  obtenerIdsEstados(): string[] {
+    return this.states.map(state => state.id).filter(id => id);
+  }
+
+  generarInforme() {
+    if(this.empresasSeleccionadas.length == 0) {
+      this.empresasSeleccionadas = this.obtenerIdsEmpresas();
+    }
+    if(this.estadosSeleccionados.length == 0) {
+      this.estadosSeleccionados = this.obtenerIdsEstados();
+    }
+    let info = {
+      usuario: this.user,
+      empresas: this.empresasSeleccionadas,
+      estados: this.estadosSeleccionados
+    }
+    
+    this.apiService.postPdf("relacion-vehiculos-propietario", info).subscribe(
+      response => {
+        const blob = new Blob([response], { type: 'application/pdf' });
+        const url = window.URL.createObjectURL(blob);
+        const viewerUrl = this.router.serializeUrl(
+          this.router.createUrlTree(['/pdf', { url }])
+        );
+        window.open(viewerUrl, '_blank'); // Abrir en una nueva pestaña
+      },
+      error => {
+        console.error('Error al generar el informe:', error);
+      }
+    );
   }
 }

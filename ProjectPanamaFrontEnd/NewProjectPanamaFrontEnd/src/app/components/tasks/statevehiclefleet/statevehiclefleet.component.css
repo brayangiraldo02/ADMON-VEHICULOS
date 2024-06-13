@@ -24,7 +24,8 @@
   cursor: pointer;
 }
 
-.report:hover {
+.report:hover, 
+.report.selected {
   /* background: #fff8b4;  */
   background: #bcd1ec;
 }
@@ -67,4 +68,46 @@
 .report-text {
   font-size: 20px; /* Ajuste según necesidad */
   color: #333; /* Color del texto */
+}
+
+.option {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
+
+.select.selected {
+  background: #bcd1ec; /* Cambia este color según sea necesario */
+}
+
+.cuadro-seleccion {
+  border: 1px solid #ccc;
+  padding: 10px;
+  min-height: 20vh;
+  max-height: 25vh;
+  width: 40%;
+  border-radius: 10px;
+  overflow-y: scroll;
+  height: auto;
+  background-color: white;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.cuadro-seleccion .checkbox-container {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  justify-content: flex-start; /* Alinea el contenido al inicio (izquierda) */
+  padding: 5px 0; /* Añadir algo de espaciado vertical */
+}
+
+.cuadro-seleccion .checkbox-container:hover {
+  background: #bcd1ec;
+}
+
+.cuadro-seleccion label {
+  padding-left: 5px;
 }

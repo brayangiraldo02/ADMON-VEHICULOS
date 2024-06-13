@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { ApiService } from 'src/app/services/api.service';
+import { JwtService } from 'src/app/services/jwt.service';
 
 @Component({
   selector: 'app-feespaid',
@@ -7,7 +9,10 @@ import { ApiService } from 'src/app/services/api.service';
   styleUrls: ['./feespaid.component.css']
 })
 export class FeespaidComponent implements OnInit {
-  constructor(private apiService: ApiService) { }
+  constructor(
+    private apiService: ApiService, 
+    private jwtService: JwtService, 
+    private router: Router) { }
 
   owners: any[] = [];
   states: any[] = [];
@@ -27,10 +32,15 @@ export class FeespaidComponent implements OnInit {
     this.listStates();
   }
 
+  obtenerUsuario() {
+    let user = this.jwtService.decodeToken();
+    return user.user_data.nombre;
+  }
+
   listOwners(): void {
     this.apiService.getData("owners").subscribe(
       (response) => {
-        this.owners = response;
+        this.owners = response.filter((owner: any) => owner.id);
         console.log(this.owners);
       },
       (error) => {
@@ -42,7 +52,7 @@ export class FeespaidComponent implements OnInit {
   listStates(): void {
     this.apiService.getData("states").subscribe(
       (response) => {
-        this.states = response;
+        this.states = response.filter((state: any) => state.id);
         console.log(response);
       },
       (error) => {
@@ -166,4 +176,41 @@ export class FeespaidComponent implements OnInit {
     event.stopPropagation(); // Evita que el evento de clic se propague
   }
   // -----------------------------------------------------------------------
+
+  obtenerIdsEmpresas(): string[] {
+    return this.owners.map(owner => owner.id).filter(id => id);
+  }
+
+  obtenerIdsEstados(): string[] {
+    return this.states.map(state => state.id).filter(id => id);
+  }
+
+  generarInforme() {
+    let user = this.obtenerUsuario()
+    if(this.empresasSeleccionadas.length == 0) {
+      this.empresasSeleccionadas = this.obtenerIdsEmpresas();
+    }
+    if(this.estadosSeleccionados.length == 0) {
+      this.estadosSeleccionados = this.obtenerIdsEstados();
+    }
+    let info = {
+      usuario: user,
+      empresas: this.empresasSeleccionadas,
+      estados: this.estadosSeleccionados
+    }
+    
+    this.apiService.postPdf("informe-cuotas-pagas", info).subscribe(
+      response => {
+        const blob = new Blob([response], { type: 'application/pdf' });
+        const url = window.URL.createObjectURL(blob);
+        const viewerUrl = this.router.serializeUrl(
+          this.router.createUrlTree(['/pdf', { url }])
+        );
+        window.open(viewerUrl, '_blank'); // Abrir en una nueva pestaña
+      },
+      error => {
+        console.error('Error al generar el informe:', error);
+      }
+    );
+  }
 }
