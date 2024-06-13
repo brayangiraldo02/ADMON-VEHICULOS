@@ -5,10 +5,10 @@ from models.estados import Estados
 from models.vehiculos import Vehiculos
 from models.propietarios import Propietarios
 from models.conductores import Conductores
+from schemas.reports import *
 from fastapi.encoders import jsonable_encoder
 from utils.reports import *
 from datetime import datetime
-from schemas.reports import info
 
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import FileResponse
@@ -20,7 +20,7 @@ templateJinja = Jinja2Templates(directory="templates")
 reports_router = APIRouter()
 
 @reports_router.post('/estado-vehiculos-resumen', response_class=FileResponse)
-async def get_conteo_vehiculos_estados(info: info):
+async def get_conteo_vehiculos_estados(info: userInfo):
   db = session()
   try:
     conteo_vehiculos_estados = db.query(Estados.CODIGO, Estados.NOMBRE, Vehiculos.NUMERO) \
@@ -120,7 +120,7 @@ async def get_conteo_vehiculos_estados(info: info):
 #-----------------------------------------------------------------------------------------
 
 @reports_router.post('/estado-vehiculos-resumen-empresa/{id}', response_class=FileResponse)
-async def get_conteo_propietarios_vehiculos_estados(id: int, info: info):
+async def get_conteo_propietarios_vehiculos_estados(id: int, info: userInfo):
     db = session()
     try:
         conteo_propietarios_vehiculos_estados = db.query(
@@ -239,7 +239,7 @@ async def get_conteo_propietarios_vehiculos_estados(id: int, info: info):
 
 
 @reports_router.post('/informe-estados-detallado', response_class=FileResponse)
-async def get_conteo_vehiculos_estados_numeros(info: info):
+async def get_conteo_vehiculos_estados_numeros(info: userInfo):
   db = session()
   try:
     conteo_propietarios_vehiculos_estados = db.query(
@@ -374,7 +374,7 @@ async def get_conteo_vehiculos_estados_numeros(info: info):
 # -----------------------------------------------------------------------------------------
 
 @reports_router.post('/informe-estados-detallado-empresa/{id}', response_class=FileResponse)
-async def get_conteo_propietarios_vehiculos_estados_numeros(id: int, info: info):
+async def get_conteo_propietarios_vehiculos_estados_numeros(id: int, info: userInfo):
   db = session()
   try:
     conteo_propietarios_vehiculos_estados = db.query(
@@ -513,8 +513,8 @@ async def get_conteo_propietarios_vehiculos_estados_numeros(id: int, info: info)
 
 #-----------------------------------------------------------------------------------------
 
-@reports_router.get('/relacion-vehiculos-propietario')
-async def get_vehiculos_detalles():
+@reports_router.post('/relacion-vehiculos-propietario', response_class=FileResponse)
+async def get_vehiculos_detalles(infoReports: infoReports):
     db = session()
     try:
         vehiculos_detalles = db.query(
@@ -568,11 +568,11 @@ async def get_vehiculos_detalles():
             }
             vehiculos_detalles_list.append(vehiculo_detalle)
 
-        codigos_estados_deseados = []
+        codigos_estados_deseados = infoReports.estados
 
         data = obtener_conductores_por_propietario(vehiculos_detalles_list, codigos_estados_deseados)
 
-        claves_deseadas = ["1", "13", "17", "26", "36"]
+        claves_deseadas = infoReports.empresas
 
         datos = {clave: data.get(clave, {}) for clave in claves_deseadas}
 
@@ -670,8 +670,8 @@ async def get_vehiculos_detalles():
 
 #-----------------------------------------------------------------------------------------
 
-@reports_router.get('/conductores-detalles-propietario')
-async def get_vehiculos_detalles():
+@reports_router.post('/informe-cuotas-pagas', response_class=FileResponse)
+async def get_vehiculos_detalles(infoReports: infoReports):
     db = session()
     try:
         vehiculos_detalles = db.query(
@@ -713,11 +713,11 @@ async def get_vehiculos_detalles():
             }
             vehiculos_detalles_list.append(vehiculo_detalle)
 
-        codigos_estados_deseados = []
+        codigos_estados_deseados = infoReports.estados
     
         data = cuotas_pagas(vehiculos_detalles_list, codigos_estados_deseados)
 
-        claves_deseadas = ["1", "13", "17", "26", "36"]
+        claves_deseadas = infoReports.empresas
 
         # Crear un nuevo diccionario con los datos de las claves deseadas
         datos = {clave: data.get(clave, {}) for clave in claves_deseadas}
@@ -725,7 +725,7 @@ async def get_vehiculos_detalles():
         # Datos de la fecha y hora actual
         fecha = datetime.now().strftime("%Y-%m-%d")
         hora_actual = datetime.now().strftime("%H:%M:%S")
-        usuario = "admin" 
+        usuario = infoReports.usuario 
         titulo = 'Informe Cuotas Pagas de conductores'
 
         # Inicializar el diccionario data_view con información común
@@ -839,14 +839,13 @@ async def get_propietarios_detalles():
             }
             propietarios_detalles_list.append(propietario_detalle)
     
-        #data = cuotas_pagas(propietarios_detalles_list)
-        data = propietarios_detalles_list
+        data = agrupar_empresas_por_estado(propietarios_detalles_list)
 
-        """ # Datos de la fecha y hora actual
+        # Datos de la fecha y hora actual
         fecha = datetime.now().strftime("%Y-%m-%d")
         hora_actual = datetime.now().strftime("%H:%M:%S")
         usuario = "admin" 
-        titulo = 'Informe Cuotas Pagas de conductores'
+        titulo = 'Directorio Propietarios'
 
         # Inicializar el diccionario data_view con información común
         data_view = {
@@ -854,38 +853,26 @@ async def get_propietarios_detalles():
             "hora": hora_actual
         }
 
-        # Iterar sobre las empresas y vehículos
-        total = 0
-        for empresa, info in data.items(): 
+        for estado, info in data.items():
             if isinstance(info, dict):
-                data_view[empresa] = {
-                    "codigo_empresa": info.get("propietario_codigo", 0),
-                    "nombre_empresa": info.get("propietario_nombre", 0),
-                    "empty": info.get("empty", 0)
+                estado_nombre = info.pop('nombre_estado', 'Sin nombre')
+                data_view[estado] = {
+                    "nombre_estado": estado_nombre,
+                    "empresas": []
                 }
-                consecutivo = 1
-                for vehiculo, vehiculo_info in info.items():
-                    if isinstance(vehiculo_info, dict):
-                        data_view[vehiculo] = {
-                            "consecutivo": consecutivo,
-                            "codigo_empresa": info.get("propietario_codigo", 0),
-                            "codigo_conductor": vehiculo_info.get("conductor_codigo", 0),
-                            "nombre": vehiculo_info.get("conductor_nombre", 0),
-                            "fecha_ingreso": vehiculo_info.get("conductor_fecha_ingreso", 0),
-                            "numero": vehiculo_info.get("vehiculo_numero", 0),
-                            "prestado": vehiculo_info.get("conductor_und_pre", 0),
-                            "estado": vehiculo_info.get("estado_nombre", 0),
-                            "valor": vehiculo_info.get("conductor_vlr_cuo_diaria", 0),
-                            "num_cuotas": vehiculo_info.get("conductor_nro_cuotas", 0),
-                            "num_cuotas_pagas": vehiculo_info.get("conductor_nro_cuotas_pagas", 0),
-                            "num_cuotas_pendientes": vehiculo_info.get("conductor_nro_ent_sdo", 0),
+                for empresa_codigo, empresa_info in info.items():
+                    if isinstance(empresa_info, dict):
+                        empresa = {
+                            "codigo_empresa": empresa_info.get("propietario_codigo", ""),
+                            "nombre": empresa_info.get("propietario_nombre", ""),
+                            "ciudad": empresa_info.get("propietario_ciudad", ""),
+                            "direccion": empresa_info.get("propietario_direccion", ""),
+                            "telefono": empresa_info.get("propietario_telefono", ""),
+                            "celular": empresa_info.get("propietario_celular", ""),
+                            "correo": empresa_info.get("propietario_correo", ""),
                         }
-                        consecutivo += 1
-                        total += 1
-                    else:
-                        pass
+                        data_view[estado]["empresas"].append(empresa)
         
-        data_view["total"] = total
         data_view["usuario"] = usuario
 
         headers = {
@@ -894,7 +881,7 @@ async def get_propietarios_detalles():
 
         template_loader = jinja2.FileSystemLoader(searchpath="./templates")
         template_env = jinja2.Environment(loader=template_loader)
-        template_file = "InformeCuotas.html"
+        template_file = "DirectorioPropietarios.html"
         header_file = "header.html"
         footer_file = "footer.html"
         template = template_env.get_template(template_file)
@@ -904,7 +891,7 @@ async def get_propietarios_detalles():
         output_header = header.render(data_view=data_view)
         output_footer = footer.render(data_view=data_view)
 
-        html_path = f'./templates/renderInformeCuotas.html'
+        html_path = f'./templates/renderDirectorioPropietarios.html'
         header_path = f'./templates/renderheader.html'
         footer_path = f'./templates/renderfooter.html'
         html_file = open(html_path, 'w')
@@ -916,13 +903,13 @@ async def get_propietarios_detalles():
         html_file.close()
         header_file.close()
         html_footer.close()
-        pdf_path = 'informe-cuotas-pagas.pdf'
+        pdf_path = 'propietarios-detalles.pdf'
         html2pdf(titulo, html_path, pdf_path, header_path=header_path, footer_path=footer_path)
 
-        response = FileResponse(pdf_path, media_type='application/pdf', filename='templates/informe-cuotas-pagas.pdf', headers=headers) """
+        response = FileResponse(pdf_path, media_type='application/pdf', filename='templates/propietarios-detalles.pdf', headers=headers)
         
-        #return response
+        return response
 
-        return JSONResponse(content=jsonable_encoder(data))
+        #return JSONResponse(content=jsonable_encoder(data))
     finally:
         db.close()

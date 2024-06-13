@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Directorio Propietarios</title>
+    <style type="text/css">
+        .container {
+            position: relative;
+        }
+        #logo {
+            position: absolute;
+            top: 0;
+            right: 0;
+        }
+        .content {
+            margin-left: 200px; 
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            text-align: center;
+        }
+        tr:first-child th, tr:first-child td {
+            background-color: #ffffff;
+            border: 1px solid #000000;
+            padding: 10px;
+            text-align: center;
+        }
+        td{
+            white-space: nowrap;
+            font-size: 15px;
+        }
+        tr {
+            padding: 15px;
+            line-height: 1.8;
+            margin-bottom: 20px;
+        }
+        .box-propietario {
+            text-align: left;
+            font-size: 23px;
+            margin-top: 10px;
+            border: 2px solid #000;
+            border-radius: 10px; /* Bordes redondeados */
+            padding: 5px; /* Espaciado interno */
+        }
+        .box-propietario2 {
+            text-align: left;
+            font-size: 17px;
+            margin-top: 10px;
+            position: sticky;
+            left: 0;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+        dr {
+            position: absolute;
+            right: 0;
+            text-align: right;
+            top: 0;
+        }
+        dt, dd {
+            display: inline;
+            margin: 0;
+        }
+        dt {
+            color: #a9a;
+        }
+        dt::before {
+            content: '';
+            display: block;
+        }
+        dt::after {
+            content: ':';
+        }
+        html, body {
+            scroll-behavior: smooth;
+        }
+        .title {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .centered-title {
+            font-size: 30px; 
+            text-align: center; /* Centra el título horizontalmente */
+            margin-bottom: 0px; 
+        }
+        .box {
+            flex: 1; /* Distribuye el espacio disponible entre las cajas */
+            border: 1px solid #ccc;
+            padding: 10px;
+        }
+        p {
+            line-height: 1; 
+            font-size: 12px;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+        footer {
+        bottom: 0;
+        width: 100%;
+        text-align: center;
+        font-family: Arial, sans-serif;
+        }
+        footer p {
+        font-size: 12px; 
+        }
+    </style>
+</head>
+<body>
+
+    <table>
+            <tr>
+                <th>Código</th>
+                <th>Nombre</th>
+                <th>Ciudad</th>
+                <th>Dirección</th>
+                <th>Teléfono</th>
+                <th>Celular</th>
+                <th>Correo</th>
+            </tr>
+            {% for estado, estado_info in data_view.items() %}
+                {% if estado != 'usuario' %}
+                    <tr>
+                        <th colspan="7">
+                            <div class="box-propietario2">
+                                <span style="text-transform: uppercase;">{{ estado_info['nombre_estado'] }}</span>
+                            </div>
+                        </th>
+                    </tr>
+                    {% for empresa in estado_info['empresas'] %}
+                        <tr>
+                            <td>{{ empresa['codigo_empresa'] }}</td>
+                            <td style="text-align: left;">{{ empresa['nombre'] }}</td>
+                            <td>{{ empresa['ciudad'] }}</td>
+                            <td style="text-align: left;">{{ empresa['direccion'] }}</td>
+                            <td>{{ empresa['telefono'] }}</td>
+                            <td>{{ empresa['celular'] }}</td>
+                            <td>{{ empresa['correo'] }}</td>
+                        </tr>
+                    {% endfor %}
+                {% endif %}
+            {% endfor %}
+    </table>     
+</body>
+</html>

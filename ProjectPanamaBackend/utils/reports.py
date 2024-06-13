@@ -131,17 +131,25 @@ def cuotas_pagas(data, codigos_estados_deseados=None):
 
 #------------------------------------------------------------
 
-def agrupar_empresas(data):
-    empresas = {}
-    for vehiculo in data:
-        codigo_empresa = vehiculo["propietario_codigo"]
-        if codigo_empresa not in empresas:
-            empresas[codigo_empresa] = {
-                "propietario_codigo": vehiculo["propietario_codigo"],
-                "propietario_nombre": vehiculo["propietario_nombre"],
-                "empty": "1"
-            }
-        if vehiculo["conductor_codigo"]:
-            empresas[codigo_empresa][vehiculo["vehiculo_numero"]] = vehiculo
-            empresas[codigo_empresa]["empty"] = "0"
-    return empresas
+def obtener_nombre_estado(estado):
+    if estado == 0:
+        return "Sin clasificar"
+    elif estado == 1:
+        return "Activo"
+    elif estado == 2:
+        return "Suspendido"
+    elif estado == 3:
+        return "Inactivo"
+    else:
+        return "Desconocido"
+
+def agrupar_empresas_por_estado(empresas):
+    empresas_por_estado = {}
+    for empresa in empresas:
+        estado = empresa["propietario_estado"]
+        if estado not in empresas_por_estado:
+            empresas_por_estado[estado] = {}
+            empresas_por_estado[estado]["nombre_estado"] = obtener_nombre_estado(estado)
+        codigo = empresa["propietario_codigo"]
+        empresas_por_estado[estado][codigo] = empresa
+    return empresas_por_estado
