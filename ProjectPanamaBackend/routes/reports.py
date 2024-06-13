@@ -5,6 +5,7 @@ from models.estados import Estados
 from models.vehiculos import Vehiculos
 from models.propietarios import Propietarios
 from models.conductores import Conductores
+from schemas.reports import *
 from fastapi.encoders import jsonable_encoder
 from utils.reports import *
 from datetime import datetime
@@ -18,8 +19,8 @@ templateJinja = Jinja2Templates(directory="templates")
 
 reports_router = APIRouter()
 
-@reports_router.get('/estado-vehiculos-resumen', response_class=FileResponse)
-async def get_conteo_vehiculos_estados():
+@reports_router.post('/estado-vehiculos-resumen', response_class=FileResponse)
+async def get_conteo_vehiculos_estados(info: userInfo):
   db = session()
   try:
     conteo_vehiculos_estados = db.query(Estados.CODIGO, Estados.NOMBRE, Vehiculos.NUMERO) \
@@ -31,7 +32,7 @@ async def get_conteo_vehiculos_estados():
     # Datos de la fecha y hora actual
     fecha = datetime.now().strftime("%Y-%m-%d")
     hora_actual = datetime.now().strftime("%H:%M:%S")
-    usuario = "admin" 
+    usuario = info.user
     titulo = 'Informe Por Estados General'
 
     # Inicializar el diccionario data_view con información común
@@ -119,7 +120,7 @@ async def get_conteo_vehiculos_estados():
 #-----------------------------------------------------------------------------------------
 
 @reports_router.post('/estado-vehiculos-resumen-empresa/{id}', response_class=FileResponse)
-async def get_conteo_propietarios_vehiculos_estados(id: int, info: info):
+async def get_conteo_propietarios_vehiculos_estados(id: int, info: userInfo):
     db = session()
     try:
         conteo_propietarios_vehiculos_estados = db.query(
@@ -238,7 +239,7 @@ async def get_conteo_propietarios_vehiculos_estados(id: int, info: info):
 
 
 @reports_router.post('/informe-estados-detallado', response_class=FileResponse)
-async def get_conteo_vehiculos_estados_numeros(info: info):
+async def get_conteo_vehiculos_estados_numeros(info: userInfo):
   db = session()
   try:
     conteo_propietarios_vehiculos_estados = db.query(
@@ -373,7 +374,7 @@ async def get_conteo_vehiculos_estados_numeros(info: info):
 # -----------------------------------------------------------------------------------------
 
 @reports_router.post('/informe-estados-detallado-empresa/{id}', response_class=FileResponse)
-async def get_conteo_propietarios_vehiculos_estados_numeros(id: int, info: info):
+async def get_conteo_propietarios_vehiculos_estados_numeros(id: int, info: userInfo):
   db = session()
   try:
     conteo_propietarios_vehiculos_estados = db.query(
@@ -512,8 +513,8 @@ async def get_conteo_propietarios_vehiculos_estados_numeros(id: int, info: info)
 
 #-----------------------------------------------------------------------------------------
 
-@reports_router.get('/relacion-vehiculos-propietario')
-async def get_vehiculos_detalles():
+@reports_router.post('/relacion-vehiculos-propietario', response_class=FileResponse)
+async def get_vehiculos_detalles(infoReports: infoReports):
     db = session()
     try:
         vehiculos_detalles = db.query(
@@ -567,11 +568,11 @@ async def get_vehiculos_detalles():
             }
             vehiculos_detalles_list.append(vehiculo_detalle)
 
-        codigos_estados_deseados = []
+        codigos_estados_deseados = infoReports.estados
 
         data = obtener_conductores_por_propietario(vehiculos_detalles_list, codigos_estados_deseados)
 
-        claves_deseadas = ["1", "13", "17", "26", "36"]
+        claves_deseadas = infoReports.empresas
 
         datos = {clave: data.get(clave, {}) for clave in claves_deseadas}
 
@@ -669,8 +670,8 @@ async def get_vehiculos_detalles():
 
 #-----------------------------------------------------------------------------------------
 
-@reports_router.get('/conductores-detalles-propietario')
-async def get_vehiculos_detalles():
+@reports_router.post('/informe-cuotas-pagas', response_class=FileResponse)
+async def get_vehiculos_detalles(infoReports: infoReports):
     db = session()
     try:
         vehiculos_detalles = db.query(
@@ -712,11 +713,11 @@ async def get_vehiculos_detalles():
             }
             vehiculos_detalles_list.append(vehiculo_detalle)
 
-        codigos_estados_deseados = []
+        codigos_estados_deseados = infoReports.estados
     
         data = cuotas_pagas(vehiculos_detalles_list, codigos_estados_deseados)
 
-        claves_deseadas = ["1", "13", "17", "26", "36"]
+        claves_deseadas = infoReports.empresas
 
         # Crear un nuevo diccionario con los datos de las claves deseadas
         datos = {clave: data.get(clave, {}) for clave in claves_deseadas}
@@ -724,7 +725,7 @@ async def get_vehiculos_detalles():
         # Datos de la fecha y hora actual
         fecha = datetime.now().strftime("%Y-%m-%d")
         hora_actual = datetime.now().strftime("%H:%M:%S")
-        usuario = "admin" 
+        usuario = infoReports.usuario 
         titulo = 'Informe Cuotas Pagas de conductores'
 
         # Inicializar el diccionario data_view con información común
