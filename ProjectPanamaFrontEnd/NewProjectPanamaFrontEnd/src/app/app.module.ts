@@ -28,6 +28,7 @@ import { OpcionesUtilidadesComponent } from './components/options/utilidades/opc
 import { OpcionesCarteraComponent } from './components/options/cartera/opciones-cartera/opciones-cartera.component';
 import { OpcionesAlmacenComponent } from './components/options/almacen/opciones-almacen/opciones-almacen.component';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { OwnersComponent } from './components/tasks/owners/owners.component';
 
 @NgModule({
   declarations: [
@@ -52,6 +53,7 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
     OpcionesUtilidadesComponent,
     OpcionesCarteraComponent,
     OpcionesAlmacenComponent,
+    OwnersComponent,
   ],
   imports: [
     BrowserModule,

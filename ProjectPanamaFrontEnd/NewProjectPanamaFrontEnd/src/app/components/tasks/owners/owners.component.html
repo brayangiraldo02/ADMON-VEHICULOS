@@ -1,0 +1,46 @@
+<app-header></app-header>
+<div class="main-container">
+  <h1 class="title-container">PROPIETARIOS</h1>
+  <p>Total Registros: {{ data.length }}</p>
+  <div class="options-container">
+    <input type="text" placeholder="Buscar..." [(ngModel)]="searchTerm" (input)="filterData()" class="search-container">
+    <li class="report">
+      <a>
+        <span class="report-text">Reportes</span>
+      </a>
+    </li>
+  </div>
+  <div class="table-container">
+    <table>
+      <thead>
+        <tr>
+          <th class="col-campo1">CÓDIGO</th>
+          <th class="col-campo2">NOMBRE PROPIETARIO</th>
+          <th class="col-campo3">R.U.C.</th>
+          <th class="col-campo4">TELÉFONO</th>
+          <th class="col-campo5">REPRESENTANTE</th>
+          <th class="col-campo6">CENTRAL</th>
+          <th class="col-campo7">AUDITOR</th>
+          <th class="col-campo8">CNT</th>
+          <th class="col-campo9">DCTO %</th>
+          <th class="col-campo10">ESTADO</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of filteredData">
+          <td class="col-campo1">{{ item.codigo }}</td>
+          <td class="col-campo2">{{ item.nombre_propietario }}</td>
+          <td class="col-campo3">{{ item.ruc }}</td>
+          <td class="col-campo4">{{ item.telefono }} {{ item.celular }}</td>
+          <td class="col-campo5">{{ item.representante }}</td>
+          <td class="col-campo6">{{ item.central }}</td>
+          <td class="col-campo7">{{ item.auditor }}</td>
+          <td class="col-campo8">{{ item.cnt }}</td>
+          <td class="col-campo9">{{ item.dcto }}</td>
+          <td class="col-campo10">{{ item.estado }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+<app-footer></app-footer>

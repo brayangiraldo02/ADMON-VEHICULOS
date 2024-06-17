@@ -15,6 +15,7 @@
   box-sizing: border-box;
   background: #ffffff; /* Fondo claro por defecto, ajustable */
   border-radius: 10px; /* Bordes redondeados */
+  border: 1px solid #ccc;
   padding: 30px;
   display: flex;
   align-items: center; /* Centrado vertical */
@@ -36,6 +37,7 @@
   box-sizing: border-box;
   background: #ffffff;
   border-radius: 10px;
+  border: 1px solid #ccc;
   padding: 30px;
   display: flex;
   align-items: center;

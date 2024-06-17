@@ -20,6 +20,7 @@
   margin: 10px;
   box-sizing: border-box;
   background: #ffffff; /* Fondo claro por defecto, ajustable */
+  border: 1px solid #ccc;
   border-radius: 10px; /* Bordes redondeados */
   padding: 30px;
   display: flex;

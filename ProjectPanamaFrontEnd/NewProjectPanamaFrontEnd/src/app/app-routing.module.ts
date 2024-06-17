@@ -20,6 +20,7 @@ import { OpcionesCntComponent } from './components/options/cnt/opciones-cnt/opci
 import { OpcionesUtilidadesComponent } from './components/options/utilidades/opciones-utilidades/opciones-utilidades.component';
 import { OpcionesCarteraComponent } from './components/options/cartera/opciones-cartera/opciones-cartera.component';
 import { OpcionesAlmacenComponent } from './components/options/almacen/opciones-almacen/opciones-almacen.component';
+import { OwnersComponent } from './components/tasks/owners/owners.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -28,6 +29,7 @@ const routes: Routes = [
   { path: 'statevehiclefleet', component: StatevehiclefleetComponent, canActivate: [AuthGuard]},
   { path: 'vehicles', component: VehiclesComponent, canActivate: [AuthGuard]},
   { path: 'feespaid', component: FeespaidComponent, canActivate: [AuthGuard]},
+  { path: 'owners', component: OwnersComponent, canActivate: [AuthGuard]},
   { path: 'operations', component: OpcionesOperacionesComponent, canActivate: [AuthGuard]},
   { path: 'procedures', component: OpcionesTramitesComponent, canActivate: [AuthGuard]},
   { path: 'warehouse', component: OpcionesAlmacenComponent, canActivate: [AuthGuard]},
