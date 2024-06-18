@@ -52,7 +52,7 @@ input[type="password"] {
   width: calc(100% - 20px); /* Ajustamos el ancho restando el padding */
   padding: 10px;
   border: 1px solid #ccc;
-  border-radius: 5px;
+  border-radius: 10px;
 }
 
 .validators p {
@@ -69,7 +69,7 @@ button {
   background-color: #002B65;
   color: #fff;
   border: none;
-  border-radius: 5px;
+  border-radius: 10px;
   cursor: pointer;
 }
 

@@ -1,0 +1,106 @@
+.main-container {
+  min-height: 90vh;
+  height: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 3vh;
+  user-select: none;
+}
+
+hr {
+  width: 95%;
+  height: 1px;
+  background-color: #000000;
+
+}
+
+.title-container {
+  margin-bottom: 5px;
+}
+
+.buttons-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  width: 100%;
+}
+
+.select{
+  width: 20%; 
+  margin: 10px;
+  box-sizing: border-box;
+  background: #ffffff; /* Fondo claro por defecto, ajustable */
+  border: 1px solid #ccc;
+  border-radius: 10px; /* Bordes redondeados */
+  padding: 10px;
+  display: flex;
+  align-items: center; /* Centrado vertical */
+  justify-content: center; /* Centrado horizontal */
+  text-align: center; /* Texto centrado */
+  flex-direction: column; /* Ícono sobre el texto */
+  cursor: pointer;
+}
+
+.select.selected {
+  background: #bcd1ec; /* Cambia este color según sea necesario */
+}
+
+.select:hover {
+  /* background: #fff8b4;  */
+  background: #bcd1ec;
+}
+
+.select-text {
+  font-size: 20px; /* Ajuste según necesidad */
+  color: #333; /* Color del texto */
+}
+
+.info-container {
+  width: 95%;
+  margin-top: 5px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: row;
+  flex-shrink: 0;
+  margin-bottom: 10px;
+}
+
+.form-group label {
+  padding-right: 10px;
+  display: flex;
+  align-items: center;
+}
+
+.form-group input {
+  padding: 10px;
+  border: 1px solid #ccc;
+  background: #ffffff;
+  border-radius: 10px;
+}
+
+.form-group input:enabled {
+  background: #eeeeee;
+  border-color: #000000;
+}
+
+.two-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.two-container .form-group {
+  flex: 1;
+}
+
+.two-container .form-group-abreviado {
+  margin-left: 5vh;
+}
+
+input.large {
+  width: 100%;
+}
