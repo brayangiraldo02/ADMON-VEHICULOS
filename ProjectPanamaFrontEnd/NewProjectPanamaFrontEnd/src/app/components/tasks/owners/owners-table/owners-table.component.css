@@ -1,0 +1,116 @@
+.main-container {
+  min-height: 90vh;
+  height: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 3vh;
+  user-select: none;
+}
+
+.title-container {
+  margin-bottom: 0;
+}
+
+.options-container {
+  width: 95%;
+  display: flex;
+  justify-content: space-between;
+}
+
+.search-container {
+  width: 75%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+}
+
+.report{
+  width: 20%;
+  box-sizing: border-box;
+  background: #ffffff; /* Fondo claro por defecto, ajustable */
+  border-radius: 10px; /* Bordes redondeados */
+  border: 1px solid #ccc;
+  padding: 10px;
+  display: flex;
+  align-items: center; /* Centrado vertical */
+  justify-content: center; /* Centrado horizontal */
+  text-align: center; /* Texto centrado */
+  flex-direction: column; /* Ícono sobre el texto */
+  cursor: pointer;
+}
+
+.report:hover {
+  /* background: #fff8b4;  */
+  background: #bcd1ec;
+}
+
+.report-text {
+  font-size: 15px; /* Ajuste según necesidad */
+  color: #333; /* Color del texto */
+}
+
+.table-container {
+  margin: 20px auto;
+  padding: 10px;
+  max-width: 95%;
+  overflow-x: auto;
+  background: #f9f9f9;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: auto; /* Adjust to fixed if widths need to be absolute */
+}
+
+th, td {
+  padding: 12px 15px;
+  border: 1px solid #ddd;
+  text-align: center;
+  word-wrap: break-word; /* This will handle long text wrapping */
+
+}
+
+th {
+  background-color: #f4f4f4;
+  font-weight: bold;
+  font-size:small;
+}
+
+td {
+  font-size: small;
+}
+
+tbody tr:nth-child(odd) {
+  background-color: #f9f9f9;
+}
+
+tbody tr:hover {
+  background-color: #f1f1f1;
+}
+
+/* Column-specific styles */
+/* .col-campo1, .col-campo2, .col-campo3, .col-campo4, .col-campo5, .col-campo6, .col-campo7, .col-campo8, .col-campo9, .col-campo10 {
+  width: 10%; 
+} */
+
+/* .col-campo1, .col-campo2, .col-campo3, .col-campo4, .col-campo5, .col-campo6 {
+  width: 8%;
+}
+
+.col-campo7, .col-campo8, .col-campo9, .col-campo10 {
+  width: 12%;
+} */
+
+.col-campo1 .col-campo8 .col-campo9 {
+  width: 2%;
+}
+
+/* @media (max-width: 768px) {
+  th, td {
+    padding: 8px 10px;
+  }
+} */
