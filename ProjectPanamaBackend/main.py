@@ -1,12 +1,14 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from config.dbconnection import Base, engine
-from routes.reports import reports_router
 from fastapi.staticfiles import StaticFiles
 from routes.users import users_router
 from routes.owners import owners_router
 from routes.states import states_router
 from dotenv import load_dotenv
+from routes.reports.feespaid import feespaidReports_router
+from routes.reports.owners import ownersReports_router
+from routes.reports.statevehiclefleet import statevehiclefleetReports_router
 import os
 
 load_dotenv()
@@ -23,7 +25,9 @@ app.add_middleware(
 
 Base.metadata.create_all(bind=engine)
 
-app.include_router(reports_router)
+app.include_router(feespaidReports_router)
+app.include_router(ownersReports_router)
+app.include_router(statevehiclefleetReports_router)
 app.include_router(users_router)
 app.include_router(owners_router)
 app.include_router(states_router)
