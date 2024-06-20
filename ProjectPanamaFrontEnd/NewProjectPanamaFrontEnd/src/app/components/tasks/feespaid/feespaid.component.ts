@@ -223,7 +223,6 @@ export class FeespaidComponent implements OnInit {
       empresas: this.empresasSeleccionadas,
       estados: this.estadosSeleccionados
     }
-    
     this.apiService.postPdf("informe-cuotas-pagas", info).subscribe(
       response => {
         const blob = new Blob([response], { type: 'application/pdf' });
@@ -232,6 +231,7 @@ export class FeespaidComponent implements OnInit {
           this.router.createUrlTree(['/pdf', { url }])
         );
         window.open(viewerUrl, '_blank'); // Abrir en una nueva pestaña
+        this.router.navigate(['/home']);
       },
       error => {
         console.error('Error al generar el informe:', error);

@@ -242,6 +242,7 @@ export class StatevehiclefleetComponent implements OnInit {
               this.router.createUrlTree(['/pdf', { url }])
             );
             window.open(viewerUrl, '_blank'); // Abrir en una nueva pestaña
+            this.router.navigate(['/home']);
           },
           error => {
             console.error('Error al generar el informe:', error);
@@ -282,6 +283,7 @@ export class StatevehiclefleetComponent implements OnInit {
           this.router.createUrlTree(['/pdf', { url }])
         );
         window.open(viewerUrl, '_blank'); // Abrir en una nueva pestaña
+        this.router.navigate(['/home']);
       },
       error => {
         console.error('Error al generar el informe:', error);
