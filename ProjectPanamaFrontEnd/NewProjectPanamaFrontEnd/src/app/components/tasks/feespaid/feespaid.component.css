@@ -40,6 +40,10 @@
   background: #bcd1ec;
 }
 
+.home:hover {
+  background: #ffcdcd; 
+}
+
 .select-text {
   font-size: 20px; /* Ajuste según necesidad */
   color: #333; /* Color del texto */

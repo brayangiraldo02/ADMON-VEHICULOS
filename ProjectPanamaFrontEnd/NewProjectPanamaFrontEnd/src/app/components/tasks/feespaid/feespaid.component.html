@@ -110,6 +110,24 @@
   </div>
   <!-- -------------------------------------------------------------------------- -->
 
+  <!-- REGRESAR -->
+  <!-- -------------------------------------------------------------------------- -->
+  <li class="select home" *ngIf="mostrarOpcionesEstados || mostrarOpcionesEmpresas" (click)="backOptions()">
+    <a>
+      <span class="select-text">Regresar</span>
+    </a>
+  </li>
+  <!-- -------------------------------------------------------------------------- -->
+
+  <!-- REGRESAR AL INICIO -->
+  <!-- -------------------------------------------------------------------------- -->
+  <li class="select home" *ngIf="!mostrarOpcionesEstados && !mostrarOpcionesEmpresas" routerLink="/home">
+    <a>
+      <span class="select-text">Regresar Al Inicio</span>
+    </a>
+  </li>
+  <!-- -------------------------------------------------------------------------- -->
+
   <!-- <p>Empresas seleccionadas: {{ empresasSeleccionadas.join(', ') }}</p>
   <p>Estados seleccionadas: {{ estadosSeleccionados.join(', ') }}</p> -->
 </div>
