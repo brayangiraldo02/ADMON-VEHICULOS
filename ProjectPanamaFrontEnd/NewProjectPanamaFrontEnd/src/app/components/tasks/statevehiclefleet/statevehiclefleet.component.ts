@@ -30,8 +30,8 @@ export class StatevehiclefleetComponent implements OnInit {
   selectedEstadosOptions: { [key: string]: boolean } = {};
 
   titles: { [key: string]: string } = {
-    'summary': 'Informe resumen de vehículos',
-    'detail': 'Informe detalle de vehículos',
+    'summary': 'Informe Resumen de Vehículos',
+    'detail': 'Informe Detalle de Vehículos',
     'company-units': 'Relación Unidad/Estado Empresa'
   };
 
@@ -54,6 +54,21 @@ export class StatevehiclefleetComponent implements OnInit {
     this.listOwners();
     this.listStates();
     this.obtenerUsuario();
+  }
+
+  backOptions() {
+    if (this.mostrarOpcionesEmpresas) {
+      this.mostrarOpcionesEmpresas = !this.mostrarOpcionesEmpresas;
+      // this.toggleEmpresaSelect('empresas');
+      this.empresasSeleccionadas = [];
+      this.clearEmpresasSelections();
+    }
+    if (this.mostrarOpcionesEstados) {
+      this.mostrarOpcionesEstados = !this.mostrarOpcionesEstados;
+      // this.toggleEstadoSelect('estados');
+      this.estadosSeleccionados = [];
+      this.clearEstadosSelections();
+    }
   }
 
   openSnack() {
