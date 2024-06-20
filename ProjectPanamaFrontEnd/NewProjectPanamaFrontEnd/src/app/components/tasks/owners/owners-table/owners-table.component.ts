@@ -35,15 +35,11 @@ export class OwnersTableComponent implements OnInit {
     const term = this.searchTerm.toLowerCase();
     this.filteredData = this.data.filter(item => 
       item.codigo.toString().toLowerCase().includes(term) ||
-      item.nombre_propietario.toLowerCase().includes(term)
-      // item.ruc.toLowerCase().includes(term) ||
-      // (item.telefono + ' ' + item.celular).toLowerCase().includes(term) ||
-      // item.representante.toLowerCase().includes(term) ||
-      // item.central.toLowerCase().includes(term) ||
-      // item.auditor.toLowerCase().includes(term) ||
-      // item.cnt.toString().toLowerCase().includes(term) ||
-      // item.dcto.toString().toLowerCase().includes(term) ||
-      // item.estado.toLowerCase().includes(term)
+      item.nombre_propietario.toLowerCase().includes(term) ||
+      item.representante.toLowerCase().includes(term) ||
+      item.central.toLowerCase().includes(term) ||
+      item.auditor.toLowerCase().includes(term) ||
+      item.estado.toLowerCase().includes(term)
     );
   }
 }

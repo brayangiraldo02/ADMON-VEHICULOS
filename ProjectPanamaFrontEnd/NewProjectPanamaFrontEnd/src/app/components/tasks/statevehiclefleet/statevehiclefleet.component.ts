@@ -30,8 +30,8 @@ export class StatevehiclefleetComponent implements OnInit {
   selectedEstadosOptions: { [key: string]: boolean } = {};
 
   titles: { [key: string]: string } = {
-    'summary': 'Informe resumen de vehículos',
-    'detail': 'Informe detalle de vehículos',
+    'summary': 'Informe Resumen de Vehículos',
+    'detail': 'Informe Detalle de Vehículos',
     'company-units': 'Relación Unidad/Estado Empresa'
   };
 
@@ -56,6 +56,21 @@ export class StatevehiclefleetComponent implements OnInit {
     this.obtenerUsuario();
   }
 
+  backOptions() {
+    if (this.mostrarOpcionesEmpresas) {
+      this.mostrarOpcionesEmpresas = !this.mostrarOpcionesEmpresas;
+      // this.toggleEmpresaSelect('empresas');
+      this.empresasSeleccionadas = [];
+      this.clearEmpresasSelections();
+    }
+    if (this.mostrarOpcionesEstados) {
+      this.mostrarOpcionesEstados = !this.mostrarOpcionesEstados;
+      // this.toggleEstadoSelect('estados');
+      this.estadosSeleccionados = [];
+      this.clearEstadosSelections();
+    }
+  }
+
   openSnack() {
     this.snack.open("Un momento...", "Aceptar"),{
       duration:3000
@@ -72,6 +87,7 @@ export class StatevehiclefleetComponent implements OnInit {
     this.apiService.getData("owners").subscribe(
       (response) => {
         this.owners = response.filter((owner: any) => owner.id);
+        this.owners.sort((a, b) => a.name.localeCompare(b.name));
       },
       (error) => {
         console.log(error);
@@ -83,6 +99,19 @@ export class StatevehiclefleetComponent implements OnInit {
     this.apiService.getData("states").subscribe(
       (response) => {
         this.states = response.filter((state: any) => state.id);
+        this.states.sort((a, b) => {
+          const aStartsWithSpecialChar = a.name.startsWith('»');
+          const bStartsWithSpecialChar = b.name.startsWith('»');
+        
+          if (aStartsWithSpecialChar && !bStartsWithSpecialChar) {
+            return 1;
+          }
+          if (!aStartsWithSpecialChar && bStartsWithSpecialChar) {
+            return -1;
+          }
+        
+          return a.name.localeCompare(b.name);
+        });
         console.log(response);
       },
       (error) => {
@@ -213,6 +242,7 @@ export class StatevehiclefleetComponent implements OnInit {
               this.router.createUrlTree(['/pdf', { url }])
             );
             window.open(viewerUrl, '_blank'); // Abrir en una nueva pestaña
+            this.router.navigate(['/home']);
           },
           error => {
             console.error('Error al generar el informe:', error);
@@ -253,6 +283,7 @@ export class StatevehiclefleetComponent implements OnInit {
           this.router.createUrlTree(['/pdf', { url }])
         );
         window.open(viewerUrl, '_blank'); // Abrir en una nueva pestaña
+        this.router.navigate(['/home']);
       },
       error => {
         console.error('Error al generar el informe:', error);

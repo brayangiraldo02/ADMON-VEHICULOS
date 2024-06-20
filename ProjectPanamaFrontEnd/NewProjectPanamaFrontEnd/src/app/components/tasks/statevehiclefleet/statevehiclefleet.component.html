@@ -1,9 +1,9 @@
 <app-header></app-header>
 <div class="report-container">
-  <h1>{{ selectedOption ? titles[selectedOption] : 'Informes estados de flota' }}</h1>
+  <h1>{{ selectedOption ? titles[selectedOption] : 'Informes Estados de Flota' }}</h1>
   <li class="report" *ngIf="!selectedOption" (click)="selectOption('summary')">
     <a>
-      <span class="report-text">Informe Resumen De Vehículos</span>
+      <span class="report-text">Informe Resumen de Vehículos</span>
     </a>
   </li>
   
@@ -21,13 +21,13 @@
   
   <li class="select-owner" *ngIf="showCompanySelect && selectedOption === 'summary'">
     <select (change)="onCompanyChange($event)" class="full-width">
-      <option *ngFor="let owner of owners" [value]="owner.id">{{ owner.id }} - {{ owner.name }}</option>
+      <option *ngFor="let owner of owners" [value]="owner.id">{{ owner.name }} - {{ owner.id }}</option>
     </select>
   </li>
 
   <li class="report" *ngIf="!selectedOption" (click)="selectOption('detail')">
     <a>
-      <span class="report-text">Informe Detalle De Vehículos</span>
+      <span class="report-text">Informe Detalle de Vehículos</span>
     </a>
   </li>
   <li class="report" *ngIf="selectedOption === 'detail' && !showCompanySelect"  (click)="openExternalLink(selectedOption, 'general')">
@@ -43,7 +43,7 @@
   
   <li class="select-owner" *ngIf="showCompanySelect && selectedOption === 'detail'">
     <select (change)="onCompanyChange($event)" class="full-width">
-      <option *ngFor="let owner of owners" [value]="owner.id">{{ owner.id }} - {{ owner.name }}</option>
+      <option *ngFor="let owner of owners" [value]="owner.id">{{ owner.name }} - {{ owner.id }}</option>
     </select>
   </li>
 
@@ -100,6 +100,13 @@
       </a>
     </li>
   </div>
+
+  <!-- REGRESAR RELACIÓN UNIDAD/ESTADO EMPRESA -->
+  <li class="report home" *ngIf="mostrarOpcionesEstados || mostrarOpcionesEmpresas" (click)="backOptions()">
+    <a>
+      <span class="report-text">Regresar</span>
+    </a>
+  </li>
 
   <li class="report" *ngIf="selectedOption === 'company-units' && (!mostrarOpcionesEstados && !mostrarOpcionesEmpresas)" (click)="generarInforme()">
     <a>
