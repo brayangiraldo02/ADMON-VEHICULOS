@@ -41,7 +41,7 @@ export class FeespaidComponent implements OnInit {
     this.apiService.getData("owners").subscribe(
       (response) => {
         this.owners = response.filter((owner: any) => owner.id);
-        console.log(this.owners);
+        this.owners.sort((a, b) => a.name.localeCompare(b.name));
       },
       (error) => {
         console.log(error);
@@ -53,7 +53,19 @@ export class FeespaidComponent implements OnInit {
     this.apiService.getData("states").subscribe(
       (response) => {
         this.states = response.filter((state: any) => state.id);
-        console.log(response);
+        this.states.sort((a, b) => {
+          const aStartsWithSpecialChar = a.name.startsWith('»');
+          const bStartsWithSpecialChar = b.name.startsWith('»');
+        
+          if (aStartsWithSpecialChar && !bStartsWithSpecialChar) {
+            return 1;
+          }
+          if (!aStartsWithSpecialChar && bStartsWithSpecialChar) {
+            return -1;
+          }
+        
+          return a.name.localeCompare(b.name);
+        });
       },
       (error) => {
         console.log(error);
@@ -112,7 +124,6 @@ export class FeespaidComponent implements OnInit {
 
   onEmpresaSeleccionar() {
     this.empresasSeleccionadas.sort((a, b) => parseInt(a) - parseInt(b));
-    console.log('Empresas seleccionadas:', this.empresasSeleccionadas);
     this.mostrarOpcionesEmpresas = false; // Cierra el cuadro después de la selección
     this.clearEmpresasSelections();
   }
@@ -160,7 +171,6 @@ export class FeespaidComponent implements OnInit {
 
   onEstadoSeleccionar() {
     this.estadosSeleccionados.sort((a, b) => parseInt(a) - parseInt(b));
-    console.log('Estados seleccionadas:', this.estadosSeleccionados);
     this.mostrarOpcionesEstados = false; 
     this.clearEstadosSelections();
   }

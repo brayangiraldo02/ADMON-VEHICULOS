@@ -72,6 +72,7 @@ export class StatevehiclefleetComponent implements OnInit {
     this.apiService.getData("owners").subscribe(
       (response) => {
         this.owners = response.filter((owner: any) => owner.id);
+        this.owners.sort((a, b) => a.name.localeCompare(b.name));
       },
       (error) => {
         console.log(error);
@@ -83,6 +84,19 @@ export class StatevehiclefleetComponent implements OnInit {
     this.apiService.getData("states").subscribe(
       (response) => {
         this.states = response.filter((state: any) => state.id);
+        this.states.sort((a, b) => {
+          const aStartsWithSpecialChar = a.name.startsWith('»');
+          const bStartsWithSpecialChar = b.name.startsWith('»');
+        
+          if (aStartsWithSpecialChar && !bStartsWithSpecialChar) {
+            return 1;
+          }
+          if (!aStartsWithSpecialChar && bStartsWithSpecialChar) {
+            return -1;
+          }
+        
+          return a.name.localeCompare(b.name);
+        });
         console.log(response);
       },
       (error) => {

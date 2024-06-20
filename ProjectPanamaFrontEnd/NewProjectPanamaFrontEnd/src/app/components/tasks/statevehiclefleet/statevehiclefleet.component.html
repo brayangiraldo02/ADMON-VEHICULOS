@@ -21,7 +21,7 @@
   
   <li class="select-owner" *ngIf="showCompanySelect && selectedOption === 'summary'">
     <select (change)="onCompanyChange($event)" class="full-width">
-      <option *ngFor="let owner of owners" [value]="owner.id">{{ owner.id }} - {{ owner.name }}</option>
+      <option *ngFor="let owner of owners" [value]="owner.id">{{ owner.name }} - {{ owner.id }}</option>
     </select>
   </li>
 
@@ -43,7 +43,7 @@
   
   <li class="select-owner" *ngIf="showCompanySelect && selectedOption === 'detail'">
     <select (change)="onCompanyChange($event)" class="full-width">
-      <option *ngFor="let owner of owners" [value]="owner.id">{{ owner.id }} - {{ owner.name }}</option>
+      <option *ngFor="let owner of owners" [value]="owner.id">{{ owner.name }} - {{ owner.id }}</option>
     </select>
   </li>
 
