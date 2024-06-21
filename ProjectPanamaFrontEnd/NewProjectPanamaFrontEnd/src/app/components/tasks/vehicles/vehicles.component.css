@@ -69,13 +69,17 @@ th, td {
   padding: 8px;
   border: 1px solid #ddd;
   text-align: center;
-  font-size: small;
   word-wrap: break-word;
 }
 
 th {
   background-color: #f4f4f4;
   font-weight: bold;
+  font-size: 1.9vh;
+}
+
+td {
+  font-size: 1.8vh;
 }
 
 tbody tr:nth-child(odd) {
