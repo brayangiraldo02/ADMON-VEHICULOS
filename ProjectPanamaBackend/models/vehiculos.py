@@ -27,6 +27,7 @@ class Vehiculos(Base):
   CHASISNRO = Column(CHAR(20))
   CHASISREG = Column(CHAR(3))
   NRO_CUPO = Column(CHAR(12))
+  PERMISONRO = Column(CHAR(12))
   FEC_CUPO = Column(Date)
   PROPI_IDEN = Column(CHAR(12))
   CTA_GASTO = Column(CHAR(12))

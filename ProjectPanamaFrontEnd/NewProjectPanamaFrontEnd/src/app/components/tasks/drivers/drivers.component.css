@@ -19,40 +19,41 @@
 }
 
 .search-container {
-  width: 75%;
+  width: 100%;
   padding: 10px;
   border: 1px solid #ccc;
   border-radius: 10px;
 }
 
-.report {
+.report{
   width: 20%;
   box-sizing: border-box;
-  background: #ffffff;
-  border-radius: 10px;
+  background: #ffffff; /* Fondo claro por defecto, ajustable */
+  border-radius: 10px; /* Bordes redondeados */
   border: 1px solid #ccc;
   padding: 10px;
   display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  flex-direction: column;
+  align-items: center; /* Centrado vertical */
+  justify-content: center; /* Centrado horizontal */
+  text-align: center; /* Texto centrado */
+  flex-direction: column; /* Ícono sobre el texto */
   cursor: pointer;
 }
 
 .report:hover {
+  /* background: #fff8b4;  */
   background: #bcd1ec;
 }
 
 .report-text {
-  font-size: 15px;
-  color: #333;
+  font-size: 15px; /* Ajuste según necesidad */
+  color: #333; /* Color del texto */
 }
 
 .table-container {
   margin: 20px auto;
   padding: 10px;
-  width: 96%;
+  width: 95%;
   overflow-x: auto;
   background: #f9f9f9;
   border-radius: 10px;
@@ -62,20 +63,25 @@
 table {
   width: 100%;
   border-collapse: collapse;
-  table-layout: fixed; /* Ensures table respects column width */
+  table-layout: auto; /* Adjust to fixed if widths need to be absolute */
 }
 
 th, td {
-  padding: 8px;
+  padding: 12px 15px;
   border: 1px solid #ddd;
   text-align: center;
-  font-size: small;
-  word-wrap: break-word;
+  word-wrap: break-word; /* This will handle long text wrapping */
+
 }
 
 th {
   background-color: #f4f4f4;
   font-weight: bold;
+  font-size:small;
+}
+
+td {
+  font-size: small;
 }
 
 tbody tr:nth-child(odd) {
@@ -86,61 +92,25 @@ tbody tr:hover {
   background-color: #f1f1f1;
 }
 
-.col-campo1 {
-  width: 6%;
-}
+/* Column-specific styles */
+/* .col-campo1, .col-campo2, .col-campo3, .col-campo4, .col-campo5, .col-campo6, .col-campo7, .col-campo8, .col-campo9, .col-campo10 {
+  width: 10%; 
+} */
 
-.col-campo2 {
-  width: 5.5%
-}
-
-.col-campo3 {
-  width: 3.5%;
-}
-
-.col-campo4 {
-  width: 6%;
-}
-
-.col-campo5 {
-  width: 6.5%;
-}
-
-.col-campo6, .col-campo7 {
-  width: 9.5%;
-}
-
-.col-campo8 {
-  width: 8.5%;
-}
-
-.col-campo9 {
+/* .col-campo1, .col-campo2, .col-campo3, .col-campo4, .col-campo5, .col-campo6 {
   width: 8%;
 }
 
-.col-campo10 {
-  width: 9%;
-}
+.col-campo7, .col-campo8, .col-campo9, .col-campo10 {
+  width: 12%;
+} */
 
-.col-campo11 {
-  width: 10%;
-} 
-
-.col-campo12 {
-  width: 3%;
-}
-
-.col-campo13 {
-  width: 3.5%;
-}
-
-.col-campo14, .col-campo15, .col-campo16 {
-  width: 5%;
+.col-campo1 .col-campo8 .col-campo9 {
+  width: 2%;
 }
 
 /* @media (max-width: 768px) {
   th, td {
-    padding: 6px;
-    font-size: x-small;
+    padding: 8px 10px;
   }
 } */

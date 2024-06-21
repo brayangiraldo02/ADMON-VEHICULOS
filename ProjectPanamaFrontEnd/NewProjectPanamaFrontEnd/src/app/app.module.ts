@@ -32,6 +32,7 @@ import { OwnersTableComponent } from './components/tasks/owners/owners-table/own
 import { OwnersContractComponent } from './components/tasks/owners/owners-contract/owners-contract.component';
 import { OwnersVehiclesComponent } from './components/tasks/owners/owners-vehicles/owners-vehicles.component';
 import { OwnersResumeComponent } from './components/tasks/owners/owners-resume/owners-resume.component';
+import { DriversComponent } from './components/tasks/drivers/drivers.component';
 
 @NgModule({
   declarations: [
@@ -60,6 +61,7 @@ import { OwnersResumeComponent } from './components/tasks/owners/owners-resume/o
     OwnersContractComponent,
     OwnersVehiclesComponent,
     OwnersResumeComponent,
+    DriversComponent,
   ],
   imports: [
     BrowserModule,

@@ -1,5 +1,65 @@
 <app-header></app-header>
-<div class="message">
-  <h1>Función en desarrollo.</h1>
+<div class="main-container">
+  <h1 class="title-container">VEHÍCULOS</h1>
+  <p *ngIf="!isLoading">Total Registros: {{ filteredData.length }}</p>
+  <div class="options-container" *ngIf="!isLoading">
+    <input type="text" placeholder="Buscar..." [(ngModel)]="searchTerm" (input)="filterData()" class="search-container">
+    <li class="report">
+      <a>
+        <span class="report-text">Reportes</span>
+      </a>
+    </li>
+  </div>
+  <div class="table-container" *ngIf="!isLoading; else loadingTemplate">
+    <table>
+      <thead>
+        <tr>
+          <th class="col-campo1">UNIDAD</th>
+          <th class="col-campo2">PLACA</th>
+          <th class="col-campo3">AÑO</th>
+          <th class="col-campo4">N° CUPO</th>
+          <th class="col-campo5">PERMISO</th>
+          <th class="col-campo6">N° MOTOR</th>
+          <th class="col-campo7">N° CHASIS</th>
+          <th class="col-campo8">MATRICULA</th>
+          <th class="col-campo9">EMPRESA</th>
+          <th class="col-campo10">CONDUCTOR</th>
+          <th class="col-campo11">ESTADO</th>
+          <th class="col-campo12">Vlr. Cta</th>
+          <th class="col-campo13">N° Ctas</th>
+          <th class="col-campo14">PANAPASS</th>
+          <th class="col-campo15">CLAVE</th>
+          <th class="col-campo16">SALDO</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of filteredData">
+          <td class="col-campo1">{{ item.unidad }}</td>
+          <td class="col-campo2">{{ item.placa }}</td>
+          <td class="col-campo3">{{ item.modelo }}</td>
+          <td class="col-campo4">{{ item.nro_cupo }}</td>
+          <td class="col-campo5">{{ item.permiso }}</td>
+          <td class="col-campo6">{{ item.motor }}</td>
+          <td class="col-campo7">{{ item.chasis }}</td>
+          <td class="col-campo8">{{ item.matricula }}</td>
+          <td class="col-campo9">{{ item.empresa }}</td>
+          <td class="col-campo10">{{ item.conductor }}</td>
+          <td class="col-campo11">{{ item.estado }}</td>
+          <td class="col-campo12">{{ item.vlr_cta }}</td>
+          <td class="col-campo13">{{ item.nro_ctas }}</td>
+          <td class="col-campo14">{{ item.panapass }}</td>
+          <td class="col-campo15">{{ item.clave }}</td>
+          <td class="col-campo16">{{ item.saldo }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 </div>
+
+<ng-template #loadingTemplate>
+  <div class="loading-container">
+    <p>Loading data, please wait...</p>
+  </div>
+</ng-template>
+
 <app-footer></app-footer>

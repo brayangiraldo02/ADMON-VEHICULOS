@@ -9,6 +9,8 @@ from dotenv import load_dotenv
 from routes.reports.feespaid import feespaidReports_router
 from routes.reports.owners import ownersReports_router
 from routes.reports.statevehiclefleet import statevehiclefleetReports_router
+from routes.drivers import drivers_router
+from routes.vehicles import vehicles_router
 import os
 
 load_dotenv()
@@ -31,9 +33,11 @@ app.include_router(statevehiclefleetReports_router)
 app.include_router(users_router)
 app.include_router(owners_router)
 app.include_router(states_router)
+app.include_router(drivers_router)
+app.include_router(vehicles_router)
+
 app.mount("/assets", StaticFiles(directory="assets"), name="assets")
 
 @app.get("/")
 def main():
   return {"Hello": "World"}
-
