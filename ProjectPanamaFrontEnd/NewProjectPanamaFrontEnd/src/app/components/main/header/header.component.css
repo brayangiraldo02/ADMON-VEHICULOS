@@ -6,6 +6,7 @@ header {
   padding: 2vh 2vh 2vh 2vh;
   background-color: white; /* Color de fondo del header */
   color: black; /* Color del texto */
+  user-select: none;
 }
 
 h1 {

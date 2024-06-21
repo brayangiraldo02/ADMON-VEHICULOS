@@ -6,6 +6,7 @@
   /* padding: 10vh ; */
   padding: 10vh 5vh 0vh 5vh;
   gap: 20px;
+  user-select: none;
 }
 
 /* Contenedor principal del carrusel */
