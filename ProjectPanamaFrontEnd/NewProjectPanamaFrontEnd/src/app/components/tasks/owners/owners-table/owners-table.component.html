@@ -1,8 +1,8 @@
 <app-header></app-header>
 <div class="main-container">
   <h1 class="title-container">PROPIETARIOS</h1>
-  <p>Total Registros: {{ data.length }}</p>
-  <div class="options-container">
+  <p *ngIf="!isLoading">Total Registros: {{ data.length }}</p>
+  <div class="options-container" *ngIf="!isLoading">
     <input type="text" placeholder="Buscar..." [(ngModel)]="searchTerm" (input)="filterData()" class="search-container">
     <li class="report">
       <a>
@@ -10,7 +10,7 @@
       </a>
     </li>
   </div>
-  <div class="table-container">
+  <div class="table-container" *ngIf="!isLoading; else loadingTemplate">
     <table>
       <thead>
         <tr>
@@ -43,4 +43,11 @@
     </table>
   </div>
 </div>
+
+<ng-template #loadingTemplate>
+  <div class="loading-container">
+    <p>Cargando datos, por favor espere...</p>
+  </div>
+</ng-template>
+
 <app-footer></app-footer>

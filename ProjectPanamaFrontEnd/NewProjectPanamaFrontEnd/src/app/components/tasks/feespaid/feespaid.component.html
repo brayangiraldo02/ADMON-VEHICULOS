@@ -4,7 +4,7 @@
 
   <!-- EMPRESAS -->
   <!-- -------------------------------------------------------------------------- -->
-  <div class="option" *ngIf="!mostrarOpcionesEstados">
+  <div class="option" *ngIf="!mostrarOpcionesEstados && !isLoading">
     <li class="select" [class.selected]="selectedEmpresasOptions['empresas']" (click)="toggleOpcionesEmpresas()">
       <a>
         <span class="select-text">Seleccionar Empresas</span>
@@ -74,7 +74,7 @@
 
   <!-- ESTADOS -->
   <!-- -------------------------------------------------------------------------- -->
-  <div class="option" *ngIf="!mostrarOpcionesEmpresas">
+  <div class="option" *ngIf="!mostrarOpcionesEmpresas && !isLoading">
     <li class="select" [class.selected]="selectedEstadosOptions['estados']" (click)="toggleOpcionesEstados()">
       <a>
         <span class="select-text">Seleccionar Estados</span>
@@ -90,7 +90,7 @@
     </div>
   </div>
 
-  <div class="option" *ngIf="mostrarOpcionesEstados">
+  <div class="option" *ngIf="mostrarOpcionesEstados !isLoading">
     <li class="select" (click)="onEstadoSeleccionar()">
       <a>
         <span class="select-text">Aceptar Estados</span>
@@ -101,7 +101,7 @@
 
   <!-- GENERAR INFORME -->
   <!-- -------------------------------------------------------------------------- -->
-  <div class="option" *ngIf="!mostrarOpcionesEstados && !mostrarOpcionesEmpresas">
+  <div class="option" *ngIf="!mostrarOpcionesEstados && !mostrarOpcionesEmpresas && !isLoading">
     <li class="select" (click)="generarInforme()">
       <a>
         <span class="select-text">Generar Informe</span>
@@ -112,7 +112,7 @@
 
   <!-- REGRESAR -->
   <!-- -------------------------------------------------------------------------- -->
-  <li class="select home" *ngIf="mostrarOpcionesEstados || mostrarOpcionesEmpresas" (click)="backOptions()">
+  <li class="select home" *ngIf="mostrarOpcionesEstados || mostrarOpcionesEmpresas && !isLoading" (click)="backOptions()">
     <a>
       <span class="select-text">Regresar</span>
     </a>
@@ -121,7 +121,7 @@
 
   <!-- REGRESAR AL INICIO -->
   <!-- -------------------------------------------------------------------------- -->
-  <li class="select home" *ngIf="!mostrarOpcionesEstados && !mostrarOpcionesEmpresas" routerLink="/home">
+  <li class="select home" *ngIf="!mostrarOpcionesEstados && !mostrarOpcionesEmpresas && !isLoading" routerLink="/home">
     <a>
       <span class="select-text">Regresar Al Inicio</span>
     </a>
@@ -130,5 +130,8 @@
 
   <!-- <p>Empresas seleccionadas: {{ empresasSeleccionadas.join(', ') }}</p>
   <p>Estados seleccionadas: {{ estadosSeleccionados.join(', ') }}</p> -->
+  <div class="loading-container" *ngIf="isLoading">
+    <p>Generando informe, por favor espere...</p>
+  </div>
 </div>
 <app-footer></app-footer>

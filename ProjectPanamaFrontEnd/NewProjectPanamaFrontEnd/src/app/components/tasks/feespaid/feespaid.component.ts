@@ -27,6 +27,8 @@ export class FeespaidComponent implements OnInit {
   mostrarOpcionesEstados: boolean = false;
   selectedEstadosOptions: { [key: string]: boolean } = {};
 
+  isLoading: boolean = false;
+
   ngOnInit(): void {
     this.listOwners();
     this.listStates();
@@ -211,6 +213,7 @@ export class FeespaidComponent implements OnInit {
   }
 
   generarInforme() {
+    this.isLoading = true;
     let user = this.obtenerUsuario()
     if(this.empresasSeleccionadas.length == 0) {
       this.empresasSeleccionadas = this.obtenerIdsEmpresas();
