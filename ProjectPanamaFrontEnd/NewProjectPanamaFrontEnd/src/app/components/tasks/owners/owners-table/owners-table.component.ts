@@ -10,6 +10,7 @@ export class OwnersTableComponent implements OnInit {
   data: any[] = [];
   filteredData: any[] = [];
   searchTerm: string = '';
+  isLoading: boolean = true;
 
   constructor(private apiService: ApiService) {}
 
@@ -23,10 +24,11 @@ export class OwnersTableComponent implements OnInit {
         this.data = response.filter((data: any) => data.codigo);
         this.data.sort((a, b) => a.nombre_propietario.localeCompare(b.nombre_propietario));
         this.filteredData = [...this.data]; 
-        console.log(response);
+        this.isLoading = false;
       },
       (error) => {
         console.log(error);
+        this.isLoading = false;
       }
     );
   }

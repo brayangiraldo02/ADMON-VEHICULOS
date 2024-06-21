@@ -28,6 +28,7 @@ export class StatevehiclefleetComponent implements OnInit {
   mostrarOpcionesEstados: boolean = false;
   selectedEmpresasOptions: { [key: string]: boolean } = {};
   selectedEstadosOptions: { [key: string]: boolean } = {};
+  isLoading: boolean = false;
 
   titles: { [key: string]: string } = {
     'summary': 'Informe Resumen de Vehículos',
@@ -224,7 +225,7 @@ export class StatevehiclefleetComponent implements OnInit {
   }
 
   openExternalLink(option: string, type: string): void {
-    // this.openSnack();
+    this.isLoading = true;
     let endpoint = this.externalLinks[option][type];
     if (type === 'company' && this.selectedCompany) {
       endpoint += this.selectedCompany;
@@ -263,6 +264,7 @@ export class StatevehiclefleetComponent implements OnInit {
   }
 
   generarInforme() {
+    this.isLoading = true;
     if(this.empresasSeleccionadas.length == 0) {
       this.empresasSeleccionadas = this.obtenerIdsEmpresas();
     }
