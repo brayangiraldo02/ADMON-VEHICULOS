@@ -142,6 +142,18 @@ tbody tr:hover {
   width: 5%;
 }
 
+.orange {
+  background-color: orange;
+}
+
+.pink {
+  background-color: pink;
+}
+
+.red {
+  background-color: red;
+}
+
 /* @media (max-width: 768px) {
   th, td {
     padding: 6px;

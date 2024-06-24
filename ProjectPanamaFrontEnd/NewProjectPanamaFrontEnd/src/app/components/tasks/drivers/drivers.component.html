@@ -4,6 +4,11 @@
   <p *ngIf="!isLoading">Total Registros: {{ filteredData.length }}</p>
   <div class="options-container" *ngIf="!isLoading">
     <input type="text" placeholder="Buscar..." [(ngModel)]="searchTerm" (input)="filterData()" class="search-container">
+    <li class="report">
+      <a>
+        <span class="report-text">Ver Directorio</span>
+      </a>
+    </li>
   </div>
   <div class="table-container" *ngIf="!isLoading; else loadingTemplate">
     <table>
