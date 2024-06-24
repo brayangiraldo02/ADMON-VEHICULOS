@@ -4,11 +4,12 @@
   <p *ngIf="!isLoading">Total Registros: {{ filteredData.length }}</p>
   <div class="options-container" *ngIf="!isLoading">
     <input type="text" placeholder="Buscar..." [(ngModel)]="searchTerm" (input)="filterData()" class="search-container">
-    <li class="report">
-      <a>
-        <span class="report-text">Reportes</span>
-      </a>
-    </li>
+    <a class="report">
+      <span class="material-symbols-outlined">
+        print
+      </span>
+      <span class="report-text">Ver Directorio</span>
+    </a>
   </div>
   <div class="table-container" *ngIf="!isLoading; else loadingTemplate">
     <table>
@@ -49,7 +50,12 @@
           <td class="col-campo13">{{ item.nro_ctas }}</td>
           <td class="col-campo14">{{ item.panapass }}</td>
           <td class="col-campo15">{{ item.clave }}</td>
-          <td class="col-campo16">{{ item.saldo }}</td>
+          <td class="col-campo16" [ngClass]="{
+            'pink': item.saldo > -5 && item.saldo < 0,
+            'orange': item.saldo > -10 && item.saldo <= -5,
+            'red': item.saldo <= -10
+          }">{{ item.saldo }}
+        </td>
         </tr>
       </tbody>
     </table>

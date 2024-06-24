@@ -19,7 +19,7 @@
 }
 
 .search-container {
-  width: 100%;
+  width: 75%;
   padding: 10px;
   border: 1px solid #ccc;
   border-radius: 10px;
@@ -31,23 +31,30 @@
   background: #ffffff; /* Fondo claro por defecto, ajustable */
   border-radius: 10px; /* Bordes redondeados */
   border: 1px solid #ccc;
-  padding: 10px;
+  padding: 8px;
   display: flex;
   align-items: center; /* Centrado vertical */
   justify-content: center; /* Centrado horizontal */
   text-align: center; /* Texto centrado */
-  flex-direction: column; /* Ícono sobre el texto */
   cursor: pointer;
+  position: relative;  /* Permite posicionamiento absoluto de elementos hijos */
+}
+
+.report span.material-symbols-outlined {
+  margin-right: auto;  /* Empuja el icono a la izquierda */
+  font-size: 3.5vh;
+}
+
+.report-text {
+  flex-grow: 1;
+  text-align: center;  /* Asegura que el texto esté centrado */
+  font-size: 15px; /* Ajuste según necesidad */
+  color: #333; /* Color del texto */
 }
 
 .report:hover {
   /* background: #fff8b4;  */
   background: #bcd1ec;
-}
-
-.report-text {
-  font-size: 15px; /* Ajuste según necesidad */
-  color: #333; /* Color del texto */
 }
 
 .table-container {
