@@ -101,6 +101,18 @@ hr {
   margin-left: 5vh;
 }
 
+.two-tel-container {
+  display: flex;
+}
+
+.two-tel-container .form-group-abreviado {
+  margin-left: 5vh;
+}
+
 input.large {
   width: 100%;
+}
+
+input.medium {
+  width: 40%;
 }
