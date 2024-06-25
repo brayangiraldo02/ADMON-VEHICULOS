@@ -14,6 +14,7 @@ relacion-vehiculos-propietario.pdf
 relacion-vehiculos-empresa.pdf
 relacion-vehiculos-estados.pdf
 propietarios-detalles.pdf
+Conductores-detalles.pdf
 renderfooter.html
 renderfooter1.html
 renderheader.html
@@ -23,3 +24,5 @@ renderform2.html
 renderInformeCuotas.html
 renderRelacionVehiculos.html
 renderDirectorioPropietarios.html
+DirectorioConductores.html
+renderDirectorioConductores.html
