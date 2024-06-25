@@ -42,7 +42,7 @@ async def get_vehicles():
         'permiso': vehicle.vehiculo_permiso_nro,
         'motor': vehicle.vehiculo_motor,
         'chasis': vehicle.vehiculo_chasis,
-        'matricula': vehicle.vehiculo_matricula,
+        'matricula': vehicle.vehiculo_fec_matricula,
         'empresa': vehicle.vehiculo_empresa,
         'conductor': vehicle.vehiculo_conductor,
         'estado': vehicle.vehiculo_estado,
