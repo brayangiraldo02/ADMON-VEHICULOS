@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { ApiService } from 'src/app/services/api.service';
 
 @Component({
@@ -12,7 +13,7 @@ export class OwnersTableComponent implements OnInit {
   searchTerm: string = '';
   isLoading: boolean = true;
 
-  constructor(private apiService: ApiService) {}
+  constructor(private apiService: ApiService, private router: Router) {}
 
   ngOnInit(): void {
     this.fetchData();
@@ -43,5 +44,9 @@ export class OwnersTableComponent implements OnInit {
       item.auditor.toLowerCase().includes(term) ||
       item.estado.toLowerCase().includes(term)
     );
+  }
+
+  goToOwnerResume(codigo: string) {
+    this.router.navigate(['/owner', codigo]);
   }
 }

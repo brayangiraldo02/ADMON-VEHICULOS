@@ -29,30 +29,30 @@
   <div class="info-container">
     <div class="form-group">
       <label for="codigo">CÓDIGO:</label><br>
-      <input type="number" id="codigo" name="codigo" value="26" disabled><br>
+      <input type="number" id="codigo" name="codigo" [value]="data.codigo" disabled><br>
     </div>
 
     <div class="two-container">
       <div class="form-group">
         <label for="nombre">Nombre:</label><br>
-        <input class="large" type="text" id="nombre" name="nombre" value="TOTAL TAXI PANAMA S.A." disabled><br>
+        <input class="large" type="text" id="nombre" name="nombre" [value]="data.nombre_propietario" disabled><br>
       </div>
   
       <div class="form-group form-group-abreviado">
         <label for="abreviado">Abreviado:</label><br>
-        <input type="text" id="abreviado" name="abreviado" value="Total Taxi Panama S." disabled><br>
+        <input type="text" id="abreviado" name="abreviado" [value]="data.abreviado" disabled><br>
       </div>
     </div>
 
     <div class="form-group">
       <label for="ccnit">C.C / N.I.T. :</label><br>
-      <input type="text" id="ccnit" name="ccnit" value="0" disabled><br>
-      <input type="text" id="ccnit" name="ccnit" value="26" disabled><br>
+      <input type="text" id="ccnit" name="ccnit" [value]="data.codigo" disabled><br>
+      <input type="text" id="ccnit" name="ccnit" [value]="data.codigo" disabled><br>
     </div>
 
     <div class="form-group">
       <label for="ruc">R.U.C:</label><br>
-      <input type="text" id="ruc" name="ruc" value="2321399-1-793036" disabled><br>
+      <input type="text" id="ruc" name="ruc" [value]="data.ruc" disabled><br>
     </div>
 
   </div>
@@ -62,42 +62,42 @@
   <div class="info-container">
     <div class="form-group">
       <label for="ciudad">Ciudad:</label><br>
-      <input type="number" id="ciudad" name="ciudad" value="10" disabled><br>
+      <input type="number" id="ciudad" name="ciudad" [value]="data.ciudad" disabled><br>
     </div>
 
     <div class="form-group">
       <label for="direccion">Dirección:</label><br>
-      <input class="medium" type="text" id="direccion" name="direccion" value="VILLA LORENA" disabled><br>
+      <input class="medium" type="text" id="direccion" name="direccion" [value]="data.direccion" disabled><br>
     </div>
 
     <div class="two-tel-container">
       <div class="form-group">
         <label for="telefono">Teléfono:</label><br>
-        <input type="text" id="telefono" name="telefono" value="396-5555" disabled><br>
+        <input type="text" id="telefono" name="telefono" [value]="data.telefono" disabled><br>
       </div>
   
       <div class="form-group form-group-abreviado">
         <label for="celulares1">Celulares:</label><br>
-        <input type="text" id="celulares1" name="celulares1" value="" disabled><br>
-        <input type="text" id="celulares2" name="celulares2" value="" disabled><br>
+        <input type="text" id="celulares1" name="celulares1" [value]="data.celular" disabled><br>
+        <input type="text" id="celulares2" name="celulares2" [value]="data.celular" disabled><br>
       </div>
       
     </div>
 
     <div class="form-group">
       <label for="representante">Representante:</label><br>
-      <input class="medium" type="text" id="representante" name="representante" value="ADAN SAAVEDRA" disabled><br>
+      <input class="medium" type="text" id="representante" name="representante" [value]="data.representante" disabled><br>
     </div>
 
     <div class="form-group">
       <label for="contacto">Contacto:</label><br>
-      <input class="medium" type="text" id="contacto" name="contacto" value="" disabled><br>
+      <input class="medium" type="text" id="contacto" name="contacto" [value]="data.contacto" disabled><br>
     </div>
 
     <div class="form-group">
       <label for="correos">Correos:</label><br>
-      <input class="medium" type="text" id="correos1" name="correos1" value="" disabled><br>
-      <input class="medium" type="text" id="correos2" name="correos2" value="" disabled><br>
+      <input class="medium" type="text" id="correos1" name="correos1" [value]="data.correo" disabled><br>
+      <input class="medium" type="text" id="correos2" name="correos2" [value]="data.correo" disabled><br>
     </div>
   </div>
 

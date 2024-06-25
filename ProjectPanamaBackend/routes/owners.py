@@ -92,3 +92,43 @@ async def get_all_owners():
     return JSONResponse(content={"error": str(e)})
   finally:
     db.close()
+# ---------------------------------------------------------------------------------------------------------------
+
+# PETICIÓN DE UN PROPIETARIO ESPECÍFICO A LA BASE DE DATOS
+# ---------------------------------------------------------------------------------------------------------------
+@owners_router.get("/owner/{owner_id}", tags=["Owners"])
+async def get_owner(owner_id: int):
+  db = session()
+  try:
+    owner = db.query(Propietarios).filter(Propietarios.CODIGO == owner_id).first()
+
+    if not owner:
+      return JSONResponse(content={"error": "Owner not found"}, status_code=404)
+
+    if owner.ESTADO == 1:
+      estado = 'Activo'
+    elif owner.ESTADO == 2:
+      estado = 'Suspendido'
+    elif owner.ESTADO == 3:
+      estado = 'Retirado'
+    else:
+      estado = 'Desconocido'
+
+    owner_dict = {
+      'codigo': owner.CODIGO,
+      'nombre_propietario': owner.NOMBRE,
+      'ruc': owner.RUC,
+      'telefono': owner.TELEFONO,
+      'celular': owner.CELULAR,
+      'representante': owner.REPRESENTA,
+      'central': owner.CENTRAL,
+      'auditor': owner.USUARIO,  # Ajustar si la columna auditor es diferente
+      'cnt': owner.CONTROL,  # Ajustar si la columna cnt es diferente
+      'dcto': owner.DESCUENTO,
+      'estado': estado
+    }
+    return JSONResponse(content=jsonable_encoder(owner_dict))
+  except Exception as e:
+    return JSONResponse(content={"error": str(e)})
+  finally:
+    db.close()
