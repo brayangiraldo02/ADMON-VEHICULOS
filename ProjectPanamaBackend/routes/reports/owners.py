@@ -1,10 +1,7 @@
 from fastapi import APIRouter
 from fastapi.responses import JSONResponse
 from config.dbconnection import session
-from models.estados import Estados
-from models.vehiculos import Vehiculos
 from models.propietarios import Propietarios
-from models.conductores import Conductores
 from schemas.reports import *
 from fastapi.encoders import jsonable_encoder
 from utils.reports import *
@@ -86,7 +83,7 @@ async def get_propietarios_detalles():
         data_view["usuario"] = usuario
 
         headers = {
-            "Content-Disposition": "inline; informe-cuotas-pagas.pdf"
+            "Content-Disposition": "inline; directorio-propietarios.pdf"
         }  
 
         template_loader = jinja2.FileSystemLoader(searchpath="./templates")

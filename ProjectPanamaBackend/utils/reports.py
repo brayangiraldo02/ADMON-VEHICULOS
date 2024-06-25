@@ -153,3 +153,30 @@ def agrupar_empresas_por_estado(empresas):
         codigo = empresa["propietario_codigo"]
         empresas_por_estado[estado][codigo] = empresa
     return empresas_por_estado
+
+#------------------------------------------------------------
+
+def obtener_nombre_estado_conductor(estado):
+    if estado == "0":
+        return "Sin clasificar"
+    elif estado == "1":
+        return "Activo"
+    elif estado == "2":
+        return "Suspendido"
+    elif estado == "3":
+        return "Retirado"
+    elif estado == "4":
+        return "Reportado"
+    else:
+        return "Desconocido"
+
+def agrupar_conductores_por_estado(conductores):
+    conductores_por_estado = {}
+    for conductor in conductores:
+        estado = conductor["conductor_estado"]
+        if estado not in conductores_por_estado:
+            conductores_por_estado[estado] = {}
+            conductores_por_estado[estado]["nombre_estado"] = obtener_nombre_estado_conductor(estado)
+        codigo = conductor["conductor_codigo"]
+        conductores_por_estado[estado][codigo] = conductor
+    return conductores_por_estado

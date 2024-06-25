@@ -20,7 +20,7 @@ async def get_vehicles():
             Vehiculos.PERMISONRO.label('vehiculo_permiso_nro'),
             Vehiculos.MOTORNRO.label('vehiculo_motor'),
             Vehiculos.CHASISNRO.label('vehiculo_chasis'),
-            Vehiculos.NRO_CUPO.label('vehiculo_matricula'),
+            Vehiculos.FEC_MATRIC.label('vehiculo_fec_matricula'),
             Vehiculos.EMPRESA.label('vehiculo_empresa'),
             Conductores.NOMBRE.label('vehiculo_conductor'),
             Estados.NOMBRE.label('vehiculo_estado'),
