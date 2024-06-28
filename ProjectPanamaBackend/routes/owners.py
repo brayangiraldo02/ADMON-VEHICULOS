@@ -1,16 +1,17 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 from fastapi.responses import JSONResponse
 from config.dbconnection import session
 from models.propietarios import Propietarios
 from models.centrales import Centrales
 from models.permisosusuario import PermisosUsuario
+from middlewares.JWTBearer import JWTBearer
 from fastapi.encoders import jsonable_encoder
 
 owners_router = APIRouter()
 
 # PETICIÓN DE LISTA DE PROPIETARIOS A LA BASE DE DATOS 
 # ---------------------------------------------------------------------------------------------------------------
-@owners_router.get("/owners", tags=["Owners"])
+@owners_router.get("/owners", tags=["Owners"], dependencies=[Depends(JWTBearer())])
 async def get_owners():
   db = session()
   try:

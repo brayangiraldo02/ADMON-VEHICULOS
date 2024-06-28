@@ -1,8 +1,9 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 from fastapi.responses import JSONResponse
 from config.dbconnection import session
 from models.conductores import Conductores
 from schemas.reports import *
+from middlewares.JWTBearer import JWTBearer
 from fastapi.encoders import jsonable_encoder
 from utils.reports import *
 from datetime import datetime
@@ -14,16 +15,16 @@ from utils.pdf import html2pdf
 
 drivers_router = APIRouter()
 
-@drivers_router.get("/drivers", tags=["Drivers"])
+@drivers_router.get("/drivers", tags=["Drivers"], dependencies=[Depends(JWTBearer())])
 async def get_drivers():
   db = session()
   try:
-    drivers = db.query(Conductores.CODIGO, Conductores.UND_NRO, Conductores.NOMBRE, Conductores.CEDULA, Conductores.TELEFONO, Conductores.FEC_INGRES, Conductores.CUO_DIARIA, Conductores.NROENTREGA, Conductores.NROENTPAGO, Conductores.NROENTSDO, Conductores.LICEN_VCE, Conductores.CONTACTO, Conductores.TEL_CONTAC, Conductores.PAR_CONTAC, Conductores.CONTACTO1, Conductores.TEL_CONTA1, Conductores.PAR_CONTA1).all()
+    drivers = db.query(Conductores.CODIGO, Conductores.UND_NRO, Conductores.UND_PRE, Conductores.NOMBRE, Conductores.CEDULA, Conductores.TELEFONO, Conductores.FEC_INGRES, Conductores.CUO_DIARIA, Conductores.NROENTREGA, Conductores.NROENTPAGO, Conductores.NROENTSDO, Conductores.LICEN_VCE, Conductores.CONTACTO, Conductores.TEL_CONTAC, Conductores.PAR_CONTAC, Conductores.CONTACTO1, Conductores.TEL_CONTA1, Conductores.PAR_CONTA1).all()
 
     drivers_list = [
       {
         'codigo': driver.CODIGO,
-        'unidad': driver.UND_NRO,
+        'unidad': driver.UND_NRO + ' - ' + driver.UND_PRE,
         'nombre': driver.NOMBRE,
         'cedula': driver.CEDULA,
         'telefono': driver.TELEFONO,
