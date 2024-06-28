@@ -15,7 +15,7 @@ from utils.pdf import html2pdf
 
 drivers_router = APIRouter()
 
-@drivers_router.get("/drivers", tags=["Drivers"], dependencies=[Depends(JWTBearer())])
+@drivers_router.get("/drivers", tags=["Drivers"])
 async def get_drivers():
   db = session()
   try:

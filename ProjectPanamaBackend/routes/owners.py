@@ -11,7 +11,7 @@ owners_router = APIRouter()
 
 # PETICIÓN DE LISTA DE PROPIETARIOS A LA BASE DE DATOS 
 # ---------------------------------------------------------------------------------------------------------------
-@owners_router.get("/owners", tags=["Owners"], dependencies=[Depends(JWTBearer())])
+@owners_router.get("/owners", tags=["Owners"])
 async def get_owners():
   db = session()
   try:
