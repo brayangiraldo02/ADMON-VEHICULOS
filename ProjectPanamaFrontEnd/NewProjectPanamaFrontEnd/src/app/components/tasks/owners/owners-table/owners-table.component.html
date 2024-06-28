@@ -4,7 +4,7 @@
   <p *ngIf="!isLoading">Total Registros: {{ data.length }}</p>
   <div class="options-container" *ngIf="!isLoading">
     <input type="text" placeholder="Buscar..." [(ngModel)]="searchTerm" (input)="filterData()" class="search-container">
-    <a class="report">
+    <a class="report" (click)="openExternalLink()">
       <span class="material-symbols-outlined">
         print
       </span>
@@ -28,7 +28,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let item of filteredData">
+        <tr *ngFor="let item of filteredData" (click)="goToOwnerResume(item.codigo)">
           <td class="col-campo1">{{ item.codigo }}</td>
           <td class="col-campo2">{{ item.nombre_propietario }}</td>
           <td class="col-campo3">{{ item.ruc }}</td>

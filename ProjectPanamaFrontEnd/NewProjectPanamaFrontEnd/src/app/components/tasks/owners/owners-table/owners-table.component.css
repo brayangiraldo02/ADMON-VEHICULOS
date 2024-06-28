@@ -89,6 +89,7 @@ th {
 
 td {
   font-size: small;
+  cursor: pointer;
 }
 
 tbody tr:nth-child(odd) {

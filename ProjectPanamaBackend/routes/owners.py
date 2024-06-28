@@ -1,9 +1,10 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 from fastapi.responses import JSONResponse
 from config.dbconnection import session
 from models.propietarios import Propietarios
 from models.centrales import Centrales
 from models.permisosusuario import PermisosUsuario
+from middlewares.JWTBearer import JWTBearer
 from fastapi.encoders import jsonable_encoder
 
 owners_router = APIRouter()
@@ -88,6 +89,56 @@ async def get_all_owners():
     #   for owner in owners
     # ]
     return JSONResponse(content=jsonable_encoder(owners_list))
+  except Exception as e:
+    return JSONResponse(content={"error": str(e)})
+  finally:
+    db.close()
+# ---------------------------------------------------------------------------------------------------------------
+
+# PETICIÓN DE UN PROPIETARIO ESPECÍFICO A LA BASE DE DATOS
+# ---------------------------------------------------------------------------------------------------------------
+@owners_router.get("/owner/{owner_id}", tags=["Owners"])
+async def get_owner(owner_id: int):
+  db = session()
+  try:
+    owner = db.query(Propietarios).filter(Propietarios.CODIGO == owner_id).first()
+
+    if not owner:
+      return JSONResponse(content={"error": "Owner not found"}, status_code=404)
+
+    if owner.ESTADO == 1:
+      estado = 'Activo'
+    elif owner.ESTADO == 2:
+      estado = 'Suspendido'
+    elif owner.ESTADO == 3:
+      estado = 'Retirado'
+    else:
+      estado = 'Desconocido'
+
+    owner_dict = {
+      'codigo': owner.CODIGO,
+      'nombre_propietario': owner.NOMBRE,
+      'nombre_abreviado': owner.ABREVIADO,
+      'nit': owner.NIT,
+      'ruc': owner.RUC,
+      'ciudad': owner.CIUDAD,
+      'direccion': owner.DIRECCION,
+      'telefono': owner.TELEFONO,
+      'celular': owner.CELULAR,
+      'celular1': owner.CELULAR1,
+      'representante': owner.REPRESENTA,
+      'contacto': owner.CONTACTO,
+      'correo': owner.CORREO,
+      'correo1': owner.CORREO1,
+      'estado': owner.ESTADO,
+      'fec_estado': owner.FEC_ESTADO,
+      'central': owner.CENTRAL,
+      'auditor': owner.USUARIO,  
+      'cnt': owner.CONTROL,  
+      'dcto': owner.DESCUENTO,
+      'estado': estado
+    }
+    return JSONResponse(content=jsonable_encoder(owner_dict))
   except Exception as e:
     return JSONResponse(content={"error": str(e)})
   finally:

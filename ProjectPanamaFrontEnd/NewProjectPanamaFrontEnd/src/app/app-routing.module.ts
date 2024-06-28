@@ -32,7 +32,7 @@ const routes: Routes = [
   { path: 'vehicles', component: VehiclesComponent, canActivate: [AuthGuard]},
   { path: 'feespaid', component: FeespaidComponent, canActivate: [AuthGuard]},
   { path: 'owners', component: OwnersTableComponent, canActivate: [AuthGuard]},
-  { path: 'owner', component: OwnersResumeComponent, canActivate: [AuthGuard]},
+  { path: 'owner/:code', component: OwnersResumeComponent, canActivate: [AuthGuard]},
   { path: 'drivers', component: DriversComponent, canActivate: [AuthGuard]},
   { path: 'operations', component: OpcionesOperacionesComponent, canActivate: [AuthGuard]},
   { path: 'procedures', component: OpcionesTramitesComponent, canActivate: [AuthGuard]},

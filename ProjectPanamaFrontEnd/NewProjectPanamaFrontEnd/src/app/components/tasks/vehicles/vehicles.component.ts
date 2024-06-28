@@ -46,4 +46,11 @@ export class VehiclesComponent implements OnInit {
     );
   }
 
+  formatDate(dateString: string): string {
+    if (dateString == "0000-00-00 00:00:00") {
+      return "-";
+    }
+    return dateString.split('T')[0];
+  }
+
 }

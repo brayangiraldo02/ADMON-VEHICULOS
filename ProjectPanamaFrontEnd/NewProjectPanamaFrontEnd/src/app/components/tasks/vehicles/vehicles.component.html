@@ -22,7 +22,7 @@
           <th class="col-campo5">PERMISO</th>
           <th class="col-campo6">N° MOTOR</th>
           <th class="col-campo7">N° CHASIS</th>
-          <th class="col-campo8">MATRICULA</th>
+          <th class="col-campo8">FECHA MATRICULA</th>
           <th class="col-campo9">EMPRESA</th>
           <th class="col-campo10">CONDUCTOR</th>
           <th class="col-campo11">ESTADO</th>
@@ -42,7 +42,7 @@
           <td class="col-campo5">{{ item.permiso }}</td>
           <td class="col-campo6">{{ item.motor }}</td>
           <td class="col-campo7">{{ item.chasis }}</td>
-          <td class="col-campo8">{{ item.matricula }}</td>
+          <td class="col-campo8">{{ formatDate(item.matricula) }}</td>
           <td class="col-campo9">{{ item.empresa }}</td>
           <td class="col-campo10">{{ item.conductor }}</td>
           <td class="col-campo11">{{ item.estado }}</td>
