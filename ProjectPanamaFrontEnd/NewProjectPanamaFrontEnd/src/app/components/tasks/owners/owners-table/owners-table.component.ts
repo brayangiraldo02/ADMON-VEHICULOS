@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { ApiService } from 'src/app/services/api.service';
+import { JwtService } from 'src/app/services/jwt.service';
 
 @Component({
   selector: 'app-table-owners',
@@ -11,12 +12,17 @@ export class OwnersTableComponent implements OnInit {
   data: any[] = [];
   filteredData: any[] = [];
   searchTerm: string = '';
+  user: any;
   isLoading: boolean = true;
 
-  constructor(private apiService: ApiService, private router: Router) {}
+  constructor(
+    private apiService: ApiService, 
+    private router: Router,
+    private jwtService: JwtService) {}
 
   ngOnInit(): void {
     this.fetchData();
+    this.getUser();
   }
 
   fetchData() {
@@ -34,6 +40,11 @@ export class OwnersTableComponent implements OnInit {
     );
   }
 
+  getUser() {
+    this.user = this.jwtService.decodeToken();
+    this.user = this.user.user_data.nombre;
+  }
+
   filterData() {
     const term = this.searchTerm.toLowerCase();
     this.filteredData = this.data.filter(item => 
@@ -48,5 +59,24 @@ export class OwnersTableComponent implements OnInit {
 
   goToOwnerResume(codigo: string) {
     this.router.navigate(['/owner', codigo]);
+  }
+
+  openExternalLink(): void {
+    this.isLoading = true;
+    const data = { user: this.user };
+    this.apiService.getPdf("directorio-propietarios").subscribe(
+      response => {
+        const blob = new Blob([response], { type: 'application/pdf' });
+        const url = window.URL.createObjectURL(blob);
+        const viewerUrl = this.router.serializeUrl(
+          this.router.createUrlTree(['/pdf', { url }])
+        );
+        window.open(viewerUrl, '_blank'); // Abrir en una nueva pestaña
+        this.router.navigate(['/home']);
+      },
+      error => {
+        console.error('Error al generar el informe:', error);
+      }
+    );
   }
 }

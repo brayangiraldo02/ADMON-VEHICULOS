@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { ApiService } from 'src/app/services/api.service';
 import { JwtService } from 'src/app/services/jwt.service';
-import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-statevehiclefleet',
@@ -13,8 +12,7 @@ export class StatevehiclefleetComponent implements OnInit {
   constructor(
     private router: Router, 
     private apiService: ApiService, 
-    private jwtService: JwtService, 
-    private snack:MatSnackBar) { }
+    private jwtService: JwtService) { }
 
   selectedOption: string | null = null;
   showCompanySelect: boolean = false;
@@ -54,7 +52,7 @@ export class StatevehiclefleetComponent implements OnInit {
   ngOnInit(): void {
     this.listOwners();
     this.listStates();
-    this.obtenerUsuario();
+    this.getUser();
   }
 
   backOptions() {
@@ -72,16 +70,9 @@ export class StatevehiclefleetComponent implements OnInit {
     }
   }
 
-  openSnack() {
-    this.snack.open("Un momento...", "Aceptar"),{
-      duration:3000
-    }
-  }
-
-  obtenerUsuario() {
+  getUser() {
     this.user = this.jwtService.decodeToken();
     this.user = this.user.user_data.nombre;
-    console.log(this.user);
   }
 
   listOwners(): void {

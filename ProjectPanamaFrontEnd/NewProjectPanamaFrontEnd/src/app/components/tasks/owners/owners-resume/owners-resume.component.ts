@@ -36,16 +36,56 @@ export class OwnersResumeComponent implements OnInit {
   }
 
   enableInputs() {
-    const nameElement = document.getElementById('nombre') as HTMLInputElement;
-    if (nameElement) {
-      nameElement.disabled = false;
-    }
+    const fields = [
+      'nombre', 'abreviado', 'cc', 'nit', 'ruc', 'ciudad', 'direccion', 
+      'telefono', 'celular', 'celular1', 'representante', 'contacto', 
+      'correo', 'correo1'
+    ];
+    fields.forEach(field => {
+      const element = document.getElementById(field) as HTMLInputElement;
+      if (element) {
+        element.disabled = false;
+      }
+    });
   }
 
   disableInputs() {
-    const nameElement = document.getElementById('nombre') as HTMLInputElement;
-    if (nameElement) {
-      nameElement.disabled = true;
+    const fields = [
+      'nombre', 'abreviado', 'cc', 'nit', 'ruc', 'ciudad', 'direccion', 
+      'telefono', 'celular', 'celular1', 'representante', 'contacto', 
+      'correo', 'correo1'
+    ];
+    fields.forEach(field => {
+      const element = document.getElementById(field) as HTMLInputElement;
+      if (element) {
+        element.disabled = true;
+      }
+    });
+  }
+
+  saveData() {
+    const fields = [
+      'nombre', 'abreviado', 'cc', 'nit', 'ruc', 'ciudad', 'direccion', 
+      'telefono', 'celular', 'celular1', 'representante', 'contacto', 
+      'correo', 'correo1'
+    ];
+    
+    const dataToSave: any = {};
+    fields.forEach(field => {
+      const element = document.getElementById(field) as HTMLInputElement;
+      if (element) {
+        dataToSave[field] = element.value;
+      }
+    });
+    
+    // Add the 'codigo' field which should be read-only
+    const codigoElement = document.getElementById('codigo') as HTMLInputElement;
+    if (codigoElement) {
+      dataToSave['codigo'] = codigoElement.value;
     }
+
+    this.disableInputs();
+    console.log('Data to save:', dataToSave);
+    // Here you can send the dataToSave object to your API or handle it as needed
   }
 }

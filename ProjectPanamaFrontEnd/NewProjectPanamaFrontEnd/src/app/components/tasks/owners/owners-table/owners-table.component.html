@@ -4,7 +4,7 @@
   <p *ngIf="!isLoading">Total Registros: {{ data.length }}</p>
   <div class="options-container" *ngIf="!isLoading">
     <input type="text" placeholder="Buscar..." [(ngModel)]="searchTerm" (input)="filterData()" class="search-container">
-    <a class="report">
+    <a class="report" (click)="openExternalLink()">
       <span class="material-symbols-outlined">
         print
       </span>

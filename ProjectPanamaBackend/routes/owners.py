@@ -117,13 +117,23 @@ async def get_owner(owner_id: int):
     owner_dict = {
       'codigo': owner.CODIGO,
       'nombre_propietario': owner.NOMBRE,
+      'nombre_abreviado': owner.ABREVIADO,
+      'nit': owner.NIT,
       'ruc': owner.RUC,
+      'ciudad': owner.CIUDAD,
+      'direccion': owner.DIRECCION,
       'telefono': owner.TELEFONO,
       'celular': owner.CELULAR,
+      'celular1': owner.CELULAR1,
       'representante': owner.REPRESENTA,
+      'contacto': owner.CONTACTO,
+      'correo': owner.CORREO,
+      'correo1': owner.CORREO1,
+      'estado': owner.ESTADO,
+      'fec_estado': owner.FEC_ESTADO,
       'central': owner.CENTRAL,
-      'auditor': owner.USUARIO,  # Ajustar si la columna auditor es diferente
-      'cnt': owner.CONTROL,  # Ajustar si la columna cnt es diferente
+      'auditor': owner.USUARIO,  
+      'cnt': owner.CONTROL,  
       'dcto': owner.DESCUENTO,
       'estado': estado
     }

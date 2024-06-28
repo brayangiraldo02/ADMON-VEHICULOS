@@ -27,19 +27,23 @@ hr {
 }
 
 .select{
-  width: 20%; 
+  width: 20%;
   margin: 10px;
   box-sizing: border-box;
   background: #ffffff; /* Fondo claro por defecto, ajustable */
-  border: 1px solid #ccc;
   border-radius: 10px; /* Bordes redondeados */
-  padding: 10px;
+  border: 1px solid #ccc;
   display: flex;
   align-items: center; /* Centrado vertical */
   justify-content: center; /* Centrado horizontal */
   text-align: center; /* Texto centrado */
-  flex-direction: column; /* Ícono sobre el texto */
   cursor: pointer;
+  position: relative;
+}
+
+.select span.material-symbols-outlined {
+  margin-right: auto;  /* Empuja el icono a la izquierda */
+  font-size: 3.5vh;
 }
 
 .select.selected {
@@ -52,7 +56,9 @@ hr {
 }
 
 .select-text {
-  font-size: 20px; /* Ajuste según necesidad */
+  flex-grow: 1;
+  text-align: center;  /* Asegura que el texto esté centrado */
+  font-size: 15px; /* Ajuste según necesidad */
   color: #333; /* Color del texto */
 }
 
