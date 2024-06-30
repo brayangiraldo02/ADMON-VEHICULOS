@@ -80,14 +80,19 @@ hr {
   align-items: center;
 }
 
-.form-group input {
+.form-group input, .form-group select {
   padding: 10px;
   border: 1px solid #ccc;
   background: #ffffff;
   border-radius: 10px;
+  color: black;
 }
 
-.form-group input:enabled {
+.form-group select {
+  width: 40%;
+}
+
+.form-group input:enabled, .form-group select:enabled {
   background: #eeeeee;
   border-color: #000000;
 }

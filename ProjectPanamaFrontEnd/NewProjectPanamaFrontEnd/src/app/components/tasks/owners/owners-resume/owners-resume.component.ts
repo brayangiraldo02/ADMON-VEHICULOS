@@ -10,7 +10,15 @@ import { ActivatedRoute } from '@angular/router';
 export class OwnersResumeComponent implements OnInit {
   code: string | null = null;
   data: any = null;
+  cities: any = null;
+  central: any = null;
+  users: any = null;
   isLoading = true;
+  isEditable = false;
+  cityFound = false;
+  centralFound = false;
+  usersFound = false;
+  stateEdited = false;
 
   constructor(private route: ActivatedRoute, private apiService: ApiService) {}
 
@@ -18,6 +26,9 @@ export class OwnersResumeComponent implements OnInit {
     this.route.paramMap.subscribe(params => {
       this.code = params.get('code');
     });
+    this.getUsers();
+    this.getCities();
+    this.getCentral();
     this.fetchData();
   }
 
@@ -27,6 +38,7 @@ export class OwnersResumeComponent implements OnInit {
         this.data = response;
         console.log(this.data);
         this.isLoading = false;
+        this.checkCity();
       },
       (error) => {
         console.log(error);
@@ -35,7 +47,95 @@ export class OwnersResumeComponent implements OnInit {
     );
   }
 
+  getCities() {
+    this.apiService.getData('cities').subscribe(
+      (response) => {
+        this.cities = response.map((city: any) => ({
+          ...city,
+          codigo: this.removeLeadingZero(city.codigo)
+        }));
+        this.checkCity();
+        console.log(this.cities);
+      },
+      (error) => {
+        console.log(error);
+      }
+    );
+  }
+
+  removeLeadingZero(code: string): string {
+    return code.replace(/^0+/, '');
+  }
+
+  checkCity() {
+    if (this.data && this.cities) {
+      this.cityFound = this.cities.some((city: any) => city.codigo === this.data.ciudad);
+      if (!this.cityFound) {
+        this.cities.push({
+          codigo: this.data.ciudad,
+          nombre: "Ciudad no encontrada"
+        });
+      }
+    }
+  }
+
+  getCentral() {
+    this.apiService.getData('central').subscribe(
+      (response) => {
+        this.central = response.filter((central: any) => central.codigo);
+        this.checkCentral();
+        console.log(this.central);
+      },
+      (error) => {
+        console.log(error);
+      }
+    );
+  }
+
+  checkCentral() {
+    if (this.data && this.central) {
+      this.centralFound = this.central.some((central: any) => central.codigo === this.data.central);
+      if (!this.centralFound) {
+        this.central.push({
+          codigo: this.data.central,
+          nombre: "Central no encontrada"
+        });
+      }
+    }
+  }
+
+  getUsers() {
+    this.apiService.getData('users').subscribe(
+      (response) => {
+        this.users = response.filter((users: any) => users.codigo);
+        this.checkUsers();
+        console.log(this.users);
+      },
+      (error) => {
+        console.log(error);
+      }
+    );
+  }
+
+  checkUsers() {
+    if (this.data && this.users) {
+      this.usersFound = this.users.some((users: any) => users.codigo === this.data.auditor);
+      if (!this.usersFound) {
+        this.users.push({
+          codigo: this.data.auditor,
+          nombre: "Auditor no encontrado"
+        });
+      }
+    }
+  }
+
   enableInputs() {
+    if (this.isEditable) {
+      this.disableInputs();
+      return;
+    }
+
+    this.isEditable = true;
     const fields = [
       'nombre', 'abreviado', 'cc', 'nit', 'ruc', 'ciudad', 'direccion', 
       'telefono', 'celular', 'celular1', 'representante', 'contacto', 
@@ -50,6 +150,7 @@ export class OwnersResumeComponent implements OnInit {
   }
 
   disableInputs() {
+    this.isEditable = false;
     const fields = [
       'nombre', 'abreviado', 'cc', 'nit', 'ruc', 'ciudad', 'direccion', 
       'telefono', 'celular', 'celular1', 'representante', 'contacto', 
@@ -67,7 +168,7 @@ export class OwnersResumeComponent implements OnInit {
     const fields = [
       'nombre', 'abreviado', 'cc', 'nit', 'ruc', 'ciudad', 'direccion', 
       'telefono', 'celular', 'celular1', 'representante', 'contacto', 
-      'correo', 'correo1'
+      'correo', 'correo1', 'estado', 'auditora', 'central'
     ];
     
     const dataToSave: any = {};
@@ -83,6 +184,14 @@ export class OwnersResumeComponent implements OnInit {
     if (codigoElement) {
       dataToSave['codigo'] = codigoElement.value;
     }
+
+     // Check if the city field was edited
+    const estadoElement = document.getElementById('estado') as HTMLSelectElement;
+    if (estadoElement && estadoElement.value !== this.data.estado) {
+      this.stateEdited = true;
+    }
+
+    dataToSave['stateEdited'] = this.stateEdited;
 
     this.disableInputs();
     console.log('Data to save:', dataToSave);
