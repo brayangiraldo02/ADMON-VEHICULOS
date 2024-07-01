@@ -1,12 +1,13 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import JSONResponse
 from config.dbconnection import session
 from models.propietarios import Propietarios
+from schemas.owners import PropietarioUpdate
 from models.centrales import Centrales
 from models.permisosusuario import PermisosUsuario
 from middlewares.JWTBearer import JWTBearer
 from fastapi.encoders import jsonable_encoder
-
+from datetime import datetime
 owners_router = APIRouter()
 
 # PETICIÓN DE LISTA DE PROPIETARIOS A LA BASE DE DATOS 
@@ -143,3 +144,45 @@ async def get_owner(owner_id: int):
     return JSONResponse(content={"error": str(e)})
   finally:
     db.close()
+
+#----------------------------------------------------------------------------------------------------------------
+
+@owners_router.put("/propietarios/{propietario_id}", response_model=PropietarioUpdate)
+def update_propietario(propietario_id: str, propietario: PropietarioUpdate):
+    db = session()
+    try:
+      result = db.query(Propietarios).filter(Propietarios.CODIGO == propietario_id).first()
+      if not result:
+        return JSONResponse(status_code=404, content={"message": "Owner not found"})
+      result.NOMBRE = propietario.nombre
+      result.ABREVIADO = propietario.abreviado
+      result.REPRESENTA = propietario.representante
+      result.USUARIO = propietario.auditora
+      result.NIT = propietario.cc
+      result.RUC = propietario.ruc
+      result.CIUDAD = propietario.ciudad
+      result.DIRECCION = propietario.direccion
+      result.CENTRAL = propietario.central
+      result.TELEFONO = propietario.telefono
+      result.CELULAR = propietario.celular
+      result.CELULAR1 = propietario.celular1
+      result.CORREO = propietario.correo
+      result.CORREO1 = propietario.correo1
+      result.CONTACTO = propietario.contacto
+      if propietario.stateEdited:
+        if propietario.estado == 'Activo':
+          result.ESTADO = 1
+        elif propietario.estado == 'Suspendido':
+          result.ESTADO = 2
+        elif propietario.estado == 'Retirado':
+          result.ESTADO = 3
+        else:
+          result.ESTADO = 0
+        date = datetime.now()
+        result.FEC_ESTADO = date
+      db.commit()
+      return JSONResponse(content={"message": "Owner updated"}, status_code=200)
+    except Exception as e:
+      return JSONResponse(content={"error": str(e)})
+    finally:
+      db.close()

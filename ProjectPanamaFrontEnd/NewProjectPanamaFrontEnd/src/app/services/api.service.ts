@@ -58,4 +58,16 @@ export class ApiService {
       catchError(this.errorHandlerService.handleError)
     );
   }
+
+  /**
+   * Update data at a specified endpoint.
+   * @param {string} endpoint - The endpoint to put data to.
+   * @param {any} data - The data to update.
+   * @returns {Observable<any>} An Observable of the HTTP response.
+   */
+  updateData(endpoint: string, data: any): Observable<any> {
+    return this.http.put<any>(`${this.baseURL}/${endpoint}/`, data, { withCredentials: true }).pipe(
+      catchError(this.errorHandlerService.handleError)
+    );
+  }
 }

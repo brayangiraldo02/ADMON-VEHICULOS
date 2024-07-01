@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends
 from fastapi.responses import JSONResponse
 from config.dbconnection import session
 from models.conductores import Conductores
+from models.ciudades import Ciudades
 from schemas.reports import *
 from middlewares.JWTBearer import JWTBearer
 from fastapi.encoders import jsonable_encoder
@@ -56,11 +57,13 @@ async def get_conductores_detalles():
             Conductores.CODIGO.label('conductor_codigo'),
             Conductores.NOMBRE.label('conductor_nombre'),
             Conductores.CEDULA.label('conductor_cedula'),
-            Conductores.CIUDAD.label('conductor_ciudad'),
+            Ciudades.NOMBRE.label('conductor_ciudad'),
             Conductores.DIRECCION.label('conductor_direccion'),
             Conductores.TELEFONO.label('conductor_telefono'),
-            Conductores.CELULAR.label('conductor_celular'),
-        )   .all()
+            Conductores.UND_NRO.label('conductor_und'),
+            Conductores.UND_PRE.label('conductor_und_pre'),
+        )   .join(Ciudades, Conductores.CIUDAD == Ciudades.CODIGO) \
+            .all()
         
         # Convertir los resultados en un formato JSON
         conductores_detalles_list = []
@@ -73,7 +76,8 @@ async def get_conductores_detalles():
                 'conductor_ciudad': resultado.conductor_ciudad,
                 'conductor_direccion': resultado.conductor_direccion,
                 'conductor_telefono': resultado.conductor_telefono,
-                'conductor_celular': resultado.conductor_celular,
+                'conductor_und': resultado.conductor_und,
+                'conductor_und_pre': resultado.conductor_und_pre
             }
             conductores_detalles_list.append(conductor_detalle)
     
@@ -107,7 +111,7 @@ async def get_conductores_detalles():
                             "ciudad": conductor_info.get("conductor_ciudad", ""),
                             "direccion": conductor_info.get("conductor_direccion", ""),
                             "telefono": conductor_info.get("conductor_telefono", ""),
-                            "celular": conductor_info.get("conductor_celular", ""),
+                            "unidad_og": conductor_info.get("conductor_und", ""), "unidad_pres":conductor_info.get("conductor_und_pre", ""),
                         }
                         data_view[estado]["conductores"].append(conductor)
 
