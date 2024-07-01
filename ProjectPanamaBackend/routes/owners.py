@@ -2,6 +2,9 @@ from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import JSONResponse
 from config.dbconnection import session
 from models.propietarios import Propietarios
+from models.vehiculos import Vehiculos
+from models.conductores import Conductores
+from models.estados import Estados
 from schemas.owners import PropietarioUpdate
 from models.centrales import Centrales
 from models.permisosusuario import PermisosUsuario
@@ -186,3 +189,46 @@ def update_propietario(propietario_id: str, propietario: PropietarioUpdate):
       return JSONResponse(content={"error": str(e)})
     finally:
       db.close()
+
+#----------------------------------------------------------------------------------------------------------------
+
+@owners_router.get("/propietarios-vehiculos/{owner_id}", tags=["Owners"])
+async def get_owners_vehicles(owner_id: int):
+  db = session()
+  try:
+    owner = db.query(
+      Vehiculos.PLACA.label('placa'),
+      Vehiculos.NUMERO.label('numero'),
+      Vehiculos.NOMMARCA.label('marca'),
+      Vehiculos.LINEA.label('linea'),
+      Vehiculos.MODELO.label('modelo'),
+      Vehiculos.LICETRANSI.label('licencia_transito'),
+      Conductores.NOMBRE.label('conductor'),
+      Estados.NOMBRE.label('estado'),
+    ).join(
+      Conductores, Vehiculos.CONDUCTOR == Conductores.CODIGO
+    ).join(
+      Estados, Vehiculos.ESTADO == Estados.CODIGO
+    ).filter(
+      Vehiculos.PROPI_IDEN == owner_id
+    ).all()
+
+    owner_vehicles = []
+    for vehicle in owner:
+      owner_vehicle = {
+        'placa': vehicle.placa,
+        'numero': vehicle.numero,
+        'marca': vehicle.marca,
+        'linea': vehicle.linea,
+        'modelo': vehicle.modelo,
+        'licencia_transito': vehicle.licencia_transito,
+        'conductor': vehicle.conductor,
+        'estado': vehicle.estado
+      }
+      owner_vehicles.append(owner_vehicle)
+
+    return JSONResponse(content=jsonable_encoder(owner_vehicles))
+  except Exception as e:
+    return JSONResponse(content={"error": str(e)})
+  finally:
+    db.close()
