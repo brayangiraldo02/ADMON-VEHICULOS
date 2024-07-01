@@ -14,12 +14,13 @@ db_port = os.getenv('DB_PORT')
 db_name = os.getenv('DB_NAME')
 DATABASE_URL = f"{db_type}://{db_user}:{db_password}@{db_host}:{db_port}/{db_name}"
 if DATABASE_URL is None:
-  raise ValueError("No se ha definido la variable de entorno 'DB_URL'")
+    raise ValueError("No se ha definido la variable de entorno 'DB_URL'")
 
-# database motor
-engine = create_engine(DATABASE_URL,
-                      pool_recycle=3600,  # Recicla cada 1 hora
-                      pool_pre_ping=True  # Habilita pre-ping para evitar 'server has gone away'
+# Database motor
+engine = create_engine(
+    DATABASE_URL,
+    pool_recycle=3600,  # Recicla cada 1 hora
+    pool_pre_ping=True  # Habilita pre-ping para evitar 'server has gone away'
 )
 
 # Session generator

@@ -180,3 +180,15 @@ def agrupar_conductores_por_estado(conductores):
         codigo = conductor["conductor_codigo"]
         conductores_por_estado[estado][codigo] = conductor
     return conductores_por_estado
+
+#------------------------------------------------------------
+
+def agrupar_vehiculos_por_estado(vehiculos):
+    vehiculos_por_estado_nombre = {}
+    for vehiculo in vehiculos:
+        estado_nombre = vehiculo["vehiculo_estado_nombre"]
+        if estado_nombre not in vehiculos_por_estado_nombre:
+            vehiculos_por_estado_nombre[estado_nombre] = {}
+        placa = vehiculo["vehiculo_placa"]
+        vehiculos_por_estado_nombre[estado_nombre][placa] = vehiculo
+    return vehiculos_por_estado_nombre
