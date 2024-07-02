@@ -4,16 +4,23 @@
 
   <div class="buttons-container" *ngIf="!isLoading">
 
-    <button class="select" type="button">
+    <button class="select back" type="button" routerLink="/owners">
       <span class="material-symbols-outlined">
-        print
+        arrow_back
       </span>
-      <p class="select-text">Contrato</p>
+      <p class="select-text">Regresar</p>
     </button>
 
     <button class="select" type="button">
       <span class="material-symbols-outlined">
-        print
+        contract
+      </span>
+      <p class="select-text">Contrato</p>
+    </button>
+
+    <button class="select" type="button" (click)="goToOwnerVehicles(code)">
+      <span class="material-symbols-outlined">
+        traffic_jam
       </span>
       <p class="select-text">Vehículos</p>
     </button>
@@ -41,8 +48,8 @@
     </div>
 
     <div class="form-group">
-      <label for="nit" for="codigo">C.C / N.I.T. :</label><br>
-      <input type="text" id="nit" name="nit" [value]="data.nit" disabled><br>
+      <label for="cc" for="codigo">C.C / N.I.T. :</label><br>
+      <input type="number" id="cc" name="cc" [value]="data.nit" disabled><br>
       <input type="text" id="codigo" name="codigo" [value]="data.codigo" disabled><br>
     </div>
 
@@ -122,8 +129,8 @@
 
   <div class="info-container" *ngIf="!isLoading">
     <div class="form-group">
-      <label for="auditora">Auditora:</label><br>
-      <select class="select-option" id="auditora" name="auditora" [value]="data.auditora" [disabled]="!isEditable">
+      <label for="auditor">Auditora:</label><br>
+      <select class="select-option" id="auditor" name="auditor" [value]="data.auditor" [disabled]="!isEditable">
         <option *ngFor="let auditor of users" [value]="auditor.codigo" [selected]="auditor.codigo === data.auditor">{{ auditor.codigo }} - {{ auditor.nombre }}</option>
       </select><br>
     </div>
@@ -143,15 +150,19 @@
   <div class="buttons-container" *ngIf="!isLoading">
 
     <button class="select" type="button" (click)="enableInputs()">
-      <span class="material-symbols-outlined">
-        print
+      <span class="material-symbols-outlined" *ngIf="!isEditable">
+        edit
       </span>
-      <p class="select-text">Editar</p>
+      <p class="select-text" *ngIf="!isEditable">Editar</p>
+      <span class="material-symbols-outlined" *ngIf="isEditable">
+        close
+      </span>
+      <p class="select-text" *ngIf="isEditable">Cancelar</p>
     </button>
   
-    <button class="select" type="button" (click)="saveData()">
+    <button class="select" type="button" (click)="saveData()" *ngIf="isEditable">
       <span class="material-symbols-outlined">
-        print
+        check
       </span>
       <p class="select-text">Aceptar</p>
     </button>

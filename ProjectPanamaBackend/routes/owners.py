@@ -150,7 +150,7 @@ async def get_owner(owner_id: int):
 
 #----------------------------------------------------------------------------------------------------------------
 
-@owners_router.put("/propietarios/{propietario_id}", response_model=PropietarioUpdate)
+@owners_router.put("/owner/{propietario_id}", response_model=PropietarioUpdate, tags=["Owners"])
 def update_propietario(propietario_id: str, propietario: PropietarioUpdate):
     db = session()
     try:
@@ -160,7 +160,7 @@ def update_propietario(propietario_id: str, propietario: PropietarioUpdate):
       result.NOMBRE = propietario.nombre
       result.ABREVIADO = propietario.abreviado
       result.REPRESENTA = propietario.representante
-      result.USUARIO = propietario.auditora
+      result.USUARIO = propietario.auditor
       result.NIT = propietario.cc
       result.RUC = propietario.ruc
       result.CIUDAD = propietario.ciudad
@@ -186,13 +186,13 @@ def update_propietario(propietario_id: str, propietario: PropietarioUpdate):
       db.commit()
       return JSONResponse(content={"message": "Owner updated"}, status_code=200)
     except Exception as e:
-      return JSONResponse(content={"error": str(e)})
+      return JSONResponse(content={"error": str(e)}, status_code=500)
     finally:
       db.close()
 
 #----------------------------------------------------------------------------------------------------------------
 
-@owners_router.get("/propietarios-vehiculos/{owner_id}", tags=["Owners"])
+@owners_router.get("/owner-vehicles/{owner_id}", tags=["Owners"])
 async def get_owners_vehicles(owner_id: int):
   db = session()
   try:

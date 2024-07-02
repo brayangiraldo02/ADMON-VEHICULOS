@@ -32,6 +32,7 @@ export class DriversComponent implements OnInit {
         this.data.sort((a, b) => a.nombre.localeCompare(b.nombre));
         this.filteredData = [...this.data];
         this.isLoading = false;
+        console.log(this.data)
       },
       (error) => {
         console.log(error);

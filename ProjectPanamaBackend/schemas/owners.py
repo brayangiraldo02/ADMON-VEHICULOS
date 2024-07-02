@@ -15,6 +15,7 @@ class PropietarioUpdate(BaseModel):
     contacto: Optional[str] = None
     correo: Optional[str] = None
     correo1: Optional[str] = None
-
-    class Config:
-        orm_mode = True
+    central: Optional[str] = None
+    auditor: Optional[str] = None
+    stateEdited: Optional[bool] = False
+    estado: Optional[str] = None
