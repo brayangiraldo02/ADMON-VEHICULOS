@@ -70,7 +70,7 @@
 table {
   width: 100%;
   border-collapse: collapse;
-  table-layout: auto; /* Adjust to fixed if widths need to be absolute */
+  table-layout: fixed; /* Adjust to fixed if widths need to be absolute */
 }
 
 th, td {
@@ -84,11 +84,11 @@ th, td {
 th {
   background-color: #f4f4f4;
   font-weight: bold;
-  font-size:small;
+  font-size: 1.9vh;
 }
 
 td {
-  font-size: small;
+  font-size: 1.8vh;
 }
 
 tbody tr:nth-child(odd) {
@@ -97,6 +97,18 @@ tbody tr:nth-child(odd) {
 
 tbody tr:hover {
   background-color: #f1f1f1;
+}
+
+.col-campo1 {
+  width: 5%;
+}
+
+.col-campo3 {
+  width: 8%;
+}
+
+.col-campo7, .col-campo8, .col-campo9, .col-campo10{
+  width: 3%;
 }
 
 /* Column-specific styles */
@@ -112,9 +124,9 @@ tbody tr:hover {
   width: 12%;
 } */
 
-.col-campo1 .col-campo8 .col-campo9 {
+/* .col-campo1 .col-campo8 .col-campo9 {
   width: 2%;
-}
+} */
 
 /* @media (max-width: 768px) {
   th, td {

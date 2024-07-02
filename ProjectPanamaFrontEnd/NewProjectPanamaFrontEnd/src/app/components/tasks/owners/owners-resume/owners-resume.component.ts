@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ApiService } from 'src/app/services/api.service';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-owners-resume',
@@ -10,23 +10,40 @@ import { ActivatedRoute } from '@angular/router';
 export class OwnersResumeComponent implements OnInit {
   code: string | null = null;
   data: any = null;
+  cities: any = null;
+  central: any = null;
+  users: any = null;
   isLoading = true;
+  isEditable = false;
+  cityFound = false;
+  centralFound = false;
+  usersFound = false;
+  stateEdited = false;
 
-  constructor(private route: ActivatedRoute, private apiService: ApiService) {}
+  constructor(
+    private route: ActivatedRoute, 
+    private apiService: ApiService,
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
     this.route.paramMap.subscribe(params => {
       this.code = params.get('code');
     });
     this.fetchData();
+    this.getUsers();
+    this.getCities();
+    this.getCentral();
   }
 
   fetchData() {
     this.apiService.getData(`owner/${this.code}`).subscribe(
       (response) => {
         this.data = response;
-        console.log(this.data);
+        console.log('Fetch Data:', this.data);
+        this.stateEdited = false;
         this.isLoading = false;
+        this.checkCity();
       },
       (error) => {
         console.log(error);
@@ -35,7 +52,105 @@ export class OwnersResumeComponent implements OnInit {
     );
   }
 
+  getCities() {
+    this.apiService.getData('cities').subscribe(
+      (response) => {
+        this.cities = response.map((city: any) => ({
+          ...city,
+          codigo: this.removeLeadingZero(city.codigo)
+        }));
+        this.checkCity();
+      },
+      (error) => {
+        console.log(error);
+      }
+    );
+  }
+
+  removeLeadingZero(code: string): string {
+    return code.replace(/^0+/, '');
+  }
+
+  checkCity() {
+    if (this.data && this.cities) {
+      this.cityFound = this.cities.some((city: any) => city.codigo === this.data.ciudad);
+      if (!this.cityFound) {
+        this.cities.push({
+          codigo: this.data.ciudad,
+          nombre: "Ciudad no encontrada"
+        });
+      }
+    }
+  }
+
+  getCentral() {
+    this.apiService.getData('central').subscribe(
+      (response) => {
+        this.central = response.filter((central: any) => central.codigo);
+        this.checkCentral();
+      },
+      (error) => {
+        console.log(error);
+      }
+    );
+  }
+
+  checkCentral() {
+    if (this.data && this.central) {
+      this.centralFound = this.central.some((central: any) => central.codigo === this.data.central);
+      if (!this.centralFound) {
+        this.central.push({
+          codigo: this.data.central,
+          nombre: "Central no encontrada"
+        });
+      }
+    }
+  }
+
+  getUsers() {
+    this.apiService.getData('users').subscribe(
+      (response) => {
+        this.users = response.filter((users: any) => users.codigo);
+        this.checkUsers();
+      },
+      (error) => {
+        console.log(error);
+      }
+    );
+  }
+
+  checkUsers() {
+    var varCodigo;
+    var varNombre  = "Sin Auditor";
+    if(this.data.auditor == null) {
+      this.data.auditor = '';
+      varCodigo = this.data.auditor;
+    }
+    else {
+      varCodigo = '';
+    }
+    if (this.data && this.users) {
+      this.usersFound = this.users.some((users: any) => users.codigo === this.data.auditor);
+      if (!this.usersFound) {
+        varCodigo = this.data.auditor;
+        if(varCodigo !== '') {
+          varNombre = "Auditor no encontrado";
+        }
+      }
+      this.users.push({
+        codigo: varCodigo,
+        nombre: varNombre
+      });
+    }
+  }
+
   enableInputs() {
+    if (this.isEditable) {
+      this.disableInputs();
+      return;
+    }
+
+    this.isEditable = true;
     const fields = [
       'nombre', 'abreviado', 'cc', 'nit', 'ruc', 'ciudad', 'direccion', 
       'telefono', 'celular', 'celular1', 'representante', 'contacto', 
@@ -50,6 +165,7 @@ export class OwnersResumeComponent implements OnInit {
   }
 
   disableInputs() {
+    this.isEditable = false;
     const fields = [
       'nombre', 'abreviado', 'cc', 'nit', 'ruc', 'ciudad', 'direccion', 
       'telefono', 'celular', 'celular1', 'representante', 'contacto', 
@@ -63,11 +179,11 @@ export class OwnersResumeComponent implements OnInit {
     });
   }
 
-  saveData() {
+  newData() {
     const fields = [
       'nombre', 'abreviado', 'cc', 'nit', 'ruc', 'ciudad', 'direccion', 
       'telefono', 'celular', 'celular1', 'representante', 'contacto', 
-      'correo', 'correo1'
+      'correo', 'correo1', 'estado', 'auditor', 'central'
     ];
     
     const dataToSave: any = {};
@@ -84,8 +200,85 @@ export class OwnersResumeComponent implements OnInit {
       dataToSave['codigo'] = codigoElement.value;
     }
 
-    this.disableInputs();
+    return dataToSave;
+  }
+
+  checkModifiedData(dataToSave:any) {
+    const fields = [
+      'nombre', 'abreviado', 'cc', 'ruc', 'ciudad', 'direccion', 
+      'telefono', 'celular', 'celular1', 'representante', 'contacto', 
+      'correo', 'correo1', 'estado', 'auditor', 'central'
+    ];
+
+    let modified = false;
+    fields.forEach(field => {
+      if (field == 'nombre') {
+        if(this.data['nombre_propietario'] !== dataToSave[field]) {
+          modified = true;
+          console.log('Modified field:', field, dataToSave[field], this.data['nombre_propietario'])
+        }
+      }
+      else if (field == 'abreviado') {
+        if(this.data['nombre_abreviado'] !== dataToSave[field]) {
+          modified = true;
+          console.log('Modified field:', field, dataToSave[field], this.data['nombre_abreviado'])
+        }
+      }
+      else if (field == 'cc') {
+        if(this.data['nit'] != dataToSave[field]) {
+          modified = true;
+          console.log('Modified field:', field, dataToSave[field], this.data['nit'])
+        }
+      }
+      else if (dataToSave[field] !== this.data[field]) {
+        console.log('Modified field:', field, dataToSave[field], this.data[field])
+        modified = true;
+      }
+    });
+
+    return modified;
+  }
+
+  checkModifiedCity() {
+    const estadoElement = document.getElementById('estado') as HTMLSelectElement;
+    if (estadoElement && estadoElement.value !== this.data.estado) {
+      this.stateEdited = true;
+    }
+  }
+
+  saveData() {
+
+    const dataToSave = this.newData();
+
+    const modifiedData = this.checkModifiedData(dataToSave);
+
+    console.log(modifiedData)
+
+    if (!modifiedData) {
+      window.alert('No se ha modificado ningún dato');
+      this.disableInputs();
+      return;
+    }
+    
+    this.checkModifiedCity();
+
+    dataToSave['stateEdited'] = this.stateEdited;
+
     console.log('Data to save:', dataToSave);
-    // Here you can send the dataToSave object to your API or handle it as needed
+  
+    this.apiService.updateData(`owner/${this.code}`, dataToSave).subscribe(
+      (response) => {
+        window.alert('Datos actualizados correctamente');
+        this.disableInputs();
+        this.fetchData();
+      },
+      (error) => {
+        console.log(error);
+      }
+    );
+  }
+
+  goToOwnerVehicles(code: string | null) {
+    this.router.navigate(['/owner-vehicles', code]);
   }
 }

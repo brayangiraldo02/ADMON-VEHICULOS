@@ -20,11 +20,13 @@
           <th class="col-campo3">NOMBRE CONDUCTOR</th>
           <th class="col-campo4">CÉDULA</th>
           <th class="col-campo5">TELÉFONO</th>
-          <th class="col-campo6">FEC.INGRESO</th>
-          <th class="col-campo7">VLR.CUOTA</th>
+          <th class="col-campo6">FEC. INGRESO</th>
+          <th class="col-campo7">VLR. CUOTA</th>
           <th class="col-campo8">N° CUOTAS</th>
           <th class="col-campo9">PAGAS</th>
           <th class="col-campo10">PENDIENTES</th>
+          <th class="col-campo11">VEC. LICENCIA</th>
+          <th class="col-campo12">CONTACTOS</th>
         </tr>
       </thead>
       <tbody>
@@ -39,6 +41,8 @@
           <td class="col-campo8">{{ item.nro_entrega }}</td>
           <td class="col-campo9">{{ item.nro_pago }}</td>
           <td class="col-campo10">{{ item.nro_saldo }}</td>
+          <td class="col-campo11">{{ item.vce_licen }}</td>
+          <td class="col-campo12">{{ item.contacto }} // {{ item.contacto1 }}</td>
         </tr>
       </tbody>
     </table>
