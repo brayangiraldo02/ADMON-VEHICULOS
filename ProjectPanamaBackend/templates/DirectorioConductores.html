@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Directorio Conductores</title>
+    <style type="text/css">
+        .container {
+            position: relative;
+        }
+        #logo {
+            position: absolute;
+            top: 0;
+            right: 0;
+        }
+        .content {
+            margin-left: 200px; 
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            text-align: center;
+        }
+        tr:first-child th, tr:first-child td {
+            background-color: #ffffff;
+            border: 1px solid #000000;
+            padding: 6px;
+            text-align: center;
+        }
+        td{
+            white-space: nowrap;
+            font-size: 15px;
+        }
+        tr {
+            padding: 15px;
+            line-height: 1.8;
+            margin-bottom: 20px;
+        }
+        .box-propietario {
+            text-align: left;
+            font-size: 23px;
+            margin-top: 10px;
+            border: 2px solid #000;
+            border-radius: 10px; /* Bordes redondeados */
+            padding: 5px; /* Espaciado interno */
+        }
+        .box-propietario2 {
+            text-align: left;
+            font-size: 17px;
+            margin-top: 10px;
+            position: sticky;
+            left: 0;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+        dr {
+            position: absolute;
+            right: 0;
+            text-align: right;
+            top: 0;
+        }
+        dt, dd {
+            display: inline;
+            margin: 0;
+        }
+        dt {
+            color: #a9a;
+        }
+        dt::before {
+            content: '';
+            display: block;
+        }
+        dt::after {
+            content: ':';
+        }
+        html, body {
+            scroll-behavior: smooth;
+        }
+        .title {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .centered-title {
+            font-size: 30px; 
+            text-align: center; /* Centra el título horizontalmente */
+            margin-bottom: 0px; 
+        }
+        .box {
+            flex: 1; /* Distribuye el espacio disponible entre las cajas */
+            border: 1px solid #ccc;
+            padding: 10px;
+        }
+        p {
+            line-height: 1; 
+            font-size: 8px;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+        footer {
+        bottom: 0;
+        width: 100%;
+        text-align: center;
+        font-family: Arial, sans-serif;
+        }
+        footer p {
+        font-size: 12px; 
+        }
+    </style>
+</head>
+<body>
+
+    <table>
+            <tr>
+                <th>Código</th>
+                <th>Nombre</th>
+                <th>Cedula</th>
+                <th>Ciudad</th>
+                <th>Dirección</th>
+                <th>Teléfono</th>
+                <th>UND Orig</th>
+                <th>UND Pres</th>
+            </tr>
+            {% for estado, estado_info in data_view.items() %}
+                {% if estado != 'usuario' %}
+                    <tr>
+                        <th colspan="7">
+                            <div class="box-propietario2">
+                                <span style="text-transform: uppercase;">{{ estado_info['nombre_estado'] }}</span>
+                            </div>
+                        </th>
+                    </tr>
+                    {% for conductor in estado_info['conductores'] %}
+                        <tr>
+                            <td>{{ conductor['codigo_conductor'] }}</td>
+                            <td style="text-align: left;">{{ conductor['nombre'][:35] }}</td>
+                            <td>{{ conductor['cedula'] }}</td>
+                            <td style="text-align: left;">{{ conductor['ciudad'] }}</td>
+                            <td style="text-align: left;">{{ conductor['direccion'][:40] }}</td>
+                            <td>{{ conductor['telefono'] }}</td>
+                            <td>{{ conductor['unidad_og'] }}</td>
+                            <td>{{ conductor['unidad_pres'] }}</td>
+                        </tr>
+                    {% endfor %}
+                {% endif %}
+            {% endfor %}
+    </table>     
+</body>
+</html>
