@@ -225,7 +225,6 @@ def create_propietario(propietario: PropietarioCreate):
             REP_NACION="",
             FICHA="",
             DOCUMENTO="",
-            FEC_ESTADO="",
             BANCO1="",
             TIPOCTA1="",
             CUENTA1="",
