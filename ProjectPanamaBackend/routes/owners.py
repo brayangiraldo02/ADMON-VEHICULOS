@@ -205,10 +205,13 @@ async def get_owners_vehicles(owner_id: int):
       Vehiculos.LICETRANSI.label('licencia_transito'),
       Conductores.NOMBRE.label('conductor'),
       Estados.NOMBRE.label('estado'),
+      Centrales.NOMBRE.label('central')
     ).join(
       Conductores, Vehiculos.CONDUCTOR == Conductores.CODIGO
     ).join(
       Estados, Vehiculos.ESTADO == Estados.CODIGO
+    ).join(
+      Centrales, Vehiculos.CENTRAL == Centrales.CODIGO
     ).filter(
       Vehiculos.PROPI_IDEN == owner_id
     ).all()
@@ -223,6 +226,7 @@ async def get_owners_vehicles(owner_id: int):
         'modelo': vehicle.modelo,
         'licencia_transito': vehicle.licencia_transito,
         'conductor': vehicle.conductor,
+        'central': vehicle.central,
         'estado': vehicle.estado
       }
       owner_vehicles.append(owner_vehicle)
@@ -232,3 +236,47 @@ async def get_owners_vehicles(owner_id: int):
     return JSONResponse(content={"error": str(e)})
   finally:
     db.close()
+
+#----------------------------------------------------------------------------------------------------------------
+
+@owners_router.get("/propietarios-representa/{owner_id}", tags=["Owners"])
+async def get_owner_rep(owner_id: int):
+  db = session()
+  try: 
+    owner = db.query(
+      Propietarios.RAZONSOCIA.label('razon_social'),
+      Propietarios.REPRESENTA.label('representante'),
+      Propietarios.REP_SEXO.label('sexo'),
+      Propietarios.REP_ESTADO.label('estado_civil'),
+      Propietarios.REP_TIPDOC.label('tipo_documento'),
+      Propietarios.REP_NUMERO.label('numero_documento'),
+      Propietarios.REP_NACION.label('nacionalidad'),
+      Propietarios.FICHA.label('ficha'),
+      Propietarios.DOCUMENTO.label('documento'),
+    ).filter(
+      Propietarios.CODIGO == owner_id
+    ).first()
+
+    if not owner:
+      return JSONResponse(content={"error": "Owner not found"}, status_code=404)
+    
+    owner_rep = {
+      'razon_social': owner.razon_social,
+      'sexo': owner.sexo,
+      'estado_civil': owner.estado_civil,
+      'tipo_documento': owner.tipo_documento,
+      'numero_documento': owner.numero_documento,
+      'nacionalidad': owner.nacionalidad,
+      'ficha': owner.ficha,
+      'documento': owner.documento,
+      'representante': owner.representante
+    }
+
+    return JSONResponse(content=jsonable_encoder(owner_rep))
+  except Exception as e:
+    return JSONResponse(content={"error": str(e)})
+  finally:
+    db.close()
+
+#----------------------------------------------------------------------------------------------------------------
+
