@@ -16,5 +16,21 @@ class PropietarioUpdate(BaseModel):
     correo: Optional[str] = None
     correo1: Optional[str] = None
 
-    class Config:
-        orm_mode = True
+class PropietarioCreate(BaseModel):
+    codigo: str
+    nombre: str
+    abreviado: str
+    cc: str
+    ruc: str
+    auditora: str
+    ciudad: str
+    direccion: str
+    central: str
+    telefono: str
+    celular: str
+    celular1: str
+    representante: str
+    contacto: str
+    correo: str
+    correo1: str
+    estado: str

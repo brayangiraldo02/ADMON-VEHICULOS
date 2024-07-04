@@ -5,7 +5,7 @@ from models.propietarios import Propietarios
 from models.vehiculos import Vehiculos
 from models.conductores import Conductores
 from models.estados import Estados
-from schemas.owners import PropietarioUpdate
+from schemas.owners import PropietarioUpdate, PropietarioCreate
 from models.centrales import Centrales
 from models.permisosusuario import PermisosUsuario
 from middlewares.JWTBearer import JWTBearer
@@ -189,6 +189,67 @@ def update_propietario(propietario_id: str, propietario: PropietarioUpdate):
       return JSONResponse(content={"error": str(e)})
     finally:
       db.close()
+
+#----------------------------------------------------------------------------------------------------------------
+
+@owners_router.post("/propietarios", response_model=PropietarioCreate)
+def create_propietario(propietario: PropietarioCreate):
+    db = session()
+    try:
+        new_propietario = Propietarios(
+            CODIGO=propietario.codigo,
+            NOMBRE=propietario.nombre,
+            ABREVIADO=propietario.abreviado,
+            REPRESENTA=propietario.representante,
+            USUARIO=propietario.auditora,
+            NIT=propietario.cc,
+            RUC=propietario.ruc,
+            CIUDAD=propietario.ciudad,
+            DIRECCION=propietario.direccion,
+            CENTRAL=propietario.central,
+            TELEFONO=propietario.telefono,
+            CELULAR=propietario.celular,
+            CELULAR1=propietario.celular1,
+            CORREO=propietario.correo,
+            CORREO1=propietario.correo1,
+            CONTACTO=propietario.contacto,
+            ESTADO=1 if propietario.estado == 'Activo' else 2 if propietario.estado == 'Suspendido' else 3 if propietario.estado == 'Retirado' else 0,
+            CONTROL="",
+            RAZONSOCIA="",
+            FEC_NACIMI="",
+            FEC_INGRES="",
+            REP_SEXO="",
+            REP_ESTADO="",
+            REP_TIPDOC="",
+            REP_NUMERO="",
+            REP_NACION="",
+            FICHA="",
+            DOCUMENTO="",
+            FEC_ESTADO="",
+            BANCO1="",
+            TIPOCTA1="",
+            CUENTA1="",
+            BANCO2="",
+            TIPOCTA2="",
+            CUENTA2="",
+            GRUPO="",
+            IMPUESTO="",
+            DESCUENTO="",
+            ADM_PARADO="",
+            FEC_CREADO="",
+            USU_CREADO="",
+            USU_MODIFI="",
+            SEL="",
+            FEC_ESTADO=datetime.now()
+        )
+        db.add(new_propietario)
+        db.commit()
+        return JSONResponse(content={"message": "Owner created"}, status_code=201)
+    except Exception as e:
+        db.rollback()
+        return JSONResponse(content={"error": str(e)})
+    finally:
+        db.close()
 
 #----------------------------------------------------------------------------------------------------------------
 
