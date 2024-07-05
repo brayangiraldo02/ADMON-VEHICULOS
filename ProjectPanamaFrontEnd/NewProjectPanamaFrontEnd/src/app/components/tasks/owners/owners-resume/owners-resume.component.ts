@@ -31,25 +31,39 @@ export class OwnersResumeComponent implements OnInit {
       this.code = params.get('code');
     });
     this.fetchData();
+    this.delay(500);
     this.getUsers();
     this.getCities();
     this.getCentral();
+  }
+
+  async delay(ms: number) {
+    await new Promise(resolve => setTimeout(resolve, ms));
   }
 
   fetchData() {
     this.apiService.getData(`owner/${this.code}`).subscribe(
       (response) => {
         this.data = response;
-        console.log('Fetch Data:', this.data);
         this.stateEdited = false;
-        this.isLoading = false;
+        this.checkDate();
+        console.log('Fetch Data:', this.data);
         this.checkCity();
       },
       (error) => {
         console.log(error);
-        this.isLoading = false;
+        
       }
     );
+  }
+
+  checkDate() {
+    this.data.fec_nacimiento = this.validateDate(this.data.fec_nacimiento);
+    this.data.fec_ingreso = this.validateDate(this.data.fec_ingreso);
+  }
+
+  validateDate(date: string): string {
+    return date === "0000-00-00" ? "" : date;
   }
 
   getCities() {
@@ -88,9 +102,11 @@ export class OwnersResumeComponent implements OnInit {
       (response) => {
         this.central = response.filter((central: any) => central.codigo);
         this.checkCentral();
+        this.isLoading = false;
       },
       (error) => {
         console.log(error);
+        this.isLoading = false;
       }
     );
   }
@@ -147,14 +163,15 @@ export class OwnersResumeComponent implements OnInit {
   enableInputs() {
     if (this.isEditable) {
       this.disableInputs();
-      return;
+      window.alert('No se ha modificado ningún dato.');
+      location.reload();
     }
 
     this.isEditable = true;
     const fields = [
       'nombre', 'abreviado', 'cc', 'nit', 'ruc', 'ciudad', 'direccion', 
       'telefono', 'celular', 'celular1', 'representante', 'contacto', 
-      'correo', 'correo1'
+      'correo', 'correo1', 'grupo', 'impuesto', 'admon_parado', 'descuento', 'fec_nacimiento', 'fec_ingreso'
     ];
     fields.forEach(field => {
       const element = document.getElementById(field) as HTMLInputElement;
@@ -169,7 +186,7 @@ export class OwnersResumeComponent implements OnInit {
     const fields = [
       'nombre', 'abreviado', 'cc', 'nit', 'ruc', 'ciudad', 'direccion', 
       'telefono', 'celular', 'celular1', 'representante', 'contacto', 
-      'correo', 'correo1'
+      'correo', 'correo1', 'grupo', 'impuesto', 'admon_parado', 'descuento', 'fec_nacimiento', 'fec_ingreso'
     ];
     fields.forEach(field => {
       const element = document.getElementById(field) as HTMLInputElement;
@@ -183,7 +200,7 @@ export class OwnersResumeComponent implements OnInit {
     const fields = [
       'nombre', 'abreviado', 'cc', 'nit', 'ruc', 'ciudad', 'direccion', 
       'telefono', 'celular', 'celular1', 'representante', 'contacto', 
-      'correo', 'correo1', 'estado', 'auditor', 'central'
+      'correo', 'correo1', 'estado', 'auditor', 'central', 'grupo', 'impuesto', 'admon_parado', 'descuento', 'fec_nacimiento', 'fec_ingreso'
     ];
     
     const dataToSave: any = {};
@@ -207,7 +224,7 @@ export class OwnersResumeComponent implements OnInit {
     const fields = [
       'nombre', 'abreviado', 'cc', 'ruc', 'ciudad', 'direccion', 
       'telefono', 'celular', 'celular1', 'representante', 'contacto', 
-      'correo', 'correo1', 'estado', 'auditor', 'central'
+      'correo', 'correo1', 'estado', 'auditor', 'central', 'grupo', 'impuesto', 'admon_parado', 'descuento', 'fec_nacimiento', 'fec_ingreso'
     ];
 
     let modified = false;
@@ -230,7 +247,7 @@ export class OwnersResumeComponent implements OnInit {
           console.log('Modified field:', field, dataToSave[field], this.data['nit'])
         }
       }
-      else if (dataToSave[field] !== this.data[field]) {
+      else if (dataToSave[field] != this.data[field]) {
         console.log('Modified field:', field, dataToSave[field], this.data[field])
         modified = true;
       }
@@ -266,16 +283,16 @@ export class OwnersResumeComponent implements OnInit {
 
     console.log('Data to save:', dataToSave);
   
-    this.apiService.updateData(`owner/${this.code}`, dataToSave).subscribe(
-      (response) => {
-        window.alert('Datos actualizados correctamente');
-        this.disableInputs();
-        this.fetchData();
-      },
-      (error) => {
-        console.log(error);
-      }
-    );
+    // this.apiService.updateData(`owner/${this.code}`, dataToSave).subscribe(
+    //   (response) => {
+    //     window.alert('Datos actualizados correctamente');
+    //     this.disableInputs();
+    //     location.reload();
+    //   },
+    //   (error) => {
+    //     console.log(error);
+    //   }
+    // );
   }
 
   goToOwnerVehicles(code: string | null) {

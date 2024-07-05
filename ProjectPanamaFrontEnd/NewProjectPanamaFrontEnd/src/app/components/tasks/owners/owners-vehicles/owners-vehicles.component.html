@@ -1,7 +1,8 @@
 <app-header></app-header>
 <div class="main-container">
   <h1 class="title-container">PROPIETARIOS</h1>
-  <p *ngIf="!isLoading">{{ infoOwner.codigo }} - {{ infoOwner.nombre_propietario }}</p>
+  <h4 class="title-container" *ngIf="!isLoading">{{ infoOwner.codigo }} - {{ infoOwner.nombre_propietario }}</h4>
+  <p *ngIf="!isLoading">Total Registros: {{ vehicles.length }}</p>
 
   <div class="buttons-container" *ngIf="!isLoading">
     <button class="select back" type="button" routerLink="/owners">
