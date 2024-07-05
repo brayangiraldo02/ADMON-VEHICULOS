@@ -19,3 +19,7 @@ class PropietarioUpdate(BaseModel):
     auditor: Optional[str] = None
     stateEdited: Optional[bool] = False
     estado: Optional[str] = None
+    grupo: Optional[str] = None
+    impuesto: Optional[str] = None
+    admon_parado: Optional[str] = None
+    descuento: Optional[str] = None

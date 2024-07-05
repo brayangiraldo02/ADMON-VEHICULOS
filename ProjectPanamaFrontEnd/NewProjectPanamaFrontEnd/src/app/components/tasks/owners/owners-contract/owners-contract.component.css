@@ -1,0 +1,119 @@
+.main-container {
+  min-height: 90vh;
+  height: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 3vh;
+  user-select: none;
+}
+
+hr {
+  width: 95%;
+  height: 1px;
+  background-color: #000000;
+}
+
+.title-container {
+  margin-bottom: 5px;
+}
+
+.buttons-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  width: 100%;
+}
+
+.select{
+  width: 20%;
+  margin: 10px;
+  box-sizing: border-box;
+  background: #ffffff; /* Fondo claro por defecto, ajustable */
+  border-radius: 10px; /* Bordes redondeados */
+  border: 1px solid #ccc;
+  display: flex;
+  align-items: center; /* Centrado vertical */
+  justify-content: center; /* Centrado horizontal */
+  text-align: center; /* Texto centrado */
+  cursor: pointer;
+  position: relative;
+}
+
+.select span.material-symbols-outlined {
+  margin-right: auto;  /* Empuja el icono a la izquierda */
+  font-size: 3.5vh;
+}
+
+.select.selected {
+  background: #bcd1ec; /* Cambia este color según sea necesario */
+}
+
+.select:hover {
+  /* background: #fff8b4;  */
+  background: #bcd1ec;
+}
+
+.back:hover {
+  background: #ffcdcd; 
+}
+
+.select-text {
+  flex-grow: 1;
+  text-align: center;  /* Asegura que el texto esté centrado */
+  font-size: 15px; /* Ajuste según necesidad */
+  color: #333; /* Color del texto */
+}
+
+.info-container {
+  width: 95%;
+  margin-top: 5px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: row;
+  flex-shrink: 0;
+  margin-bottom: 10px;
+}
+
+.form-group label {
+  padding-right: 10px;
+  display: flex;
+  align-items: center;
+}
+
+.form-group input, .form-group select {
+  padding: 10px;
+  border: 1px solid #ccc;
+  background: #ffffff;
+  border-radius: 10px;
+  color: black;
+}
+
+.form-group input:enabled, .form-group select:enabled {
+  background: #eeeeee;
+  border-color: #000000;
+}
+
+.two-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+  width: 90%;
+}
+
+.two-container .form-group {
+  flex: 1;
+}
+
+.large {
+  width: 70%;
+}
+
+.medium {
+  width: 40%;
+}

@@ -12,7 +12,6 @@ hr {
   width: 95%;
   height: 1px;
   background-color: #000000;
-
 }
 
 .title-container {
@@ -24,6 +23,7 @@ hr {
   flex-direction: row;
   justify-content: space-around;
   width: 100%;
+  padding-bottom: 10px;
 }
 
 .select{
@@ -92,10 +92,6 @@ hr {
   color: black;
 }
 
-.form-group select {
-  width: 40%;
-}
-
 .form-group input:enabled, .form-group select:enabled {
   background: #eeeeee;
   border-color: #000000;
@@ -105,29 +101,17 @@ hr {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  width: 100%;
+  width: 90%;
 }
 
 .two-container .form-group {
   flex: 1;
 }
 
-.two-container .form-group-abreviado {
-  margin-left: 5vh;
+.large {
+  width: 70%;
 }
 
-.two-tel-container {
-  display: flex;
-}
-
-.two-tel-container .form-group-abreviado {
-  margin-left: 5vh;
-}
-
-input.large {
-  width: 100%;
-}
-
-input.medium {
+.medium {
   width: 40%;
 }

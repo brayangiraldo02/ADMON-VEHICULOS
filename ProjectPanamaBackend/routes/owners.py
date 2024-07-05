@@ -130,6 +130,8 @@ async def get_owner(owner_id: int):
       'telefono': owner.TELEFONO,
       'celular': owner.CELULAR,
       'celular1': owner.CELULAR1,
+      'fec_nacimiento': owner.FEC_NACIMI,
+      'fec_ingreso': owner.FEC_INGRES,
       'representante': owner.REPRESENTA,
       'contacto': owner.CONTACTO,
       'correo': owner.CORREO,
@@ -137,6 +139,10 @@ async def get_owner(owner_id: int):
       'estado': owner.ESTADO,
       'fec_estado': owner.FEC_ESTADO,
       'central': owner.CENTRAL,
+      'grupo': owner.GRUPO,
+      'impuesto': owner.IMPUESTO,
+      'admon_parado': owner.ADM_PARADO,
+      'descuento': owner.DESCUENTO,
       'auditor': owner.USUARIO,  
       'cnt': owner.CONTROL,  
       'dcto': owner.DESCUENTO,
@@ -172,6 +178,10 @@ def update_propietario(propietario_id: str, propietario: PropietarioUpdate):
       result.CORREO = propietario.correo
       result.CORREO1 = propietario.correo1
       result.CONTACTO = propietario.contacto
+      result.GRUPO = propietario.grupo
+      result.IMPUESTO = propietario.impuesto
+      result.ADM_PARADO = propietario.admon_parado
+      result.DESCUENTO = propietario.descuento
       if propietario.stateEdited:
         if propietario.estado == 'Activo':
           result.ESTADO = 1
@@ -239,7 +249,7 @@ async def get_owners_vehicles(owner_id: int):
 
 #----------------------------------------------------------------------------------------------------------------
 
-@owners_router.get("/propietarios-representa/{owner_id}", tags=["Owners"])
+@owners_router.get("/owner-representative/{owner_id}", tags=["Owners"])
 async def get_owner_rep(owner_id: int):
   db = session()
   try: 
