@@ -19,6 +19,11 @@ export class OwnersResumeComponent implements OnInit {
   centralFound = false;
   usersFound = false;
   stateEdited = false;
+  fields = [
+    'nombre', 'abreviado', 'cc', 'nit', 'ruc', 'ciudad', 'direccion', 
+    'telefono', 'celular', 'celular1', 'representante', 'contacto', 
+    'correo', 'correo1', 'grupo', 'impuesto', 'admon_parado', 'descuento', 'fec_nacimiento', 'fec_ingreso'
+  ];
 
   constructor(
     private route: ActivatedRoute, 
@@ -168,12 +173,7 @@ export class OwnersResumeComponent implements OnInit {
     }
 
     this.isEditable = true;
-    const fields = [
-      'nombre', 'abreviado', 'cc', 'nit', 'ruc', 'ciudad', 'direccion', 
-      'telefono', 'celular', 'celular1', 'representante', 'contacto', 
-      'correo', 'correo1', 'grupo', 'impuesto', 'admon_parado', 'descuento', 'fec_nacimiento', 'fec_ingreso'
-    ];
-    fields.forEach(field => {
+    this.fields.forEach(field => {
       const element = document.getElementById(field) as HTMLInputElement;
       if (element) {
         element.disabled = false;
@@ -183,12 +183,7 @@ export class OwnersResumeComponent implements OnInit {
 
   disableInputs() {
     this.isEditable = false;
-    const fields = [
-      'nombre', 'abreviado', 'cc', 'nit', 'ruc', 'ciudad', 'direccion', 
-      'telefono', 'celular', 'celular1', 'representante', 'contacto', 
-      'correo', 'correo1', 'grupo', 'impuesto', 'admon_parado', 'descuento', 'fec_nacimiento', 'fec_ingreso'
-    ];
-    fields.forEach(field => {
+    this.fields.forEach(field => {
       const element = document.getElementById(field) as HTMLInputElement;
       if (element) {
         element.disabled = true;
@@ -197,14 +192,8 @@ export class OwnersResumeComponent implements OnInit {
   }
 
   newData() {
-    const fields = [
-      'nombre', 'abreviado', 'cc', 'nit', 'ruc', 'ciudad', 'direccion', 
-      'telefono', 'celular', 'celular1', 'representante', 'contacto', 
-      'correo', 'correo1', 'estado', 'auditor', 'central', 'grupo', 'impuesto', 'admon_parado', 'descuento', 'fec_nacimiento', 'fec_ingreso'
-    ];
-    
     const dataToSave: any = {};
-    fields.forEach(field => {
+    this.fields.forEach(field => {
       const element = document.getElementById(field) as HTMLInputElement;
       if (element) {
         dataToSave[field] = element.value;
@@ -224,7 +213,8 @@ export class OwnersResumeComponent implements OnInit {
     const fields = [
       'nombre', 'abreviado', 'cc', 'ruc', 'ciudad', 'direccion', 
       'telefono', 'celular', 'celular1', 'representante', 'contacto', 
-      'correo', 'correo1', 'estado', 'auditor', 'central', 'grupo', 'impuesto', 'admon_parado', 'descuento', 'fec_nacimiento', 'fec_ingreso'
+      'correo', 'correo1', 'estado', 'auditor', 'central', 'grupo', 
+      'impuesto', 'admon_parado', 'descuento', 'fec_nacimiento', 'fec_ingreso'
     ];
 
     let modified = false;
@@ -272,7 +262,7 @@ export class OwnersResumeComponent implements OnInit {
     console.log(modifiedData)
 
     if (!modifiedData) {
-      window.alert('No se ha modificado ningún dato');
+      window.alert('No se ha modificado ningún dato.');
       this.disableInputs();
       return;
     }
@@ -283,16 +273,16 @@ export class OwnersResumeComponent implements OnInit {
 
     console.log('Data to save:', dataToSave);
   
-    // this.apiService.updateData(`owner/${this.code}`, dataToSave).subscribe(
-    //   (response) => {
-    //     window.alert('Datos actualizados correctamente');
-    //     this.disableInputs();
-    //     location.reload();
-    //   },
-    //   (error) => {
-    //     console.log(error);
-    //   }
-    // );
+    this.apiService.updateData(`owner/${this.code}`, dataToSave).subscribe(
+      (response) => {
+        window.alert('Datos actualizados correctamente');
+        this.disableInputs();
+        location.reload();
+      },
+      (error) => {
+        console.log(error);
+      }
+    );
   }
 
   goToOwnerVehicles(code: string | null) {
