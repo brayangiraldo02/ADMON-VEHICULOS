@@ -288,4 +288,8 @@ export class OwnersResumeComponent implements OnInit {
   goToOwnerVehicles(code: string | null) {
     this.router.navigate(['/owner-vehicles', code]);
   }
+
+  goToOwnerContract(code: string | null) {
+    this.router.navigate(['/owner-contract', code]);
+  }
 }

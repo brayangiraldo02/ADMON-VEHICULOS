@@ -1,6 +1,6 @@
 <app-header></app-header>
 <div class="main-container">
-  <h1 class="title-container">PROPIETARIOS</h1>
+  <h1 class="title-container">PROPIETARIOS {{code}} - HOJA DE VIDA</h1>
 
   <div class="buttons-container" *ngIf="!isLoading">
 
@@ -11,7 +11,7 @@
       <p class="select-text">Regresar</p>
     </button>
 
-    <button class="select" type="button">
+    <button class="select" type="button" (click)="goToOwnerContract(code)">
       <span class="material-symbols-outlined">
         contract
       </span>

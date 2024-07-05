@@ -24,6 +24,7 @@ import { OwnersTableComponent } from './components/tasks/owners/owners-table/own
 import { OwnersResumeComponent } from './components/tasks/owners/owners-resume/owners-resume.component';
 import { DriversComponent } from './components/tasks/drivers/drivers.component';
 import { OwnersVehiclesComponent } from './components/tasks/owners/owners-vehicles/owners-vehicles.component';
+import { OwnersContractComponent } from './components/tasks/owners/owners-contract/owners-contract.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -35,6 +36,7 @@ const routes: Routes = [
   { path: 'owners', component: OwnersTableComponent, canActivate: [AuthGuard]},
   { path: 'owner/:code', component: OwnersResumeComponent, canActivate: [AuthGuard]},
   { path: 'owner-vehicles/:code', component: OwnersVehiclesComponent, canActivate: [AuthGuard]},
+  { path: 'owner-contract/:code', component: OwnersContractComponent, canActivate: [AuthGuard]},
   { path: 'drivers', component: DriversComponent, canActivate: [AuthGuard]},
   { path: 'operations', component: OpcionesOperacionesComponent, canActivate: [AuthGuard]},
   { path: 'procedures', component: OpcionesTramitesComponent, canActivate: [AuthGuard]},
