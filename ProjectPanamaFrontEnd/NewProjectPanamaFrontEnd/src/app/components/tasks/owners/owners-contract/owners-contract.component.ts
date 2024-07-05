@@ -11,7 +11,6 @@ export class OwnersContractComponent implements OnInit {
   code: string | null = null;
   isLoading = true;
   data: any;
-  infoOwner: any;
   isEditable = false;
   fields = [
     'razon_social', 'representante', 'sexo', 'estado_civil', 'tipo_documento', 'numero_documento', 'nacionalidad', 'ficha', 'documento'
@@ -28,7 +27,6 @@ export class OwnersContractComponent implements OnInit {
       this.code = params.get('code');
     });
     this.fetchData();
-    this.getInfoOwner();
   }
 
   fetchData() {
@@ -41,17 +39,6 @@ export class OwnersContractComponent implements OnInit {
       (error) => {
         console.log(error);
         this.isLoading = false;
-      }
-    );
-  }
-
-  getInfoOwner(){
-    this.apiService.getData(`owner/${this.code}`).subscribe(
-      (response) => {
-        this.infoOwner = response;
-      },
-      (error) => {
-        console.log(error);
       }
     );
   }

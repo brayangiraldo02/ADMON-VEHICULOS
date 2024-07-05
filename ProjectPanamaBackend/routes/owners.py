@@ -254,6 +254,7 @@ async def get_owner_rep(owner_id: int):
   db = session()
   try: 
     owner = db.query(
+      Propietarios.NOMBRE.label('nombre_propietario'),
       Propietarios.RAZONSOCIA.label('razon_social'),
       Propietarios.REPRESENTA.label('representante'),
       Propietarios.REP_SEXO.label('sexo'),
@@ -271,6 +272,7 @@ async def get_owner_rep(owner_id: int):
       return JSONResponse(content={"error": "Owner not found"}, status_code=404)
     
     owner_rep = {
+      'nombre_propietario': owner.nombre_propietario,
       'razon_social': owner.razon_social,
       'sexo': owner.sexo,
       'estado_civil': owner.estado_civil,
