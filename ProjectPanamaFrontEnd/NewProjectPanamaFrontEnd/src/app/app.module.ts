@@ -27,12 +27,12 @@ import { OpcionesCntComponent } from './components/options/cnt/opciones-cnt/opci
 import { OpcionesUtilidadesComponent } from './components/options/utilidades/opciones-utilidades/opciones-utilidades.component';
 import { OpcionesCarteraComponent } from './components/options/cartera/opciones-cartera/opciones-cartera.component';
 import { OpcionesAlmacenComponent } from './components/options/almacen/opciones-almacen/opciones-almacen.component';
-import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { OwnersTableComponent } from './components/tasks/owners/owners-table/owners-table.component';
 import { OwnersContractComponent } from './components/tasks/owners/owners-contract/owners-contract.component';
 import { OwnersVehiclesComponent } from './components/tasks/owners/owners-vehicles/owners-vehicles.component';
 import { OwnersResumeComponent } from './components/tasks/owners/owners-resume/owners-resume.component';
 import { DriversComponent } from './components/tasks/drivers/drivers.component';
+import { OwnersAddnewComponent } from './components/tasks/owners/owners-addnew/owners-addnew.component';
 
 @NgModule({
   declarations: [
@@ -62,6 +62,7 @@ import { DriversComponent } from './components/tasks/drivers/drivers.component';
     OwnersVehiclesComponent,
     OwnersResumeComponent,
     DriversComponent,
+    OwnersAddnewComponent,
   ],
   imports: [
     BrowserModule,
@@ -71,8 +72,7 @@ import { DriversComponent } from './components/tasks/drivers/drivers.component';
     MatButtonModule,
     HttpClientModule,
     FormsModule,
-    ReactiveFormsModule,
-    MatSnackBarModule
+    ReactiveFormsModule
   ],
   providers: [],
   bootstrap: [AppComponent]
