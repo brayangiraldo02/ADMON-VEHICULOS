@@ -5,7 +5,7 @@ from models.propietarios import Propietarios
 from models.vehiculos import Vehiculos
 from models.conductores import Conductores
 from models.estados import Estados
-from schemas.owners import PropietarioUpdate, PropietarioCreate
+from schemas.owners import PropietarioUpdate, PropietarioCreate, RepresentantePropietario
 from models.centrales import Centrales
 from models.permisosusuario import PermisosUsuario
 from middlewares.JWTBearer import JWTBearer
@@ -314,6 +314,7 @@ async def get_owner_rep(owner_id: int):
   db = session()
   try: 
     owner = db.query(
+      Propietarios.NOMBRE.label('nombre_propietario'),
       Propietarios.RAZONSOCIA.label('razon_social'),
       Propietarios.REPRESENTA.label('representante'),
       Propietarios.REP_SEXO.label('sexo'),
@@ -331,6 +332,7 @@ async def get_owner_rep(owner_id: int):
       return JSONResponse(content={"error": "Owner not found"}, status_code=404)
     
     owner_rep = {
+      'nombre_propietario': owner.nombre_propietario,
       'razon_social': owner.razon_social,
       'sexo': owner.sexo,
       'estado_civil': owner.estado_civil,
@@ -350,3 +352,25 @@ async def get_owner_rep(owner_id: int):
 
 #----------------------------------------------------------------------------------------------------------------
 
+@owners_router.put("/owner-representative/{owner_id}", tags=["Owners"])
+async def update_owner_representative(owner_id: int, propietario: RepresentantePropietario):
+  db = session()
+  try:
+    result = db.query(Propietarios).filter(Propietarios.CODIGO == owner_id).first()
+    if not result:
+      return JSONResponse(status_code=404, content={"message": "Owner not found"})
+    result.RAZONSOCIA = propietario.razon_social
+    result.REPRESENTA = propietario.representante
+    result.REP_SEXO = propietario.sexo
+    result.REP_ESTADO = propietario.estado_civil
+    result.REP_TIPDOC = propietario.tipo_documento
+    result.REP_NUMERO = propietario.numero_documento
+    result.REP_NACION = propietario.nacionalidad
+    result.FICHA = propietario.ficha
+    result.DOCUMENTO = propietario.documento
+    db.commit()
+    return JSONResponse(content={"message": "Owner representative updated"}, status_code=200)
+  except Exception as e:
+    return JSONResponse(content={"error": str(e)}, status_code=500)
+  finally:
+    db.close()
