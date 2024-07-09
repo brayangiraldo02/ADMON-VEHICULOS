@@ -12,7 +12,6 @@ hr {
   width: 95%;
   height: 1px;
   background-color: #000000;
-
 }
 
 .title-container {
@@ -24,6 +23,7 @@ hr {
   flex-direction: row;
   justify-content: space-around;
   width: 100%;
+  padding-bottom: 10px;
 }
 
 .select{
@@ -55,6 +55,10 @@ hr {
   background: #bcd1ec;
 }
 
+.back:hover {
+  background: #ffcdcd; 
+}
+
 .select-text {
   flex-grow: 1;
   text-align: center;  /* Asegura que el texto esté centrado */
@@ -80,14 +84,15 @@ hr {
   align-items: center;
 }
 
-.form-group input {
+.form-group input, .form-group select {
   padding: 10px;
   border: 1px solid #ccc;
   background: #ffffff;
   border-radius: 10px;
+  color: black;
 }
 
-.form-group input:enabled {
+.form-group input:enabled, .form-group select:enabled {
   background: #eeeeee;
   border-color: #000000;
 }
@@ -96,29 +101,17 @@ hr {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  width: 100%;
+  width: 90%;
 }
 
 .two-container .form-group {
   flex: 1;
 }
 
-.two-container .form-group-abreviado {
-  margin-left: 5vh;
+.large {
+  width: 70%;
 }
 
-.two-tel-container {
-  display: flex;
-}
-
-.two-tel-container .form-group-abreviado {
-  margin-left: 5vh;
-}
-
-input.large {
-  width: 100%;
-}
-
-input.medium {
+.medium {
   width: 40%;
 }

@@ -130,6 +130,8 @@ async def get_owner(owner_id: int):
       'telefono': owner.TELEFONO,
       'celular': owner.CELULAR,
       'celular1': owner.CELULAR1,
+      'fec_nacimiento': owner.FEC_NACIMI,
+      'fec_ingreso': owner.FEC_INGRES,
       'representante': owner.REPRESENTA,
       'contacto': owner.CONTACTO,
       'correo': owner.CORREO,
@@ -137,6 +139,10 @@ async def get_owner(owner_id: int):
       'estado': owner.ESTADO,
       'fec_estado': owner.FEC_ESTADO,
       'central': owner.CENTRAL,
+      'grupo': owner.GRUPO,
+      'impuesto': owner.IMPUESTO,
+      'admon_parado': owner.ADM_PARADO,
+      'descuento': owner.DESCUENTO,
       'auditor': owner.USUARIO,  
       'cnt': owner.CONTROL,  
       'dcto': owner.DESCUENTO,
@@ -150,7 +156,7 @@ async def get_owner(owner_id: int):
 
 #----------------------------------------------------------------------------------------------------------------
 
-@owners_router.put("/propietarios/{propietario_id}", response_model=PropietarioUpdate)
+@owners_router.put("/owner/{propietario_id}", response_model=PropietarioUpdate, tags=["Owners"])
 def update_propietario(propietario_id: str, propietario: PropietarioUpdate):
     db = session()
     try:
@@ -160,7 +166,7 @@ def update_propietario(propietario_id: str, propietario: PropietarioUpdate):
       result.NOMBRE = propietario.nombre
       result.ABREVIADO = propietario.abreviado
       result.REPRESENTA = propietario.representante
-      result.USUARIO = propietario.auditora
+      result.USUARIO = propietario.auditor
       result.NIT = propietario.cc
       result.RUC = propietario.ruc
       result.CIUDAD = propietario.ciudad
@@ -172,6 +178,10 @@ def update_propietario(propietario_id: str, propietario: PropietarioUpdate):
       result.CORREO = propietario.correo
       result.CORREO1 = propietario.correo1
       result.CONTACTO = propietario.contacto
+      result.GRUPO = propietario.grupo
+      result.IMPUESTO = propietario.impuesto
+      result.ADM_PARADO = propietario.admon_parado
+      result.DESCUENTO = propietario.descuento
       if propietario.stateEdited:
         if propietario.estado == 'Activo':
           result.ESTADO = 1
@@ -186,7 +196,7 @@ def update_propietario(propietario_id: str, propietario: PropietarioUpdate):
       db.commit()
       return JSONResponse(content={"message": "Owner updated"}, status_code=200)
     except Exception as e:
-      return JSONResponse(content={"error": str(e)})
+      return JSONResponse(content={"error": str(e)}, status_code=500)
     finally:
       db.close()
 
@@ -252,7 +262,7 @@ def create_propietario(propietario: PropietarioCreate):
 
 #----------------------------------------------------------------------------------------------------------------
 
-@owners_router.get("/propietarios-vehiculos/{owner_id}", tags=["Owners"])
+@owners_router.get("/owner-vehicles/{owner_id}", tags=["Owners"])
 async def get_owners_vehicles(owner_id: int):
   db = session()
   try:
@@ -299,7 +309,7 @@ async def get_owners_vehicles(owner_id: int):
 
 #----------------------------------------------------------------------------------------------------------------
 
-@owners_router.get("/propietarios-representa/{owner_id}", tags=["Owners"])
+@owners_router.get("/owner-representative/{owner_id}", tags=["Owners"])
 async def get_owner_rep(owner_id: int):
   db = session()
   try: 

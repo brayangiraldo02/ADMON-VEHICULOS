@@ -1,26 +1,26 @@
 <app-header></app-header>
 <div class="main-container">
-  <h1 class="title-container">PROPIETARIOS</h1>
+  <h1 class="title-container">PROPIETARIOS {{code}} - HOJA DE VIDA</h1>
 
   <div class="buttons-container" *ngIf="!isLoading">
 
-    <button class="select" type="button">
+    <button class="select back" type="button" routerLink="/owners">
       <span class="material-symbols-outlined">
-        print
+        arrow_back
       </span>
-      <p class="select-text">Hoja de Vida</p>
+      <p class="select-text">Regresar</p>
     </button>
 
-    <button class="select" type="button">
+    <button class="select" type="button" (click)="goToOwnerContract(code)">
       <span class="material-symbols-outlined">
-        print
+        contract
       </span>
       <p class="select-text">Contrato</p>
     </button>
 
-    <button class="select" type="button">
+    <button class="select" type="button" (click)="goToOwnerVehicles(code)">
       <span class="material-symbols-outlined">
-        print
+        traffic_jam
       </span>
       <p class="select-text">Vehículos</p>
     </button>
@@ -41,21 +41,23 @@
         <input class="large" type="text" id="nombre" name="nombre" [value]="data.nombre_propietario" disabled><br>
       </div>
   
-      <div class="form-group form-group-abreviado">
+      <div class="form-group">
         <label for="abreviado">Abreviado:</label><br>
-        <input type="text" id="abreviado" name="abreviado" [value]="data.nombre_abreviado" disabled><br>
+        <input class="medium" type="text" id="abreviado" name="abreviado" [value]="data.nombre_abreviado" disabled><br>
       </div>
     </div>
 
-    <div class="form-group">
-      <label for="nit" for="codigo">C.C / N.I.T. :</label><br>
-      <input type="text" id="nit" name="nit" [value]="data.nit" disabled><br>
-      <input type="text" id="codigo" name="codigo" [value]="data.codigo" disabled><br>
-    </div>
-
-    <div class="form-group">
-      <label for="ruc">R.U.C:</label><br>
-      <input type="text" id="ruc" name="ruc" [value]="data.ruc" disabled><br>
+    <div class="two-container">
+      <div class="form-group">
+        <label for="cc" for="codigo">C.C / N.I.T. :</label><br>
+        <input type="number" id="cc" name="cc" [value]="data.nit" disabled><br>
+        <input type="text" id="codigo" name="codigo" [value]="data.codigo" disabled><br>
+      </div>
+  
+      <div class="form-group">
+        <label for="ruc">R.U.C:</label><br>
+        <input class="medium" type="text" id="ruc" name="ruc" [value]="data.ruc" disabled><br>
+      </div>
     </div>
 
   </div>
@@ -63,23 +65,29 @@
   <hr *ngIf="!isLoading">
 
   <div class="info-container" *ngIf="!isLoading">
-    <div class="form-group">
-      <label for="ciudad">Ciudad:</label><br>
-      <input type="number" id="ciudad" name="ciudad" [value]="data.ciudad" disabled><br>
+
+    <div class="two-container">
+      <div class="form-group">
+        <label for="ciudad">Ciudad:</label><br>
+        <select class="large" id="ciudad" name="ciudad" [value]="data.ciudad" [disabled]="!isEditable">
+          <option *ngFor="let city of cities" [value]="city.codigo" [selected]="city.codigo === data.ciudad">{{ city.codigo }} - {{ city.nombre }}</option>
+        </select><br>
+      </div>
+      
+  
+      <div class="form-group">
+        <label for="direccion">Dirección:</label><br>
+        <input class="large" type="text" id="direccion" name="direccion" [value]="data.direccion" disabled><br>
+      </div>
     </div>
 
-    <div class="form-group">
-      <label for="direccion">Dirección:</label><br>
-      <input class="medium" type="text" id="direccion" name="direccion" [value]="data.direccion" disabled><br>
-    </div>
-
-    <div class="two-tel-container">
+    <div class="two-container">
       <div class="form-group">
         <label for="telefono">Teléfono:</label><br>
         <input type="text" id="telefono" name="telefono" [value]="data.telefono" disabled><br>
       </div>
   
-      <div class="form-group form-group-abreviado">
+      <div class="form-group">
         <label for="celular" for="celular1">Celulares:</label><br>
         <input type="text" id="celular" name="celular" [value]="data.celular" disabled><br>
         <input type="text" id="celular1" name="celular1" [value]="data.celular1" disabled><br>
@@ -87,14 +95,16 @@
       
     </div>
 
-    <div class="form-group">
-      <label for="representante">Representante:</label><br>
-      <input class="medium" type="text" id="representante" name="representante" [value]="data.representante" disabled><br>
-    </div>
-
-    <div class="form-group">
-      <label for="contacto">Contacto:</label><br>
-      <input class="medium" type="text" id="contacto" name="contacto" [value]="data.contacto" disabled><br>
+    <div class="two-container">
+      <div class="form-group">
+        <label for="representante">Representante:</label><br>
+        <input class="large" type="text" id="representante" name="representante" [value]="data.representante" disabled><br>
+      </div>
+  
+      <div class="form-group">
+        <label for="contacto">Contacto:</label><br>
+        <input class="medium" type="text" id="contacto" name="contacto" [value]="data.contacto" disabled><br>
+      </div>
     </div>
 
     <div class="form-group">
@@ -106,18 +116,101 @@
 
   <hr *ngIf="!isLoading">
 
+  <div class="info-container" *ngIf="!isLoading">
+
+    <div class="two-container">
+      <div class="form-group">
+        <label for="estado">Estado:</label><br>
+        <select class="medium" id="estado" name="estado" [disabled]="!isEditable">
+          <option value="Activo" [selected]="data.estado === 'Activo'">Activo</option>
+          <option value="Suspendido" [selected]="data.estado === 'Suspendido'">Suspendido</option>
+          <option value="Retirado" [selected]="data.estado === 'Retirado'">Retirado</option>
+        </select><br>
+      </div>
+  
+      <div class="form-group">
+        <label for="fec_estado">Fecha Estado:</label><br>
+        <input type="text" id="fec_estado" name="fec_estado" [value]="data.fec_estado" disabled><br>
+      </div>
+    </div>
+  </div>
+
+  <hr *ngIf="!isLoading">
+
+  <div class="info-container" *ngIf="!isLoading">
+    <div class="two-container">
+      <div class="form-group">
+        <label for="auditor">Auditora:</label><br>
+        <select class="select-option" id="auditor" name="auditor" [value]="data.auditor" [disabled]="!isEditable">
+          <option *ngFor="let auditor of users" [value]="auditor.codigo" [selected]="auditor.codigo === data.auditor">{{ auditor.codigo }} - {{ auditor.nombre }}</option>
+        </select><br>
+      </div>
+
+      <div class="form-group">
+        <label for="central">Central:</label><br>
+        <select class="select-option" id="central" name="central" [value]="data.central" [disabled]="!isEditable">
+          <option *ngFor="let central of central" [value]="central.codigo" [selected]="central.codigo === data.central">{{ central.codigo }} - {{ central.nombre }}</option>
+        </select><br>
+      </div>
+    </div>
+  </div>
+
+  <hr *ngIf="!isLoading">
+
+  <div class="info-container" *ngIf="!isLoading">
+    <div class="two-container">
+      <div class="form-group">
+        <label for="grupo">Grupo Consulta:</label><br>
+        <input type="text" id="grupo" name="grupo" [value]="data.grupo" disabled><br>
+      </div>
+
+      <div class="form-group">
+        <label for="impuesto">Impuesto:</label><br>
+        <input type="text" id="impuesto" name="impuesto" [value]="data.impuesto" disabled><br>
+      </div>
+
+      <div class="form-group">
+        <label for="admon_parado">Admon Parado:</label><br>
+        <input type="text" id="admon_parado" name="admon_parado" [value]="data.admon_parado" disabled><br>
+      </div>
+    </div>
+
+    <div class="two-container">
+      <div class="form-group">
+        <label for="descuento">Descuento:</label><br>
+        <input type="text" id="descuento" name="descuento" [value]="data.descuento" disabled><br>
+      </div>
+
+      <div class="form-group">
+        <label for="fec_nacimiento">Fecha nacimiento:</label><br>
+        <input type="date" id="fec_nacimiento" name="fec_nacimiento" [value]="data.fec_nacimiento" disabled><br>
+      </div>
+
+      <div class="form-group">
+        <label for="fec_ingreso">Fecha ingreso:</label><br>
+        <input type="date" id="fec_ingreso" name="fec_ingreso" [value]="data.fec_ingreso" disabled><br>
+      </div>
+    </div>
+  </div>
+
+  <hr *ngIf="!isLoading">
+
   <div class="buttons-container" *ngIf="!isLoading">
 
     <button class="select" type="button" (click)="enableInputs()">
-      <span class="material-symbols-outlined">
-        print
+      <span class="material-symbols-outlined" *ngIf="!isEditable">
+        edit
       </span>
-      <p class="select-text">Editar</p>
+      <p class="select-text" *ngIf="!isEditable">Editar</p>
+      <span class="material-symbols-outlined" *ngIf="isEditable">
+        close
+      </span>
+      <p class="select-text" *ngIf="isEditable">Cancelar</p>
     </button>
   
-    <button class="select" type="button" (click)="saveData()">
+    <button class="select" type="button" (click)="saveData()" *ngIf="isEditable">
       <span class="material-symbols-outlined">
-        print
+        check
       </span>
       <p class="select-text">Aceptar</p>
     </button>

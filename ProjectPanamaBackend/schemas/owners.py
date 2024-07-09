@@ -15,6 +15,14 @@ class PropietarioUpdate(BaseModel):
     contacto: Optional[str] = None
     correo: Optional[str] = None
     correo1: Optional[str] = None
+    central: Optional[str] = None
+    auditor: Optional[str] = None
+    stateEdited: Optional[bool] = False
+    estado: Optional[str] = None
+    grupo: Optional[str] = None
+    impuesto: Optional[str] = None
+    admon_parado: Optional[str] = None
+    descuento: Optional[str] = None
 
 class PropietarioCreate(BaseModel):
     codigo: str
@@ -34,3 +42,4 @@ class PropietarioCreate(BaseModel):
     correo: str
     correo1: str
     estado: str
+    
