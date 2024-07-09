@@ -23,3 +23,14 @@ class PropietarioUpdate(BaseModel):
     impuesto: Optional[str] = None
     admon_parado: Optional[str] = None
     descuento: Optional[str] = None
+
+class RepresentantePropietario(BaseModel):
+    razon_social: Optional[str] = None
+    representante: Optional[str] = None
+    tipo_documento: Optional[str] = None
+    numero_documento: Optional[str] = None
+    sexo: Optional[str] = None
+    estado_civil: Optional[str] = None
+    nacionalidad: Optional[str] = None
+    ficha: Optional[str] = None
+    documento: Optional[str] = None

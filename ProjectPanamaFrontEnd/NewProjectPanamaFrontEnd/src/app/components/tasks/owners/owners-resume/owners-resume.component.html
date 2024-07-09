@@ -197,6 +197,13 @@
 
   <div class="buttons-container" *ngIf="!isLoading">
 
+    <button class="select" type="button" *ngIf="!isEditable">
+      <span class="material-symbols-outlined">
+        add_circle
+      </span>
+      <p class="select-text">Nuevo Propietario</p>
+    </button>
+
     <button class="select" type="button" (click)="enableInputs()">
       <span class="material-symbols-outlined" *ngIf="!isEditable">
         edit

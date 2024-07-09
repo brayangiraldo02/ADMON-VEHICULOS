@@ -2,7 +2,7 @@
 
 <div class="main-container">
   <h1 class="title-container">PROPIETARIOS - CONTRATO</h1>
-  <h4 class="title-container"  *ngIf="!isLoading">{{ infoOwner.codigo }} - {{ infoOwner.nombre_propietario }}</h4>
+  <h4 class="title-container"  *ngIf="!isLoading">{{ code }} - {{ data.nombre_propietario }}</h4>
 
   <div class="buttons-container"  *ngIf="!isLoading">
 
@@ -93,18 +93,18 @@
 
   <div class="buttons-container" *ngIf="!isLoading">
 
-    <button class="select" type="button">
-      <span class="material-symbols-outlined">
+    <button class="select" type="button" (click)="enableInputs()">
+      <span class="material-symbols-outlined" *ngIf="!isEditable">
         edit
       </span>
-      <p class="select-text">Editar</p>
-      <span class="material-symbols-outlined">
+      <p class="select-text" *ngIf="!isEditable">Editar</p>
+      <span class="material-symbols-outlined" *ngIf="isEditable">
         close
       </span>
-      <p class="select-text">Cancelar</p>
+      <p class="select-text" *ngIf="isEditable">Cancelar</p>
     </button>
   
-    <button class="select" type="button">
+    <button class="select" type="button" *ngIf="isEditable" (click)="saveData()">
       <span class="material-symbols-outlined">
         check
       </span>

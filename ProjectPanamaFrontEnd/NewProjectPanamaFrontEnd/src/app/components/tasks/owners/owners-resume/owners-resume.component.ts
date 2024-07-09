@@ -22,7 +22,8 @@ export class OwnersResumeComponent implements OnInit {
   fields = [
     'nombre', 'abreviado', 'cc', 'nit', 'ruc', 'ciudad', 'direccion', 
     'telefono', 'celular', 'celular1', 'representante', 'contacto', 
-    'correo', 'correo1', 'grupo', 'impuesto', 'admon_parado', 'descuento', 'fec_nacimiento', 'fec_ingreso'
+    'correo', 'correo1', 'grupo', 'impuesto', 'admon_parado', 
+    'descuento', 'fec_nacimiento', 'fec_ingreso'
   ];
 
   constructor(
@@ -192,8 +193,14 @@ export class OwnersResumeComponent implements OnInit {
   }
 
   newData() {
+    const fields = [
+      'nombre', 'abreviado', 'cc', 'ruc', 'ciudad', 'direccion', 
+      'telefono', 'celular', 'celular1', 'representante', 'contacto', 
+      'correo', 'correo1', 'estado', 'auditor', 'central', 'grupo', 
+      'impuesto', 'admon_parado', 'descuento', 'fec_nacimiento', 'fec_ingreso'
+    ]
     const dataToSave: any = {};
-    this.fields.forEach(field => {
+    fields.forEach(field => {
       const element = document.getElementById(field) as HTMLInputElement;
       if (element) {
         dataToSave[field] = element.value;
