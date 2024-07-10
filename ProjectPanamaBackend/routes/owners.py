@@ -101,11 +101,15 @@ async def get_all_owners():
 
 # PETICIÓN DE UN PROPIETARIO ESPECÍFICO A LA BASE DE DATOS
 # ---------------------------------------------------------------------------------------------------------------
-@owners_router.get("/owner/{owner_id}", tags=["Owners"])
+""" @owners_router.get("/owner/{owner_id}", tags=["Owners"])
 async def get_owner(owner_id: int):
   db = session()
   try:
-    owner = db.query(Propietarios).filter(Propietarios.CODIGO == owner_id).first()
+    owner = db.query(
+      Propietarios
+    ).filter(
+      Propietarios.CODIGO == owner_id
+    ).first()
 
     if not owner:
       return JSONResponse(content={"error": "Owner not found"}, status_code=404)
@@ -122,6 +126,15 @@ async def get_owner(owner_id: int):
     owner_dict = {
       'codigo': owner.CODIGO,
       'nombre_propietario': owner.NOMBRE,
+      'razon_social': owner.RAZONSOCIA,
+      'sexo': owner.REP_SEXO,
+      'estado_civil': owner.REP_ESTADO,
+      'tipo_documento': owner.REP_TIPDOC,
+      'numero_documento': owner.REP_NUMERO,
+      'nacionalidad': owner.REP_NACION,
+      'ficha': owner.FICHA,
+      'documento': owner.DOCUMENTO,
+      'representante': owner.REPRESENTA,
       'nombre_abreviado': owner.ABREVIADO,
       'nit': owner.NIT,
       'ruc': owner.RUC,
@@ -152,20 +165,28 @@ async def get_owner(owner_id: int):
   except Exception as e:
     return JSONResponse(content={"error": str(e)})
   finally:
-    db.close()
+    db.close() """
 
 #----------------------------------------------------------------------------------------------------------------
 
-@owners_router.put("/owner/{propietario_id}", response_model=PropietarioUpdate, tags=["Owners"])
-def update_propietario(propietario_id: str, propietario: PropietarioUpdate):
+""" @owners_router.put("/owner/{owner_id}", response_model=PropietarioUpdate, tags=["Owners"])
+def update_propietario(owner_id: str, propietario: PropietarioUpdate):
     db = session()
     try:
-      result = db.query(Propietarios).filter(Propietarios.CODIGO == propietario_id).first()
+      result = db.query(Propietarios).filter(Propietarios.CODIGO == owner_id).first()
       if not result:
         return JSONResponse(status_code=404, content={"message": "Owner not found"})
       result.NOMBRE = propietario.nombre
       result.ABREVIADO = propietario.abreviado
       result.REPRESENTA = propietario.representante
+      result.RAZONSOCIA = propietario.razon_social
+      result.REP_SEXO = propietario.sexo
+      result.REP_ESTADO = propietario.estado_civil
+      result.REP_TIPDOC = propietario.tipo_documento
+      result.REP_NUMERO = propietario.numero_documento
+      result.REP_NACION = propietario.nacionalidad
+      result.FICHA = propietario.ficha
+      result.DOCUMENTO = propietario.documento
       result.USUARIO = propietario.auditor
       result.NIT = propietario.cc
       result.RUC = propietario.ruc
@@ -198,11 +219,11 @@ def update_propietario(propietario_id: str, propietario: PropietarioUpdate):
     except Exception as e:
       return JSONResponse(content={"error": str(e)}, status_code=500)
     finally:
-      db.close()
+      db.close() """
 
 #----------------------------------------------------------------------------------------------------------------
 
-@owners_router.post("/propietarios", response_model=PropietarioCreate)
+@owners_router.post("/owners", response_model=PropietarioCreate)
 def create_propietario(propietario: PropietarioCreate):
     db = session()
     try:

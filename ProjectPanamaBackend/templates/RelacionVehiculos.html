@@ -128,7 +128,7 @@
         {% for empresa, empresa_info in data_view.items() %}
             {% if empresa_info['empty'] == '0' %}
                 <tr>
-                    <th colspan="8">
+                    <th colspan="11">
                         <div class="box-propietario">
                             Propietario: {{ empresa_info['codigo_empresa'] }} <span style="text-transform: uppercase;">{{ empresa_info['nombre_empresa'] }}</span>
                         </div>

@@ -9,6 +9,7 @@ from schemas.reports import *
 from fastapi.encoders import jsonable_encoder
 from utils.reports import *
 from datetime import datetime
+import pytz
 
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import FileResponse
@@ -73,8 +74,13 @@ async def get_vehiculos_detalles(infoReports: infoReports):
         datos = {clave: data.get(clave, {}) for clave in claves_deseadas}
 
         # Datos de la fecha y hora actual
-        fecha = datetime.now().strftime("%Y-%m-%d")
-        hora_actual = datetime.now().strftime("%H:%M:%S")
+        # Define la zona horaria de Ciudad de Panamá
+        panama_timezone = pytz.timezone('America/Panama')
+        # Obtén la hora actual en la zona horaria de Ciudad de Panamá
+        now_in_panama = datetime.now(panama_timezone)
+        # Formatea la fecha y la hora según lo requerido
+        fecha = now_in_panama.strftime("%d/%m/%Y")
+        hora_actual = now_in_panama.strftime("%I:%M:%S %p")
         usuario = infoReports.usuario 
         titulo = 'Informe Cuotas Pagas de conductores'
 
