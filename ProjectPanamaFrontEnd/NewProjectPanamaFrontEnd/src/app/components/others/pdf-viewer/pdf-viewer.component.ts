@@ -1,8 +1,8 @@
+// pdf-viewer.component.ts
 import { Component, OnInit } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
 import { ApiService } from 'src/app/services/api.service';
-
 
 @Component({
   selector: 'app-pdf-viewer',
@@ -10,25 +10,61 @@ import { ApiService } from 'src/app/services/api.service';
   styleUrls: ['./pdf-viewer.component.css']
 })
 export class PdfViewerComponent implements OnInit {
-  pdfUrl: SafeResourceUrl | null = null;
-  user: any;
+  pdfBlobUrl: SafeResourceUrl | null = null;
 
   constructor(
     private apiService: ApiService,
-    private sanitizer: DomSanitizer,
-    private route: ActivatedRoute
+    private sanitizer: DomSanitizer
   ) {}
 
   ngOnInit(): void {
-    const pdfUrl = this.route.snapshot.paramMap.get('url');
-    if (pdfUrl) {
-      this.loadPdf(pdfUrl);
+    const endpoint = localStorage.getItem('pdfEndpoint');
+    const dataParam = localStorage.getItem('pdfData') || '0';
+
+    if (endpoint) {
+      if (dataParam != '0') {
+        let data = {};
+        try {
+          data = JSON.parse(dataParam);
+        } catch (e) {
+          console.error('Error parsing data param:', e);
+        }
+        this.loadPostPdf(endpoint, data);
+      } else {
+        this.loadGetPdf(endpoint);
+      }
     } else {
-      console.log('No pdfUrl found');
+      console.log('Missing endpoint');
     }
   }
 
-  loadPdf(url: string) {
-    this.pdfUrl = this.sanitizer.bypassSecurityTrustResourceUrl(url);
+  loadPostPdf(endpoint: string, data: any) {
+    this.apiService.postPdf(endpoint, data).subscribe(
+      response => {
+        // Limpiar LocalStorage
+        localStorage.removeItem('pdfEndpoint');
+        localStorage.removeItem('pdfData');
+        const blob = new Blob([response], { type: 'application/pdf' });
+        this.pdfBlobUrl = this.sanitizer.bypassSecurityTrustResourceUrl(URL.createObjectURL(blob));
+      },
+      error => {
+        console.error('Error al cargar el PDF:', error);
+      }
+    );
+  }
+
+  loadGetPdf(endpoint: string) {
+    this.apiService.getPdf(endpoint).subscribe(
+      response => {
+        // Limpiar LocalStorage
+        localStorage.removeItem('pdfEndpoint');
+        localStorage.removeItem('pdfData');
+        const blob = new Blob([response], { type: 'application/pdf' });
+        this.pdfBlobUrl = this.sanitizer.bypassSecurityTrustResourceUrl(URL.createObjectURL(blob));
+      },
+      error => {
+        console.error('Error al cargar el PDF:', error);
+      }
+    );
   }
 }

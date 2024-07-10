@@ -226,20 +226,10 @@ export class StatevehiclefleetComponent implements OnInit {
     } else {
       if (endpoint) {
         const data = { user: this.user };
-        this.apiService.postPdf(endpoint, data).subscribe(
-          response => {
-            const blob = new Blob([response], { type: 'application/pdf' });
-            const url = window.URL.createObjectURL(blob);
-            const viewerUrl = this.router.serializeUrl(
-              this.router.createUrlTree(['/pdf', { url }])
-            );
-            window.open(viewerUrl, '_blank'); // Abrir en una nueva pestaña
-            this.router.navigate(['/home']);
-          },
-          error => {
-            console.error('Error al generar el informe:', error);
-          }
-        );
+        localStorage.setItem('pdfEndpoint', endpoint);
+        localStorage.setItem('pdfData', JSON.stringify(data));
+        window.open(`/pdf`, '_blank')
+        this.router.navigate(['/home']);
       } else {
         console.error('URL no encontrada para la opción seleccionada.');
       }
@@ -268,19 +258,12 @@ export class StatevehiclefleetComponent implements OnInit {
       estados: this.estadosSeleccionados
     }
     
-    this.apiService.postPdf("relacion-vehiculos-propietario", info).subscribe(
-      response => {
-        const blob = new Blob([response], { type: 'application/pdf' });
-        const url = window.URL.createObjectURL(blob);
-        const viewerUrl = this.router.serializeUrl(
-          this.router.createUrlTree(['/pdf', { url }])
-        );
-        window.open(viewerUrl, '_blank'); // Abrir en una nueva pestaña
-        this.router.navigate(['/home']);
-      },
-      error => {
-        console.error('Error al generar el informe:', error);
-      }
-    );
+    // Guardar endpoint y data en LocalStorage
+    localStorage.setItem('pdfEndpoint', 'relacion-vehiculos-propietario');
+    localStorage.setItem('pdfData', JSON.stringify(info));
+
+    // Navegar al componente PdfViewerComponent
+    window.open(`/pdf`, '_blank')
+    this.router.navigate(['/home']);
   }
 }
