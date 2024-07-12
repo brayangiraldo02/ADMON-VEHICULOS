@@ -1,32 +1,5 @@
-<app-header></app-header>
 <div class="main-container">
-  <h1 class="title-container">PROPIETARIOS - VEHÍCULOS</h1>
-  <h4 class="title-container" *ngIf="!isLoading">{{ infoOwner.codigo }} - {{ infoOwner.nombre_propietario }}</h4>
   <p *ngIf="!isLoading">Total Registros: {{ vehicles.length }}</p>
-
-  <div class="buttons-container" *ngIf="!isLoading">
-    <button class="select back" type="button" routerLink="/owners">
-      <span class="material-symbols-outlined">
-        arrow_back
-      </span>
-      <p class="select-text">Regresar</p>
-    </button>
-
-    <button class="select" type="button" (click)="goToOwnerContract(code)">
-      <span class="material-symbols-outlined">
-        contract
-      </span>
-      <p class="select-text">Contrato</p>
-    </button>
-
-    <button class="select" type="button" (click)="goToOwnerResume(code)">
-      <span class="material-symbols-outlined">
-        library_books
-      </span>
-      <p class="select-text">Hoja de Vida</p>
-    </button>
-  </div>
-
   <div class="table-container" *ngIf="!isLoading">
     <table>
       <thead>
@@ -57,4 +30,3 @@
   </div>
   <p *ngIf="isLoading">Cargando datos, por favor espere...</p>
 </div>
-<app-footer></app-footer>

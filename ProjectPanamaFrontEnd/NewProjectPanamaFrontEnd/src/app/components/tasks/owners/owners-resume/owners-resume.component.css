@@ -26,6 +26,10 @@ hr {
   padding-bottom: 10px;
 }
 
+button.selected {
+  background: #bcd1ec;
+}
+
 .select{
   width: 20%;
   margin: 10px;

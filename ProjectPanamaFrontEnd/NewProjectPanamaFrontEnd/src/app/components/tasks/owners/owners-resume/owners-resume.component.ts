@@ -8,6 +8,7 @@ import { ActivatedRoute, Router } from '@angular/router';
   styleUrls: ['./owners-resume.component.css']
 })
 export class OwnersResumeComponent implements OnInit {
+  selectedButton: string = "hoja";
   code: string | null = null;
   data: any = null;
   cities: any = null;
@@ -19,6 +20,8 @@ export class OwnersResumeComponent implements OnInit {
   centralFound = false;
   usersFound = false;
   stateEdited = false;
+  OwnersVehiclesView = false;
+  OwnersContractView = false;
   fields = [
     'nombre', 'abreviado', 'cc', 'nit', 'ruc', 'ciudad', 'direccion', 
     'telefono', 'celular', 'celular1', 'representante', 'contacto', 
@@ -166,6 +169,10 @@ export class OwnersResumeComponent implements OnInit {
     }
   }
 
+  selectButton(button: string) {
+    this.selectedButton = button;
+  }
+
   enableInputs() {
     if (this.isEditable) {
       this.disableInputs();
@@ -292,11 +299,21 @@ export class OwnersResumeComponent implements OnInit {
     );
   }
 
-  goToOwnerVehicles(code: string | null) {
-    this.router.navigate(['/owner-vehicles', code]);
+  goToOwnerResume() {
+    this.selectButton('hoja')
+    this.OwnersContractView = false;
+    this.OwnersVehiclesView = false;
   }
 
-  goToOwnerContract(code: string | null) {
-    this.router.navigate(['/owner-contract', code]);
+  goToOwnerContract() {
+    this.selectButton('contrato')
+    this.OwnersVehiclesView = false
+    this.OwnersContractView = true;
+  }
+
+  goToOwnerVehicles() {
+    this.selectButton('vehiculos')
+    this.OwnersContractView = false;
+    this.OwnersVehiclesView = true;
   }
 }
