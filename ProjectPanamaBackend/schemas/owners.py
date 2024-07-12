@@ -23,7 +23,44 @@ class PropietarioUpdate(BaseModel):
     impuesto: Optional[str] = None
     admon_parado: Optional[str] = None
     descuento: Optional[str] = None
+    razon_social: Optional[str] = None
+    representante: Optional[str] = None
+    tipo_documento: Optional[str] = None
+    numero_documento: Optional[str] = None
+    sexo: Optional[str] = None
+    estado_civil: Optional[str] = None
+    nacionalidad: Optional[str] = None
+    ficha: Optional[str] = None
+    documento: Optional[str] = None
 
+class PropietarioCreate(BaseModel):
+    codigo: str
+    nombre: str
+    abreviado: str
+    cc: str
+    ruc: str
+    auditora: str
+    ciudad: str
+    direccion: str
+    central: str
+    telefono: str
+    celular: str
+    celular1: str
+    representante: str
+    contacto: str
+    correo: str
+    correo1: str
+    estado: str
+    razon_social: str
+    representante: str
+    tipo_documento: str
+    numero_documento: str
+    sexo: str
+    estado_civil: str
+    nacionalidad: str
+    ficha: str
+    documento: str
+    
 class RepresentantePropietario(BaseModel):
     razon_social: Optional[str] = None
     representante: Optional[str] = None

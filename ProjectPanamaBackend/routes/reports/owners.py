@@ -6,6 +6,7 @@ from schemas.reports import *
 from fastapi.encoders import jsonable_encoder
 from utils.reports import *
 from datetime import datetime
+import pytz
 
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import FileResponse
@@ -49,8 +50,13 @@ async def get_propietarios_detalles():
         data = agrupar_empresas_por_estado(propietarios_detalles_list)
 
         # Datos de la fecha y hora actual
-        fecha = datetime.now().strftime("%Y-%m-%d")
-        hora_actual = datetime.now().strftime("%H:%M:%S")
+        # Define la zona horaria de Ciudad de Panamá
+        panama_timezone = pytz.timezone('America/Panama')
+        # Obtén la hora actual en la zona horaria de Ciudad de Panamá
+        now_in_panama = datetime.now(panama_timezone)
+        # Formatea la fecha y la hora según lo requerido
+        fecha = now_in_panama.strftime("%d/%m/%Y")
+        hora_actual = now_in_panama.strftime("%I:%M:%S %p")
         usuario = "admin" 
         titulo = 'Directorio Propietarios'
 

@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Directorio Vehiculos</title>
     <style type="text/css">
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+        }
         .container {
             position: relative;
         }
@@ -27,36 +30,28 @@
             padding: 10px;
             text-align: center;
         }
-        td{
+        td, th {
             white-space: nowrap;
-            font-size: 15px;
+            font-size: 12px;
+            padding: 5px;
         }
         tr {
-            padding: 15px;
-            line-height: 1.8;
-            margin-bottom: 20px;
+            line-height: 1.5;
         }
         .box-propietario {
             text-align: left;
-            font-size: 23px;
+            font-size: 18px;
             margin-top: 10px;
-            border: 2px solid #000;
-            border-radius: 10px; /* Bordes redondeados */
-            padding: 5px; /* Espaciado interno */
+            border: 1px solid #000;
+            border-radius: 5px;
+            padding: 5px;
         }
         .box-propietario2 {
             text-align: left;
-            font-size: 17px;
+            font-size: 16px;
             margin-top: 10px;
-            position: sticky;
-            left: 0;
-            font-family: Arial, Helvetica, sans-serif;
-        }
-        dr {
-            position: absolute;
-            right: 0;
-            text-align: right;
-            top: 0;
+            font-weight: bold;
+            padding: 5px;
         }
         dt, dd {
             display: inline;
@@ -76,76 +71,75 @@
             scroll-behavior: smooth;
         }
         .title {
-            font-size: 24px;
+            font-size: 20px;
             font-weight: bold;
             margin-bottom: 10px;
         }
         .centered-title {
-            font-size: 30px; 
-            text-align: center; /* Centra el título horizontalmente */
+            font-size: 24px; 
+            text-align: center;
             margin-bottom: 0px; 
         }
         .box {
-            flex: 1; /* Distribuye el espacio disponible entre las cajas */
+            flex: 1;
             border: 1px solid #ccc;
             padding: 10px;
         }
         p {
-            line-height: 1; 
+            line-height: 1;
             font-size: 12px;
-            font-family: Arial, Helvetica, sans-serif;
         }
         footer {
-        bottom: 0;
-        width: 100%;
-        text-align: center;
-        font-family: Arial, sans-serif;
+            bottom: 0;
+            width: 100%;
+            text-align: center;
+            font-family: Arial, sans-serif;
         }
         footer p {
-        font-size: 12px; 
+            font-size: 12px; 
         }
     </style>
 </head>
 <body>
 
     <table>
-            <tr>
-                <th>Placa</th>
-                <th>Unidad</th>
-                <th>N° Cupo</th>
-                <th>Permiso</th>
-                <th>Marca/Modelo/Año</th>
-                <th>N° Motor</th>
-                <th>N° Chasis</th>
-                <th>Matricula</th>
-                <th>Propietario</th>
-                <th>Central</th>
-            </tr>
-            {% for estado, estado_info in data_view.items() %}
-                {% if estado != 'usuario' %}
+        <tr>
+            <th>Placa</th>
+            <th>Unidad</th>
+            <th>N° Cupo</th>
+            <th>Permiso</th>
+            <th>Marca/Modelo/Año</th>
+            <th>N° Motor</th>
+            <th>N° Chasis</th>
+            <th>Matricula</th>
+            <th>Propietario</th>
+            <th>Central</th>
+        </tr>
+        {% for estado, estado_info in data_view.items() %}
+            {% if estado != 'usuario' %}
+                <tr>
+                    <th colspan="10">
+                        <div class="box-propietario2">
+                            <span style="text-transform: uppercase;">{{ estado_info['nombre_estado'] }}</span>
+                        </div>
+                    </th>
+                </tr>
+                {% for vehiculo in estado_info['vehiculos'] %}
                     <tr>
-                        <th colspan="7">
-                            <div class="box-propietario2">
-                                <span style="text-transform: uppercase;">{{ estado_info['nombre_estado'] }}</span>
-                            </div>
-                        </th>
+                        <td style="text-align: left;">{{ vehiculo['placa'] }}</td>
+                        <td style="text-align: left;">{{ vehiculo['unidad'] }}</td>
+                        <td>{{ vehiculo['nro_cupo'] }}</td>
+                        <td style="text-align: left;">{{ vehiculo['permiso'] }}</td>
+                        <td style="text-align: left;">{{ vehiculo['marca'] }} {{ vehiculo['linea'] }} {{ vehiculo['año'] }}</td>
+                        <td style="text-align: left;">{{ vehiculo['motor'] }}</td>
+                        <td>{{ vehiculo['chasis'] }}</td>
+                        <td>{{ vehiculo['fec_matricula'] }}</td>
+                        <td style="text-align: left;">{{ vehiculo['empresa'] }}</td>
+                        <td>{{ vehiculo['central'] }}</td>
                     </tr>
-                    {% for vehiculo in estado_info['vehiculos'] %}
-                        <tr>
-                            <td style="text-align: left;">{{ vehiculo['placa'] }}</td>
-                            <td style="text-align: left;">{{ vehiculo['unidad'] }}</td>
-                            <td>{{ vehiculo['nro_cupo'] }}</td>
-                            <td style="text-align: left;">{{ vehiculo['permiso'] }}</td>
-                            <td style="text-align: left;">{{ vehiculo['marca'] }} {{ vehiculo['linea'] }} {{ vehiculo['año'] }}</td>
-                            <td style="text-align: left;">{{ vehiculo['motor'] }}</td>
-                            <td>{{ vehiculo['chasis'] }}</td>
-                            <td>{{ vehiculo['fec_matricula'] }}</td>
-                            <td style="text-align: left;">{{ vehiculo['empresa'] }}</td>
-                            <td>{{ vehiculo['central'] }}</td>
-                        </tr>
-                    {% endfor %}
-                {% endif %}
-            {% endfor %}
+                {% endfor %}
+            {% endif %}
+        {% endfor %}
     </table>     
 </body>
 </html>

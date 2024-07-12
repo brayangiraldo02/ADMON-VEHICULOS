@@ -9,6 +9,7 @@ from schemas.reports import *
 from fastapi.encoders import jsonable_encoder
 from utils.reports import *
 from datetime import datetime
+import pytz
 
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import FileResponse
@@ -30,8 +31,13 @@ async def get_conteo_vehiculos_estados(info: userInfo):
     data = fun_conteo_vehiculos_estados(vehiculos_estados_list)
     data = data.get("conteo_placas")
     # Datos de la fecha y hora actual
-    fecha = datetime.now().strftime("%Y-%m-%d")
-    hora_actual = datetime.now().strftime("%H:%M:%S")
+    # Define la zona horaria de Ciudad de Panamá
+    panama_timezone = pytz.timezone('America/Panama')
+    # Obtén la hora actual en la zona horaria de Ciudad de Panamá
+    now_in_panama = datetime.now(panama_timezone)
+    # Formatea la fecha y la hora según lo requerido
+    fecha = now_in_panama.strftime("%d/%m/%Y")
+    hora_actual = now_in_panama.strftime("%I:%M:%S %p")
     usuario = info.user
     titulo = 'Informe Por Estados General'
 
@@ -120,7 +126,7 @@ async def get_conteo_vehiculos_estados(info: userInfo):
 #-----------------------------------------------------------------------------------------
 
 @statevehiclefleetReports_router.post('/estado-vehiculos-resumen-empresa/{id}', response_class=FileResponse)
-async def get_conteo_propietarios_vehiculos_estados(id: int, info: userInfo):
+async def get_conteo_propietarios_vehiculos_estados(id: str, info: userInfo):
     db = session()
     try:
         conteo_propietarios_vehiculos_estados = db.query(
@@ -151,8 +157,13 @@ async def get_conteo_propietarios_vehiculos_estados(id: int, info: userInfo):
         data = data.get(str(id))  # Usa el id directamente
 
         # Datos de la fecha y hora actual
-        fecha = datetime.now().strftime("%Y-%m-%d")
-        hora_actual = datetime.now().strftime("%H:%M:%S")
+        # Define la zona horaria de Ciudad de Panamá
+        panama_timezone = pytz.timezone('America/Panama')
+        # Obtén la hora actual en la zona horaria de Ciudad de Panamá
+        now_in_panama = datetime.now(panama_timezone)
+        # Formatea la fecha y la hora según lo requerido
+        fecha = now_in_panama.strftime("%d/%m/%Y")
+        hora_actual = now_in_panama.strftime("%I:%M:%S %p")
         usuario = info.user
         titulo = 'Informe Por Estados General'
 
@@ -259,8 +270,13 @@ async def get_conteo_vehiculos_estados_numeros(info: userInfo):
     data = obtener_numeros_por_estado(vehiculos_estados_list)
     data = data.get("numeros_por_estado")
     # Datos de la fecha y hora actual
-    fecha = datetime.now().strftime("%Y-%m-%d")
-    hora_actual = datetime.now().strftime("%H:%M:%S")
+    # Define la zona horaria de Ciudad de Panamá
+    panama_timezone = pytz.timezone('America/Panama')
+    # Obtén la hora actual en la zona horaria de Ciudad de Panamá
+    now_in_panama = datetime.now(panama_timezone)
+    # Formatea la fecha y la hora según lo requerido
+    fecha = now_in_panama.strftime("%d/%m/%Y")
+    hora_actual = now_in_panama.strftime("%I:%M:%S %p")
 
     # Inicializar el diccionario data_view con información común
     data_view = {
@@ -399,8 +415,13 @@ async def get_conteo_propietarios_vehiculos_estados_numeros(id: int, info: userI
     data = data.get("numeros_por_propietario")
     data = data.get(str(id))  
     # Datos de la fecha y hora actual
-    fecha = datetime.now().strftime("%Y-%m-%d")
-    hora_actual = datetime.now().strftime("%H:%M:%S")
+    # Define la zona horaria de Ciudad de Panamá
+    panama_timezone = pytz.timezone('America/Panama')
+    # Obtén la hora actual en la zona horaria de Ciudad de Panamá
+    now_in_panama = datetime.now(panama_timezone)
+    # Formatea la fecha y la hora según lo requerido
+    fecha = now_in_panama.strftime("%d/%m/%Y")
+    hora_actual = now_in_panama.strftime("%I:%M:%S %p")
 
     # Inicializar el diccionario data_view con información común
     data_view = {
@@ -577,8 +598,13 @@ async def get_vehiculos_detalles(infoReports: infoReports):
         datos = {clave: data.get(clave, {}) for clave in claves_deseadas}
 
         # Datos de la fecha y hora actual
-        fecha = datetime.now().strftime("%Y-%m-%d")
-        hora_actual = datetime.now().strftime("%H:%M:%S")
+        # Define la zona horaria de Ciudad de Panamá
+        panama_timezone = pytz.timezone('America/Panama')
+        # Obtén la hora actual en la zona horaria de Ciudad de Panamá
+        now_in_panama = datetime.now(panama_timezone)
+        # Formatea la fecha y la hora según lo requerido
+        fecha = now_in_panama.strftime("%d/%m/%Y")
+        hora_actual = now_in_panama.strftime("%I:%M:%S %p")
         usuario = "admin" 
         titulo = 'Relación Vehículos por Propietario'
 

@@ -26,8 +26,10 @@ def html2pdf(titulo, html_path, pdf_path, header_path, footer_path):
         '--header-font-name': 'Times New Roman', 
         '--header-font-size': '14',
         'footer-center': 'Pág [page] de [topage]',  
+        'footer-spacing': '4',  # Aumenta este valor para proporcionar más espacio
         'footer-html': footer_path,
         'footer-font-size': '9',
     }
+
     with open(html_path) as f: 
-        pdfkit.from_file(f, pdf_path, options=options) 
+        pdfkit.from_file(f, pdf_path, options=options)
