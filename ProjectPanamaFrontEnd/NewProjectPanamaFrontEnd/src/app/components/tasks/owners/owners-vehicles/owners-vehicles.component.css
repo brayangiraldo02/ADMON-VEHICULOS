@@ -8,61 +8,10 @@
   user-select: none;
 }
 
-.title-container {
-  margin-bottom: 5px;
-}
-
-.buttons-container {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-around;
-  width: 100%;
-}
-
-.select{
-  width: 20%;
-  margin: 10px;
-  box-sizing: border-box;
-  background: #ffffff; /* Fondo claro por defecto, ajustable */
-  border-radius: 10px; /* Bordes redondeados */
-  border: 1px solid #ccc;
-  display: flex;
-  align-items: center; /* Centrado vertical */
-  justify-content: center; /* Centrado horizontal */
-  text-align: center; /* Texto centrado */
-  cursor: pointer;
-  position: relative;
-}
-
-.select span.material-symbols-outlined {
-  margin-right: auto;  /* Empuja el icono a la izquierda */
-  font-size: 3.5vh;
-}
-
-.select.selected {
-  background: #bcd1ec; /* Cambia este color según sea necesario */
-}
-
-.select:hover {
-  /* background: #fff8b4;  */
-  background: #bcd1ec;
-}
-
-.back:hover {
-  background: #ffcdcd; 
-}
-
-.select-text {
-  flex-grow: 1;
-  text-align: center;  /* Asegura que el texto esté centrado */
-  font-size: 15px; /* Ajuste según necesidad */
-  color: #333; /* Color del texto */
-}
-
 .table-container {
   margin: 20px auto;
   padding: 10px;
-  width: 95%;
+  width: 98%;
   overflow-x: auto;
   background: #f9f9f9;
   border-radius: 10px;

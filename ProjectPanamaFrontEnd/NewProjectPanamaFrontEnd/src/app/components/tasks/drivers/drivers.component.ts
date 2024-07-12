@@ -59,19 +59,9 @@ export class DriversComponent implements OnInit {
   openExternalLink(): void {
     this.isLoading = true;
     const data = { user: this.user };
-    this.apiService.getPdf("directorio-conductores").subscribe(
-      response => {
-        const blob = new Blob([response], { type: 'application/pdf' });
-        const url = window.URL.createObjectURL(blob);
-        const viewerUrl = this.router.serializeUrl(
-          this.router.createUrlTree(['/pdf', { url }])
-        );
-        window.open(viewerUrl, '_blank'); // Abrir en una nueva pestaña
-        this.router.navigate(['/home']);
-      },
-      error => {
-        console.error('Error al generar el informe:', error);
-      }
-    );
+    localStorage.setItem('pdfEndpoint', 'directorio-conductores');
+    localStorage.setItem('pdfData', '0');
+    window.open(`/pdf`, '_blank')
+    this.router.navigate(['/home']);
   }
 }

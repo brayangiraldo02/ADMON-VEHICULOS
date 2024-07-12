@@ -11,14 +11,21 @@
       <p class="select-text">Regresar</p>
     </button>
 
-    <button class="select" type="button" (click)="goToOwnerContract(code)">
+    <button class="select" type="button" (click)="goToOwnerResume()" [ngClass]="{'selected': selectedButton === 'hoja'}">
+      <span class="material-symbols-outlined">
+        library_books
+      </span>
+      <p class="select-text">Hoja de Vida</p>
+    </button>
+
+    <button class="select" type="button" (click)="goToOwnerContract()" [ngClass]="{'selected': selectedButton === 'contrato'}">
       <span class="material-symbols-outlined">
         contract
       </span>
       <p class="select-text">Contrato</p>
     </button>
 
-    <button class="select" type="button" (click)="goToOwnerVehicles(code)">
+    <button class="select" type="button" (click)="goToOwnerVehicles()" [ngClass]="{'selected': selectedButton === 'vehiculos'}">
       <span class="material-symbols-outlined">
         traffic_jam
       </span>
@@ -29,7 +36,7 @@
 
   <hr *ngIf="!isLoading">
 
-  <div class="info-container" *ngIf="!isLoading">
+  <div class="info-container" *ngIf="!isLoading && (!OwnersVehiclesView && !OwnersContractView)">
     <div class="form-group">
       <label for="codigo">CÓDIGO:</label><br>
       <input type="number" id="codigo" name="codigo" [value]="data.codigo" disabled><br>
@@ -62,9 +69,9 @@
 
   </div>
 
-  <hr *ngIf="!isLoading">
+  <hr *ngIf="!isLoading && (!OwnersVehiclesView && !OwnersContractView)">
 
-  <div class="info-container" *ngIf="!isLoading">
+  <div class="info-container" *ngIf="!isLoading && (!OwnersVehiclesView && !OwnersContractView)">
 
     <div class="two-container">
       <div class="form-group">
@@ -114,9 +121,9 @@
     </div>
   </div>
 
-  <hr *ngIf="!isLoading">
+  <hr *ngIf="!isLoading && (!OwnersVehiclesView && !OwnersContractView)">
 
-  <div class="info-container" *ngIf="!isLoading">
+  <div class="info-container" *ngIf="!isLoading && (!OwnersVehiclesView && !OwnersContractView)">
 
     <div class="two-container">
       <div class="form-group">
@@ -135,9 +142,9 @@
     </div>
   </div>
 
-  <hr *ngIf="!isLoading">
+  <hr *ngIf="!isLoading && (!OwnersVehiclesView && !OwnersContractView)">
 
-  <div class="info-container" *ngIf="!isLoading">
+  <div class="info-container" *ngIf="!isLoading && (!OwnersVehiclesView && !OwnersContractView)">
     <div class="two-container">
       <div class="form-group">
         <label for="auditor">Auditora:</label><br>
@@ -155,9 +162,9 @@
     </div>
   </div>
 
-  <hr *ngIf="!isLoading">
+  <hr *ngIf="!isLoading && (!OwnersVehiclesView && !OwnersContractView)">
 
-  <div class="info-container" *ngIf="!isLoading">
+  <div class="info-container" *ngIf="!isLoading && (!OwnersVehiclesView && !OwnersContractView)">
     <div class="two-container">
       <div class="form-group">
         <label for="grupo">Grupo Consulta:</label><br>
@@ -193,9 +200,9 @@
     </div>
   </div>
 
-  <hr *ngIf="!isLoading">
+  <hr *ngIf="!isLoading && (!OwnersVehiclesView && !OwnersContractView)">
 
-  <div class="buttons-container" *ngIf="!isLoading">
+  <div class="buttons-container" *ngIf="!isLoading && (!OwnersVehiclesView && !OwnersContractView)">
 
     <button class="select" type="button" *ngIf="!isEditable">
       <span class="material-symbols-outlined">
@@ -223,6 +230,8 @@
     </button>
 
   </div>
+
+  <app-owners-vehicles *ngIf="OwnersVehiclesView"></app-owners-vehicles>
 
   <p *ngIf="isLoading">Cargando datos, por favor espere...</p>
 </div>

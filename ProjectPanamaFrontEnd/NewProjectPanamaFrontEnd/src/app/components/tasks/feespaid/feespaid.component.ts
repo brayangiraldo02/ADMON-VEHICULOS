@@ -212,33 +212,29 @@ export class FeespaidComponent implements OnInit {
     return this.states.map(state => state.id).filter(id => id);
   }
 
+  // Generar informe y mostrar el PDF
   generarInforme() {
     this.isLoading = true;
-    let user = this.obtenerUsuario()
-    if(this.empresasSeleccionadas.length == 0) {
+    let user = this.obtenerUsuario();
+    if (this.empresasSeleccionadas.length === 0) {
       this.empresasSeleccionadas = this.obtenerIdsEmpresas();
     }
-    if(this.estadosSeleccionados.length == 0) {
+    if (this.estadosSeleccionados.length === 0) {
       this.estadosSeleccionados = this.obtenerIdsEstados();
     }
     let info = {
       usuario: user,
       empresas: this.empresasSeleccionadas,
       estados: this.estadosSeleccionados
-    }
-    this.apiService.postPdf("informe-cuotas-pagas", info).subscribe(
-      response => {
-        const blob = new Blob([response], { type: 'application/pdf' });
-        const url = window.URL.createObjectURL(blob);
-        const viewerUrl = this.router.serializeUrl(
-          this.router.createUrlTree(['/pdf', { url }])
-        );
-        window.open(viewerUrl, '_blank'); // Abrir en una nueva pestaña
-        this.router.navigate(['/home']);
-      },
-      error => {
-        console.error('Error al generar el informe:', error);
-      }
-    );
+    };
+
+    // Guardar endpoint y data en LocalStorage
+    localStorage.setItem('pdfEndpoint', 'informe-cuotas-pagas');
+    localStorage.setItem('pdfData', JSON.stringify(info));
+
+    // Navegar al componente PdfViewerComponent
+    window.open(`/pdf`, '_blank')
+    this.router.navigate(['/home']);
   }
+
 }
