@@ -1,6 +1,6 @@
 <app-header></app-header>
 <div class="main-container">
-  <h1 class="title-container">PROPIETARIOS {{code}} - HOJA DE VIDA</h1>
+  <h1 class="title-container">PROPIETARIO {{code}}</h1>
 
   <div class="buttons-container" *ngIf="!isLoading">
 
@@ -34,8 +34,11 @@
 
   </div>
 
+  <p *ngIf="OwnersVehiclesView">Total Registros: {{ vehicles.length }}</p>
   <hr *ngIf="!isLoading">
 
+  <!-- INPUTS HOJA DE VIDA -->
+  <!-- -------------------------------------------------------------------------------------- -->
   <div class="info-container" *ngIf="!isLoading && (!OwnersVehiclesView && !OwnersContractView)">
     <div class="form-group">
       <label for="codigo">CÓDIGO:</label><br>
@@ -45,12 +48,12 @@
     <div class="two-container">
       <div class="form-group">
         <label for="nombre">Nombre:</label><br>
-        <input class="large" type="text" id="nombre" name="nombre" [value]="data.nombre_propietario" disabled><br>
+        <input class="large" type="text" id="nombre" name="nombre" [(ngModel)]="data.nombre_propietario" [disabled]="!isEditable"><br>
       </div>
   
       <div class="form-group">
         <label for="abreviado">Abreviado:</label><br>
-        <input class="medium" type="text" id="abreviado" name="abreviado" [value]="data.nombre_abreviado" disabled><br>
+        <input class="medium" type="text" id="abreviado" name="abreviado" [(ngModel)]="data.nombre_abreviado" [disabled]="!isEditable"><br>
       </div>
     </div>
 
@@ -63,7 +66,7 @@
   
       <div class="form-group">
         <label for="ruc">R.U.C:</label><br>
-        <input class="medium" type="text" id="ruc" name="ruc" [value]="data.ruc" disabled><br>
+        <input class="medium" type="text" id="ruc" name="ruc" [(ngModel)]="data.ruc" [disabled]="!isEditable"><br>
       </div>
     </div>
 
@@ -76,28 +79,28 @@
     <div class="two-container">
       <div class="form-group">
         <label for="ciudad">Ciudad:</label><br>
-        <select class="large" id="ciudad" name="ciudad" [value]="data.ciudad" [disabled]="!isEditable">
-          <option *ngFor="let city of cities" [value]="city.codigo" [selected]="city.codigo === data.ciudad">{{ city.codigo }} - {{ city.nombre }}</option>
+        <select class="large" id="ciudad" name="ciudad" [(ngModel)]="data.ciudad" [disabled]="!isEditable">
+          <option *ngFor="let city of cities" [ngValue]="city.codigo" [selected]="city.codigo === data.ciudad">{{ city.codigo }} - {{ city.nombre }}</option>
         </select><br>
       </div>
       
   
       <div class="form-group">
         <label for="direccion">Dirección:</label><br>
-        <input class="large" type="text" id="direccion" name="direccion" [value]="data.direccion" disabled><br>
+        <input class="large" type="text" id="direccion" name="direccion" [(ngModel)]="data.direccion" [disabled]="!isEditable"><br>
       </div>
     </div>
 
     <div class="two-container">
       <div class="form-group">
         <label for="telefono">Teléfono:</label><br>
-        <input type="text" id="telefono" name="telefono" [value]="data.telefono" disabled><br>
+        <input type="text" id="telefono" name="telefono" [(ngModel)]="data.telefono" [disabled]="!isEditable"><br>
       </div>
   
       <div class="form-group">
         <label for="celular" for="celular1">Celulares:</label><br>
-        <input type="text" id="celular" name="celular" [value]="data.celular" disabled><br>
-        <input type="text" id="celular1" name="celular1" [value]="data.celular1" disabled><br>
+        <input type="text" id="celular" name="celular" [(ngModel)]="data.celular" [disabled]="!isEditable"><br>
+        <input type="text" id="celular1" name="celular1" [(ngModel)]="data.celular1" [disabled]="!isEditable"><br>
       </div>
       
     </div>
@@ -105,19 +108,19 @@
     <div class="two-container">
       <div class="form-group">
         <label for="representante">Representante:</label><br>
-        <input class="large" type="text" id="representante" name="representante" [value]="data.representante" disabled><br>
+        <input class="large" type="text" id="representante" name="representante" [(ngModel)]="data.representante" [disabled]="!isEditable"><br>
       </div>
   
       <div class="form-group">
         <label for="contacto">Contacto:</label><br>
-        <input class="medium" type="text" id="contacto" name="contacto" [value]="data.contacto" disabled><br>
+        <input class="medium" type="text" id="contacto" name="contacto" [(ngModel)]="data.contacto" [disabled]="!isEditable"><br>
       </div>
     </div>
 
     <div class="form-group">
       <label for="correo" for="correo1">Correos:</label><br>
-      <input class="medium" type="text" id="correo" name="correo" [value]="data.correo" disabled><br>
-      <input class="medium" type="text" id="correo1" name="correo1" [value]="data.correo1" disabled><br>
+      <input class="medium" type="text" id="correo" name="correo" [(ngModel)]="data.correo" [disabled]="!isEditable"><br>
+      <input class="medium" type="text" id="correo1" name="correo1" [(ngModel)]="data.correo1" [disabled]="!isEditable"><br>
     </div>
   </div>
 
@@ -128,10 +131,10 @@
     <div class="two-container">
       <div class="form-group">
         <label for="estado">Estado:</label><br>
-        <select class="medium" id="estado" name="estado" [disabled]="!isEditable">
-          <option value="Activo" [selected]="data.estado === 'Activo'">Activo</option>
-          <option value="Suspendido" [selected]="data.estado === 'Suspendido'">Suspendido</option>
-          <option value="Retirado" [selected]="data.estado === 'Retirado'">Retirado</option>
+        <select class="medium" id="estado" name="estado" [(ngModel)]="data.estado" [disabled]="!isEditable">
+          <option value="Activo">Activo</option>
+          <option value="Suspendido">Suspendido</option>
+          <option value="Retirado">Retirado</option>
         </select><br>
       </div>
   
@@ -148,15 +151,15 @@
     <div class="two-container">
       <div class="form-group">
         <label for="auditor">Auditora:</label><br>
-        <select class="select-option" id="auditor" name="auditor" [value]="data.auditor" [disabled]="!isEditable">
-          <option *ngFor="let auditor of users" [value]="auditor.codigo" [selected]="auditor.codigo === data.auditor">{{ auditor.codigo }} - {{ auditor.nombre }}</option>
+        <select class="select-option" id="auditor" name="auditor" [(ngModel)]="data.auditor" [disabled]="!isEditable">
+          <option *ngFor="let auditor of users" [ngValue]="auditor.codigo" [selected]="auditor.codigo === data.auditor">{{ auditor.codigo }} - {{ auditor.nombre }}</option>
         </select><br>
       </div>
 
       <div class="form-group">
         <label for="central">Central:</label><br>
-        <select class="select-option" id="central" name="central" [value]="data.central" [disabled]="!isEditable">
-          <option *ngFor="let central of central" [value]="central.codigo" [selected]="central.codigo === data.central">{{ central.codigo }} - {{ central.nombre }}</option>
+        <select class="select-option" id="central" name="central" [(ngModel)]="data.central" [disabled]="!isEditable">
+          <option *ngFor="let central of central" [ngValue]="central.codigo" [selected]="central.codigo === data.central">{{ central.codigo }} - {{ central.nombre }}</option>
         </select><br>
       </div>
     </div>
@@ -168,47 +171,117 @@
     <div class="two-container">
       <div class="form-group">
         <label for="grupo">Grupo Consulta:</label><br>
-        <input type="text" id="grupo" name="grupo" [value]="data.grupo" disabled><br>
+        <input type="text" id="grupo" name="grupo" [(ngModel)]="data.grupo" [disabled]="!isEditable"><br>
       </div>
 
       <div class="form-group">
         <label for="impuesto">Impuesto:</label><br>
-        <input type="text" id="impuesto" name="impuesto" [value]="data.impuesto" disabled><br>
+        <input type="number" id="impuesto" name="impuesto" [(ngModel)]="data.impuesto" [disabled]="!isEditable"><br>
       </div>
 
       <div class="form-group">
         <label for="admon_parado">Admon Parado:</label><br>
-        <input type="text" id="admon_parado" name="admon_parado" [value]="data.admon_parado" disabled><br>
+        <input type="number" id="admon_parado" name="admon_parado" [(ngModel)]="data.admon_parado" [disabled]="!isEditable"><br>
       </div>
     </div>
 
     <div class="two-container">
       <div class="form-group">
         <label for="descuento">Descuento:</label><br>
-        <input type="text" id="descuento" name="descuento" [value]="data.descuento" disabled><br>
+        <input type="number" id="descuento" name="descuento" [(ngModel)]="data.descuento" [disabled]="!isEditable"><br>
       </div>
 
       <div class="form-group">
         <label for="fec_nacimiento">Fecha nacimiento:</label><br>
-        <input type="date" id="fec_nacimiento" name="fec_nacimiento" [value]="data.fec_nacimiento" disabled><br>
+        <input type="date" id="fec_nacimiento" name="fec_nacimiento" [(ngModel)]="data.fec_nacimiento" [disabled]="!isEditable"><br>
       </div>
 
       <div class="form-group">
         <label for="fec_ingreso">Fecha ingreso:</label><br>
-        <input type="date" id="fec_ingreso" name="fec_ingreso" [value]="data.fec_ingreso" disabled><br>
+        <input type="date" id="fec_ingreso" name="fec_ingreso" [(ngModel)]="data.fec_ingreso" [disabled]="!isEditable"><br>
       </div>
     </div>
   </div>
 
-  <hr *ngIf="!isLoading && (!OwnersVehiclesView && !OwnersContractView)">
+  <!-- -------------------------------------------------------------------------------------- -->
 
-  <div class="buttons-container" *ngIf="!isLoading && (!OwnersVehiclesView && !OwnersContractView)">
+  <!-- INPUTS CONTRATO -->
+  <!-- -------------------------------------------------------------------------------------- -->
+  <div class="info-container-contract"  *ngIf="!isLoading && (!OwnersVehiclesView && OwnersContractView)">
+    <div class="two-container-contract">
+      <div class="form-group">
+        <label for="razon_social">Razon social:</label><br>
+        <input class="large" type="text" id="razon_social" name="razon_social" [(ngModel)]="data.razon_social" [disabled]="!isEditable"><br>
+      </div>
+
+      <div class="form-group">
+        <label for="representante">Representante:</label><br>
+        <input class="large" type="text" id="representante" name="representante" [(ngModel)]="data.representante" [disabled]="!isEditable"><br>
+      </div>
+    </div>
+    documento
+    <div class="two-container-contract">
+      <div class="form-group">
+        <label for="tipo_documento">Tipo de Documento:</label><br>
+        <input class="medium" type="text" id="tipo_documento" name="tipo_documento" [(ngModel)]="data.tipo_documento" [disabled]="!isEditable"><br>
+      </div>
+
+      <div class="form-group">
+        <label for="numero_documento">Número de Documento:</label><br>
+        <input class="medium" type="text" id="numero_documento" name="numero_documento" [(ngModel)]="data.numero_documento" [disabled]="!isEditable"><br>
+      </div>
+    </div>
+
+    <div class="two-container-contract">
+
+      <div class="form-group">
+        <label for="sexo">Sexo:</label><br>
+        <input type="text" id="sexo" name="sexo" [(ngModel)]="data.sexo" [disabled]="!isEditable"><br>
+      </div>
+
+      <div class="form-group">
+        <label for="estado_civil">Estado Civil:</label><br>
+        <input type="text" id="estado_civil" name="estado_civil" [(ngModel)]="data.estado_civil" [disabled]="!isEditable"><br>
+      </div>
+
+      <div class="form-group">
+        <label for="nacionalidad">Nacionalidad:</label><br>
+        <input type="text" id="nacionalidad" name="nacionalidad" [(ngModel)]="data.nacionalidad" [disabled]="!isEditable"><br>
+      </div>
+
+    </div>
+
+    <div class="two-container-contract">
+      <div class="form-group">
+        <label for="ficha">Ficha Inscripción:</label><br>
+        <input class="medium" type="text" id="ficha" name="ficha" [(ngModel)]="data.ficha" [disabled]="!isEditable"><br>
+      </div>
+
+      <div class="form-group">
+        <label for="documento">Documento Inscripción:</label><br>
+        <input class="medium" type="text" id="documento" name="documento" [(ngModel)]="data.documento" [disabled]="!isEditable"><br>
+      </div>
+    </div>
+
+  </div>
+  <!-- -------------------------------------------------------------------------------------- -->
+
+  <hr *ngIf="!isLoading && !OwnersVehiclesView">
+
+  <div class="buttons-container" *ngIf="!isLoading && !OwnersVehiclesView">
 
     <button class="select" type="button" *ngIf="!isEditable">
       <span class="material-symbols-outlined">
         add_circle
       </span>
       <p class="select-text">Nuevo Propietario</p>
+    </button>
+
+    <button class="select" type="button" (click)="saveData()" *ngIf="isEditable">
+      <span class="material-symbols-outlined">
+        check
+      </span>
+      <p class="select-text">Aceptar</p>
     </button>
 
     <button class="select" type="button" (click)="enableInputs()">
@@ -221,17 +294,10 @@
       </span>
       <p class="select-text" *ngIf="isEditable">Cancelar</p>
     </button>
-  
-    <button class="select" type="button" (click)="saveData()" *ngIf="isEditable">
-      <span class="material-symbols-outlined">
-        check
-      </span>
-      <p class="select-text">Aceptar</p>
-    </button>
 
   </div>
 
-  <app-owners-vehicles *ngIf="OwnersVehiclesView"></app-owners-vehicles>
+  <app-owners-vehicles *ngIf="OwnersVehiclesView" [vehicles]="vehicles"></app-owners-vehicles>
 
   <p *ngIf="isLoading">Cargando datos, por favor espere...</p>
 </div>

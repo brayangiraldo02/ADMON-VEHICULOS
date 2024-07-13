@@ -101,7 +101,7 @@ async def get_all_owners():
 
 # PETICIÓN DE UN PROPIETARIO ESPECÍFICO A LA BASE DE DATOS
 # ---------------------------------------------------------------------------------------------------------------
-""" @owners_router.get("/owner/{owner_id}", tags=["Owners"])
+@owners_router.get("/owner/{owner_id}", tags=["Owners"])
 async def get_owner(owner_id: int):
   db = session()
   try:
@@ -158,26 +158,26 @@ async def get_owner(owner_id: int):
       'descuento': owner.DESCUENTO,
       'auditor': owner.USUARIO,  
       'cnt': owner.CONTROL,  
-      'dcto': owner.DESCUENTO,
       'estado': estado
     }
     return JSONResponse(content=jsonable_encoder(owner_dict))
   except Exception as e:
     return JSONResponse(content={"error": str(e)})
   finally:
-    db.close() """
+    db.close()
 
 #----------------------------------------------------------------------------------------------------------------
 
-""" @owners_router.put("/owner/{owner_id}", response_model=PropietarioUpdate, tags=["Owners"])
+@owners_router.put("/owner/{owner_id}", response_model=PropietarioUpdate, tags=["Owners"])
 def update_propietario(owner_id: str, propietario: PropietarioUpdate):
     db = session()
     try:
+      print(propietario)
       result = db.query(Propietarios).filter(Propietarios.CODIGO == owner_id).first()
       if not result:
         return JSONResponse(status_code=404, content={"message": "Owner not found"})
-      result.NOMBRE = propietario.nombre
-      result.ABREVIADO = propietario.abreviado
+      result.NOMBRE = propietario.nombre_propietario
+      result.ABREVIADO = propietario.nombre_abreviado
       result.REPRESENTA = propietario.representante
       result.RAZONSOCIA = propietario.razon_social
       result.REP_SEXO = propietario.sexo
@@ -188,7 +188,7 @@ def update_propietario(owner_id: str, propietario: PropietarioUpdate):
       result.FICHA = propietario.ficha
       result.DOCUMENTO = propietario.documento
       result.USUARIO = propietario.auditor
-      result.NIT = propietario.cc
+      result.NIT = propietario.nit
       result.RUC = propietario.ruc
       result.CIUDAD = propietario.ciudad
       result.DIRECCION = propietario.direccion
@@ -203,6 +203,8 @@ def update_propietario(owner_id: str, propietario: PropietarioUpdate):
       result.IMPUESTO = propietario.impuesto
       result.ADM_PARADO = propietario.admon_parado
       result.DESCUENTO = propietario.descuento
+      result.FEC_INGRES = propietario.fec_ingreso
+      result.FEC_NACIMI = propietario.fec_nacimiento
       if propietario.stateEdited:
         if propietario.estado == 'Activo':
           result.ESTADO = 1
@@ -219,7 +221,7 @@ def update_propietario(owner_id: str, propietario: PropietarioUpdate):
     except Exception as e:
       return JSONResponse(content={"error": str(e)}, status_code=500)
     finally:
-      db.close() """
+      db.close()
 
 #----------------------------------------------------------------------------------------------------------------
 

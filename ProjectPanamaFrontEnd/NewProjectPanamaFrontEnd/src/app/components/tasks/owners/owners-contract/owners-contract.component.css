@@ -65,7 +65,7 @@ hr {
   color: #333; /* Color del texto */
 }
 
-.info-container {
+.info-container-contract {
   width: 95%;
   margin-top: 5px;
   display: flex;
@@ -99,7 +99,7 @@ hr {
   border-color: #000000;
 }
 
-.two-container {
+.two-container-contract {
   display: flex;
   flex-direction: row;
   justify-content: space-evenly;

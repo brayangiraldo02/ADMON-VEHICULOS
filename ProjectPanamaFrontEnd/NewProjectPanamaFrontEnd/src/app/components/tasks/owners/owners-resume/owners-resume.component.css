@@ -75,6 +75,14 @@ button.selected {
   margin-top: 5px;
 }
 
+.info-container-contract {
+  width: 95%;
+  margin-top: 5px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
 .form-group {
   display: flex;
   flex-direction: row;
@@ -108,7 +116,14 @@ button.selected {
   width: 90%;
 }
 
-.two-container .form-group {
+.two-container-contract {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+  width: 90%;
+}
+
+.two-container .form-group, .two-container-contract .form-group {
   flex: 1;
 }
 

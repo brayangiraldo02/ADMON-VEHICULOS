@@ -11,9 +11,11 @@ export class OwnersResumeComponent implements OnInit {
   selectedButton: string = "hoja";
   code: string | null = null;
   data: any = null;
+  dataOriginal: any = null;
   cities: any = null;
   central: any = null;
   users: any = null;
+  vehicles: any = null;
   isLoading = true;
   isEditable = false;
   cityFound = false;
@@ -22,12 +24,6 @@ export class OwnersResumeComponent implements OnInit {
   stateEdited = false;
   OwnersVehiclesView = false;
   OwnersContractView = false;
-  fields = [
-    'nombre', 'abreviado', 'cc', 'nit', 'ruc', 'ciudad', 'direccion', 
-    'telefono', 'celular', 'celular1', 'representante', 'contacto', 
-    'correo', 'correo1', 'grupo', 'impuesto', 'admon_parado', 
-    'descuento', 'fec_nacimiento', 'fec_ingreso'
-  ];
 
   constructor(
     private route: ActivatedRoute, 
@@ -44,6 +40,7 @@ export class OwnersResumeComponent implements OnInit {
     this.getUsers();
     this.getCities();
     this.getCentral();
+    this.getVehicles();
   }
 
   async delay(ms: number) {
@@ -54,6 +51,7 @@ export class OwnersResumeComponent implements OnInit {
     this.apiService.getData(`owner/${this.code}`).subscribe(
       (response) => {
         this.data = response;
+        this.dataOriginal = { ...this.data };
         this.stateEdited = false;
         this.checkDate();
         console.log('Fetch Data:', this.data);
@@ -78,20 +76,13 @@ export class OwnersResumeComponent implements OnInit {
   getCities() {
     this.apiService.getData('cities').subscribe(
       (response) => {
-        this.cities = response.map((city: any) => ({
-          ...city,
-          codigo: this.removeLeadingZero(city.codigo)
-        }));
+        this.cities = response;
         this.checkCity();
       },
       (error) => {
         console.log(error);
       }
     );
-  }
-
-  removeLeadingZero(code: string): string {
-    return code.replace(/^0+/, '');
   }
 
   checkCity() {
@@ -169,6 +160,31 @@ export class OwnersResumeComponent implements OnInit {
     }
   }
 
+  getVehicles() {
+    this.apiService.getData(`owner-vehicles/${this.code}`).subscribe(
+      (response) => {
+        this.vehicles = response;
+        this.vehicles.sort((a: any, b: any) => {
+          const aStartsWithSpecialChar = a.estado.startsWith('»');
+          const bStartsWithSpecialChar = b.estado.startsWith('»');
+
+          if (aStartsWithSpecialChar && !bStartsWithSpecialChar) {
+            return 1;
+          }
+          if (!aStartsWithSpecialChar && bStartsWithSpecialChar) {
+            return -1;
+          }
+
+          return a.estado.localeCompare(b.estado);
+          }
+        );
+      },
+      (error) => {
+        console.log(error);
+      }
+    );
+  }
+
   selectButton(button: string) {
     this.selectedButton = button;
   }
@@ -181,22 +197,10 @@ export class OwnersResumeComponent implements OnInit {
     }
 
     this.isEditable = true;
-    this.fields.forEach(field => {
-      const element = document.getElementById(field) as HTMLInputElement;
-      if (element) {
-        element.disabled = false;
-      }
-    });
   }
 
   disableInputs() {
     this.isEditable = false;
-    this.fields.forEach(field => {
-      const element = document.getElementById(field) as HTMLInputElement;
-      if (element) {
-        element.disabled = true;
-      }
-    });
   }
 
   newData() {
@@ -204,7 +208,7 @@ export class OwnersResumeComponent implements OnInit {
       'nombre', 'abreviado', 'cc', 'ruc', 'ciudad', 'direccion', 
       'telefono', 'celular', 'celular1', 'representante', 'contacto', 
       'correo', 'correo1', 'estado', 'auditor', 'central', 'grupo', 
-      'impuesto', 'admon_parado', 'descuento', 'fec_nacimiento', 'fec_ingreso'
+      'impuesto', 'admon_parado', 'descuento', 'fec_nacimiento', 'fec_ingreso', 'razon_social', 'tipo_documento', 'numero_documento', 'sexo', 'estado_civil', 'nacionalidad', 'ficha', 'documento'
     ]
     const dataToSave: any = {};
     fields.forEach(field => {
@@ -223,55 +227,71 @@ export class OwnersResumeComponent implements OnInit {
     return dataToSave;
   }
 
-  checkModifiedData(dataToSave:any) {
-    const fields = [
-      'nombre', 'abreviado', 'cc', 'ruc', 'ciudad', 'direccion', 
-      'telefono', 'celular', 'celular1', 'representante', 'contacto', 
-      'correo', 'correo1', 'estado', 'auditor', 'central', 'grupo', 
-      'impuesto', 'admon_parado', 'descuento', 'fec_nacimiento', 'fec_ingreso'
-    ];
+  // checkModifiedData(dataToSave:any) {
+  //   const fields = [
+  //     'nombre', 'abreviado', 'cc', 'ruc', 'ciudad', 'direccion', 
+  //     'telefono', 'celular', 'celular1', 'representante', 'contacto', 
+  //     'correo', 'correo1', 'estado', 'auditor', 'central', 'grupo', 
+  //     'impuesto', 'admon_parado', 'descuento', 'fec_nacimiento', 'fec_ingreso', 'razon_social', 'tipo_documento', 'numero_documento', 'sexo', 'estado_civil', 'nacionalidad', 'ficha', 'documento'
+  //   ];
 
-    let modified = false;
-    fields.forEach(field => {
-      if (field == 'nombre') {
-        if(this.data['nombre_propietario'] !== dataToSave[field]) {
-          modified = true;
-          console.log('Modified field:', field, dataToSave[field], this.data['nombre_propietario'])
+  //   let modified = false;
+  //   fields.forEach(field => {
+  //     if (field == 'nombre') {
+  //       if(this.data['nombre_propietario'] !== dataToSave[field]) {
+  //         modified = true;
+  //         console.log('Modified field:', field, dataToSave[field], this.data['nombre_propietario'])
+  //       }
+  //     }
+  //     else if (field == 'abreviado') {
+  //       if(this.data['nombre_abreviado'] !== dataToSave[field]) {
+  //         modified = true;
+  //         console.log('Modified field:', field, dataToSave[field], this.data['nombre_abreviado'])
+  //       }
+  //     }
+  //     else if (field == 'cc') {
+  //       if(this.data['nit'] != dataToSave[field]) {
+  //         modified = true;
+  //         console.log('Modified field:', field, dataToSave[field], this.data['nit'])
+  //       }
+  //     }
+  //     else if (dataToSave[field] != this.data[field]) {
+  //       console.log('Modified field:', field, dataToSave[field], this.data[field])
+  //       modified = true;
+  //     }
+  //   });
+
+  //   return modified;
+  // }
+
+  // checkModifiedCity() {
+  //   const estadoElement = document.getElementById('estado') as HTMLSelectElement;
+  //   if (estadoElement && estadoElement.value !== this.data.estado) {
+  //     this.stateEdited = true;
+  //   }
+  // }
+
+  checkModifiedData(): boolean {
+    for (const key in this.data) {
+      if(key == 'fec_nacimiento' || key == 'fec_ingreso') {
+        if(this.data[key] == '') {
+          this.data[key] = '0000-00-00';
         }
       }
-      else if (field == 'abreviado') {
-        if(this.data['nombre_abreviado'] !== dataToSave[field]) {
-          modified = true;
-          console.log('Modified field:', field, dataToSave[field], this.data['nombre_abreviado'])
+      if (this.data[key] !== this.dataOriginal[key]) {
+        if(key == 'estado'){
+          this.stateEdited = true;
         }
+        console.log(`Difference found at key: ${key}, data: ${this.data[key]}, dataOriginal: ${this.dataOriginal[key]}`);
+        return true;
       }
-      else if (field == 'cc') {
-        if(this.data['nit'] != dataToSave[field]) {
-          modified = true;
-          console.log('Modified field:', field, dataToSave[field], this.data['nit'])
-        }
-      }
-      else if (dataToSave[field] != this.data[field]) {
-        console.log('Modified field:', field, dataToSave[field], this.data[field])
-        modified = true;
-      }
-    });
-
-    return modified;
-  }
-
-  checkModifiedCity() {
-    const estadoElement = document.getElementById('estado') as HTMLSelectElement;
-    if (estadoElement && estadoElement.value !== this.data.estado) {
-      this.stateEdited = true;
     }
+    return false;
   }
 
   saveData() {
 
-    const dataToSave = this.newData();
-
-    const modifiedData = this.checkModifiedData(dataToSave);
+    const modifiedData = this.checkModifiedData();
 
     console.log(modifiedData)
 
@@ -280,14 +300,12 @@ export class OwnersResumeComponent implements OnInit {
       this.disableInputs();
       return;
     }
-    
-    this.checkModifiedCity();
 
-    dataToSave['stateEdited'] = this.stateEdited;
+    this.data['stateEdited'] = this.stateEdited;
 
-    console.log('Data to save:', dataToSave);
+    console.log('Data to save:', this.data);
   
-    this.apiService.updateData(`owner/${this.code}`, dataToSave).subscribe(
+    this.apiService.updateData(`owner/${this.code}`, this.data).subscribe(
       (response) => {
         window.alert('Datos actualizados correctamente');
         this.disableInputs();

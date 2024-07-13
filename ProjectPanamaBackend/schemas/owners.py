@@ -2,9 +2,10 @@ from pydantic import BaseModel
 from typing import Optional
 
 class PropietarioUpdate(BaseModel):
-    nombre: Optional[str] = None
-    abreviado: Optional[str] = None
-    cc: Optional[str] = None
+    nombre_propietario: Optional[str] = None
+    nombre_abreviado: Optional[str] = None
+    nit: Optional[int] = None
+    cnt: Optional[str] = None
     ruc: Optional[str] = None
     ciudad: Optional[str] = None
     direccion: Optional[str] = None
@@ -20,9 +21,9 @@ class PropietarioUpdate(BaseModel):
     stateEdited: Optional[bool] = False
     estado: Optional[str] = None
     grupo: Optional[str] = None
-    impuesto: Optional[str] = None
-    admon_parado: Optional[str] = None
-    descuento: Optional[str] = None
+    impuesto: Optional[int] = None
+    admon_parado: Optional[int] = None
+    descuento: Optional[int] = None
     razon_social: Optional[str] = None
     representante: Optional[str] = None
     tipo_documento: Optional[str] = None
@@ -32,6 +33,8 @@ class PropietarioUpdate(BaseModel):
     nacionalidad: Optional[str] = None
     ficha: Optional[str] = None
     documento: Optional[str] = None
+    fec_ingreso: Optional[str] = None
+    fec_nacimiento: Optional[str] = None
 
 class PropietarioCreate(BaseModel):
     codigo: str
