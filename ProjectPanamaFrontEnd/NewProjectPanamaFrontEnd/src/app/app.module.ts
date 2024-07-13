@@ -28,7 +28,6 @@ import { OpcionesUtilidadesComponent } from './components/options/utilidades/opc
 import { OpcionesCarteraComponent } from './components/options/cartera/opciones-cartera/opciones-cartera.component';
 import { OpcionesAlmacenComponent } from './components/options/almacen/opciones-almacen/opciones-almacen.component';
 import { OwnersTableComponent } from './components/tasks/owners/owners-table/owners-table.component';
-import { OwnersContractComponent } from './components/tasks/owners/owners-contract/owners-contract.component';
 import { OwnersVehiclesComponent } from './components/tasks/owners/owners-vehicles/owners-vehicles.component';
 import { OwnersResumeComponent } from './components/tasks/owners/owners-resume/owners-resume.component';
 import { DriversComponent } from './components/tasks/drivers/drivers.component';
@@ -58,7 +57,6 @@ import { OwnersAddnewComponent } from './components/tasks/owners/owners-addnew/o
     OpcionesCarteraComponent,
     OpcionesAlmacenComponent,
     OwnersTableComponent,
-    OwnersContractComponent,
     OwnersVehiclesComponent,
     OwnersResumeComponent,
     DriversComponent,

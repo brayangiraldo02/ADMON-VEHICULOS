@@ -1,6 +1,5 @@
 <div class="main-container">
-  <p *ngIf="!isLoading">Total Registros: {{ vehicles.length }}</p>
-  <div class="table-container" *ngIf="!isLoading">
+  <div class="table-container" *ngIf="vehicles && vehicles.length > 0">
     <table>
       <thead>
         <tr>
@@ -28,5 +27,4 @@
       </tbody>
     </table>
   </div>
-  <p *ngIf="isLoading">Cargando datos, por favor espere...</p>
 </div>
