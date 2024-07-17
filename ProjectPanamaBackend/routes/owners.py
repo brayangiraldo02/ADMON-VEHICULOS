@@ -397,3 +397,17 @@ async def update_owner_representative(owner_id: int, propietario: RepresentanteP
     return JSONResponse(content={"error": str(e)}, status_code=500)
   finally:
     db.close()
+
+#----------------------------------------------------------------------------------------------------------------
+
+@owners_router.get("/owner-codes/", tags=["Owners"])
+async def get_owner_codes():
+  db = session()
+  try:
+    owners = db.query(Propietarios.CODIGO).all()
+    owner_codes = [owner.CODIGO for owner in owners]
+    return JSONResponse(content=jsonable_encoder(owner_codes))
+  except Exception as e:
+    return JSONResponse(content={"error": str(e)})
+  finally:
+    db.close()
