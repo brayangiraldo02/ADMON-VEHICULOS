@@ -219,7 +219,6 @@
         <input class="large" type="text" id="representante" name="representante" [(ngModel)]="data.representante" [disabled]="!isEditable"><br>
       </div>
     </div>
-    documento
     <div class="two-container-contract">
       <div class="form-group">
         <label for="tipo_documento">Tipo de Documento:</label><br>
@@ -270,7 +269,7 @@
 
   <div class="buttons-container" *ngIf="!isLoading && !OwnersVehiclesView">
 
-    <button class="select" type="button" *ngIf="!isEditable">
+    <button class="select" type="button" *ngIf="!isEditable" routerLink="/new-owner">
       <span class="material-symbols-outlined">
         add_circle
       </span>

@@ -1,1 +1,272 @@
-<p>owners-addnew works!</p>
+<app-header></app-header>
+<div class="main-container">
+  <h1 class="title-container">PROPIETARIO</h1>
+  <div class="buttons-container">
+    <button class="select back" type="button" routerLink="/owners">
+      <span class="material-symbols-outlined">
+        arrow_back
+      </span>
+      <p class="select-text">Regresar</p>
+    </button>
+
+    <button class="select" type="button"  (click)="goToOwnerResume()" [ngClass]="{'selected': selectedButton === 'hoja'}">
+      <span class="material-symbols-outlined">
+        library_books
+      </span>
+      <p class="select-text">Hoja de Vida</p>
+    </button>
+
+    <button class="select" type="button" (click)="goToOwnerContract()" [ngClass]="{'selected': selectedButton === 'contrato'}">
+      <span class="material-symbols-outlined">
+        contract
+      </span>
+      <p class="select-text">Contrato</p>
+    </button>
+  </div>
+
+  <hr>
+
+  <form [formGroup]="ownerForm" (ngSubmit)="onSubmit()">
+    <!-- INPUTS HOJA DE VIDA -->
+  <!-- -------------------------------------------------------------------------------------- -->
+    <div class="info-container" *ngIf="!OwnersContractView">
+      <div class="form-group">
+        <label for="codigo">CÓDIGO:</label><br>
+        <input type="number" id="codigo" formControlName="codigo"><br>
+      </div>
+
+      <div class="two-container">
+        <div class="form-group">
+          <label for="nombre">Nombre:</label><br>
+          <input class="large" type="text" id="nombre" formControlName="nombre_propietario"><br>
+        </div>
+    
+        <div class="form-group">
+          <label for="abreviado">Abreviado:</label><br>
+          <input class="medium" type="text" id="abreviado" formControlName="nombre_abreviado"><br>
+        </div>
+      </div>
+
+      <div class="two-container">
+        <div class="form-group">
+          <!-- <label for="cc" for="nit">C.C / N.I.T. :</label><br> -->
+          <!-- <input type="number" id="cc" formControlName="cc"><br> -->
+          <label for="nit">N.I.T. :</label><br>
+          <input type="text" id="nit" formControlName="nit"><br>
+        </div>
+    
+        <div class="form-group">
+          <label for="ruc">R.U.C:</label><br>
+          <input class="medium" type="text" id="ruc" formControlName="ruc"><br>
+        </div>
+      </div>
+    </div>
+
+    <hr *ngIf="!OwnersContractView">
+
+    <div class="info-container" *ngIf="!OwnersContractView">
+      <div class="two-container">
+        <div class="form-group">
+          <label for="ciudad">Ciudad:</label><br>
+          <select class="large" id="ciudad" formControlName="ciudad">
+            <option *ngFor="let city of cities" [value]="city.codigo">{{ city.codigo }} - {{ city.nombre }}</option>
+          </select><br>
+        </div>
+        
+    
+        <div class="form-group">
+          <label for="direccion">Dirección:</label><br>
+          <input class="large" type="text" id="direccion" formControlName="direccion"><br>
+        </div>
+      </div>
+  
+      <div class="two-container">
+        <div class="form-group">
+          <label for="telefono">Teléfono:</label><br>
+          <input type="text" id="telefono" formControlName="telefono"><br>
+        </div>
+    
+        <div class="form-group">
+          <label for="celular" for="celular1">Celulares:</label><br>
+          <input type="text" id="celular" formControlName="celular"><br>
+          <input type="text" id="celular1" formControlName="celular1"><br>
+        </div>
+        
+      </div>
+  
+      <div class="two-container">
+        <div class="form-group">
+          <label for="representante">Representante:</label><br>
+          <input class="large" type="text" id="representante" formControlName="representante"><br>
+        </div>
+    
+        <div class="form-group">
+          <label for="contacto">Contacto:</label><br>
+          <input class="medium" type="text" id="contacto" formControlName="contacto"><br>
+        </div>
+      </div>
+  
+      <div class="form-group">
+        <label for="correo" for="correo1">Correos:</label><br>
+        <input class="medium" type="text" id="correo" formControlName="correo"><br>
+        <input class="medium" type="text" id="correo1" formControlName="correo1"><br>
+      </div>
+    </div>
+
+    <hr *ngIf="!OwnersContractView">
+
+    <div class="info-container" *ngIf="!OwnersContractView">
+      <div class="two-container">
+        <div class="form-group">
+          <label for="estado">Estado:</label><br>
+          <select class="medium" id="estado" formControlName="estado">
+            <option value="Activo">Activo</option>
+            <option value="Suspendido">Suspendido</option>
+            <option value="Retirado">Retirado</option>
+          </select><br>
+        </div>
+    
+        <div class="form-group">
+          <label for="fec_estado">Fecha Estado:</label><br>
+          <input disabled><br>
+        </div>
+      </div>
+    </div>
+
+    <hr *ngIf="!OwnersContractView">
+
+    <div class="info-container" *ngIf="!OwnersContractView">
+      <div class="two-container">
+        <div class="form-group">
+          <label for="auditor">Auditora:</label><br>
+          <select class="select-option" id="auditor" formControlName="auditor">
+            <option *ngFor="let auditor of users" [value]="auditor.codigo">{{ auditor.codigo }} - {{ auditor.nombre }}</option>
+          </select><br>
+        </div>
+  
+        <div class="form-group">
+          <label for="central">Central:</label><br>
+          <select class="select-option" id="central" formControlName="central">
+            <option *ngFor="let central of central" [value]="central.codigo">{{ central.codigo }} - {{ central.nombre }}</option>
+          </select><br>
+        </div>
+      </div>
+    </div>
+
+    <hr *ngIf="!OwnersContractView">
+
+    <div class="info-container" *ngIf="!OwnersContractView">
+      <div class="two-container">
+        <div class="form-group">
+          <label for="grupo">Grupo Consulta:</label><br>
+          <input type="text" id="grupo" formControlName="grupo"><br>
+        </div>
+  
+        <div class="form-group">
+          <label for="impuesto">Impuesto:</label><br>
+          <input type="number" id="impuesto" formControlName="impuesto"><br>
+        </div>
+  
+        <div class="form-group">
+          <label for="admon_parado">Admon Parado:</label><br>
+          <input type="number" id="admon_parado" formControlName="admon_parado"><br>
+        </div>
+      </div>
+  
+      <div class="two-container">
+        <div class="form-group">
+          <label for="descuento">Descuento:</label><br>
+          <input type="number" id="descuento" formControlName="descuento"><br>
+        </div>
+  
+        <div class="form-group">
+          <label for="fec_nacimiento">Fecha nacimiento:</label><br>
+          <input type="date" id="fec_nacimiento" formControlName="fec_nacimiento"><br>
+        </div>
+  
+        <div class="form-group">
+          <label for="fec_ingreso">Fecha ingreso:</label><br>
+          <input type="date" id="fec_ingreso" formControlName="fec_ingreso"><br>
+        </div>
+      </div>
+    </div>
+    <!-- -------------------------------------------------------------------------------------- -->
+
+  <!-- INPUTS CONTRATO -->
+  <!-- -------------------------------------------------------------------------------------- -->
+    <div class="info-container-contract" *ngIf="OwnersContractView">
+      <div class="two-container-contract">
+        <div class="form-group">
+          <label for="razon_social">Razon social:</label><br>
+          <input class="large" type="text" id="razon_social" formControlName="razon_social"><br>
+        </div>
+  
+        <div class="form-group">
+          <label for="representante">Representante:</label><br>
+          <input class="large" type="text" id="representante" formControlName="representante"><br>
+        </div>
+      </div>
+
+      <div class="two-container-contract">
+        <div class="form-group">
+          <label for="tipo_documento">Tipo de Documento:</label><br>
+          <input class="medium" type="text" id="tipo_documento" formControlName="tipo_documento"><br>
+        </div>
+  
+        <div class="form-group">
+          <label for="numero_documento">Número de Documento:</label><br>
+          <input class="medium" type="text" id="numero_documento" formControlName="numero_documento"><br>
+        </div>
+      </div>
+
+      <div class="two-container-contract">
+        <div class="form-group">
+          <label for="sexo">Sexo:</label><br>
+          <input type="text" id="sexo" formControlName="sexo"><br>
+        </div>
+  
+        <div class="form-group">
+          <label for="estado_civil">Estado Civil:</label><br>
+          <input type="text" id="estado_civil" formControlName="estado_civil"><br>
+        </div>
+  
+        <div class="form-group">
+          <label for="nacionalidad">Nacionalidad:</label><br>
+          <input type="text" id="nacionalidad" formControlName="nacionalidad"><br>
+        </div>
+      </div>
+
+      <div class="two-container-contract">
+        <div class="form-group">
+          <label for="ficha">Ficha Inscripción:</label><br>
+          <input class="medium" type="text" id="ficha" formControlName="ficha"><br>
+        </div>
+  
+        <div class="form-group">
+          <label for="documento">Documento Inscripción:</label><br>
+          <input class="medium" type="text" id="documento" formControlName="documento"><br>
+        </div>
+      </div>
+    </div>
+
+    <hr>
+
+    <div class="buttons-container">
+      <button class="select" type="submit">
+        <span class="material-symbols-outlined">
+          check
+        </span>
+        <p class="select-text">Guardar</p>
+      </button>
+
+      <button class="select" type="button" routerLink="/owners">
+        <span class="material-symbols-outlined">
+          close
+        </span>
+        <p class="select-text">Cancelar</p>
+      </button>
+    </div>
+
+  </form>
+</div>
+<app-footer></app-footer>

@@ -54,7 +54,7 @@ export class OwnersResumeComponent implements OnInit {
         this.dataOriginal = { ...this.data };
         this.stateEdited = false;
         this.checkDate();
-        console.log('Fetch Data:', this.data);
+        // console.log('Fetch Data:', this.data);
         this.checkCity();
       },
       (error) => {
@@ -227,50 +227,6 @@ export class OwnersResumeComponent implements OnInit {
     return dataToSave;
   }
 
-  // checkModifiedData(dataToSave:any) {
-  //   const fields = [
-  //     'nombre', 'abreviado', 'cc', 'ruc', 'ciudad', 'direccion', 
-  //     'telefono', 'celular', 'celular1', 'representante', 'contacto', 
-  //     'correo', 'correo1', 'estado', 'auditor', 'central', 'grupo', 
-  //     'impuesto', 'admon_parado', 'descuento', 'fec_nacimiento', 'fec_ingreso', 'razon_social', 'tipo_documento', 'numero_documento', 'sexo', 'estado_civil', 'nacionalidad', 'ficha', 'documento'
-  //   ];
-
-  //   let modified = false;
-  //   fields.forEach(field => {
-  //     if (field == 'nombre') {
-  //       if(this.data['nombre_propietario'] !== dataToSave[field]) {
-  //         modified = true;
-  //         console.log('Modified field:', field, dataToSave[field], this.data['nombre_propietario'])
-  //       }
-  //     }
-  //     else if (field == 'abreviado') {
-  //       if(this.data['nombre_abreviado'] !== dataToSave[field]) {
-  //         modified = true;
-  //         console.log('Modified field:', field, dataToSave[field], this.data['nombre_abreviado'])
-  //       }
-  //     }
-  //     else if (field == 'cc') {
-  //       if(this.data['nit'] != dataToSave[field]) {
-  //         modified = true;
-  //         console.log('Modified field:', field, dataToSave[field], this.data['nit'])
-  //       }
-  //     }
-  //     else if (dataToSave[field] != this.data[field]) {
-  //       console.log('Modified field:', field, dataToSave[field], this.data[field])
-  //       modified = true;
-  //     }
-  //   });
-
-  //   return modified;
-  // }
-
-  // checkModifiedCity() {
-  //   const estadoElement = document.getElementById('estado') as HTMLSelectElement;
-  //   if (estadoElement && estadoElement.value !== this.data.estado) {
-  //     this.stateEdited = true;
-  //   }
-  // }
-
   checkModifiedData(): boolean {
     for (const key in this.data) {
       if(key == 'fec_nacimiento' || key == 'fec_ingreso') {
@@ -282,7 +238,7 @@ export class OwnersResumeComponent implements OnInit {
         if(key == 'estado'){
           this.stateEdited = true;
         }
-        console.log(`Difference found at key: ${key}, data: ${this.data[key]}, dataOriginal: ${this.dataOriginal[key]}`);
+        // console.log(`Difference found at key: ${key}, data: ${this.data[key]}, dataOriginal: ${this.dataOriginal[key]}`);
         return true;
       }
     }
@@ -293,7 +249,7 @@ export class OwnersResumeComponent implements OnInit {
 
     const modifiedData = this.checkModifiedData();
 
-    console.log(modifiedData)
+    // console.log(modifiedData)
 
     if (!modifiedData) {
       window.alert('No se ha modificado ningún dato.');
@@ -303,7 +259,7 @@ export class OwnersResumeComponent implements OnInit {
 
     this.data['stateEdited'] = this.stateEdited;
 
-    console.log('Data to save:', this.data);
+    // console.log('Data to save:', this.data);
   
     this.apiService.updateData(`owner/${this.code}`, this.data).subscribe(
       (response) => {
