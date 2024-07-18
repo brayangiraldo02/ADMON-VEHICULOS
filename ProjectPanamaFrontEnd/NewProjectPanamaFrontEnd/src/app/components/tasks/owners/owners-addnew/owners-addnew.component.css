@@ -84,6 +84,11 @@ button.selected {
   align-items: center;
 }
 
+.form {
+  display: flex;
+  flex-direction: column;
+}
+
 .form-group {
   display: flex;
   flex-direction: row;
@@ -134,4 +139,16 @@ button.selected {
 
 .medium {
   width: 40%;
+}
+
+.validators {
+  color: #FE0108;
+  cursor: default;
+  margin: 0;
+  font-size:small;
+}
+
+.validators p {
+  margin: 0;
+  margin-bottom: 5px;
 }

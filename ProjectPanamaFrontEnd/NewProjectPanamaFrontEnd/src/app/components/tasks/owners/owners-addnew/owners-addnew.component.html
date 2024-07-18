@@ -30,6 +30,7 @@
     <!-- INPUTS HOJA DE VIDA -->
   <!-- -------------------------------------------------------------------------------------- -->
     <div class="info-container" *ngIf="!OwnersContractView">
+      
       <div class="form-group">
         <label for="codigo">CÓDIGO:</label><br>
         <input type="number" id="codigo" formControlName="codigo"><br>
@@ -52,7 +53,7 @@
           <!-- <label for="cc" for="nit">C.C / N.I.T. :</label><br> -->
           <!-- <input type="number" id="cc" formControlName="cc"><br> -->
           <label for="nit">N.I.T. :</label><br>
-          <input type="text" id="nit" formControlName="nit"><br>
+          <input type="number" id="nit" formControlName="nit"><br>
         </div>
     
         <div class="form-group">
@@ -61,6 +62,34 @@
         </div>
       </div>
     </div>
+
+    <!-- MENSAJES DE ERROR CÓDIGO, NOMBRE, ABREVIADO, NIT Y RUC -->
+    <!-- -------------------------------------------------------------------------------------- -->
+    <div *ngIf="!OwnersContractView && (ownerForm.get('codigo')?.invalid && (ownerForm.get('codigo')?.dirty || ownerForm.get('codigo')?.touched))" class="validators">
+      <div *ngIf="ownerForm.get('codigo')?.errors?.['required']"><p>- Código es requerido.</p></div>
+      <div *ngIf="ownerForm.get('codigo')?.errors?.['pattern']"><p>- Código no puede exceder 12 caracteres.</p></div>
+    </div>
+
+    <div *ngIf="!OwnersContractView && (ownerForm.get('nombre_propietario')?.invalid && (ownerForm.get('nombre_propietario')?.dirty || ownerForm.get('nombre_propietario')?.touched))" class="validators">
+      <div *ngIf="ownerForm.get('nombre_propietario')?.errors?.['required']"><p>- Nombre es requerido.</p></div>
+      <div *ngIf="ownerForm.get('nombre_propietario')?.errors?.['maxlength']"><p>- Nombre no puede exceder 50 caracteres.</p></div>
+    </div>
+
+    <div *ngIf="!OwnersContractView && (ownerForm.get('nombre_abreviado')?.invalid && (ownerForm.get('nombre_abreviado')?.dirty || ownerForm.get('nombre_abreviado')?.touched))" class="validators">
+      <div *ngIf="ownerForm.get('nombre_abreviado')?.errors?.['required']"><p>- Abreviado es requerido.</p></div>
+      <div *ngIf="ownerForm.get('nombre_abreviado')?.errors?.['maxlength']"><p>- Abreviado no puede exceder 20 caracteres.</p></div>
+    </div>
+
+    <div *ngIf="!OwnersContractView && (ownerForm.get('nit')?.invalid && (ownerForm.get('nit')?.dirty || ownerForm.get('nit')?.touched))" class="validators">
+      <div *ngIf="ownerForm.get('nit')?.errors?.['required']"><p>- NIT es requerido.</p></div>
+      <div *ngIf="ownerForm.get('nit')?.errors?.['pattern']"><p>- NIT no puede exceder 10 caracteres.</p></div>
+    </div>
+
+    <div *ngIf="!OwnersContractView && (ownerForm.get('ruc')?.invalid && (ownerForm.get('ruc')?.dirty || ownerForm.get('ruc')?.touched))" class="validators">
+      <div *ngIf="ownerForm.get('ruc')?.errors?.['required']"><p>- R.U.C. es requerido.</p></div>
+      <div *ngIf="ownerForm.get('ruc')?.errors?.['maxlength']"><p>- R.U.C. no puede exceder 18 caracteres.</p></div>
+    </div>
+    <!-- -------------------------------------------------------------------------------------- -->
 
     <hr *ngIf="!OwnersContractView">
 
@@ -112,6 +141,49 @@
         <input class="medium" type="text" id="correo1" formControlName="correo1"><br>
       </div>
     </div>
+
+    <!-- MENSAJES DE ERROR DIRECCIÓN, TELÉFONO, CELULAR, CELULAR1, REPRESENTANTE, CONTACTO, CORREO Y CORREO1 -->
+    <!-- -------------------------------------------------------------------------------------- -->
+    <div *ngIf="!OwnersContractView && (ownerForm.get('direccion')?.invalid && (ownerForm.get('direccion')?.dirty || ownerForm.get('direccion')?.touched))" class="validators">
+      <div *ngIf="ownerForm.get('direccion')?.errors?.['required']"><p>- Dirección es requerido.</p></div>
+      <div *ngIf="ownerForm.get('direccion')?.errors?.['maxlength']"><p>- Dirección no puede exceder 60 caracteres.</p></div>
+    </div>
+
+    <div *ngIf="!OwnersContractView && (ownerForm.get('telefono')?.invalid && (ownerForm.get('telefono')?.dirty || ownerForm.get('telefono')?.touched))" class="validators">
+      <div *ngIf="ownerForm.get('telefono')?.errors?.['required']"><p>- Teléfono es requerido.</p></div>
+      <div *ngIf="ownerForm.get('telefono')?.errors?.['maxlength']"><p>- Teléfono no puede exceder 30 caracteres.</p></div>
+    </div>
+
+    <div *ngIf="!OwnersContractView && (ownerForm.get('celular')?.invalid && (ownerForm.get('celular')?.dirty || ownerForm.get('celular')?.touched))" class="validators">
+      <div *ngIf="ownerForm.get('celular')?.errors?.['required']"><p>- Celular 1 es requerido.</p></div>
+      <div *ngIf="ownerForm.get('celular')?.errors?.['maxlength']"><p>- Celular 1 no puede exceder 30 caracteres.</p></div>
+    </div>
+
+    <div *ngIf="!OwnersContractView && (ownerForm.get('celular1')?.invalid && (ownerForm.get('celular1')?.dirty || ownerForm.get('celular1')?.touched))" class="validators">
+      <div *ngIf="ownerForm.get('celular1')?.errors?.['required']"><p>- Celular 2 es requerido.</p></div>
+      <div *ngIf="ownerForm.get('celular1')?.errors?.['maxlength']"><p>- Celular 2 no puede exceder 30 caracteres.</p></div>
+    </div>
+
+    <div *ngIf="!OwnersContractView && (ownerForm.get('representante')?.invalid && (ownerForm.get('representante')?.dirty || ownerForm.get('representante')?.touched))" class="validators">
+      <div *ngIf="ownerForm.get('representante')?.errors?.['required']"><p>- Representante es requerido.</p></div>
+      <div *ngIf="ownerForm.get('representante')?.errors?.['maxlength']"><p>- Representante no puede exceder 40 caracteres.</p></div>
+    </div>
+
+    <div *ngIf="!OwnersContractView && (ownerForm.get('contacto')?.invalid && (ownerForm.get('contacto')?.dirty || ownerForm.get('contacto')?.touched))" class="validators">
+      <div *ngIf="ownerForm.get('contacto')?.errors?.['required']"><p>- Contacto es requerido.</p></div>
+      <div *ngIf="ownerForm.get('contacto')?.errors?.['maxlength']"><p>- Contacto no puede exceder 40 caracteres.</p></div>
+    </div>
+
+    <div *ngIf="!OwnersContractView && (ownerForm.get('correo')?.invalid && (ownerForm.get('correo')?.dirty || ownerForm.get('correo')?.touched))" class="validators">
+      <div *ngIf="ownerForm.get('correo')?.errors?.['required']"><p>- Correo 1 es requerido.</p></div>
+      <div *ngIf="ownerForm.get('correo')?.errors?.['maxlength']"><p>- Correo 1 no puede exceder 12 caracteres.</p></div>
+    </div>
+
+    <div *ngIf="!OwnersContractView && (ownerForm.get('correo1')?.invalid && (ownerForm.get('correo1')?.dirty || ownerForm.get('correo1')?.touched))" class="validators">
+      <div *ngIf="ownerForm.get('correo1')?.errors?.['required']"><p>- Correo 2 es requerido.</p></div>
+      <div *ngIf="ownerForm.get('correo1')?.errors?.['maxlength']"><p>- Correo 2 no puede exceder 20 caracteres.</p></div>
+    </div>
+    <!-- -------------------------------------------------------------------------------------- -->
 
     <hr *ngIf="!OwnersContractView">
 
@@ -190,6 +262,29 @@
         </div>
       </div>
     </div>
+
+    <!-- MENSAJES DE ERROR GRUPO CONSULTA, IMPUESTO, ADMON PARADO Y DESCUENTO -->
+    <!-- -------------------------------------------------------------------------------------- -->
+    <div *ngIf="!OwnersContractView && (ownerForm.get('grupo')?.invalid && (ownerForm.get('grupo')?.dirty || ownerForm.get('grupo')?.touched))" class="validators">
+      <div *ngIf="ownerForm.get('grupo')?.errors?.['required']"><p>- Grupo Consulta es requerido.</p></div>
+      <div *ngIf="ownerForm.get('grupo')?.errors?.['maxlength']"><p>- Grupo Consulta no puede exceder 10 caracteres.</p></div>
+    </div>
+
+    <div *ngIf="!OwnersContractView && (ownerForm.get('impuesto')?.invalid && (ownerForm.get('impuesto')?.dirty || ownerForm.get('impuesto')?.touched))" class="validators">
+      <div *ngIf="ownerForm.get('impuesto')?.errors?.['required']"><p>- Impuesto es requerido.</p></div>
+      <div *ngIf="ownerForm.get('impuesto')?.errors?.['pattern']"><p>- Impuesto no puede exceder 2 caracteres.</p></div>
+    </div>
+
+    <div *ngIf="!OwnersContractView && (ownerForm.get('admon_parado')?.invalid && (ownerForm.get('admon_parado')?.dirty || ownerForm.get('admon_parado')?.touched))" class="validators">
+      <div *ngIf="ownerForm.get('admon_parado')?.errors?.['required']"><p>- Admon Parado es requerido.</p></div>
+      <div *ngIf="ownerForm.get('admon_parado')?.errors?.['pattern']"><p>- Admon Parado no puede exceder 3 caracteres.</p></div>
+    </div>
+
+    <div *ngIf="!OwnersContractView && (ownerForm.get('descuento')?.invalid && (ownerForm.get('descuento')?.dirty || ownerForm.get('descuento')?.touched))" class="validators">
+      <div *ngIf="ownerForm.get('descuento')?.errors?.['required']"><p>- Descuento es requerido.</p></div>
+      <div *ngIf="ownerForm.get('descuento')?.errors?.['pattern']"><p>- Descuento no puede exceder 5 caracteres.</p></div>
+    </div>
+    <!-- -------------------------------------------------------------------------------------- -->
     <!-- -------------------------------------------------------------------------------------- -->
 
   <!-- INPUTS CONTRATO -->
@@ -248,6 +343,54 @@
         </div>
       </div>
     </div>
+
+    <!-- MENSAJES DE ERROR RAZÓN SOCIAL, REPRESENTANTE, TIPO DE DOCUMENTO, NÚMERO DE DOCUMENTO, SEXO, ESTADO CIVIL, NACIONALIDAD, FICHA INSCRIPCIÓN Y DOCUMENTO INSCRIPCIÓN -->
+    <!-- -------------------------------------------------------------------------------------- -->
+    <div *ngIf="OwnersContractView && (ownerForm.get('razon_social')?.invalid && (ownerForm.get('razon_social')?.dirty || ownerForm.get('razon_social')?.touched))" class="validators">
+      <div *ngIf="ownerForm.get('razon_social')?.errors?.['required']"><p>- Razón social es requerido.</p></div>
+      <div *ngIf="ownerForm.get('razon_social')?.errors?.['maxlength']"><p>- Razón social no puede exceder 50 caracteres.</p></div>
+    </div>
+
+    <div *ngIf="OwnersContractView && (ownerForm.get('representante')?.invalid && (ownerForm.get('representante')?.dirty || ownerForm.get('representante')?.touched))" class="validators">
+      <div *ngIf="ownerForm.get('representante')?.errors?.['required']"><p>- Representante es requerido.</p></div>
+      <div *ngIf="ownerForm.get('representante')?.errors?.['maxlength']"><p>- Representante no puede exceder 40 caracteres.</p></div>
+    </div>
+
+    <div *ngIf="OwnersContractView && (ownerForm.get('tipo_documento')?.invalid && (ownerForm.get('tipo_documento')?.dirty || ownerForm.get('tipo_documento')?.touched))" class="validators">
+      <div *ngIf="ownerForm.get('tipo_documento')?.errors?.['required']"><p>- Tipo de Documento es requerido.</p></div>
+      <div *ngIf="ownerForm.get('tipo_documento')?.errors?.['maxlength']"><p>- Tipo  no puede exceder 12 caracteres.</p></div>
+    </div>
+
+    <div *ngIf="OwnersContractView && (ownerForm.get('numero_documento')?.invalid && (ownerForm.get('numero_documento')?.dirty || ownerForm.get('numero_documento')?.touched))" class="validators">
+      <div *ngIf="ownerForm.get('numero_documento')?.errors?.['required']"><p>- Número de Documento es requerido.</p></div>
+      <div *ngIf="ownerForm.get('numero_documento')?.errors?.['maxlength']"><p>- Número de Documento no puede exceder 20 caracteres.</p></div>
+    </div>
+
+    <div *ngIf="OwnersContractView && (ownerForm.get('sexo')?.invalid && (ownerForm.get('sexo')?.dirty || ownerForm.get('sexo')?.touched))" class="validators">
+      <div *ngIf="ownerForm.get('sexo')?.errors?.['required']"><p>- Sexo es requerido.</p></div>
+      <div *ngIf="ownerForm.get('sexo')?.errors?.['maxlength']"><p>- Sexo no puede exceder 10 caracteres.</p></div>
+    </div>
+
+    <div *ngIf="OwnersContractView && (ownerForm.get('estado_civil')?.invalid && (ownerForm.get('estado_civil')?.dirty || ownerForm.get('estado_civil')?.touched))" class="validators">
+      <div *ngIf="ownerForm.get('estado_civil')?.errors?.['required']"><p>- Estado Civil es requerido.</p></div>
+      <div *ngIf="ownerForm.get('estado_civil')?.errors?.['maxlength']"><p>- Estado Civil no puede exceder 20 caracteres.</p></div>
+    </div>
+
+    <div *ngIf="OwnersContractView && (ownerForm.get('nacionalidad')?.invalid && (ownerForm.get('nacionalidad')?.dirty || ownerForm.get('nacionalidad')?.touched))" class="validators">
+      <div *ngIf="ownerForm.get('nacionalidad')?.errors?.['required']"><p>- Nacionalidad es requerido.</p></div>
+      <div *ngIf="ownerForm.get('nacionalidad')?.errors?.['maxlength']"><p>- Nacionalidad no puede exceder 10 caracteres.</p></div>
+    </div>
+
+    <div *ngIf="OwnersContractView && (ownerForm.get('ficha')?.invalid && (ownerForm.get('ficha')?.dirty || ownerForm.get('ficha')?.touched))" class="validators">
+      <div *ngIf="ownerForm.get('ficha')?.errors?.['required']"><p>- Ficha Inscripción es requerido.</p></div>
+      <div *ngIf="ownerForm.get('ficha')?.errors?.['maxlength']"><p>- Ficha Inscripción no puede exceder 40 caracteres.</p></div>
+    </div>
+
+    <div *ngIf="OwnersContractView && (ownerForm.get('documento')?.invalid && (ownerForm.get('documento')?.dirty || ownerForm.get('documento')?.touched))" class="validators">
+      <div *ngIf="ownerForm.get('documento')?.errors?.['required']"><p>- Documento Inscripción es requerido.</p></div>
+      <div *ngIf="ownerForm.get('documento')?.errors?.['maxlength']"><p>- Documento Inscripción no puede exceder 40 caracteres.</p></div>
+    </div>
+    <!-- -------------------------------------------------------------------------------------- -->
 
     <hr>
 

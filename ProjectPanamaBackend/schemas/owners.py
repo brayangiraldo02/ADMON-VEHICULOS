@@ -37,33 +37,40 @@ class PropietarioUpdate(BaseModel):
     fec_nacimiento: Optional[str] = None
 
 class PropietarioCreate(BaseModel):
-    codigo: str
-    nombre: str
-    abreviado: str
-    cc: str
-    ruc: str
-    auditora: str
-    ciudad: str
-    direccion: str
-    central: str
-    telefono: str
-    celular: str
-    celular1: str
-    representante: str
-    contacto: str
-    correo: str
-    correo1: str
-    estado: str
-    razon_social: str
-    representante: str
-    tipo_documento: str
-    numero_documento: str
-    sexo: str
-    estado_civil: str
-    nacionalidad: str
-    ficha: str
-    documento: str
-    
+    codigo: int
+    nombre_propietario: str
+    nombre_abreviado: Optional[str] = ''
+    nit: Optional[str] = ''
+    cnt: Optional[str] = ''
+    ruc: Optional[str] = ''
+    razon_social: Optional[str] = ''
+    ciudad: Optional[str] = ''
+    direccion: Optional[str] = ''
+    telefono: Optional[str] = ''
+    celular: Optional[str] = ''
+    fec_nacimiento: Optional[str] = ''
+    fec_ingreso: Optional[str] = ''
+    celular1: Optional[str] = ''
+    representante: Optional[str] = ''
+    sexo: Optional[str] = ''
+    estado_civil: Optional[str] = ''
+    tipo_documento: Optional[str] = ''
+    numero_documento: Optional[str] = ''
+    nacionalidad: Optional[str] = ''
+    ficha: Optional[str] = ''
+    documento: Optional[str] = ''
+    contacto: Optional[str] = ''
+    correo: Optional[str] = ''
+    correo1: Optional[str] = ''
+    estado: Optional[str] = ''
+    auditor: Optional[str] = ''
+    central: Optional[str] = ''
+    grupo: Optional[str] = ''
+    impuesto: Optional[int] = 0
+    descuento: Optional[int] = 0
+    admon_parado: Optional[int] = 0
+
+
 class RepresentantePropietario(BaseModel):
     razon_social: Optional[str] = None
     representante: Optional[str] = None
