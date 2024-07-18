@@ -11,6 +11,7 @@ from models.permisosusuario import PermisosUsuario
 from middlewares.JWTBearer import JWTBearer
 from fastapi.encoders import jsonable_encoder
 from datetime import datetime
+import pytz
 owners_router = APIRouter()
 
 # PETICIÓN DE LISTA DE PROPIETARIOS A LA BASE DE DATOS 
@@ -172,7 +173,9 @@ async def get_owner(owner_id: int):
 def update_propietario(owner_id: str, propietario: PropietarioUpdate):
     db = session()
     try:
-      print(propietario)
+      panama_timezone = pytz.timezone('America/Panama')
+      now_in_panama = datetime.now(panama_timezone)
+      fecha = now_in_panama.strftime("%Y-%m-%d")
       result = db.query(Propietarios).filter(Propietarios.CODIGO == owner_id).first()
       if not result:
         return JSONResponse(status_code=404, content={"message": "Owner not found"})
@@ -214,8 +217,7 @@ def update_propietario(owner_id: str, propietario: PropietarioUpdate):
           result.ESTADO = 3
         else:
           result.ESTADO = 0
-        date = datetime.now()
-        result.FEC_ESTADO = date
+        result.FEC_ESTADO = fecha
       db.commit()
       return JSONResponse(content={"message": "Owner updated"}, status_code=200)
     except Exception as e:
@@ -227,61 +229,64 @@ def update_propietario(owner_id: str, propietario: PropietarioUpdate):
 
 @owners_router.post("/owners", response_model=PropietarioCreate)
 def create_propietario(propietario: PropietarioCreate):
-    db = session()
-    try:
-        new_propietario = Propietarios(
-            CODIGO=propietario.codigo,
-            NOMBRE=propietario.nombre,
-            ABREVIADO=propietario.abreviado,
-            REPRESENTA=propietario.representante,
-            RAZONSOCIA=propietario.razon_social,
-            REP_SEXO=propietario.sexo,
-            REP_ESTADO=propietario.estado_civil,
-            REP_TIPDOC=propietario.tipo_documento,
-            REP_NUMERO=propietario.numero_documento,
-            REP_NACION=propietario.nacionalidad,
-            FICHA=propietario.ficha,
-            DOCUMENTO=propietario.documento,
-            USUARIO=propietario.auditora,
-            NIT=propietario.cc,
-            RUC=propietario.ruc,
-            CIUDAD=propietario.ciudad,
-            DIRECCION=propietario.direccion,
-            CENTRAL=propietario.central,
-            TELEFONO=propietario.telefono,
-            CELULAR=propietario.celular,
-            CELULAR1=propietario.celular1,
-            CORREO=propietario.correo,
-            CORREO1=propietario.correo1,
-            CONTACTO=propietario.contacto,
-            GRUPO=propietario.grupo,
-            IMPUESTO=propietario.impuesto,
-            ADM_PARADO=propietario.admon_parado,
-            DESCUENTO=propietario.descuento,
-            ESTADO=1 if propietario.estado == 'Activo' else 2 if propietario.estado == 'Suspendido' else 3 if propietario.estado == 'Retirado' else 0,
-            CONTROL="",
-            FEC_NACIMI="",
-            FEC_INGRES="",
-            BANCO1="",
-            TIPOCTA1="",
-            CUENTA1="",
-            BANCO2="",
-            TIPOCTA2="",
-            CUENTA2="",
-            FEC_CREADO="",
-            USU_CREADO="",
-            USU_MODIFI="",
-            SEL="",
-            FEC_ESTADO=datetime.now()
-        )
-        db.add(new_propietario)
-        db.commit()
-        return JSONResponse(content={"message": "Owner created"}, status_code=201)
-    except Exception as e:
-        db.rollback()
-        return JSONResponse(content={"error": str(e)})
-    finally:
-        db.close()
+  db = session()
+  try:
+    panama_timezone = pytz.timezone('America/Panama')
+    now_in_panama = datetime.now(panama_timezone)
+    fecha = now_in_panama.strftime("%Y-%m-%d")
+    new_propietario = Propietarios(
+      CODIGO=propietario.codigo,
+      NOMBRE=propietario.nombre_propietario,
+      ABREVIADO=propietario.nombre_abreviado,
+      NIT=propietario.nit,
+      CONTROL=propietario.cnt,
+      RUC=propietario.ruc,
+      RAZONSOCIA=propietario.razon_social,
+      CIUDAD=propietario.ciudad,
+      DIRECCION=propietario.direccion,
+      TELEFONO=propietario.telefono,
+      CELULAR=propietario.celular,
+      FEC_NACIMI=propietario.fec_nacimiento,
+      FEC_INGRES=propietario.fec_ingreso,
+      CELULAR1=propietario.celular1,
+      REPRESENTA=propietario.representante,
+      REP_SEXO=propietario.sexo,
+      REP_ESTADO=propietario.estado_civil,
+      REP_TIPDOC=propietario.tipo_documento,
+      REP_NUMERO=propietario.numero_documento,
+      REP_NACION=propietario.nacionalidad,
+      FICHA=propietario.ficha,
+      DOCUMENTO=propietario.documento,
+      CONTACTO=propietario.contacto,
+      CORREO=propietario.correo,
+      CORREO1=propietario.correo1,
+      ESTADO=1 if propietario.estado == 'Activo' else 2 if propietario.estado == 'Suspendido' else 3 if propietario.estado == 'Retirado' else 0,
+      FEC_ESTADO=fecha,
+      USUARIO=propietario.auditor,
+      CENTRAL=propietario.central,
+      BANCO1="",
+      TIPOCTA1="",
+      CUENTA1="",
+      BANCO2="",
+      TIPOCTA2="",
+      CUENTA2="",
+      GRUPO=propietario.grupo,
+      IMPUESTO=propietario.impuesto,
+      DESCUENTO=propietario.descuento,
+      ADM_PARADO=propietario.admon_parado,
+      FEC_CREADO=fecha,
+      USU_CREADO="",
+      USU_MODIFI="",
+      SEL="S"
+    )
+    db.add(new_propietario)
+    db.commit()
+    return JSONResponse(content={"message": "Owner created"}, status_code=201)
+  except Exception as e:
+    db.rollback()
+    return JSONResponse(content={"error": str(e)})
+  finally:
+    db.close()
 
 #----------------------------------------------------------------------------------------------------------------
 
@@ -395,5 +400,19 @@ async def update_owner_representative(owner_id: int, propietario: RepresentanteP
     return JSONResponse(content={"message": "Owner representative updated"}, status_code=200)
   except Exception as e:
     return JSONResponse(content={"error": str(e)}, status_code=500)
+  finally:
+    db.close()
+
+#----------------------------------------------------------------------------------------------------------------
+
+@owners_router.get("/owner-codes/", tags=["Owners"])
+async def get_owner_codes():
+  db = session()
+  try:
+    owners = db.query(Propietarios.CODIGO).all()
+    owner_codes = [owner.CODIGO for owner in owners]
+    return JSONResponse(content=jsonable_encoder(owner_codes))
+  except Exception as e:
+    return JSONResponse(content={"error": str(e)})
   finally:
     db.close()

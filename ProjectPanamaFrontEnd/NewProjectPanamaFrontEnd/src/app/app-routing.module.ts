@@ -22,6 +22,7 @@ import { OpcionesCarteraComponent } from './components/options/cartera/opciones-
 import { OpcionesAlmacenComponent } from './components/options/almacen/opciones-almacen/opciones-almacen.component';
 import { OwnersTableComponent } from './components/tasks/owners/owners-table/owners-table.component';
 import { OwnersResumeComponent } from './components/tasks/owners/owners-resume/owners-resume.component';
+import { OwnersAddnewComponent } from './components/tasks/owners/owners-addnew/owners-addnew.component';
 import { DriversComponent } from './components/tasks/drivers/drivers.component';
 
 const routes: Routes = [
@@ -33,6 +34,7 @@ const routes: Routes = [
   { path: 'feespaid', component: FeespaidComponent, canActivate: [AuthGuard]},
   { path: 'owners', component: OwnersTableComponent, canActivate: [AuthGuard]},
   { path: 'owner/:code', component: OwnersResumeComponent, canActivate: [AuthGuard]},
+  { path: 'new-owner', component: OwnersAddnewComponent, canActivate: [AuthGuard]},
   { path: 'drivers', component: DriversComponent, canActivate: [AuthGuard]},
   { path: 'operations', component: OpcionesOperacionesComponent, canActivate: [AuthGuard]},
   { path: 'procedures', component: OpcionesTramitesComponent, canActivate: [AuthGuard]},

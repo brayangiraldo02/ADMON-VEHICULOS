@@ -1,1 +1,415 @@
-<p>owners-addnew works!</p>
+<app-header></app-header>
+<div class="main-container">
+  <h1 class="title-container">PROPIETARIO</h1>
+  <div class="buttons-container">
+    <button class="select back" type="button" routerLink="/owners">
+      <span class="material-symbols-outlined">
+        arrow_back
+      </span>
+      <p class="select-text">Regresar</p>
+    </button>
+
+    <button class="select" type="button"  (click)="goToOwnerResume()" [ngClass]="{'selected': selectedButton === 'hoja'}">
+      <span class="material-symbols-outlined">
+        library_books
+      </span>
+      <p class="select-text">Hoja de Vida</p>
+    </button>
+
+    <button class="select" type="button" (click)="goToOwnerContract()" [ngClass]="{'selected': selectedButton === 'contrato'}">
+      <span class="material-symbols-outlined">
+        contract
+      </span>
+      <p class="select-text">Contrato</p>
+    </button>
+  </div>
+
+  <hr>
+
+  <form [formGroup]="ownerForm" (ngSubmit)="onSubmit()">
+    <!-- INPUTS HOJA DE VIDA -->
+  <!-- -------------------------------------------------------------------------------------- -->
+    <div class="info-container" *ngIf="!OwnersContractView">
+      
+      <div class="form-group">
+        <label for="codigo">CÓDIGO:</label><br>
+        <input type="number" id="codigo" formControlName="codigo"><br>
+      </div>
+
+      <div class="two-container">
+        <div class="form-group">
+          <label for="nombre">Nombre:</label><br>
+          <input class="large" type="text" id="nombre" formControlName="nombre_propietario"><br>
+        </div>
+    
+        <div class="form-group">
+          <label for="abreviado">Abreviado:</label><br>
+          <input class="medium" type="text" id="abreviado" formControlName="nombre_abreviado"><br>
+        </div>
+      </div>
+
+      <div class="two-container">
+        <div class="form-group">
+          <!-- <label for="cc" for="nit">C.C / N.I.T. :</label><br> -->
+          <!-- <input type="number" id="cc" formControlName="cc"><br> -->
+          <label for="nit">N.I.T. :</label><br>
+          <input type="number" id="nit" formControlName="nit"><br>
+        </div>
+    
+        <div class="form-group">
+          <label for="ruc">R.U.C:</label><br>
+          <input class="medium" type="text" id="ruc" formControlName="ruc"><br>
+        </div>
+      </div>
+    </div>
+
+    <!-- MENSAJES DE ERROR CÓDIGO, NOMBRE, ABREVIADO, NIT Y RUC -->
+    <!-- -------------------------------------------------------------------------------------- -->
+    <div *ngIf="!OwnersContractView && (ownerForm.get('codigo')?.invalid && (ownerForm.get('codigo')?.dirty || ownerForm.get('codigo')?.touched))" class="validators">
+      <div *ngIf="ownerForm.get('codigo')?.errors?.['required']"><p>- Código es requerido.</p></div>
+      <div *ngIf="ownerForm.get('codigo')?.errors?.['pattern']"><p>- Código no puede exceder 12 caracteres.</p></div>
+    </div>
+
+    <div *ngIf="!OwnersContractView && (ownerForm.get('nombre_propietario')?.invalid && (ownerForm.get('nombre_propietario')?.dirty || ownerForm.get('nombre_propietario')?.touched))" class="validators">
+      <div *ngIf="ownerForm.get('nombre_propietario')?.errors?.['required']"><p>- Nombre es requerido.</p></div>
+      <div *ngIf="ownerForm.get('nombre_propietario')?.errors?.['maxlength']"><p>- Nombre no puede exceder 50 caracteres.</p></div>
+    </div>
+
+    <div *ngIf="!OwnersContractView && (ownerForm.get('nombre_abreviado')?.invalid && (ownerForm.get('nombre_abreviado')?.dirty || ownerForm.get('nombre_abreviado')?.touched))" class="validators">
+      <div *ngIf="ownerForm.get('nombre_abreviado')?.errors?.['required']"><p>- Abreviado es requerido.</p></div>
+      <div *ngIf="ownerForm.get('nombre_abreviado')?.errors?.['maxlength']"><p>- Abreviado no puede exceder 20 caracteres.</p></div>
+    </div>
+
+    <div *ngIf="!OwnersContractView && (ownerForm.get('nit')?.invalid && (ownerForm.get('nit')?.dirty || ownerForm.get('nit')?.touched))" class="validators">
+      <div *ngIf="ownerForm.get('nit')?.errors?.['required']"><p>- NIT es requerido.</p></div>
+      <div *ngIf="ownerForm.get('nit')?.errors?.['pattern']"><p>- NIT no puede exceder 10 caracteres.</p></div>
+    </div>
+
+    <div *ngIf="!OwnersContractView && (ownerForm.get('ruc')?.invalid && (ownerForm.get('ruc')?.dirty || ownerForm.get('ruc')?.touched))" class="validators">
+      <div *ngIf="ownerForm.get('ruc')?.errors?.['required']"><p>- R.U.C. es requerido.</p></div>
+      <div *ngIf="ownerForm.get('ruc')?.errors?.['maxlength']"><p>- R.U.C. no puede exceder 18 caracteres.</p></div>
+    </div>
+    <!-- -------------------------------------------------------------------------------------- -->
+
+    <hr *ngIf="!OwnersContractView">
+
+    <div class="info-container" *ngIf="!OwnersContractView">
+      <div class="two-container">
+        <div class="form-group">
+          <label for="ciudad">Ciudad:</label><br>
+          <select class="large" id="ciudad" formControlName="ciudad">
+            <option *ngFor="let city of cities" [value]="city.codigo">{{ city.codigo }} - {{ city.nombre }}</option>
+          </select><br>
+        </div>
+        
+    
+        <div class="form-group">
+          <label for="direccion">Dirección:</label><br>
+          <input class="large" type="text" id="direccion" formControlName="direccion"><br>
+        </div>
+      </div>
+  
+      <div class="two-container">
+        <div class="form-group">
+          <label for="telefono">Teléfono:</label><br>
+          <input type="text" id="telefono" formControlName="telefono"><br>
+        </div>
+    
+        <div class="form-group">
+          <label for="celular" for="celular1">Celulares:</label><br>
+          <input type="text" id="celular" formControlName="celular"><br>
+          <input type="text" id="celular1" formControlName="celular1"><br>
+        </div>
+        
+      </div>
+  
+      <div class="two-container">
+        <div class="form-group">
+          <label for="representante">Representante:</label><br>
+          <input class="large" type="text" id="representante" formControlName="representante"><br>
+        </div>
+    
+        <div class="form-group">
+          <label for="contacto">Contacto:</label><br>
+          <input class="medium" type="text" id="contacto" formControlName="contacto"><br>
+        </div>
+      </div>
+  
+      <div class="form-group">
+        <label for="correo" for="correo1">Correos:</label><br>
+        <input class="medium" type="text" id="correo" formControlName="correo"><br>
+        <input class="medium" type="text" id="correo1" formControlName="correo1"><br>
+      </div>
+    </div>
+
+    <!-- MENSAJES DE ERROR DIRECCIÓN, TELÉFONO, CELULAR, CELULAR1, REPRESENTANTE, CONTACTO, CORREO Y CORREO1 -->
+    <!-- -------------------------------------------------------------------------------------- -->
+    <div *ngIf="!OwnersContractView && (ownerForm.get('direccion')?.invalid && (ownerForm.get('direccion')?.dirty || ownerForm.get('direccion')?.touched))" class="validators">
+      <div *ngIf="ownerForm.get('direccion')?.errors?.['required']"><p>- Dirección es requerido.</p></div>
+      <div *ngIf="ownerForm.get('direccion')?.errors?.['maxlength']"><p>- Dirección no puede exceder 60 caracteres.</p></div>
+    </div>
+
+    <div *ngIf="!OwnersContractView && (ownerForm.get('telefono')?.invalid && (ownerForm.get('telefono')?.dirty || ownerForm.get('telefono')?.touched))" class="validators">
+      <div *ngIf="ownerForm.get('telefono')?.errors?.['required']"><p>- Teléfono es requerido.</p></div>
+      <div *ngIf="ownerForm.get('telefono')?.errors?.['maxlength']"><p>- Teléfono no puede exceder 30 caracteres.</p></div>
+    </div>
+
+    <div *ngIf="!OwnersContractView && (ownerForm.get('celular')?.invalid && (ownerForm.get('celular')?.dirty || ownerForm.get('celular')?.touched))" class="validators">
+      <div *ngIf="ownerForm.get('celular')?.errors?.['required']"><p>- Celular 1 es requerido.</p></div>
+      <div *ngIf="ownerForm.get('celular')?.errors?.['maxlength']"><p>- Celular 1 no puede exceder 30 caracteres.</p></div>
+    </div>
+
+    <div *ngIf="!OwnersContractView && (ownerForm.get('celular1')?.invalid && (ownerForm.get('celular1')?.dirty || ownerForm.get('celular1')?.touched))" class="validators">
+      <div *ngIf="ownerForm.get('celular1')?.errors?.['required']"><p>- Celular 2 es requerido.</p></div>
+      <div *ngIf="ownerForm.get('celular1')?.errors?.['maxlength']"><p>- Celular 2 no puede exceder 30 caracteres.</p></div>
+    </div>
+
+    <div *ngIf="!OwnersContractView && (ownerForm.get('representante')?.invalid && (ownerForm.get('representante')?.dirty || ownerForm.get('representante')?.touched))" class="validators">
+      <div *ngIf="ownerForm.get('representante')?.errors?.['required']"><p>- Representante es requerido.</p></div>
+      <div *ngIf="ownerForm.get('representante')?.errors?.['maxlength']"><p>- Representante no puede exceder 40 caracteres.</p></div>
+    </div>
+
+    <div *ngIf="!OwnersContractView && (ownerForm.get('contacto')?.invalid && (ownerForm.get('contacto')?.dirty || ownerForm.get('contacto')?.touched))" class="validators">
+      <div *ngIf="ownerForm.get('contacto')?.errors?.['required']"><p>- Contacto es requerido.</p></div>
+      <div *ngIf="ownerForm.get('contacto')?.errors?.['maxlength']"><p>- Contacto no puede exceder 40 caracteres.</p></div>
+    </div>
+
+    <div *ngIf="!OwnersContractView && (ownerForm.get('correo')?.invalid && (ownerForm.get('correo')?.dirty || ownerForm.get('correo')?.touched))" class="validators">
+      <div *ngIf="ownerForm.get('correo')?.errors?.['required']"><p>- Correo 1 es requerido.</p></div>
+      <div *ngIf="ownerForm.get('correo')?.errors?.['maxlength']"><p>- Correo 1 no puede exceder 12 caracteres.</p></div>
+    </div>
+
+    <div *ngIf="!OwnersContractView && (ownerForm.get('correo1')?.invalid && (ownerForm.get('correo1')?.dirty || ownerForm.get('correo1')?.touched))" class="validators">
+      <div *ngIf="ownerForm.get('correo1')?.errors?.['required']"><p>- Correo 2 es requerido.</p></div>
+      <div *ngIf="ownerForm.get('correo1')?.errors?.['maxlength']"><p>- Correo 2 no puede exceder 20 caracteres.</p></div>
+    </div>
+    <!-- -------------------------------------------------------------------------------------- -->
+
+    <hr *ngIf="!OwnersContractView">
+
+    <div class="info-container" *ngIf="!OwnersContractView">
+      <div class="two-container">
+        <div class="form-group">
+          <label for="estado">Estado:</label><br>
+          <select class="medium" id="estado" formControlName="estado">
+            <option value="Activo">Activo</option>
+            <option value="Suspendido">Suspendido</option>
+            <option value="Retirado">Retirado</option>
+          </select><br>
+        </div>
+    
+        <div class="form-group">
+          <label for="fec_estado">Fecha Estado:</label><br>
+          <input disabled><br>
+        </div>
+      </div>
+    </div>
+
+    <hr *ngIf="!OwnersContractView">
+
+    <div class="info-container" *ngIf="!OwnersContractView">
+      <div class="two-container">
+        <div class="form-group">
+          <label for="auditor">Auditora:</label><br>
+          <select class="select-option" id="auditor" formControlName="auditor">
+            <option *ngFor="let auditor of users" [value]="auditor.codigo">{{ auditor.codigo }} - {{ auditor.nombre }}</option>
+          </select><br>
+        </div>
+  
+        <div class="form-group">
+          <label for="central">Central:</label><br>
+          <select class="select-option" id="central" formControlName="central">
+            <option *ngFor="let central of central" [value]="central.codigo">{{ central.codigo }} - {{ central.nombre }}</option>
+          </select><br>
+        </div>
+      </div>
+    </div>
+
+    <hr *ngIf="!OwnersContractView">
+
+    <div class="info-container" *ngIf="!OwnersContractView">
+      <div class="two-container">
+        <div class="form-group">
+          <label for="grupo">Grupo Consulta:</label><br>
+          <input type="text" id="grupo" formControlName="grupo"><br>
+        </div>
+  
+        <div class="form-group">
+          <label for="impuesto">Impuesto:</label><br>
+          <input type="number" id="impuesto" formControlName="impuesto"><br>
+        </div>
+  
+        <div class="form-group">
+          <label for="admon_parado">Admon Parado:</label><br>
+          <input type="number" id="admon_parado" formControlName="admon_parado"><br>
+        </div>
+      </div>
+  
+      <div class="two-container">
+        <div class="form-group">
+          <label for="descuento">Descuento:</label><br>
+          <input type="number" id="descuento" formControlName="descuento"><br>
+        </div>
+  
+        <div class="form-group">
+          <label for="fec_nacimiento">Fecha nacimiento:</label><br>
+          <input type="date" id="fec_nacimiento" formControlName="fec_nacimiento"><br>
+        </div>
+  
+        <div class="form-group">
+          <label for="fec_ingreso">Fecha ingreso:</label><br>
+          <input type="date" id="fec_ingreso" formControlName="fec_ingreso"><br>
+        </div>
+      </div>
+    </div>
+
+    <!-- MENSAJES DE ERROR GRUPO CONSULTA, IMPUESTO, ADMON PARADO Y DESCUENTO -->
+    <!-- -------------------------------------------------------------------------------------- -->
+    <div *ngIf="!OwnersContractView && (ownerForm.get('grupo')?.invalid && (ownerForm.get('grupo')?.dirty || ownerForm.get('grupo')?.touched))" class="validators">
+      <div *ngIf="ownerForm.get('grupo')?.errors?.['required']"><p>- Grupo Consulta es requerido.</p></div>
+      <div *ngIf="ownerForm.get('grupo')?.errors?.['maxlength']"><p>- Grupo Consulta no puede exceder 10 caracteres.</p></div>
+    </div>
+
+    <div *ngIf="!OwnersContractView && (ownerForm.get('impuesto')?.invalid && (ownerForm.get('impuesto')?.dirty || ownerForm.get('impuesto')?.touched))" class="validators">
+      <div *ngIf="ownerForm.get('impuesto')?.errors?.['required']"><p>- Impuesto es requerido.</p></div>
+      <div *ngIf="ownerForm.get('impuesto')?.errors?.['pattern']"><p>- Impuesto no puede exceder 2 caracteres.</p></div>
+    </div>
+
+    <div *ngIf="!OwnersContractView && (ownerForm.get('admon_parado')?.invalid && (ownerForm.get('admon_parado')?.dirty || ownerForm.get('admon_parado')?.touched))" class="validators">
+      <div *ngIf="ownerForm.get('admon_parado')?.errors?.['required']"><p>- Admon Parado es requerido.</p></div>
+      <div *ngIf="ownerForm.get('admon_parado')?.errors?.['pattern']"><p>- Admon Parado no puede exceder 3 caracteres.</p></div>
+    </div>
+
+    <div *ngIf="!OwnersContractView && (ownerForm.get('descuento')?.invalid && (ownerForm.get('descuento')?.dirty || ownerForm.get('descuento')?.touched))" class="validators">
+      <div *ngIf="ownerForm.get('descuento')?.errors?.['required']"><p>- Descuento es requerido.</p></div>
+      <div *ngIf="ownerForm.get('descuento')?.errors?.['pattern']"><p>- Descuento no puede exceder 5 caracteres.</p></div>
+    </div>
+    <!-- -------------------------------------------------------------------------------------- -->
+    <!-- -------------------------------------------------------------------------------------- -->
+
+  <!-- INPUTS CONTRATO -->
+  <!-- -------------------------------------------------------------------------------------- -->
+    <div class="info-container-contract" *ngIf="OwnersContractView">
+      <div class="two-container-contract">
+        <div class="form-group">
+          <label for="razon_social">Razon social:</label><br>
+          <input class="large" type="text" id="razon_social" formControlName="razon_social"><br>
+        </div>
+  
+        <div class="form-group">
+          <label for="representante">Representante:</label><br>
+          <input class="large" type="text" id="representante" formControlName="representante"><br>
+        </div>
+      </div>
+
+      <div class="two-container-contract">
+        <div class="form-group">
+          <label for="tipo_documento">Tipo de Documento:</label><br>
+          <input class="medium" type="text" id="tipo_documento" formControlName="tipo_documento"><br>
+        </div>
+  
+        <div class="form-group">
+          <label for="numero_documento">Número de Documento:</label><br>
+          <input class="medium" type="text" id="numero_documento" formControlName="numero_documento"><br>
+        </div>
+      </div>
+
+      <div class="two-container-contract">
+        <div class="form-group">
+          <label for="sexo">Sexo:</label><br>
+          <input type="text" id="sexo" formControlName="sexo"><br>
+        </div>
+  
+        <div class="form-group">
+          <label for="estado_civil">Estado Civil:</label><br>
+          <input type="text" id="estado_civil" formControlName="estado_civil"><br>
+        </div>
+  
+        <div class="form-group">
+          <label for="nacionalidad">Nacionalidad:</label><br>
+          <input type="text" id="nacionalidad" formControlName="nacionalidad"><br>
+        </div>
+      </div>
+
+      <div class="two-container-contract">
+        <div class="form-group">
+          <label for="ficha">Ficha Inscripción:</label><br>
+          <input class="medium" type="text" id="ficha" formControlName="ficha"><br>
+        </div>
+  
+        <div class="form-group">
+          <label for="documento">Documento Inscripción:</label><br>
+          <input class="medium" type="text" id="documento" formControlName="documento"><br>
+        </div>
+      </div>
+    </div>
+
+    <!-- MENSAJES DE ERROR RAZÓN SOCIAL, REPRESENTANTE, TIPO DE DOCUMENTO, NÚMERO DE DOCUMENTO, SEXO, ESTADO CIVIL, NACIONALIDAD, FICHA INSCRIPCIÓN Y DOCUMENTO INSCRIPCIÓN -->
+    <!-- -------------------------------------------------------------------------------------- -->
+    <div *ngIf="OwnersContractView && (ownerForm.get('razon_social')?.invalid && (ownerForm.get('razon_social')?.dirty || ownerForm.get('razon_social')?.touched))" class="validators">
+      <div *ngIf="ownerForm.get('razon_social')?.errors?.['required']"><p>- Razón social es requerido.</p></div>
+      <div *ngIf="ownerForm.get('razon_social')?.errors?.['maxlength']"><p>- Razón social no puede exceder 50 caracteres.</p></div>
+    </div>
+
+    <div *ngIf="OwnersContractView && (ownerForm.get('representante')?.invalid && (ownerForm.get('representante')?.dirty || ownerForm.get('representante')?.touched))" class="validators">
+      <div *ngIf="ownerForm.get('representante')?.errors?.['required']"><p>- Representante es requerido.</p></div>
+      <div *ngIf="ownerForm.get('representante')?.errors?.['maxlength']"><p>- Representante no puede exceder 40 caracteres.</p></div>
+    </div>
+
+    <div *ngIf="OwnersContractView && (ownerForm.get('tipo_documento')?.invalid && (ownerForm.get('tipo_documento')?.dirty || ownerForm.get('tipo_documento')?.touched))" class="validators">
+      <div *ngIf="ownerForm.get('tipo_documento')?.errors?.['required']"><p>- Tipo de Documento es requerido.</p></div>
+      <div *ngIf="ownerForm.get('tipo_documento')?.errors?.['maxlength']"><p>- Tipo  no puede exceder 12 caracteres.</p></div>
+    </div>
+
+    <div *ngIf="OwnersContractView && (ownerForm.get('numero_documento')?.invalid && (ownerForm.get('numero_documento')?.dirty || ownerForm.get('numero_documento')?.touched))" class="validators">
+      <div *ngIf="ownerForm.get('numero_documento')?.errors?.['required']"><p>- Número de Documento es requerido.</p></div>
+      <div *ngIf="ownerForm.get('numero_documento')?.errors?.['maxlength']"><p>- Número de Documento no puede exceder 20 caracteres.</p></div>
+    </div>
+
+    <div *ngIf="OwnersContractView && (ownerForm.get('sexo')?.invalid && (ownerForm.get('sexo')?.dirty || ownerForm.get('sexo')?.touched))" class="validators">
+      <div *ngIf="ownerForm.get('sexo')?.errors?.['required']"><p>- Sexo es requerido.</p></div>
+      <div *ngIf="ownerForm.get('sexo')?.errors?.['maxlength']"><p>- Sexo no puede exceder 10 caracteres.</p></div>
+    </div>
+
+    <div *ngIf="OwnersContractView && (ownerForm.get('estado_civil')?.invalid && (ownerForm.get('estado_civil')?.dirty || ownerForm.get('estado_civil')?.touched))" class="validators">
+      <div *ngIf="ownerForm.get('estado_civil')?.errors?.['required']"><p>- Estado Civil es requerido.</p></div>
+      <div *ngIf="ownerForm.get('estado_civil')?.errors?.['maxlength']"><p>- Estado Civil no puede exceder 20 caracteres.</p></div>
+    </div>
+
+    <div *ngIf="OwnersContractView && (ownerForm.get('nacionalidad')?.invalid && (ownerForm.get('nacionalidad')?.dirty || ownerForm.get('nacionalidad')?.touched))" class="validators">
+      <div *ngIf="ownerForm.get('nacionalidad')?.errors?.['required']"><p>- Nacionalidad es requerido.</p></div>
+      <div *ngIf="ownerForm.get('nacionalidad')?.errors?.['maxlength']"><p>- Nacionalidad no puede exceder 10 caracteres.</p></div>
+    </div>
+
+    <div *ngIf="OwnersContractView && (ownerForm.get('ficha')?.invalid && (ownerForm.get('ficha')?.dirty || ownerForm.get('ficha')?.touched))" class="validators">
+      <div *ngIf="ownerForm.get('ficha')?.errors?.['required']"><p>- Ficha Inscripción es requerido.</p></div>
+      <div *ngIf="ownerForm.get('ficha')?.errors?.['maxlength']"><p>- Ficha Inscripción no puede exceder 40 caracteres.</p></div>
+    </div>
+
+    <div *ngIf="OwnersContractView && (ownerForm.get('documento')?.invalid && (ownerForm.get('documento')?.dirty || ownerForm.get('documento')?.touched))" class="validators">
+      <div *ngIf="ownerForm.get('documento')?.errors?.['required']"><p>- Documento Inscripción es requerido.</p></div>
+      <div *ngIf="ownerForm.get('documento')?.errors?.['maxlength']"><p>- Documento Inscripción no puede exceder 40 caracteres.</p></div>
+    </div>
+    <!-- -------------------------------------------------------------------------------------- -->
+
+    <hr>
+
+    <div class="buttons-container">
+      <button class="select" type="submit">
+        <span class="material-symbols-outlined">
+          check
+        </span>
+        <p class="select-text">Guardar</p>
+      </button>
+
+      <button class="select" type="button" routerLink="/owners">
+        <span class="material-symbols-outlined">
+          close
+        </span>
+        <p class="select-text">Cancelar</p>
+      </button>
+    </div>
+
+  </form>
+</div>
+<app-footer></app-footer>

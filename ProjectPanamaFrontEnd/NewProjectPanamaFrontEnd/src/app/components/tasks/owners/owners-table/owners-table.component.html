@@ -4,12 +4,19 @@
   <p *ngIf="!isLoading">Total Registros: {{ data.length }}</p>
   <div class="options-container" *ngIf="!isLoading">
     <input type="text" placeholder="Buscar..." [(ngModel)]="searchTerm" (input)="filterData()" class="search-container">
-    <a class="report" (click)="openExternalLink()">
+    <button class="report" type="button" routerLink="/new-owner">
+      <span class="material-symbols-outlined">
+        add_circle
+      </span>
+      <p class="report-text">Nuevo Propietario</p>
+    </button>
+
+    <button class="report" type="button" (click)="openExternalLink()">
       <span class="material-symbols-outlined">
         print
       </span>
       <span class="report-text">Ver Directorio</span>
-    </a>
+    </button>
   </div>
   <div class="table-container" *ngIf="!isLoading; else loadingTemplate">
     <table>
