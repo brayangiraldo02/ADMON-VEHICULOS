@@ -5,8 +5,13 @@ from models.propietarios import Propietarios
 from models.vehiculos import Vehiculos
 from models.conductores import Conductores
 from models.estados import Estados
+from utils.reports import *
 from schemas.owners import PropietarioUpdate, PropietarioCreate, RepresentantePropietario
 from models.centrales import Centrales
+from models.cajarecaudos import CajaRecaudos
+from models.cajarecaudoscontado  import CajasRecaudosContado
+from models.cartera import Cartera
+from models.movienca import Movienca
 from models.permisosusuario import PermisosUsuario
 from middlewares.JWTBearer import JWTBearer
 from fastapi.encoders import jsonable_encoder
@@ -407,6 +412,50 @@ async def get_owner_codes():
     owners = db.query(Propietarios.CODIGO).all()
     owner_codes = [owner.CODIGO for owner in owners]
     return JSONResponse(content=jsonable_encoder(owner_codes))
+  except Exception as e:
+    return JSONResponse(content={"error": str(e)})
+  finally:
+    db.close()
+
+#----------------------------------------------------------------------------------------------------------------
+
+@owners_router.get("/verify-owner-delete/{owner_id}", tags=["Owners"])
+async def verify_owner_delete(owner_id: int):
+  db = session()
+  try:
+    owner = db.query(
+            Vehiculos.PROPI_IDEN.label('vehiculo'),
+            CajaRecaudos.PROPI_IDEN.label('cajarecaudos'),
+            CajasRecaudosContado.PROPI_IDEN.label('cajarecaudoscontado'),
+            Cartera.PROPI_IDEN.label('cartera'),
+            Movienca.PROPI_IDEN.label('movienca')
+        ).select_from(Propietarios).outerjoin(
+            Vehiculos, Propietarios.CODIGO == Vehiculos.PROPI_IDEN
+        ).outerjoin(
+            CajaRecaudos, Propietarios.CODIGO == CajaRecaudos.PROPI_IDEN
+        ).outerjoin(
+            CajasRecaudosContado, Propietarios.CODIGO == CajasRecaudosContado.PROPI_IDEN
+        ).outerjoin(
+            Cartera, Propietarios.CODIGO == Cartera.PROPI_IDEN
+        ).outerjoin(
+            Movienca, Propietarios.CODIGO == Movienca.PROPI_IDEN
+        ).filter(
+            Propietarios.CODIGO == owner_id
+        ).first()
+    
+    if not owner:
+      return JSONResponse(content={"error": "Owner not found"}, status_code=404)
+    owner_conditions = {
+      'vehiculo': owner.vehiculo,
+      'cajarecaudos': owner.cajarecaudos,
+      'cajarecaudoscontado': owner.cajarecaudoscontado,
+      'cartera': owner.cartera,
+      'movienca': owner.movienca
+    }
+
+    data = check_owner_records(owner_conditions)
+
+    return JSONResponse(content=jsonable_encoder(data))
   except Exception as e:
     return JSONResponse(content={"error": str(e)})
   finally:

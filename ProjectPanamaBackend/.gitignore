@@ -16,6 +16,7 @@ relacion-vehiculos-estados.pdf
 propietarios-detalles.pdf
 vehiculos-detalles.pdf
 Conductores-detalles.pdf
+valor-compra-vehiculos.pdf
 renderfooter.html
 renderfooter1.html
 renderheader.html
@@ -27,3 +28,4 @@ renderRelacionVehiculos.html
 renderDirectorioPropietarios.html
 renderDirectorioConductores.html
 renderDirectorioVehiculos.html
+renderValorCompraVehiculos.html

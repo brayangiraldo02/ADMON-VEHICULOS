@@ -605,7 +605,7 @@ async def get_vehiculos_detalles(infoReports: infoReports):
         # Formatea la fecha y la hora según lo requerido
         fecha = now_in_panama.strftime("%d/%m/%Y")
         hora_actual = now_in_panama.strftime("%I:%M:%S %p")
-        usuario = "admin" 
+        usuario = infoReports.usuario
         titulo = 'Relación Vehículos por Propietario'
 
         data_view = {

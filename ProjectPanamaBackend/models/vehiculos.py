@@ -143,6 +143,8 @@ class Vehiculos(Base):
   FEC_PIQUER = Column(DateTime)
   TURNO = Column(CHAR(2))
   ESTADO = Column(CHAR(2))
+  ABREVIADO = Column(CHAR(20))
+  NOMESTADO = Column(CHAR(30))
   FEC_ESTADO = Column(Date)
   ESTA_SINIE = Column(CHAR(1))
   FEC_SINIES = Column(Date)
