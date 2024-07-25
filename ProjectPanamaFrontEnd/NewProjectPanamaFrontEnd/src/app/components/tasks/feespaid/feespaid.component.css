@@ -40,6 +40,10 @@
   background: #bcd1ec;
 }
 
+.home {
+  background: #ffe9e9;
+}
+
 .home:hover {
   background: #ffcdcd; 
 }
