@@ -13,12 +13,12 @@
       <h2>OPERACIONES</h2>
       <div class="options-container">
         <ng-container *ngFor="let option of operaciones">
-          <a class="option" [href]="option.url">
+          <button class="option" type="button" [routerLink]="option.url">
             <span class="material-symbols-outlined">
               {{ option.icon }}
             </span>
-            <span class="option-text">{{ option.name }}</span>
-          </a>
+            <p class="option-text">{{ option.name }}</p>
+          </button>
         </ng-container>
       </div>
     </div>
@@ -28,12 +28,12 @@
         <h2>CONTROL CUPOS</h2>
         <div class="options-container">
           <ng-container *ngFor="let option of control_cupos">
-            <a class="option" [href]="option.url">
+            <button class="option" type="button" [routerLink]="option.url">
               <span class="material-symbols-outlined">
                 {{ option.icon }}
               </span>
-              <span class="option-text">{{ option.name }}</span>
-            </a>
+              <p class="option-text">{{ option.name }}</p>
+            </button>
           </ng-container>
         </div>
       </div>
@@ -42,12 +42,12 @@
         <h2>SEGUROS</h2>
         <div class="options-container">
           <ng-container *ngFor="let option of seguros">
-            <a class="option" [href]="option.url">
+            <button class="option" type="button" [routerLink]="option.url">
               <span class="material-symbols-outlined">
                 {{ option.icon }}
               </span>
-              <span class="option-text">{{ option.name }}</span>
-            </a>
+              <p class="option-text">{{ option.name }}</p>
+            </button>
           </ng-container>
         </div>
       </div>
@@ -57,12 +57,12 @@
       <h2>FORMATOS PARA TRÁMITES</h2>
       <div class="options-container">
         <ng-container *ngFor="let option of formatos_tramites">
-          <a class="option" [href]="option.url">
+          <button class="option" type="button" [routerLink]="option.url">
             <span class="material-symbols-outlined">
               {{ option.icon }}
             </span>
-            <span class="option-text">{{ option.name }}</span>
-          </a>
+            <p class="option-text">{{ option.name }}</p>
+          </button>
         </ng-container>
       </div>
     </div>
@@ -71,12 +71,12 @@
       <h2>SEGUIMIENTO DE TRASPASOS</h2>
       <div class="options-container">
         <ng-container *ngFor="let option of seguimiento_traspasos">
-          <a class="option" [href]="option.url">
+          <button class="option" type="button" [routerLink]="option.url">
             <span class="material-symbols-outlined">
               {{ option.icon }}
             </span>
-            <span class="option-text">{{ option.name }}</span>
-          </a>
+            <p class="option-text">{{ option.name }}</p>
+          </button>
         </ng-container>
       </div>
     </div>

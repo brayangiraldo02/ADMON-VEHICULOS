@@ -9,12 +9,12 @@
         <h2>CONTEOS ALEATORIOS</h2>
         <div class="options-container">
           <ng-container *ngFor="let option of conteos_aleatorios">
-            <a class="option" [href]="option.url">
+            <button class="option" type="button" [routerLink]="option.url">
               <span class="material-symbols-outlined">
                 {{ option.icon }}
               </span>
-              <span class="option-text">{{ option.name }}</span>
-            </a>
+              <p class="option-text">{{ option.name }}</p>
+            </button>
           </ng-container>
         </div>
       </div>
@@ -23,12 +23,12 @@
         <h2>MOVIMIENTOS</h2>
         <div class="options-container">
           <ng-container *ngFor="let option of movimientos">
-            <a class="option" [href]="option.url">
+            <button class="option" type="button" [routerLink]="option.url">
               <span class="material-symbols-outlined">
                 {{ option.icon }}
               </span>
-              <span class="option-text">{{ option.name }}</span>
-            </a>
+              <p class="option-text">{{ option.name }}</p>
+            </button>
           </ng-container>
         </div>
       </div>
@@ -40,12 +40,12 @@
         <h2>INVENTARIO FÍSICO</h2>
         <div class="options-container">
           <ng-container *ngFor="let option of inventario_fisico">
-            <a class="option" [href]="option.url">
+            <button class="option" type="button" [routerLink]="option.url">
               <span class="material-symbols-outlined">
                 {{ option.icon }}
               </span>
-              <span class="option-text">{{ option.name }}</span>
-            </a>
+              <p class="option-text">{{ option.name }}</p>
+            </button>
           </ng-container>
         </div>
       </div>
@@ -54,12 +54,12 @@
         <h2>ESPECIALES</h2>
         <div class="options-container">
           <ng-container *ngFor="let option of especiales">
-            <a class="option" [href]="option.url">
+            <button class="option" type="button" [routerLink]="option.url">
               <span class="material-symbols-outlined">
                 {{ option.icon }}
               </span>
-              <span class="option-text">{{ option.name }}</span>
-            </a>
+              <p class="option-text">{{ option.name }}</p>
+            </button>
           </ng-container>
         </div>
       </div>
@@ -68,12 +68,12 @@
         <h2>CONSULTAS</h2>
         <div class="options-container">
           <ng-container *ngFor="let option of consultas">
-            <a class="option" [href]="option.url">
+            <button class="option" type="button" [routerLink]="option.url">
               <span class="material-symbols-outlined">
                 {{ option.icon }}
               </span>
-              <span class="option-text">{{ option.name }}</span>
-            </a>
+              <p class="option-text">{{ option.name }}</p>
+            </button>
           </ng-container>
         </div>
       </div>
@@ -83,12 +83,12 @@
       <h2>GENERALES</h2>
       <div class="options-container">
         <ng-container *ngFor="let option of generales">
-          <a class="option" [href]="option.url">
+          <button class="option" type="button" [routerLink]="option.url">
             <span class="material-symbols-outlined">
               {{ option.icon }}
             </span>
-            <span class="option-text">{{ option.name }}</span>
-          </a>
+            <p class="option-text">{{ option.name }}</p>
+          </button>
         </ng-container>
       </div>
     </div>

@@ -14,7 +14,9 @@ export class LoginComponent implements OnInit {
   eyeIconPath: string = '../../../../assets/icons/eye.svg';
   eyeIconVisiblePath: string = '../../../../assets/icons/no-eye.svg';
   showPassword: boolean = false;
-  eyeIcon: string = this.eyeIconPath;
+  showUser: boolean = false;
+  eyeIconUsername: string = this.eyeIconPath;
+  eyeIconPassword: string = this.eyeIconPath;
 
   constructor(
     private fb: FormBuilder,
@@ -53,10 +55,18 @@ export class LoginComponent implements OnInit {
     }
   }
 
-  togglePasswordVisibility(): void {
-    this.showPassword = !this.showPassword;
-    const passwordInput = document.getElementById('password') as HTMLInputElement;
-    passwordInput.type = this.showPassword ? 'text' : 'password';
-    this.eyeIcon = this.showPassword ? this.eyeIconVisiblePath : this.eyeIconPath;
+  togglePasswordVisibility(option: string): void {
+    if(option === 'password') {
+      this.showPassword = !this.showPassword;
+      this.eyeIconPassword = this.showPassword ? this.eyeIconVisiblePath : this.eyeIconPath;
+      const input = document.getElementById(option) as HTMLInputElement;
+      input.type = this.showPassword ? 'text' : 'password';
+    }
+    else if(option === 'user') {
+      this.showUser = !this.showUser;
+      this.eyeIconUsername = this.showUser ? this.eyeIconVisiblePath : this.eyeIconPath;
+      const input = document.getElementById(option) as HTMLInputElement;
+      input.type = this.showUser ? 'text' : 'password';
+    }
   }
 }

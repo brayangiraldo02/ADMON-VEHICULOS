@@ -56,6 +56,9 @@
   background-color: #f9f9f9; /* Fondo claro */
 }
 
+.home {
+  background: #ffe9e9;
+}
 
 .home:hover {
   background: #ffcdcd; 

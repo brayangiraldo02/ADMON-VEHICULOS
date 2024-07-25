@@ -5,11 +5,9 @@
   <!-- EMPRESAS -->
   <!-- -------------------------------------------------------------------------- -->
   <div class="option" *ngIf="!mostrarOpcionesEstados && !isLoading">
-    <li class="select" [class.selected]="selectedEmpresasOptions['empresas']" (click)="toggleOpcionesEmpresas()">
-      <a>
-        <span class="select-text">Seleccionar Empresas</span>
-      </a>
-    </li>
+    <button class="select" type="button" [class.selected]="selectedEmpresasOptions['empresas']" (click)="toggleOpcionesEmpresas()">
+      <p class="select-text">Seleccionar Empresas</p>
+    </button>
     <div *ngIf="mostrarOpcionesEmpresas" class="cuadro-seleccion">
       <div *ngFor="let opcion of owners" class="checkbox-container" (click)="onCheckboxEmpresaContainerClick(opcion.id, $event)">
         <input type="checkbox" [id]="opcion.id" [value]="opcion.id" 
@@ -64,22 +62,18 @@
   </div> -->
 
   <div class="option" *ngIf="mostrarOpcionesEmpresas">
-    <li class="select" (click)="onEmpresaSeleccionar()">
-      <a>
-        <span class="select-text">Aceptar Empresas</span>
-      </a>
-    </li>
+    <button class="select" type="button" (click)="onEmpresaSeleccionar()">
+      <p class="select-text">Aceptar Empresas</p>
+    </button>
   </div>
   <!-- -------------------------------------------------------------------------- -->
 
   <!-- ESTADOS -->
   <!-- -------------------------------------------------------------------------- -->
   <div class="option" *ngIf="!mostrarOpcionesEmpresas && !isLoading">
-    <li class="select" [class.selected]="selectedEstadosOptions['estados']" (click)="toggleOpcionesEstados()">
-      <a>
-        <span class="select-text">Seleccionar Estados</span>
-      </a>
-    </li>
+    <button class="select" type="button" [class.selected]="selectedEstadosOptions['estados']" (click)="toggleOpcionesEstados()">
+      <p class="select-text">Seleccionar Estados</p>
+    </button>
     <div *ngIf="mostrarOpcionesEstados" class="cuadro-seleccion">
       <div *ngFor="let opcion of states" class="checkbox-container" (click)="onCheckboxEstadoContainerClick(opcion.id, $event)">
         <input type="checkbox" [id]="opcion.id" [value]="opcion.id" 
@@ -91,41 +85,34 @@
   </div>
 
   <div class="option" *ngIf="mostrarOpcionesEstados !isLoading">
-    <li class="select" (click)="onEstadoSeleccionar()">
-      <a>
-        <span class="select-text">Aceptar Estados</span>
-      </a>
-    </li>
+    <button class="select" type="button" (click)="onEstadoSeleccionar()">
+      <p class="select-text">Aceptar Estados</p>
+    </button>
   </div>
   <!-- -------------------------------------------------------------------------- -->
 
   <!-- GENERAR INFORME -->
   <!-- -------------------------------------------------------------------------- -->
   <div class="option" *ngIf="!mostrarOpcionesEstados && !mostrarOpcionesEmpresas && !isLoading">
-    <li class="select" (click)="generarInforme()">
-      <a>
-        <span class="select-text">Generar Informe</span>
-      </a>
-    </li>
+    <button class="select" type="button"(click)="generarInforme()">
+      <p class="select-text">Generar Informe</p>
+    </button>
   </div>
   <!-- -------------------------------------------------------------------------- -->
 
   <!-- REGRESAR -->
   <!-- -------------------------------------------------------------------------- -->
-  <li class="select home" *ngIf="mostrarOpcionesEstados || mostrarOpcionesEmpresas && !isLoading" (click)="backOptions()">
-    <a>
-      <span class="select-text">Regresar</span>
-    </a>
-  </li>
+  <button class="select home" type="button" *ngIf="mostrarOpcionesEstados || mostrarOpcionesEmpresas && !isLoading" (click)="backOptions()">
+    <p class="select-text">Regresar</p>
+  </button>
+  
   <!-- -------------------------------------------------------------------------- -->
 
   <!-- REGRESAR AL INICIO -->
   <!-- -------------------------------------------------------------------------- -->
-  <li class="select home" *ngIf="!mostrarOpcionesEstados && !mostrarOpcionesEmpresas && !isLoading" routerLink="/home">
-    <a>
-      <span class="select-text">Regresar Al Inicio</span>
-    </a>
-  </li>
+  <button class="select home" type="button" *ngIf="!mostrarOpcionesEstados && !mostrarOpcionesEmpresas && !isLoading" routerLink="/home">
+    <p class="select-text">Regresar Al Inicio</p>
+  </button>
   <!-- -------------------------------------------------------------------------- -->
 
   <!-- <p>Empresas seleccionadas: {{ empresasSeleccionadas.join(', ') }}</p>
