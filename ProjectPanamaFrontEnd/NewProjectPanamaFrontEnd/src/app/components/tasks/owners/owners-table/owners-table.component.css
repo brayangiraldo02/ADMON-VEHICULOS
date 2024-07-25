@@ -13,6 +13,7 @@
 }
 
 .options-container {
+  height: 7vh;
   width: 95%;
   display: flex;
   justify-content: space-between;
@@ -26,7 +27,7 @@
 }
 
 .report{
-  width: 18%;
+  width: 15%;
   box-sizing: border-box;
   background: #ffffff; /* Fondo claro por defecto, ajustable */
   border-radius: 10px; /* Bordes redondeados */

@@ -7,11 +7,6 @@
   user-select: none;
 }
 
-.container h1 {
-  padding-bottom: 2vh;
-
-}
-
 .options-container {
   width: 100%;
   display: flex;
@@ -22,7 +17,7 @@
 
 .option {
   width: 90vh;
-  height: 8vh;
+  height: 7vh;
   margin: 10px;
   box-sizing: border-box;
   background: #ffffff;
@@ -35,12 +30,13 @@
   cursor: pointer;
   text-decoration: none;
   color: black;
-  font-size: 18px;position: relative;  /* Permite posicionamiento absoluto de elementos hijos */
+  font-size: 16px;
+  position: relative;  /* Permite posicionamiento absoluto de elementos hijos */
 }
 
 .option span.material-symbols-outlined {
   margin-right: auto;  /* Empuja el icono a la izquierda */
-  font-size: 4vh;
+  font-size: 3.5vh;
 }
 
 .option-text {

@@ -22,7 +22,7 @@
   background: #ffffff; /* Fondo claro por defecto, ajustable */
   border: 1px solid #ccc;
   border-radius: 10px; /* Bordes redondeados */
-  padding: 30px;
+  /* padding: 30px; */
   display: flex;
   align-items: center; /* Centrado vertical */
   justify-content: center; /* Centrado horizontal */
