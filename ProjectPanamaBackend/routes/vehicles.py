@@ -4,6 +4,7 @@ from config.dbconnection import session
 from models.vehiculos import Vehiculos
 from models.estados import Estados
 from models.conductores import Conductores
+from schemas.vehicles import VehicleUpdate
 from models.centrales import Centrales
 from utils.reports import *
 from fastapi.encoders import jsonable_encoder
@@ -71,7 +72,7 @@ async def get_vehicles():
 
 #-------------------------------------------------------------------------------------------
 
-@vehicles_router.get('/directorio-vehiculos') 
+@vehicles_router.get('/directorio-vehiculos', tags=["Vehicles"]) 
 async def get_vehiculos_detalles():
     db = session()
     try:
@@ -209,3 +210,89 @@ async def get_vehiculos_detalles():
         return JSONResponse(content={"error": str(e)}) """
     finally:
         db.close()
+
+#-------------------------------------------------------------------------------------------
+
+@vehicles_router.get("/vehicles/{vehicle_id}", tags=["Vehicles"])
+async def get_vehicle(vehicle_id: int):
+  db = session()
+  try:
+    vehicle = db.query(
+            Vehiculos.NUMERO.label('vehiculo_numero'),
+            Vehiculos.PLACA.label('vehiculo_placa'),
+            Vehiculos.MODELO.label('vehiculo_modelo'),
+            Vehiculos.NRO_CUPO.label('vehiculo_nro_cupo'),
+            Vehiculos.PERMISONRO.label('vehiculo_permiso_nro'),
+            Vehiculos.MOTORNRO.label('vehiculo_motor'),
+            Vehiculos.CHASISNRO.label('vehiculo_chasis'),
+            Vehiculos.FEC_MATRIC.label('vehiculo_fec_matricula'),
+            Vehiculos.EMPRESA.label('vehiculo_empresa'),
+            Conductores.NOMBRE.label('vehiculo_conductor'),
+            Estados.NOMBRE.label('vehiculo_estado'),
+            Vehiculos.CUO_DIARIA.label('vehiculo_cuota_diaria'),
+            Vehiculos.NROENTREGA.label('vehiculo_nro_Ctas'),
+            Vehiculos.PANAPASSNU.label('vehiculo_panapass'),
+            Vehiculos.PANAPASSPW.label('vehiculo_panapass_pwd'),
+            Vehiculos.SDO_PANAPA.label('vehiculo_saldo_panapass'),
+        )   .join(Estados, Estados.CODIGO == Vehiculos.ESTADO) \
+            .join(Conductores, Conductores.CODIGO == Vehiculos.CONDUCTOR) \
+            .filter(Vehiculos.PLACA == vehicle_id) \
+            .first()
+
+    vehicle_info = {
+      'unidad': vehicle.vehiculo_numero,
+      'placa': vehicle.vehiculo_placa,
+      'modelo': vehicle.vehiculo_modelo,
+      'nro_cupo': vehicle.vehiculo_nro_cupo,
+      'permiso': vehicle.vehiculo_permiso_nro,
+      'motor': vehicle.vehiculo_motor,
+      'chasis': vehicle.vehiculo_chasis,
+      'matricula': vehicle.vehiculo_fec_matricula,
+      'empresa': vehicle.vehiculo_empresa,
+      'conductor': vehicle.vehiculo_conductor,
+      'estado': vehicle.vehiculo_estado,
+      'vlr_cta': vehicle.vehiculo_cuota_diaria,
+      'nro_ctas': vehicle.vehiculo_nro_Ctas,
+      'panapass': vehicle.vehiculo_panapass,
+      'clave': vehicle.vehiculo_panapass_pwd,
+      'saldo': vehicle.vehiculo_saldo_panapass
+    }
+    
+    return JSONResponse(content=jsonable_encoder(vehicle_info))
+  except Exception as e:    
+    return JSONResponse(content={"error": str(e)})
+  finally:
+    db.close()
+
+#-------------------------------------------------------------------------------------------
+
+@vehicles_router.post("/vehicle/{owner_id}", response_model = VehicleUpdate, tags=["Vehicles"])
+def update_vehicle(owner_id: str, vehicle: VehicleUpdate):
+  db = session()
+  try:
+    vehicle = db.query(Vehiculos).filter(Vehiculos.NUMERO == owner_id).first()
+    vehicle.VEHICULO_NUMERO = vehicle.vehiculo_numero
+    vehicle.VEHICULO_PLACA = vehicle.vehiculo_placa
+    vehicle.VEHICULO_MODELO = vehicle.vehiculo_modelo
+    vehicle.VEHICULO_NRO_CUPO = vehicle.vehiculo_nro_cupo
+    vehicle.VEHICULO_PERMISO_NRO = vehicle.vehiculo_permiso_nro
+    vehicle.VEHICULO_MOTOR = vehicle.vehiculo_motor
+    vehicle.VEHICULO_CHASIS = vehicle.vehiculo_chasis
+    vehicle.VEHICULO_FEC_MATRICULA = vehicle.vehiculo_fec_matricula
+    vehicle.VEHICULO_EMPRESA = vehicle.vehiculo_empresa
+    vehicle.VEHICULO_CONDUCTOR = vehicle.vehiculo_conductor
+    vehicle.VEHICULO_ESTADO = vehicle.vehiculo_estado
+    vehicle.VEHICULO_CUOTA_DIARIA = vehicle.vehiculo_cuota_diaria
+    vehicle.VEHICULO_NRO_CTAS = vehicle.vehiculo_nro_Ctas
+    vehicle.VEHICULO_PANAPASS = vehicle.vehiculo_panapass
+    vehicle.VEHICULO_PANAPASS_PWD = vehicle.vehiculo_panapass_pwd
+    vehicle.VEHICULO_SDO_PANAPA = vehicle.vehiculo_saldo_panapass
+    db.commit()
+
+    return JSONResponse(content={"message": "Vehicle updated successfully"})
+  except Exception as e:
+    return JSONResponse(content={"error": str(e)})
+  finally:
+    db.close()
+
+#-------------------------------------------------------------------------------------------
