@@ -9,7 +9,7 @@
       <div class="options-container">
         <ng-container *ngFor="let option of panapass">
           <button class="option" type="button" [routerLink]="option.url">
-            <span class="material-symbols-outlined">
+            <span class="material-symbols-outlined" translate="no">
               {{ option.icon }}
             </span>
             <p class="option-text">{{ option.name }}</p>
@@ -23,7 +23,7 @@
       <div class="options-container">
         <ng-container *ngFor="let option of colisiones">
           <button class="option" type="button" [routerLink]="option.url">
-            <span class="material-symbols-outlined">
+            <span class="material-symbols-outlined" translate="no">
               {{ option.icon }}
             </span>
             <p class="option-text">{{ option.name }}</p>

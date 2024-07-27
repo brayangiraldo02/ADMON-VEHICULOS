@@ -2,7 +2,7 @@
 <div class="container">
   <h1>TRÁMITES</h1>
   <!-- <a class="option">
-    <span class="material-symbols-outlined">
+    <span class="material-symbols-outlined" translate="no">
       info
     </span>
     <span class="option-text">Estado Trámite</span>
@@ -14,7 +14,7 @@
       <div class="options-container">
         <ng-container *ngFor="let option of operaciones">
           <button class="option" type="button" [routerLink]="option.url">
-            <span class="material-symbols-outlined">
+            <span class="material-symbols-outlined" translate="no">
               {{ option.icon }}
             </span>
             <p class="option-text">{{ option.name }}</p>
@@ -29,7 +29,7 @@
         <div class="options-container">
           <ng-container *ngFor="let option of control_cupos">
             <button class="option" type="button" [routerLink]="option.url">
-              <span class="material-symbols-outlined">
+              <span class="material-symbols-outlined" translate="no">
                 {{ option.icon }}
               </span>
               <p class="option-text">{{ option.name }}</p>
@@ -43,7 +43,7 @@
         <div class="options-container">
           <ng-container *ngFor="let option of seguros">
             <button class="option" type="button" [routerLink]="option.url">
-              <span class="material-symbols-outlined">
+              <span class="material-symbols-outlined" translate="no">
                 {{ option.icon }}
               </span>
               <p class="option-text">{{ option.name }}</p>
@@ -58,7 +58,7 @@
       <div class="options-container">
         <ng-container *ngFor="let option of formatos_tramites">
           <button class="option" type="button" [routerLink]="option.url">
-            <span class="material-symbols-outlined">
+            <span class="material-symbols-outlined" translate="no">
               {{ option.icon }}
             </span>
             <p class="option-text">{{ option.name }}</p>
@@ -72,7 +72,7 @@
       <div class="options-container">
         <ng-container *ngFor="let option of seguimiento_traspasos">
           <button class="option" type="button" [routerLink]="option.url">
-            <span class="material-symbols-outlined">
+            <span class="material-symbols-outlined" translate="no">
               {{ option.icon }}
             </span>
             <p class="option-text">{{ option.name }}</p>
