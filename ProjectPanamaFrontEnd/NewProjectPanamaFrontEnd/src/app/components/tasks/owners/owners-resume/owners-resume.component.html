@@ -5,28 +5,28 @@
   <div class="buttons-container" *ngIf="!isLoading">
 
     <button class="select back" type="button" routerLink="/owners">
-      <span class="material-symbols-outlined">
+      <span class="material-symbols-outlined" translate="no">
         arrow_back
       </span>
       <p class="select-text">Regresar</p>
     </button>
 
     <button class="select" type="button" (click)="goToOwnerResume()" [ngClass]="{'selected': selectedButton === 'hoja'}">
-      <span class="material-symbols-outlined">
+      <span class="material-symbols-outlined" translate="no">
         library_books
       </span>
       <p class="select-text">Hoja de Vida</p>
     </button>
 
     <button class="select" type="button" (click)="goToOwnerContract()" [ngClass]="{'selected': selectedButton === 'contrato'}">
-      <span class="material-symbols-outlined">
+      <span class="material-symbols-outlined" translate="no">
         contract
       </span>
       <p class="select-text">Contrato</p>
     </button>
 
     <button class="select" type="button" (click)="goToOwnerVehicles()" [ngClass]="{'selected': selectedButton === 'vehiculos'}">
-      <span class="material-symbols-outlined">
+      <span class="material-symbols-outlined" translate="no">
         traffic_jam
       </span>
       <p class="select-text">Vehículos</p>
@@ -269,29 +269,65 @@
 
   <div class="buttons-container" *ngIf="!isLoading && !OwnersVehiclesView">
 
+    <div class="search-buttons-container" *ngIf="!isEditable">
+      <button class="select small-buttons" type="button">
+        <span class="material-symbols-outlined" translate="no">
+          first_page
+        </span>
+      </button>
+  
+      <button class="select small-buttons" type="button">
+        <span class="material-symbols-outlined" translate="no">
+          chevron_left
+        </span>
+      </button>
+  
+      <button class="select small-buttons" type="button">
+        <span class="material-symbols-outlined" translate="no">
+          chevron_right
+        </span>
+      </button>
+  
+      <button class="select small-buttons" type="button">
+        <span class="material-symbols-outlined" translate="no">
+          last_page
+        </span>
+      </button>
+    </div>
+
     <button class="select" type="button" *ngIf="!isEditable" routerLink="/new-owner">
-      <span class="material-symbols-outlined">
+      <span class="material-symbols-outlined" translate="no">
         add_circle
       </span>
       <p class="select-text">Nuevo Propietario</p>
     </button>
 
+    <button class="select" type="button" *ngIf="!isEditable">
+      <span class="material-symbols-outlined" translate="no">
+        delete
+      </span>
+      <p class="select-text">Eliminar Propietario</p>
+    </button>
+
+    <button class="select" type="button" (click)="enableInputs()" *ngIf="!isEditable">
+      <span class="material-symbols-outlined" translate="no">
+        edit
+      </span>
+      <p class="select-text">Editar</p>
+    </button>
+
     <button class="select" type="button" (click)="saveData()" *ngIf="isEditable">
-      <span class="material-symbols-outlined">
+      <span class="material-symbols-outlined" translate="no">
         check
       </span>
       <p class="select-text">Aceptar</p>
     </button>
 
-    <button class="select" type="button" (click)="enableInputs()">
-      <span class="material-symbols-outlined" *ngIf="!isEditable">
-        edit
-      </span>
-      <p class="select-text" *ngIf="!isEditable">Editar</p>
-      <span class="material-symbols-outlined" *ngIf="isEditable">
+    <button class="select back" type="button" (click)="enableInputs()" *ngIf="isEditable">
+      <span class="material-symbols-outlined" translate="no">
         close
       </span>
-      <p class="select-text" *ngIf="isEditable">Cancelar</p>
+      <p class="select-text">Cancelar</p>
     </button>
 
   </div>

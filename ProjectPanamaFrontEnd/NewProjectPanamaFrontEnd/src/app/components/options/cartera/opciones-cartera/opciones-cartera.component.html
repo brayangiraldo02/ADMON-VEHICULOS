@@ -2,7 +2,7 @@
 <div class="container">
   <h1>CARTERA</h1>
   <!-- <a class="option">
-    <span class="material-symbols-outlined">
+    <span class="material-symbols-outlined" translate="no">
       info
     </span>
     <span class="option-text">Estado Trámite</span>
@@ -15,7 +15,7 @@
         <div class="options-container">
           <ng-container *ngFor="let option of documentos">
             <button class="option" type="button" [routerLink]="option.url">
-              <span class="material-symbols-outlined">
+              <span class="material-symbols-outlined" translate="no">
                 {{ option.icon }}
               </span>
               <p class="option-text">{{ option.name }}</p>
@@ -29,7 +29,7 @@
         <div class="options-container">
           <ng-container *ngFor="let option of cruces">
             <button class="option" type="button" [routerLink]="option.url">
-              <span class="material-symbols-outlined">
+              <span class="material-symbols-outlined" translate="no">
                 {{ option.icon }}
               </span>
               <p class="option-text">{{ option.name }}</p>
@@ -44,7 +44,7 @@
       <div class="options-container">
         <ng-container *ngFor="let option of consultas">
           <button class="option" type="button" [routerLink]="option.url">
-            <span class="material-symbols-outlined">
+            <span class="material-symbols-outlined" translate="no">
               {{ option.icon }}
             </span>
             <p class="option-text">{{ option.name }}</p>
