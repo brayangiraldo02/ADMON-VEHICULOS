@@ -68,6 +68,15 @@ button.selected {
   background: #ffcdcd; 
 }
 
+.small-buttons {
+  width: auto;
+  margin: 5px;
+}
+
+.search-buttons-container {
+  display: flex;
+}
+
 .select-text {
   flex-grow: 1;
   text-align: center;  /* Asegura que el texto esté centrado */
