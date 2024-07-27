@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { MatCardModule } from '@angular/material/card';
+import { MatDialogModule } from '@angular/material/dialog';
 import {MatButtonModule} from '@angular/material/button';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -32,6 +33,7 @@ import { OwnersVehiclesComponent } from './components/tasks/owners/owners-vehicl
 import { OwnersResumeComponent } from './components/tasks/owners/owners-resume/owners-resume.component';
 import { DriversComponent } from './components/tasks/drivers/drivers.component';
 import { OwnersAddnewComponent } from './components/tasks/owners/owners-addnew/owners-addnew.component';
+import { OwnersReportsComponent } from './components/tasks/owners/owners-reports/owners-reports.component';
 
 @NgModule({
   declarations: [
@@ -61,12 +63,14 @@ import { OwnersAddnewComponent } from './components/tasks/owners/owners-addnew/o
     OwnersResumeComponent,
     DriversComponent,
     OwnersAddnewComponent,
+    OwnersReportsComponent,
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     BrowserAnimationsModule,
     MatCardModule,
+    MatDialogModule,
     MatButtonModule,
     HttpClientModule,
     FormsModule,
