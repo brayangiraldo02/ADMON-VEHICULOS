@@ -3,6 +3,11 @@ from fastapi.responses import JSONResponse
 from config.dbconnection import session
 from models.conductores import Conductores
 from models.ciudades import Ciudades
+from models.vehiculos import Vehiculos
+from models.cajarecaudos import CajaRecaudos
+from models.cajarecaudoscontado import CajasRecaudosContado
+from models.cartera import Cartera
+from models.movienca import Movienca
 from schemas.reports import *
 from middlewares.JWTBearer import JWTBearer
 from fastapi.encoders import jsonable_encoder
@@ -155,3 +160,52 @@ async def get_conductores_detalles():
         #return JSONResponse(content=jsonable_encoder(data))
     finally:
         db.close()
+
+#-----------------------------------------------------------------------------------------------
+
+@drivers_router.get("/driver-delete/{owner_id}", tags=["Drivers"])
+async def verify_driver_delete(driver_id: int):
+  db = session()
+  try:
+    driver = db.query(
+            CajaRecaudos.CLIENTE.label('cajarecaudos'),
+            CajasRecaudosContado.CLIENTE.label('cajarecaudoscontado'),
+            Cartera.CLIENTE.label('cartera'),
+            Movienca.CLIENTE.label('movienca'),
+            Movienca.CONDUCTOR.label('movienca_conductor')
+        ).select_from(Conductores).outerjoin(
+            CajaRecaudos, Conductores.CODIGO == CajaRecaudos.CLIENTE
+        ).outerjoin(
+            CajasRecaudosContado, Conductores.CODIGO == CajasRecaudosContado.CLIENTE
+        ).outerjoin(
+            Cartera, Conductores.CODIGO == Cartera.CLIENTE
+        ).outerjoin(
+            Movienca, Conductores.CODIGO == Movienca.CLIENTE
+        ).outerjoin(
+            Movienca, Conductores.CODIGO == Movienca.CONDUCTOR
+        ).filter(
+            Conductores.CODIGO == driver_id
+        ).first()
+        
+    if not driver:
+      return JSONResponse(content={"error": "Owner not found"}, status_code=404)
+    driver_conditions = {
+      'cajarecaudos': driver.cajarecaudos,
+      'cajarecaudoscontado': driver.cajarecaudoscontado,
+      'cartera': driver.cartera,
+      'movienca': driver.movienca,
+      'movienca_conductor': driver.movienca_conductor
+    }
+
+    if any(driver_conditions.values()):
+      return JSONResponse(content={"message": "driver cant be deleted"})
+    # Si no hay registros en otras tablas, eliminar al propietario
+    db.query(Conductores).filter(Conductores.CODIGO == driver_id).delete()
+    db.commit()
+    return JSONResponse(content={"message": "driver deleted successfully"})
+  
+  except Exception as e:
+    db.rollback() 
+    return JSONResponse(content={"error": str(e)})
+  finally:
+    db.close()

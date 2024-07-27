@@ -419,7 +419,7 @@ async def get_owner_codes():
 
 #----------------------------------------------------------------------------------------------------------------
 
-@owners_router.get("/verify-owner-delete/{owner_id}", tags=["Owners"])
+@owners_router.get("/owner-delete/{owner_id}", tags=["Owners"])
 async def verify_owner_delete(owner_id: int):
   db = session()
   try:
@@ -455,8 +455,17 @@ async def verify_owner_delete(owner_id: int):
 
     data = check_owner_records(owner_conditions)
 
-    return JSONResponse(content=jsonable_encoder(data))
+    if any(owner_conditions.values()):
+      return JSONResponse(content={"message": "Owner cant be deleted"})
+    # Si no hay registros en otras tablas, eliminar al propietario
+    db.query(Propietarios).filter(Propietarios.CODIGO == owner_id).delete()
+    db.commit()
+    return JSONResponse(content={"message": "Owner deleted successfully"})
+  
   except Exception as e:
+    db.rollback() 
     return JSONResponse(content={"error": str(e)})
   finally:
     db.close()
+
+#----------------------------------------------------------------------------------------------------------------

@@ -104,42 +104,49 @@
         footer p {
         font-size: 12px; 
         }
+        .email-column {
+            max-width: 200px;
+            overflow-wrap: break-word;
+            word-wrap: break-word;
+            word-break: break-all;
+            text-align: left;
+        }
     </style>
 </head>
 <body>
 
     <table>
-            <tr>
-                <th>Código</th>
-                <th>Nombre</th>
-                <th>Ciudad</th>
-                <th>Dirección</th>
-                <th>Teléfono</th>
-                <th>Celular</th>
-                <th>Correo</th>
-            </tr>
-            {% for estado, estado_info in data_view.items() %}
-                {% if estado != 'usuario' %}
+        <tr>
+            <th>Código</th>
+            <th>Nombre</th>
+            <th>Ciudad</th>
+            <th>Dirección</th>
+            <th>Teléfono</th>
+            <th>Celular</th>
+            <th>Correo</th>
+        </tr>
+        {% for estado, estado_info in data_view.items() %}
+            {% if estado != 'usuario' %}
+                <tr>
+                    <th colspan="7">
+                        <div class="box-propietario2">
+                            <span style="text-transform: uppercase;">{{ estado_info['nombre_estado'] }}</span>
+                        </div>
+                    </th>
+                </tr>
+                {% for empresa in estado_info['empresas'] %}
                     <tr>
-                        <th colspan="7">
-                            <div class="box-propietario2">
-                                <span style="text-transform: uppercase;">{{ estado_info['nombre_estado'] }}</span>
-                            </div>
-                        </th>
+                        <td>{{ empresa['codigo_empresa'] }}</td>
+                        <td style="text-align: left;">{{ empresa['nombre'] }}</td>
+                        <td>{{ empresa['ciudad'] }}</td>
+                        <td style="text-align: left;">{{ empresa['direccion'] }}</td>
+                        <td>{{ empresa['telefono'] }}</td>
+                        <td>{{ empresa['celular'] }}</td>
+                        <td class="email-column">{{ empresa['correo'] }}</td>
                     </tr>
-                    {% for empresa in estado_info['empresas'] %}
-                        <tr>
-                            <td>{{ empresa['codigo_empresa'] }}</td>
-                            <td style="text-align: left;">{{ empresa['nombre'] }}</td>
-                            <td>{{ empresa['ciudad'] }}</td>
-                            <td style="text-align: left;">{{ empresa['direccion'] }}</td>
-                            <td>{{ empresa['telefono'] }}</td>
-                            <td>{{ empresa['celular'] }}</td>
-                            <td>{{ empresa['correo'] }}</td>
-                        </tr>
-                    {% endfor %}
-                {% endif %}
-            {% endfor %}
-    </table>     
+                {% endfor %}
+            {% endif %}
+        {% endfor %}
+</table>     
 </body>
 </html>
