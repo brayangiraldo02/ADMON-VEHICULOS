@@ -31,7 +31,7 @@ button.selected {
 }
 
 .select{
-  width: 20%;
+  width: 15%;
   margin: 10px;
   box-sizing: border-box;
   background: #ffffff; /* Fondo claro por defecto, ajustable */
@@ -48,6 +48,7 @@ button.selected {
 .select span.material-symbols-outlined {
   margin-right: auto;  /* Empuja el icono a la izquierda */
   font-size: 3.5vh;
+  color: black;
 }
 
 .select.selected {
@@ -59,8 +60,21 @@ button.selected {
   background: #bcd1ec;
 }
 
+.back {
+  background: #ffe9e9;
+}
+
 .back:hover {
   background: #ffcdcd; 
+}
+
+.small-buttons {
+  width: auto;
+  margin: 5px;
+}
+
+.search-buttons-container {
+  display: flex;
 }
 
 .select-text {
@@ -98,15 +112,15 @@ button.selected {
 
 .form-group input, .form-group select {
   padding: 10px;
+  background: #eeeeee;
   border: 1px solid #ccc;
-  background: #ffffff;
   border-radius: 10px;
-  color: black;
+  color: rgb(75, 75, 75)
 }
 
 .form-group input:enabled, .form-group select:enabled {
-  background: #eeeeee;
-  border-color: #000000;
+  background: #ffffff;
+  color: black;
 }
 
 .two-container {

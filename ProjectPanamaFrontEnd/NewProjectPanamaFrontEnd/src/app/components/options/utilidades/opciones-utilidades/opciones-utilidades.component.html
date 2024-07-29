@@ -2,7 +2,7 @@
 <div class="container">
   <h1>UTILIDADES</h1>
   <!-- <a class="option">
-    <span class="material-symbols-outlined">
+    <span class="material-symbols-outlined" translate="no">
       info
     </span>
     <span class="option-text">Estado Trámite</span>
@@ -13,12 +13,12 @@
       <h2>TABLAS</h2>
       <div class="options-container">
         <ng-container *ngFor="let option of tablas">
-          <a class="option" [href]="option.url">
-            <span class="material-symbols-outlined">
+          <button class="option" type="button" [routerLink]="option.url">
+            <span class="material-symbols-outlined" translate="no">
               {{ option.icon }}
             </span>
-            <span class="option-text">{{ option.name }}</span>
-          </a>
+            <p class="option-text">{{ option.name }}</p>
+          </button>
         </ng-container>
       </div>
     </div>
@@ -28,12 +28,12 @@
         <h2>UTILIDADES</h2>
         <div class="options-container">
           <ng-container *ngFor="let option of utilidades">
-            <a class="option" [href]="option.url">
-              <span class="material-symbols-outlined">
+            <button class="option" type="button" [routerLink]="option.url">
+              <span class="material-symbols-outlined" translate="no">
                 {{ option.icon }}
               </span>
-              <span class="option-text">{{ option.name }}</span>
-            </a>
+              <p class="option-text">{{ option.name }}</p>
+            </button>
           </ng-container>
         </div>
       </div>
@@ -42,12 +42,12 @@
         <h2>SEGURIDAD</h2>
         <div class="options-container">
           <ng-container *ngFor="let option of seguridad">
-            <a class="option" [href]="option.url">
-              <span class="material-symbols-outlined">
+            <button class="option" type="button" [routerLink]="option.url">
+              <span class="material-symbols-outlined" translate="no">
                 {{ option.icon }}
               </span>
-              <span class="option-text">{{ option.name }}</span>
-            </a>
+              <p class="option-text">{{ option.name }}</p>
+            </button>
           </ng-container>
         </div>
       </div>

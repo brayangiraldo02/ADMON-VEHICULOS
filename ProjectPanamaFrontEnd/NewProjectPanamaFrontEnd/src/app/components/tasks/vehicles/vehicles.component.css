@@ -43,6 +43,7 @@
 .report span.material-symbols-outlined {
   margin-right: auto;  /* Empuja el icono a la izquierda */
   font-size: 3.5vh;
+  color: black;
 }
 
 .report-text {
