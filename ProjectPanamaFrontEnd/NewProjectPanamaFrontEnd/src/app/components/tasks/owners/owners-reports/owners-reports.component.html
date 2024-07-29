@@ -1,1 +1,56 @@
-<p>owners-reports works!</p>
+<div class="modal" *ngIf="isVisible">
+  <div class="modal-content">
+    <span class="close" (click)="closeModal()">&times;</span>
+    <h2 class="title-container">Tipo de Informe</h2>
+    <div class="options-container">
+      <button class="option" type="button">
+        <span class="material-symbols-outlined" translate="no">
+          description
+        </span>
+        <p class="option-text">Estado Flota Resumen</p>
+      </button>
+      <button class="option" type="button">
+        <span class="material-symbols-outlined" translate="no">
+          description
+        </span>
+        <p class="option-text">Estado Flota Detalle</p>
+      </button>
+      <button class="option" type="button">
+        <span class="material-symbols-outlined" translate="no">
+          description
+        </span>
+        <p class="option-text">Valores de Compra</p>
+      </button>
+      <button class="option" type="button">
+        <span class="material-symbols-outlined" translate="no">
+          description
+        </span>
+        <p class="option-text">Vehículos por Piquera</p>
+      </button>
+      <button class="option" type="button">
+        <span class="material-symbols-outlined" translate="no">
+          description
+        </span>
+        <p class="option-text">Reporte de Recaudos</p>
+      </button>
+      <button class="option" type="button">
+        <span class="material-symbols-outlined" translate="no">
+          description
+        </span>
+        <p class="option-text">Reporde P y G</p>
+      </button>
+      <button class="option" type="button">
+        <span class="material-symbols-outlined" translate="no">
+          description
+        </span>
+        <p class="option-text">Zarpe Empresa/Piquera</p>
+      </button>
+      <button class="option" type="button">
+        <span class="material-symbols-outlined" translate="no">
+          description
+        </span>
+        <p class="option-text">Zarpe Piquera</p>
+      </button>
+    </div>
+  </div>
+</div>

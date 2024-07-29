@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 
 @Component({
   selector: 'app-owners-reports',
@@ -6,5 +6,10 @@ import { Component } from '@angular/core';
   styleUrls: ['./owners-reports.component.css']
 })
 export class OwnersReportsComponent {
+  @Input() isVisible: boolean = false;
+  @Output() close = new EventEmitter<void>();
 
+  closeModal() {
+    this.close.emit();
+  }
 }
