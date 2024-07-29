@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends
 from fastapi.responses import JSONResponse
 from config.dbconnection import session
+from sqlalchemy.orm import aliased
 from models.conductores import Conductores
 from models.ciudades import Ciudades
 from models.vehiculos import Vehiculos
@@ -163,16 +164,22 @@ async def get_conductores_detalles():
 
 #-----------------------------------------------------------------------------------------------
 
+#@drivers_router.post("/driver", response_model=OwnerCreate, tags=["Drivers"])
+
+#-----------------------------------------------------------------------------------------------
+
 @drivers_router.get("/driver-delete/{owner_id}", tags=["Drivers"])
 async def verify_driver_delete(driver_id: int):
   db = session()
   try:
+    MoviencaClient = aliased(Movienca)
+    MoviencaConductor = aliased(Movienca)
     driver = db.query(
             CajaRecaudos.CLIENTE.label('cajarecaudos'),
             CajasRecaudosContado.CLIENTE.label('cajarecaudoscontado'),
             Cartera.CLIENTE.label('cartera'),
-            Movienca.CLIENTE.label('movienca'),
-            Movienca.CONDUCTOR.label('movienca_conductor')
+            MoviencaClient.CLIENTE.label('movienca'),
+            MoviencaConductor.CONDUCTOR.label('movienca_conductor')
         ).select_from(Conductores).outerjoin(
             CajaRecaudos, Conductores.CODIGO == CajaRecaudos.CLIENTE
         ).outerjoin(
@@ -180,15 +187,15 @@ async def verify_driver_delete(driver_id: int):
         ).outerjoin(
             Cartera, Conductores.CODIGO == Cartera.CLIENTE
         ).outerjoin(
-            Movienca, Conductores.CODIGO == Movienca.CLIENTE
+            MoviencaClient, Conductores.CODIGO == MoviencaClient.CLIENTE
         ).outerjoin(
-            Movienca, Conductores.CODIGO == Movienca.CONDUCTOR
+            MoviencaConductor, Conductores.CODIGO == MoviencaConductor.CONDUCTOR
         ).filter(
             Conductores.CODIGO == driver_id
         ).first()
         
     if not driver:
-      return JSONResponse(content={"error": "Owner not found"}, status_code=404)
+      return JSONResponse(content={"error": "Driver not found"}, status_code=404)
     driver_conditions = {
       'cajarecaudos': driver.cajarecaudos,
       'cajarecaudoscontado': driver.cajarecaudoscontado,
@@ -202,10 +209,12 @@ async def verify_driver_delete(driver_id: int):
     # Si no hay registros en otras tablas, eliminar al propietario
     db.query(Conductores).filter(Conductores.CODIGO == driver_id).delete()
     db.commit()
-    return JSONResponse(content={"message": "driver deleted successfully"})
+    return JSONResponse(content={"message": "Owner deleted successfully"})
   
   except Exception as e:
     db.rollback() 
     return JSONResponse(content={"error": str(e)})
   finally:
     db.close()
+
+#-----------------------------------------------------------------------------------------------

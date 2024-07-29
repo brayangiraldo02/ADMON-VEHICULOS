@@ -230,7 +230,7 @@ def update_propietario(owner_id: str, propietario: PropietarioUpdate):
 
 #----------------------------------------------------------------------------------------------------------------
 
-@owners_router.post("/owners", response_model=PropietarioCreate)
+@owners_router.post("/owners", response_model=PropietarioCreate, tags=["Owners"])
 def create_propietario(propietario: PropietarioCreate):
     db = session()
     try:
@@ -452,8 +452,6 @@ async def verify_owner_delete(owner_id: int):
       'cartera': owner.cartera,
       'movienca': owner.movienca
     }
-
-    data = check_owner_records(owner_conditions)
 
     if any(owner_conditions.values()):
       return JSONResponse(content={"message": "Owner cant be deleted"})

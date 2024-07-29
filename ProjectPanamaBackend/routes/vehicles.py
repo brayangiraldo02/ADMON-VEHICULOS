@@ -6,6 +6,10 @@ from models.estados import Estados
 from models.conductores import Conductores
 from schemas.vehicles import VehicleUpdate
 from models.centrales import Centrales
+from models.cajarecaudos import CajaRecaudos
+from models.cajarecaudoscontado import CajasRecaudosContado
+from models.cartera import Cartera
+from models.movienca import Movienca
 from utils.reports import *
 from fastapi.encoders import jsonable_encoder
 from datetime import datetime
@@ -296,3 +300,48 @@ def update_vehicle(owner_id: str, vehicle: VehicleUpdate):
     db.close()
 
 #-------------------------------------------------------------------------------------------
+
+@vehicles_router.get("/vehicle-delete/{vehicle_id}", tags=["Vehicles"])
+async def verify_vehicle_delete(vehicle_id: int):
+    db = session()
+    try:
+        vehicle = db.query(
+            CajaRecaudos.NUMERO.label('cajarecaudos'),
+            CajasRecaudosContado.NUMERO.label('cajarecaudoscontado'),
+            Cartera.UNIDAD.label('cartera'),
+            Movienca.UNIDAD.label('movienca')
+        ).select_from(Vehiculos).outerjoin(
+            CajaRecaudos, Vehiculos.NUMERO == CajaRecaudos.NUMERO
+        ).outerjoin(
+            CajasRecaudosContado, Vehiculos.NUMERO == CajasRecaudosContado.NUMERO
+        ).outerjoin(
+            Cartera, Vehiculos.NUMERO == Cartera.UNIDAD
+        ).outerjoin(
+            Movienca, Vehiculos.NUMERO == Movienca.UNIDAD
+        ).filter(
+            Vehiculos.NUMERO == vehicle_id
+        ).first()
+
+        if not vehicle:
+            return JSONResponse(content={"error": "Vehicle not found"}, status_code=404)
+
+        vehicle_conditions = {
+            'cajarecaudos': vehicle.cajarecaudos,
+            'cajarecaudoscontado': vehicle.cajarecaudoscontado,
+            'cartera': vehicle.cartera,
+            'movienca': vehicle.movienca
+        }
+
+        if any(vehicle_conditions.values()):
+            return JSONResponse(content={"message": "Vehicle can't be deleted"})
+
+        # If there are no records in other tables, delete the vehicle
+        db.query(Vehiculos).filter(Vehiculos.NUMERO == vehicle_id).delete()
+        db.commit()
+        return JSONResponse(content={"message": "Vehicle deleted successfully"})
+
+    except Exception as e:
+        db.rollback()
+        return JSONResponse(content={"error": str(e)})
+    finally:
+        db.close()

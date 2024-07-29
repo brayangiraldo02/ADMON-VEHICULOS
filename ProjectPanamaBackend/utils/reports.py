@@ -231,12 +231,3 @@ def valor_compra_vehiculos(data):
     return vehiculos_por_propietario
 
 #------------------------------------------------------------
-
-def check_owner_records(owner):
-    return {
-        'vehiculo': owner['vehiculo'] is not None,
-        'cajarecaudos': owner['cajarecaudos'] is not None,
-        'cajarecaudoscontado': owner['cajarecaudoscontado'] is not None,
-        'cartera': owner['cartera'] is not None,
-        'movienca': owner['movienca'] is not None
-    }
