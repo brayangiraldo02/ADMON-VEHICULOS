@@ -2,21 +2,101 @@ from pydantic import BaseModel
 from typing import Optional
 
 class VehicleUpdate(BaseModel):
-    vehiculo_numero: Optional[int] = None
-    vehiculo_placa: Optional[str] = None
-    vehiculo_modelo: Optional[str] = None
-    vehiculo_nro_cupo: Optional[int] = None
-    vehiculo_permiso_nro: Optional[str] = None
-    vehiculo_motor: Optional[str] = None
-    vehiculo_chasis: Optional[str] = None
-    vehiculo_fec_matricula: Optional[str] = None
-    vehiculo_empresa: Optional[str] = None
-    vehiculo_conductor: Optional[str] = None
-    vehiculo_estado: Optional[str] = None
-    vehiculo_cuota_diaria: Optional[float] = None
-    vehiculo_nro_Ctas: Optional[int] = None
-    vehiculo_panapass: Optional[str] = None
-    vehiculo_panapass_pwd: Optional[str] = None
-    vehiculo_sdo_panapa: Optional[float] = None
+    vehiculo_numero: Optional[str]
+    vehiculo_placa: Optional[str]
+    vehiculo_consecutivo: Optional[str]
+    vehiculo_marca: Optional[str]
+    vehiculo_modelo: Optional[str]
+    vehiculo_año: Optional[str]
+    vehiculo_cilindraje: Optional[str]
+    vehiculo_nro_puertas: Optional[str]
+    vehiculo_licencia_nro: Optional[str]
+    vehiculo_licencia_fec: Optional[str]
+    vehiculo_color: Optional[str]
+    vehiculo_servicio: Optional[str]
+    vehiculo_fec_matricula: Optional[str]
+    vehiculo_fec_vencimiento_matricula: Optional[str]
+    vehiculo_fec_importacion: Optional[str]
+    vehicul_clase: Optional[str]
+    vehiculo_tipo: Optional[str]
+    vehiculo_combustible: Optional[str]
+    vehiculo_capacidad: Optional[str]
+    vehiculo_ne: Optional[str]
+    vehiculo_motor: Optional[str]
+    vehiculo_motor_reg: Optional[str]
+    vehiculo_vin: Optional[str]
+    vehiculo_serie: Optional[str]
+    vehiculo_serie_reg: Optional[str]
+    vehiculo_chasis: Optional[str]
+    vehiculo_chasis_reg: Optional[str]
+    vehiculo_propietario: Optional[str]
+    vehiculo_cta_gasto: Optional[str]
+    vehiculo_central: Optional[str]
+    vehiculo_fec_creacion: Optional[str]
+    vehiculo_nro_cupo: Optional[int]
+    vehiculo_permiso_nro: Optional[str]
+    vehiculo_fec_vencimiento_permiso: Optional[str]
+    vehiculo_blindaje: Optional[str]
+    vehiculo_potencia: Optional[str]
+    vehiculo_dec_importacion: Optional[str]
+    vehiculo_restriccion_movilidad: Optional[str]
+    vehiculo_limit_propiedad: Optional[str]
+    vehiculo_organismo_transito: Optional[str]
+    vehiculo_codigo_barras: Optional[str]
+    vehiculo_lateral: Optional[str]
+    vehiculo_kilometraje: Optional[str]
+    vehiculo_modalidad: Optional[str]
+    vehiculo_consulta_panapass: Optional[str]
+    vehiculo_panapass: Optional[str]
+    vehiculo_panapass_pwd: Optional[str]
 
-    
+#--------------------------------------------------------------------------------
+
+class VehicleCreate(BaseModel):
+    vehiculo_numero: str
+    vehiculo_placa: str
+    vehiculo_consecutivo: str
+    vehiculo_marca: str
+    vehiculo_modelo: str
+    vehiculo_año: str
+    vehiculo_cilindraje: str
+    vehiculo_nro_puertas: str
+    vehiculo_licencia_nro: str
+    vehiculo_licencia_fec: str
+    vehiculo_color: str
+    vehiculo_servicio: str
+    vehiculo_fec_matricula: str
+    vehiculo_fec_vencimiento_matricula: str
+    vehiculo_fec_importacion: str
+    vehicul_clase: str
+    vehiculo_tipo: str
+    vehiculo_combustible: str
+    vehiculo_capacidad: str
+    vehiculo_ne: str
+    vehiculo_motor: str
+    vehiculo_motor_reg: str
+    vehiculo_vin: str
+    vehiculo_serie: str
+    vehiculo_serie_reg: str
+    vehiculo_chasis: str
+    vehiculo_chasis_reg: str
+    vehiculo_propietario: str
+    vehiculo_cta_gasto: str
+    vehiculo_central: str
+    vehiculo_fec_creacion: str
+    vehiculo_nro_cupo: int
+    vehiculo_permiso_nro: str
+    vehiculo_fec_vencimiento_permiso: str
+    vehiculo_blindaje: str
+    vehiculo_potencia: str
+    vehiculo_dec_importacion: str
+    vehiculo_restriccion_movilidad: str
+    vehiculo_limit_propiedad: str
+    vehiculo_organismo_transito: str
+    vehiculo_codigo_barras: str
+    vehiculo_lateral: str
+    vehiculo_kilometraje: str
+    vehiculo_modalidad: str
+    vehiculo_consulta_panapass: str
+    vehiculo_panapass: str
+    vehiculo_panapass_pwd: str

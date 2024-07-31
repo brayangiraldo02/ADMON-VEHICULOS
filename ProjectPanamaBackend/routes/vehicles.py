@@ -4,7 +4,7 @@ from config.dbconnection import session
 from models.vehiculos import Vehiculos
 from models.estados import Estados
 from models.conductores import Conductores
-from schemas.vehicles import VehicleUpdate
+from schemas.vehicles import VehicleUpdate, VehicleCreate
 from models.centrales import Centrales
 from models.cajarecaudos import CajaRecaudos
 from models.cajarecaudoscontado import CajasRecaudosContado
@@ -270,27 +270,127 @@ async def get_vehicle(vehicle_id: int):
 
 #-------------------------------------------------------------------------------------------
 
+@vehicles_router.post("/vehicle-create", response_model=VehicleCreate, tags=["Vehicles"])
+def create_vehicle(vehicle: VehicleCreate):
+    db = session()
+    try:
+        panama_timezone = pytz.timezone('America/Panama')
+        now_in_panama = datetime.now(panama_timezone)
+        fecha = now_in_panama.strftime("%Y-%m-%d %H:%M:%S")
+        new_vehicle = Vehiculos(
+            NUMERO=vehicle.vehiculo_numero,
+            PLACA=vehicle.vehiculo_placa,
+            CONSECUTIV=vehicle.vehiculo_consecutivo,
+            MARCA=vehicle.vehiculo_marca,
+            LINEA=vehicle.vehiculo_modelo,
+            MODELO=vehicle.vehiculo_año,
+            CILINDRAJE=vehicle.vehiculo_cilindraje,
+            PUERTAS=vehicle.vehiculo_nro_puertas,
+            LICETRANSI=vehicle.vehiculo_licencia_nro,
+            # LICENCIA_FEC=vehicle.vehiculo_licencia_fec,
+            COLORES=vehicle.vehiculo_color,
+            SERVICIO=vehicle.vehiculo_servicio,
+            FEC_MATRIC=vehicle.vehiculo_fec_matricula,
+            FEC_VENCIM=vehicle.vehiculo_fec_vencimiento_matricula,
+            FEC_IMPORT=vehicle.vehiculo_fec_importacion,
+            CLASEVEHIC=vehicle.vehicul_clase,
+            TIPOCARROC=vehicle.vehiculo_tipo,
+            COMBUSTIBL=vehicle.vehiculo_combustible,
+            CAPACIDAD=vehicle.vehiculo_capacidad,
+            NE=vehicle.vehiculo_ne,
+            MOTORNRO=vehicle.vehiculo_motor,
+            MOTORREG=vehicle.vehiculo_motor_reg,
+            MOTORVIN=vehicle.vehiculo_vin,
+            SERIENRO=vehicle.vehiculo_serie,
+            SERIEREG=vehicle.vehiculo_serie_reg,
+            CHASISNRO=vehicle.vehiculo_chasis,
+            CHASISREG=vehicle.vehiculo_chasis_reg,
+            PROPI_IDEN=vehicle.vehiculo_propietario,
+            CTA_GASTO=vehicle.vehiculo_cta_gasto,
+            CENTRAL=vehicle.vehiculo_central,
+            FEC_CREADO=fecha,
+            NRO_CUPO=vehicle.vehiculo_nro_cupo,
+            PERMISONRO=vehicle.vehiculo_permiso_nro,
+            PERMISOVCE=vehicle.vehiculo_fec_vencimiento_permiso,
+            BLINDAJE=vehicle.vehiculo_blindaje,
+            POTENCIAHP=vehicle.vehiculo_potencia,
+            DECLA_IMPO=vehicle.vehiculo_dec_importacion,
+            RESTR_MOBI=vehicle.vehiculo_restriccion_movilidad,
+            LIMI_PROPI=vehicle.vehiculo_limit_propiedad,
+            ORG_TRANSI=vehicle.vehiculo_organismo_transito,
+            COD_BARRAS=vehicle.vehiculo_codigo_barras,
+            LATERAL=vehicle.vehiculo_lateral,
+            KILOMETRAJ=vehicle.vehiculo_kilometraje,
+            MODALIDAD=vehicle.vehiculo_modalidad,
+            INFO_PANAP=vehicle.vehiculo_consulta_panapass,
+            PANAPASSNU=vehicle.vehiculo_panapass,
+            PANAPASSPW=vehicle.vehiculo_panapass_pwd
+        )
+        db.add(new_vehicle)
+        db.commit()
+
+        return JSONResponse(content={"message": "Vehicle created successfully"})
+    except Exception as e:
+        return JSONResponse(content={"error": str(e)})
+    finally:
+        db.close()
+
+#-------------------------------------------------------------------------------------------
+
 @vehicles_router.post("/vehicle/{owner_id}", response_model = VehicleUpdate, tags=["Vehicles"])
 def update_vehicle(owner_id: str, vehicle: VehicleUpdate):
   db = session()
   try:
     vehicle = db.query(Vehiculos).filter(Vehiculos.NUMERO == owner_id).first()
-    vehicle.VEHICULO_NUMERO = vehicle.vehiculo_numero
-    vehicle.VEHICULO_PLACA = vehicle.vehiculo_placa
-    vehicle.VEHICULO_MODELO = vehicle.vehiculo_modelo
-    vehicle.VEHICULO_NRO_CUPO = vehicle.vehiculo_nro_cupo
-    vehicle.VEHICULO_PERMISO_NRO = vehicle.vehiculo_permiso_nro
-    vehicle.VEHICULO_MOTOR = vehicle.vehiculo_motor
-    vehicle.VEHICULO_CHASIS = vehicle.vehiculo_chasis
-    vehicle.VEHICULO_FEC_MATRICULA = vehicle.vehiculo_fec_matricula
-    vehicle.VEHICULO_EMPRESA = vehicle.vehiculo_empresa
-    vehicle.VEHICULO_CONDUCTOR = vehicle.vehiculo_conductor
-    vehicle.VEHICULO_ESTADO = vehicle.vehiculo_estado
-    vehicle.VEHICULO_CUOTA_DIARIA = vehicle.vehiculo_cuota_diaria
-    vehicle.VEHICULO_NRO_CTAS = vehicle.vehiculo_nro_Ctas
-    vehicle.VEHICULO_PANAPASS = vehicle.vehiculo_panapass
-    vehicle.VEHICULO_PANAPASS_PWD = vehicle.vehiculo_panapass_pwd
-    vehicle.VEHICULO_SDO_PANAPA = vehicle.vehiculo_saldo_panapass
+    if not vehicle:
+      return JSONResponse(content={"error": "Vehicle not found"}, status_code=404)
+    vehicle.NUMERO = vehicle.vehiculo_numero
+    vehicle.PLACA = vehicle.vehiculo_placa
+    vehicle.CONSECUTIV = vehicle.vehiculo_consecutivo
+    vehicle.MARCA = vehicle.vehiculo_marca
+    vehicle.LINEA = vehicle.vehiculo_modelo
+    vehicle.MODELO = vehicle.vehiculo_año
+    vehicle.CILINDRAJE = vehicle.vehiculo_cilindraje
+    vehicle.PUERTAS = vehicle.vehiculo_nro_puertas
+    vehicle.LICETRANSI = vehicle.vehiculo_licencia_nro
+    # vehicle.LICENCIA_FEC = vehicle.vehiculo_licencia_fec
+    vehicle.COLORES = vehicle.vehiculo_color
+    vehicle.SERVICIO = vehicle.vehiculo_servicio
+    vehicle.FEC_MATRIC = vehicle.vehiculo_fec_matricula
+    vehicle.FEC_VENCIM = vehicle.vehiculo_fec_vencimiento_matricula
+    vehicle.FEC_IMPORT = vehicle.vehiculo_fec_importacion
+    vehicle.CLASEVEHIC = vehicle.vehicul_clase
+    vehicle.TIPOCARROC = vehicle.vehiculo_tipo
+    vehicle.COMBUSTIBL = vehicle.vehiculo_combustible
+    vehicle.CAPACIDAD = vehicle.vehiculo_capacidad
+    vehicle.NE = vehicle.vehiculo_ne
+    vehicle.MOTORNRO = vehicle.vehiculo_motor
+    vehicle.MOTORREG = vehicle.vehiculo_motor_reg
+    vehicle.MOTORVIN = vehicle.vehiculo_vin
+    vehicle.SERIENRO = vehicle.vehiculo_serie
+    vehicle.SERIEREG = vehicle.vehiculo_serie_reg
+    vehicle.CHASISNRO = vehicle.vehiculo_chasis
+    vehicle.CHASISREG = vehicle.vehiculo_chasis_reg
+    vehicle.PROPI_IDEN = vehicle.vehiculo_propietario
+    vehicle.CTA_GASTO = vehicle.vehiculo_cta_gasto
+    vehicle.CENTRAL = vehicle.vehiculo_central
+    vehicle.FEC_CREADO = vehicle.vehiculo_fecha_creacion
+    vehicle.NRO_CUPO = vehicle.vehiculo_nro_cupo
+    vehicle.PERMISONRO = vehicle.vehiculo_permiso_nro
+    vehicle.PERMISOVCE = vehicle.vehiculo_fec_vencimiento_permiso
+    vehicle.BLINDAJE = vehicle.vehiculo_blindaje
+    vehicle.POTENCIAHP = vehicle.vehiculo_potencia
+    vehicle.DECLA_IMPO = vehicle.vehiculo_dec_importacion
+    vehicle.RESTR_MOBI = vehicle.vehiculo_restriccion_movilidad
+    vehicle.LIMI_PROPI = vehicle.vehiculo_limit_propiedad
+    vehicle.ORG_TRANSI = vehicle.veh
+    vehicle.COD_BARRAS = vehicle.vehiculo_codigo_barras
+    vehicle.LATERAL = vehicle.vehiculo_lateral
+    vehicle.KILOMETRAJ = vehicle.vehiculo_kilometraje
+    vehicle.MODALIDAD = vehicle.vehiculo_modalidad
+    vehicle.INFO_PANAP = vehicle.vehiculo_consulta_panapass
+    vehicle.PANAPASSNU = vehicle.vehiculo_panapass
+    vehicle.PANAPASSPW = vehicle.vehiculo_panapass_pwd    
     db.commit()
 
     return JSONResponse(content={"message": "Vehicle updated successfully"})
@@ -302,7 +402,7 @@ def update_vehicle(owner_id: str, vehicle: VehicleUpdate):
 #-------------------------------------------------------------------------------------------
 
 @vehicles_router.get("/vehicle-delete/{vehicle_id}", tags=["Vehicles"])
-async def verify_vehicle_delete(vehicle_id: int):
+async def verify_vehicle_delete(vehicle_id: str):
     db = session()
     try:
         vehicle = db.query(
@@ -345,3 +445,5 @@ async def verify_vehicle_delete(vehicle_id: int):
         return JSONResponse(content={"error": str(e)})
     finally:
         db.close()
+
+#-------------------------------------------------------------------------------------------
