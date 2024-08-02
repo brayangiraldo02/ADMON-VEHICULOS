@@ -148,3 +148,7 @@ button.selected {
 .medium {
   width: 40%;
 }
+
+.small {
+  width: 10%;
+}

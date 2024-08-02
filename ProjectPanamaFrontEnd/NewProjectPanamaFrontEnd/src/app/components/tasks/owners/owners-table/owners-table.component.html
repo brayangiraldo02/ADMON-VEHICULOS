@@ -4,11 +4,11 @@
   <p *ngIf="!isLoading">Total Registros: {{ data.length }}</p>
   <div class="options-container" *ngIf="!isLoading">
     <input type="text" placeholder="Buscar..." [(ngModel)]="searchTerm" (input)="filterData()" class="search-container">
-    <button class="report" type="button" routerLink="/new-owner">
+    <button class="report" type="button" (click)="showModal()">
       <span class="material-symbols-outlined" translate="no">
-        add_circle
+        description
       </span>
-      <p class="report-text">Nuevo Propietario</p>
+      <p class="report-text">Informes</p>
     </button>
 
     <button class="report" type="button" (click)="openExternalLink()">
@@ -57,5 +57,7 @@
     <p>Cargando datos, por favor espere...</p>
   </div>
 </ng-template>
+
+<app-owners-reports [isVisible]="isModalVisible" (close)="hideModal()"></app-owners-reports>
 
 <app-footer></app-footer>
