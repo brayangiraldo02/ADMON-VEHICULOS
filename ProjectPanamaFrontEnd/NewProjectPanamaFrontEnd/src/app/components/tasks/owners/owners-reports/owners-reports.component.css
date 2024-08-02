@@ -1,4 +1,5 @@
 .modal {
+  overflow: auto;
   display: block;
   position: fixed;
   z-index: 1;
@@ -11,7 +12,7 @@
 
 .modal-content {
   background-color: #fefefe;
-  margin: 15% auto;
+  margin: 10% auto;
   padding: 20px;
   border: 1px solid #888;
   width: 50%;
@@ -80,4 +81,70 @@
 
 .option:hover {
   background: #bcd1ec;
+}
+
+.select-owner {
+  margin: 10px;
+  box-sizing: border-box;
+  background: #ffffff;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  padding: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  flex-direction: column;
+}
+
+.full-width {
+  width: 100%; /* Asegura que el <select> ocupe todo el ancho del contenedor */
+  padding: 10px; /* Ajuste de padding para mejor apariencia */
+  box-sizing: border-box; /* Incluye el padding y el borde en el ancho total */
+  border: 1px solid #ccc; /* Borde ligero para mejor visibilidad */
+  border-radius: 5px; /* Bordes ligeramente redondeados */
+  background-color: #f9f9f9; /* Fondo claro */
+}
+
+.cuadro-seleccion {
+  border: 1px solid #ccc;
+  padding: 10px;
+  min-height: 20vh;
+  max-height: 25vh;
+  border-radius: 10px;
+  overflow-y: scroll;
+  height: auto;
+  background-color: white;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.cuadro-seleccion .checkbox-container {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  justify-content: flex-start; /* Alinea el contenido al inicio (izquierda) */
+  padding: 5px 0; /* Añadir algo de espaciado vertical */
+}
+
+.cuadro-seleccion .checkbox-container:hover {
+  background: #bcd1ec;
+}
+
+.cuadro-seleccion label {
+  padding-left: 5px;
+}
+
+.back-option {
+  display: flex;
+  justify-content: center;
+}
+
+.back {
+  background: #ffe9e9;
+}
+
+.back:hover {
+  background: #ffcdcd; 
 }

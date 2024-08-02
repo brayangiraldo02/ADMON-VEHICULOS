@@ -1,21 +1,21 @@
 <div class="modal" *ngIf="isVisible">
   <div class="modal-content">
     <span class="close" (click)="closeModal()">&times;</span>
-    <h2 class="title-container">Tipo de Informe</h2>
-    <div class="options-container">
-      <button class="option" type="button">
+    <h2 class="title-container">{{ selectedOption ? titles[selectedOption] : 'Tipo de Informe' }}</h2>
+    <div class="options-container" *ngIf="optionsDisplay">
+      <button class="option" type="button" (click)="selected('EstadoFlotaResumen')">
         <span class="material-symbols-outlined" translate="no">
           description
         </span>
         <p class="option-text">Estado Flota Resumen</p>
       </button>
-      <button class="option" type="button">
+      <button class="option" type="button" (click)="selected('EstadoFlotaDetalle')">
         <span class="material-symbols-outlined" translate="no">
           description
         </span>
         <p class="option-text">Estado Flota Detalle</p>
       </button>
-      <button class="option" type="button">
+      <button class="option" type="button" (click)="selected('ValoresCompra')">
         <span class="material-symbols-outlined" translate="no">
           description
         </span>
@@ -52,5 +52,80 @@
         <p class="option-text">Zarpe Piquera</p>
       </button>
     </div>
+
+    <div class="select-owner" *ngIf="!optionsDisplay && companySelected">
+      <select (change)="onCompanyChange($event)" class="full-width">
+        <option *ngFor="let owner of owners" [value]="owner.id">{{ owner.name }} - {{ owner.id }}</option>
+      </select>
+    </div>
+
+    <div class="options-container" *ngIf="!optionsDisplay && companySelected" >
+      <button class="option back" type="button" (click)="resetValues()">
+        <span class="material-symbols-outlined" translate="no">
+          arrow_back
+        </span>
+        <p class="option-text">Regresar</p>
+      </button>
+    </div>
+
+    <div class="cuadro-seleccion" *ngIf="!optionsDisplay && !statesDisplay && !companySelected">
+      <div *ngFor="let opcion of owners" class="checkbox-container" (click)="onCheckboxEmpresaContainerClick(opcion.id, $event)">
+        <input type="checkbox" [id]="opcion.id" [value]="opcion.id" 
+                [checked]="isEmpresaSeleccionada(opcion.id)" 
+                (change)="onCheckboxEmpresaChange(opcion.id, $event)">
+        <label [for]="opcion.id">{{ opcion.name }} - {{ opcion.id }}</label>
+      </div>
+    </div>
+
+    <div class="options-container" *ngIf="!optionsDisplay && !statesDisplay && !companySelected">
+      <button class="option" type="button" (click)="onEmpresaSeleccionar()">
+        <span class="material-symbols-outlined" translate="no">
+          check
+        </span>
+        <p class="option-text">Aceptar Empresas</p>
+      </button>
+  
+      <button class="option back" type="button"  (click)="resetValues()">
+        <span class="material-symbols-outlined" translate="no">
+          arrow_back
+        </span>
+        <p class="option-text">Regresar</p>
+      </button>
+    </div>
+
+    <div class="cuadro-seleccion" *ngIf="!optionsDisplay && statesDisplay && !companySelected">
+      <div *ngFor="let opcion of states" class="checkbox-container" (click)="onCheckboxEstadoContainerClick(opcion.id, $event)">
+        <input type="checkbox" [id]="opcion.id" [value]="opcion.id" 
+                [checked]="isEstadoSeleccionado(opcion.id)" 
+                (change)="onCheckboxEstadoChange(opcion.id, $event)">
+        <label [for]="opcion.id">{{ opcion.name }}</label>
+      </div>
+    </div>
+
+    <div class="options-container" *ngIf="!optionsDisplay && statesDisplay && !companySelected">
+      <button class="option" type="button" (click)="onEstadoSeleccionar()">
+        <span class="material-symbols-outlined" translate="no">
+          check
+        </span>
+        <p class="option-text">Aceptar Estados</p>
+      </button>
+
+      <button class="option back" type="button" (click)="backStates()">
+        <span class="material-symbols-outlined" translate="no">
+          arrow_back
+        </span>
+        <p class="option-text">Regresar</p>
+      </button>
+    </div>
+
+    <div class="back-option" (click)="closeModal()" *ngIf="optionsDisplay">
+      <button class="option back" type="button">
+        <span class="material-symbols-outlined" translate="no">
+          arrow_back
+        </span>
+        <p class="option-text">Regresar</p>
+      </button>
+    </div>
+
   </div>
 </div>

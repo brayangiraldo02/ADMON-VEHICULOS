@@ -73,10 +73,14 @@ export class OwnersTableComponent implements OnInit {
 
   showModal() {
     this.isModalVisible = true;
+    document.documentElement.style.overflow = 'hidden';
+    document.body.style.overflow = 'hidden';
   }
 
   hideModal() {
     this.isModalVisible = false;
+    document.documentElement.style.overflow = '';
+    document.body.style.overflow = '';
   }
 
   // openExternalLink(): void {
