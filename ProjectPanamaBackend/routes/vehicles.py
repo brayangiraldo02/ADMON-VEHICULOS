@@ -277,6 +277,7 @@ def create_vehicle(vehicle: VehicleCreate):
         panama_timezone = pytz.timezone('America/Panama')
         now_in_panama = datetime.now(panama_timezone)
         fecha = now_in_panama.strftime("%Y-%m-%d %H:%M:%S")
+        
         new_vehicle = Vehiculos(
             NUMERO=vehicle.vehiculo_numero,
             PLACA=vehicle.vehiculo_placa,
@@ -287,7 +288,7 @@ def create_vehicle(vehicle: VehicleCreate):
             CILINDRAJE=vehicle.vehiculo_cilindraje,
             PUERTAS=vehicle.vehiculo_nro_puertas,
             LICETRANSI=vehicle.vehiculo_licencia_nro,
-            # LICENCIA_FEC=vehicle.vehiculo_licencia_fec,
+            FEC_EXPEDI=vehicle.vehiculo_licencia_fec,
             COLORES=vehicle.vehiculo_color,
             SERVICIO=vehicle.vehiculo_servicio,
             FEC_MATRIC=vehicle.vehiculo_fec_matricula,
@@ -324,73 +325,186 @@ def create_vehicle(vehicle: VehicleCreate):
             MODALIDAD=vehicle.vehiculo_modalidad,
             INFO_PANAP=vehicle.vehiculo_consulta_panapass,
             PANAPASSNU=vehicle.vehiculo_panapass,
-            PANAPASSPW=vehicle.vehiculo_panapass_pwd
+            PANAPASSPW=vehicle.vehiculo_panapass_pwd,
+            DOC_PLAPAR = vehicle.vehiculo_placa_particular,  
+            FEC_PLAPAR = vehicle.vehiculo_placa_particular_vence,
+            DOC_PLAPUB = vehicle.vehiculo_placa_publica,
+            FEC_PLAPUB = vehicle.vehiculo_placa_publica_vence,
+            DOC_RESCIV = vehicle.vehiculo_poliza_responsabilidad_civil,
+            FEC_RESCIV = vehicle.vehiculo_poliza_responsabilidad_civil_vence,
+            DOC_EXTING = vehicle.vehiculo_extinguidor,
+            FEC_EXTING = vehicle.vehiculo_extinguidor_vence,
+            DOC_CEROPE = vehicle.vehiculo_certificado_operacion,
+            FEC_CEROPE = vehicle.vehiculo_certificado_operacion_fec,
+            NROENTREGA = vehicle.vehiculo_nro_total_cuotas,
+            CUO_DIARIA = vehicle.vehiculo_vlr_cuo_diaria,
+            CTA_RENTA = vehicle.vehiculo_renta_diaria,
+            CTA_SINIES = vehicle.vehiculo_ahorro_siniestro,
+            PAGA_ADMON = vehicle.vehiculo_cobro_admon,
+            CUO_ADMON = vehicle.vehiculo_admon,
+            CUO_REPVEH = vehicle.vehiculo_reposicion,
+            CUO_MANTEN = vehicle.vehiculo_mantenimiento,
+            CUO_RENDIM = vehicle.vehiculo_rendimientos_propietario,
+            PAGO_LUN = vehicle.vehiculo_lunes,
+            PAGO_MAR = vehicle.vehiculo_martes,
+            PAGO_MIE = vehicle.vehiculo_miercoles,
+            PAGO_JUE = vehicle.vehiculo_jueves,
+            PAGO_VIE = vehicle.vehiculo_viernes,
+            PAGO_SAB = vehicle.vehiculo_sabado,
+            PAGO_DOM = vehicle.vehiculo_domingo,
+            FORMAPAGO = vehicle.vehiculo_pago,
+            MULTA = vehicle.vehiculo_multa_pago,
+            FEC_1PAGO = vehicle.vehiculo_fec_primer_pago,
+            FEC_ULTPAG = vehicle.vehiculo_fec_ultimo_pago,
+            VLR_ULTPAG = vehicle.vehiculo_vlr_ultimo_pago,
+            REC_ULTPAG = vehicle.vehiculo_recibo,
+            FEC_1MANTE = vehicle.vehiculo_primer_mantenimiento,
+            FEC_ULTMAN = vehicle.vehiculo_ultimo_mantenimiento,
+            CATEGORIA = vehicle.vehiculo_categoria,
+            tipo_llave = vehicle.vehiculo_tipo_llave,
+            NRO_LLAVES = vehicle.vehiculo_posicion_llave,
+            FEC_ESTADO = vehicle.vehiculo_fec_estado,
+            GRUPODIARI = vehicle.vehiculo_plan_pago,
+            PREND_APAG = vehicle.vehiculo_prendido_apagado,
+            PIQUERA = vehicle.vehiculo_piquera,
+            FEC_PIQUER = vehicle.vehiculo_fec_inicio_piquera,
+            FAC_COMPRA = vehicle.vehiculo_factura_compra,
+            FEC_COMPRA = vehicle.vehiculo_fec_factura_compra,
+            VLR_COMPRA = vehicle.vehiculo_valor_compra,
+            POLIZA = vehicle.vehiculo_num_poliza,
+            FEC_POLIZA = vehicle.vehiculo_fec_poliza,
+            OBSERVA = vehicle.vehiculo_observaciones,
+            LUN = vehicle.vehiculo_picoyplaca_lunes,
+            MAR = vehicle.vehiculo_picoyplaca_martes,
+            MIE = vehicle.vehiculo_picoyplaca_miercoles,
+            JUE = vehicle.vehiculo_picoyplaca_jueves,
+            VIE = vehicle.vehiculo_picoyplaca_viernes,
+            SAB = vehicle.vehiculo_picoyplaca_sabado,
+            DOM = vehicle.vehiculo_picoyplaca_domingo,
         )
+
         db.add(new_vehicle)
         db.commit()
 
         return JSONResponse(content={"message": "Vehicle created successfully"})
     except Exception as e:
-        return JSONResponse(content={"error": str(e)})
+        # Log para capturar la excepción
+        print("Error al crear el vehículo: ", str(e))
+        return JSONResponse(content={"error": str(e)}, status_code=500)
     finally:
         db.close()
 
 #-------------------------------------------------------------------------------------------
 
-@vehicles_router.post("/vehicle/{owner_id}", response_model = VehicleUpdate, tags=["Vehicles"])
-def update_vehicle(owner_id: str, vehicle: VehicleUpdate):
+@vehicles_router.post("/vehicle/{vehicle_id}", response_model = VehicleUpdate, tags=["Vehicles"])
+def update_vehicle(vehicle_id: str, vehicle: VehicleUpdate):
   db = session()
   try:
-    vehicle = db.query(Vehiculos).filter(Vehiculos.NUMERO == owner_id).first()
-    if not vehicle:
+    data = db.query(Vehiculos).filter(Vehiculos.NUMERO == vehicle_id).first()
+    if not data:
       return JSONResponse(content={"error": "Vehicle not found"}, status_code=404)
-    vehicle.NUMERO = vehicle.vehiculo_numero
-    vehicle.PLACA = vehicle.vehiculo_placa
-    vehicle.CONSECUTIV = vehicle.vehiculo_consecutivo
-    vehicle.MARCA = vehicle.vehiculo_marca
-    vehicle.LINEA = vehicle.vehiculo_modelo
-    vehicle.MODELO = vehicle.vehiculo_año
-    vehicle.CILINDRAJE = vehicle.vehiculo_cilindraje
-    vehicle.PUERTAS = vehicle.vehiculo_nro_puertas
-    vehicle.LICETRANSI = vehicle.vehiculo_licencia_nro
-    # vehicle.LICENCIA_FEC = vehicle.vehiculo_licencia_fec
-    vehicle.COLORES = vehicle.vehiculo_color
-    vehicle.SERVICIO = vehicle.vehiculo_servicio
-    vehicle.FEC_MATRIC = vehicle.vehiculo_fec_matricula
-    vehicle.FEC_VENCIM = vehicle.vehiculo_fec_vencimiento_matricula
-    vehicle.FEC_IMPORT = vehicle.vehiculo_fec_importacion
-    vehicle.CLASEVEHIC = vehicle.vehicul_clase
-    vehicle.TIPOCARROC = vehicle.vehiculo_tipo
-    vehicle.COMBUSTIBL = vehicle.vehiculo_combustible
-    vehicle.CAPACIDAD = vehicle.vehiculo_capacidad
-    vehicle.NE = vehicle.vehiculo_ne
-    vehicle.MOTORNRO = vehicle.vehiculo_motor
-    vehicle.MOTORREG = vehicle.vehiculo_motor_reg
-    vehicle.MOTORVIN = vehicle.vehiculo_vin
-    vehicle.SERIENRO = vehicle.vehiculo_serie
-    vehicle.SERIEREG = vehicle.vehiculo_serie_reg
-    vehicle.CHASISNRO = vehicle.vehiculo_chasis
-    vehicle.CHASISREG = vehicle.vehiculo_chasis_reg
-    vehicle.PROPI_IDEN = vehicle.vehiculo_propietario
-    vehicle.CTA_GASTO = vehicle.vehiculo_cta_gasto
-    vehicle.CENTRAL = vehicle.vehiculo_central
-    vehicle.FEC_CREADO = vehicle.vehiculo_fecha_creacion
-    vehicle.NRO_CUPO = vehicle.vehiculo_nro_cupo
-    vehicle.PERMISONRO = vehicle.vehiculo_permiso_nro
-    vehicle.PERMISOVCE = vehicle.vehiculo_fec_vencimiento_permiso
-    vehicle.BLINDAJE = vehicle.vehiculo_blindaje
-    vehicle.POTENCIAHP = vehicle.vehiculo_potencia
-    vehicle.DECLA_IMPO = vehicle.vehiculo_dec_importacion
-    vehicle.RESTR_MOBI = vehicle.vehiculo_restriccion_movilidad
-    vehicle.LIMI_PROPI = vehicle.vehiculo_limit_propiedad
-    vehicle.ORG_TRANSI = vehicle.veh
-    vehicle.COD_BARRAS = vehicle.vehiculo_codigo_barras
-    vehicle.LATERAL = vehicle.vehiculo_lateral
-    vehicle.KILOMETRAJ = vehicle.vehiculo_kilometraje
-    vehicle.MODALIDAD = vehicle.vehiculo_modalidad
-    vehicle.INFO_PANAP = vehicle.vehiculo_consulta_panapass
-    vehicle.PANAPASSNU = vehicle.vehiculo_panapass
-    vehicle.PANAPASSPW = vehicle.vehiculo_panapass_pwd    
+    data.NUMERO = vehicle.vehiculo_numero
+    data.PLACA = vehicle.vehiculo_placa
+    data.CONSECUTIV = vehicle.vehiculo_consecutivo
+    data.MARCA = vehicle.vehiculo_marca
+    data.LINEA = vehicle.vehiculo_modelo
+    data.MODELO = vehicle.vehiculo_año
+    data.CILINDRAJE = vehicle.vehiculo_cilindraje
+    data.PUERTAS = vehicle.vehiculo_nro_puertas
+    data.LICETRANSI = vehicle.vehiculo_licencia_nro
+    data.FEC_EXPEDI = vehicle.vehiculo_licencia_fec
+    data.COLORES = vehicle.vehiculo_color
+    data.SERVICIO = vehicle.vehiculo_servicio
+    data.FEC_MATRIC = vehicle.vehiculo_fec_matricula
+    data.FEC_VENCIM = vehicle.vehiculo_fec_vencimiento_matricula
+    data.FEC_IMPORT = vehicle.vehiculo_fec_importacion
+    data.CLASEVEHIC = vehicle.vehicul_clase
+    data.TIPOCARROC = vehicle.vehiculo_tipo
+    data.COMBUSTIBL = vehicle.vehiculo_combustible
+    data.CAPACIDAD = vehicle.vehiculo_capacidad
+    data.NE = vehicle.vehiculo_ne
+    data.MOTORNRO = vehicle.vehiculo_motor
+    data.MOTORREG = vehicle.vehiculo_motor_reg
+    data.MOTORVIN = vehicle.vehiculo_vin
+    data.SERIENRO = vehicle.vehiculo_serie
+    data.SERIEREG = vehicle.vehiculo_serie_reg
+    data.CHASISNRO = vehicle.vehiculo_chasis
+    data.CHASISREG = vehicle.vehiculo_chasis_reg
+    data.PROPI_IDEN = vehicle.vehiculo_propietario
+    data.CTA_GASTO = vehicle.vehiculo_cta_gasto
+    data.CENTRAL = vehicle.vehiculo_central
+    data.FEC_CREADO = vehicle.vehiculo_fec_creacion
+    data.NRO_CUPO = vehicle.vehiculo_nro_cupo
+    data.PERMISONRO = vehicle.vehiculo_permiso_nro
+    data.PERMISOVCE = vehicle.vehiculo_fec_vencimiento_permiso
+    data.BLINDAJE = vehicle.vehiculo_blindaje
+    data.POTENCIAHP = vehicle.vehiculo_potencia
+    data.DECLA_IMPO = vehicle.vehiculo_dec_importacion
+    data.RESTR_MOBI = vehicle.vehiculo_restriccion_movilidad
+    data.LIMI_PROPI = vehicle.vehiculo_limit_propiedad
+    data.ORG_TRANSI = vehicle.vehiculo_organismo_transito
+    data.COD_BARRAS = vehicle.vehiculo_codigo_barras
+    data.LATERAL = vehicle.vehiculo_lateral
+    data.KILOMETRAJ = vehicle.vehiculo_kilometraje
+    data.MODALIDAD = vehicle.vehiculo_modalidad
+    data.INFO_PANAP = vehicle.vehiculo_consulta_panapass
+    data.PANAPASSNU = vehicle.vehiculo_panapass
+    data.PANAPASSPW = vehicle.vehiculo_panapass_pwd  
+    data.DOC_PLAPAR = vehicle.vehiculo_placa_particular  
+    data.FEC_PLAPAR = vehicle.vehiculo_placa_particular_vence
+    data.DOC_PLAPUB = vehicle.vehiculo_placa_publica
+    data.FEC_PLAPUB = vehicle.vehiculo_placa_publica_vence
+    data.DOC_RESCIV = vehicle.vehiculo_poliza_responsabilidad_civil
+    data.FEC_RESCIV = vehicle.vehiculo_poliza_responsabilidad_civil_vence
+    data.DOC_EXTING = vehicle.vehiculo_extinguidor
+    data.FEC_EXTING = vehicle.vehiculo_extinguidor_vence
+    data.DOC_CEROPE = vehicle.vehiculo_certificado_operacion
+    data.FEC_CEROPE = vehicle.vehiculo_certificado_operacion_fec
+    data.NROENTREGA = vehicle.vehiculo_nro_total_cuotas
+    data.CUO_DIARIA = vehicle.vehiculo_vlr_cuo_diaria
+    data.CTA_RENTA = vehicle.vehiculo_renta_diaria
+    data.CTA_SINIES = vehicle.vehiculo_ahorro_siniestro
+    data.PAGA_ADMON = vehicle.vehiculo_cobro_admon
+    data.CUO_ADMON = vehicle.vehiculo_admon
+    data.CUO_REPVEH = vehicle.vehiculo_reposicion
+    data.CUO_MANTEN = vehicle.vehiculo_mantenimiento
+    data.CUO_RENDIM = vehicle.vehiculo_rendimientos_propietario
+    data.PAGO_LUN = vehicle.vehiculo_lunes
+    data.PAGO_MAR = vehicle.vehiculo_martes
+    data.PAGO_MIE = vehicle.vehiculo_miercoles
+    data.PAGO_JUE = vehicle.vehiculo_jueves
+    data.PAGO_VIE = vehicle.vehiculo_viernes
+    data.PAGO_SAB = vehicle.vehiculo_sabado
+    data.PAGO_DOM = vehicle.vehiculo_domingo
+    data.FORMAPAGO = vehicle.vehiculo_pago
+    data.MULTA = vehicle.vehiculo_multa_pago
+    data.FEC_1PAGO = vehicle.vehiculo_fec_primer_pago
+    data.FEC_ULTPAG = vehicle.vehiculo_fec_ultimo_pago
+    data.VLR_ULTPAG = vehicle.vehiculo_vlr_ultimo_pago
+    data.REC_ULTPAG = vehicle.vehiculo_recibo
+    data.FEC_1MANTE = vehicle.vehiculo_primer_mantenimiento
+    data.FEC_ULTMAN = vehicle.vehiculo_ultimo_mantenimiento
+    data.CATEGORIA = vehicle.vehiculo_categoria
+    data.tipo_llave = vehicle.vehiculo_tipo_llave
+    data.NRO_LLAVES = vehicle.vehiculo_posicion_llave
+    data.FEC_ESTADO = vehicle.vehiculo_fec_estado
+    data.GRUPODIARI = vehicle.vehiculo_plan_pago
+    data.PREND_APAG = vehicle.vehiculo_prendido_apagado
+    data.PIQUERA = vehicle.vehiculo_piquera
+    data.FEC_PIQUER = vehicle.vehiculo_fec_inicio_piquera
+    data.FAC_COMPRA = vehicle.vehiculo_factura_compra
+    data.FEC_COMPRA = vehicle.vehiculo_fec_factura_compra
+    data.VLR_COMPRA = vehicle.vehiculo_valor_compra
+    data.POLIZA = vehicle.vehiculo_num_poliza
+    data.FEC_POLIZA = vehicle.vehiculo_fec_poliza
+    data.OBSERVA = vehicle.vehiculo_observaciones
+    data.LUN = vehicle.vehiculo_picoyplaca_lunes
+    data.MAR = vehicle.vehiculo_picoyplaca_martes
+    data.MIE = vehicle.vehiculo_picoyplaca_miercoles
+    data.JUE = vehicle.vehiculo_picoyplaca_jueves
+    data.VIE = vehicle.vehiculo_picoyplaca_viernes
+    data.SAB = vehicle.vehiculo_picoyplaca_sabado
+    data.DOM = vehicle.vehiculo_picoyplaca_domingo
     db.commit()
 
     return JSONResponse(content={"message": "Vehicle updated successfully"})

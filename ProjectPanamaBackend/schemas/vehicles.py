@@ -2,53 +2,109 @@ from pydantic import BaseModel
 from typing import Optional
 
 class VehicleUpdate(BaseModel):
-    vehiculo_numero: Optional[str]
-    vehiculo_placa: Optional[str]
-    vehiculo_consecutivo: Optional[str]
-    vehiculo_marca: Optional[str]
-    vehiculo_modelo: Optional[str]
-    vehiculo_año: Optional[str]
-    vehiculo_cilindraje: Optional[str]
-    vehiculo_nro_puertas: Optional[str]
-    vehiculo_licencia_nro: Optional[str]
-    vehiculo_licencia_fec: Optional[str]
-    vehiculo_color: Optional[str]
-    vehiculo_servicio: Optional[str]
-    vehiculo_fec_matricula: Optional[str]
-    vehiculo_fec_vencimiento_matricula: Optional[str]
-    vehiculo_fec_importacion: Optional[str]
-    vehicul_clase: Optional[str]
-    vehiculo_tipo: Optional[str]
-    vehiculo_combustible: Optional[str]
-    vehiculo_capacidad: Optional[str]
-    vehiculo_ne: Optional[str]
-    vehiculo_motor: Optional[str]
-    vehiculo_motor_reg: Optional[str]
-    vehiculo_vin: Optional[str]
-    vehiculo_serie: Optional[str]
-    vehiculo_serie_reg: Optional[str]
-    vehiculo_chasis: Optional[str]
-    vehiculo_chasis_reg: Optional[str]
-    vehiculo_propietario: Optional[str]
-    vehiculo_cta_gasto: Optional[str]
-    vehiculo_central: Optional[str]
-    vehiculo_fec_creacion: Optional[str]
-    vehiculo_nro_cupo: Optional[int]
-    vehiculo_permiso_nro: Optional[str]
-    vehiculo_fec_vencimiento_permiso: Optional[str]
-    vehiculo_blindaje: Optional[str]
-    vehiculo_potencia: Optional[str]
-    vehiculo_dec_importacion: Optional[str]
-    vehiculo_restriccion_movilidad: Optional[str]
-    vehiculo_limit_propiedad: Optional[str]
-    vehiculo_organismo_transito: Optional[str]
-    vehiculo_codigo_barras: Optional[str]
-    vehiculo_lateral: Optional[str]
-    vehiculo_kilometraje: Optional[str]
-    vehiculo_modalidad: Optional[str]
-    vehiculo_consulta_panapass: Optional[str]
-    vehiculo_panapass: Optional[str]
-    vehiculo_panapass_pwd: Optional[str]
+    vehiculo_numero: Optional[str] = ''
+    vehiculo_placa: Optional[str] = ''
+    vehiculo_consecutivo: Optional[str] = ''
+    vehiculo_marca: Optional[str] = ''
+    vehiculo_modelo: Optional[str] = ''
+    vehiculo_año: Optional[str] = ''
+    vehiculo_cilindraje: Optional[str] = ''
+    vehiculo_nro_puertas: Optional[str] = ''
+    vehiculo_licencia_nro: Optional[str] = ''
+    vehiculo_licencia_fec: Optional[str] = ''
+    vehiculo_color: Optional[str] = ''
+    vehiculo_servicio: Optional[str] = ''
+    vehiculo_fec_matricula: Optional[str] = ''
+    vehiculo_fec_vencimiento_matricula: Optional[str] = ''
+    vehiculo_fec_importacion: Optional[str] = ''
+    vehicul_clase: Optional[str] = ''
+    vehiculo_tipo: Optional[str] = ''
+    vehiculo_combustible: Optional[str] = ''
+    vehiculo_capacidad: Optional[str] = ''
+    vehiculo_ne: Optional[str] = ''
+    vehiculo_motor: Optional[str] = ''
+    vehiculo_motor_reg: Optional[str] = ''
+    vehiculo_vin: Optional[str] = ''
+    vehiculo_serie: Optional[str] = ''
+    vehiculo_serie_reg: Optional[str] = ''
+    vehiculo_chasis: Optional[str] = ''
+    vehiculo_chasis_reg: Optional[str] = ''
+    vehiculo_propietario: Optional[str] = ''
+    vehiculo_cta_gasto: Optional[str] = ''
+    vehiculo_central: Optional[str] = ''
+    vehiculo_fec_creacion: Optional[str] = ''
+    vehiculo_nro_cupo: Optional[int] = 0
+    vehiculo_permiso_nro: Optional[str] = ''
+    vehiculo_fec_vencimiento_permiso: Optional[str] = ''
+    vehiculo_blindaje: Optional[str] = ''
+    vehiculo_potencia: Optional[str] = ''
+    vehiculo_dec_importacion: Optional[str] = ''
+    vehiculo_restriccion_movilidad: Optional[str] = ''
+    vehiculo_limit_propiedad: Optional[str] = ''
+    vehiculo_organismo_transito: Optional[str] = ''
+    vehiculo_codigo_barras: Optional[str] = ''
+    vehiculo_lateral: Optional[str] = ''
+    vehiculo_kilometraje: Optional[str] = ''
+    vehiculo_modalidad: Optional[str] = ''
+    vehiculo_consulta_panapass: Optional[str] = ''
+    vehiculo_panapass: Optional[str] = ''
+    vehiculo_panapass_pwd: Optional[str] = ''
+    vehiculo_placa_particular: Optional[str] = ''
+    vehiculo_placa_particular_vence: Optional[str] = ''
+    vehiculo_placa_publica: Optional[str] = ''
+    vehiculo_placa_publica_vence: Optional[str] = ''
+    vehiculo_poliza_responsabilidad_civil: Optional[str] = ''
+    vehiculo_poliza_responsabilidad_civil_vence: Optional[str] = ''
+    vehiculo_extinguidor: Optional[str] = ''
+    vehiculo_extinguidor_vence: Optional[str] = ''
+    vehiculo_certificado_operacion: Optional[str] = ''
+    vehiculo_certificado_operacion_fec: Optional[str] = ''
+    vehiculo_nro_total_cuotas: Optional[int] = 0
+    vehiculo_vlr_cuo_diaria: Optional[float] = 0.0
+    vehiculo_renta_diaria: Optional[float] = 0.0
+    vehiculo_ahorro_siniestro: Optional[float] = 0.0
+    vehiculo_cobro_admon: Optional[str] = ''
+    vehiculo_admon: Optional[float] = 0.0
+    vehiculo_reposicion: Optional[float] = 0.0
+    vehiculo_mantenimiento: Optional[float] = 0.0
+    vehiculo_rendimientos_propietario: Optional[float] = 0.0
+    vehiculo_lunes: Optional[str] = ''
+    vehiculo_martes: Optional[str] = ''
+    vehiculo_miercoles: Optional[str] = ''
+    vehiculo_jueves: Optional[str] = ''
+    vehiculo_viernes: Optional[str] = ''
+    vehiculo_sabado: Optional[str] = ''
+    vehiculo_domingo: Optional[str] = ''
+    vehiculo_pago: Optional[str] = ''
+    vehiculo_multa_pago: Optional[str] = ''
+    vehiculo_fec_primer_pago: Optional[str] = ''
+    vehiculo_fec_ultimo_pago: Optional[str] = ''
+    vehiculo_vlr_ultimo_pago: Optional[float] = 0.0
+    vehiculo_recibo: Optional[str] = ''
+    vehiculo_primer_mantenimiento: Optional[str] = ''
+    vehiculo_ultimo_mantenimiento: Optional[str] = ''
+    vehiculo_categoria: Optional[str] = ''
+    vehiculo_tipo_llave: Optional[str] = ''
+    vehiculo_fun_llave: Optional[str] = ''
+    vehiculo_posicion_llave: Optional[str] = ''
+    vehiculo_fec_estado: Optional[str] = ''
+    vehiculo_plan_pago: Optional[str] = ''
+    vehiculo_prendido_apagado: Optional[str] = ''
+    vehiculo_piquera: Optional[str] = ''
+    vehiculo_fec_inicio_piquera: Optional[str] = ''
+    vehiculo_factura_compra: Optional[str] = ''
+    vehiculo_fec_factura_compra: Optional[str] = ''
+    vehiculo_valor_compra: Optional[float] = 0.0
+    vehiculo_num_poliza: Optional[str] = ''
+    vehiculo_fec_poliza: Optional[str] = ''
+    vehiculo_observaciones: Optional[str] = ''
+    vehiculo_picoyplaca_lunes: Optional[str] = ''
+    vehiculo_picoyplaca_martes: Optional[str] = ''
+    vehiculo_picoyplaca_miercoles: Optional[str] = ''
+    vehiculo_picoyplaca_jueves: Optional[str] = ''
+    vehiculo_picoyplaca_viernes: Optional[str] = ''
+    vehiculo_picoyplaca_sabado: Optional[str] = ''
+    vehiculo_picoyplaca_domingo: Optional[str] = ''
 
 #--------------------------------------------------------------------------------
 
@@ -56,47 +112,103 @@ class VehicleCreate(BaseModel):
     vehiculo_numero: str
     vehiculo_placa: str
     vehiculo_consecutivo: str
-    vehiculo_marca: str
-    vehiculo_modelo: str
-    vehiculo_año: str
-    vehiculo_cilindraje: str
-    vehiculo_nro_puertas: str
-    vehiculo_licencia_nro: str
-    vehiculo_licencia_fec: str
-    vehiculo_color: str
-    vehiculo_servicio: str
-    vehiculo_fec_matricula: str
-    vehiculo_fec_vencimiento_matricula: str
-    vehiculo_fec_importacion: str
-    vehicul_clase: str
-    vehiculo_tipo: str
-    vehiculo_combustible: str
-    vehiculo_capacidad: str
-    vehiculo_ne: str
-    vehiculo_motor: str
-    vehiculo_motor_reg: str
-    vehiculo_vin: str
-    vehiculo_serie: str
-    vehiculo_serie_reg: str
-    vehiculo_chasis: str
-    vehiculo_chasis_reg: str
-    vehiculo_propietario: str
-    vehiculo_cta_gasto: str
-    vehiculo_central: str
-    vehiculo_fec_creacion: str
-    vehiculo_nro_cupo: int
-    vehiculo_permiso_nro: str
-    vehiculo_fec_vencimiento_permiso: str
-    vehiculo_blindaje: str
-    vehiculo_potencia: str
-    vehiculo_dec_importacion: str
-    vehiculo_restriccion_movilidad: str
-    vehiculo_limit_propiedad: str
-    vehiculo_organismo_transito: str
-    vehiculo_codigo_barras: str
-    vehiculo_lateral: str
-    vehiculo_kilometraje: str
-    vehiculo_modalidad: str
-    vehiculo_consulta_panapass: str
-    vehiculo_panapass: str
-    vehiculo_panapass_pwd: str
+    vehiculo_marca: Optional[str] = ''
+    vehiculo_modelo: Optional[str] = ''
+    vehiculo_año: Optional[str] = ''
+    vehiculo_cilindraje: Optional[str] = ''
+    vehiculo_nro_puertas: Optional[str] = ''
+    vehiculo_licencia_nro: Optional[str] = ''
+    vehiculo_licencia_fec: Optional[str] = ''
+    vehiculo_color: Optional[str] = ''
+    vehiculo_servicio: Optional[str] = ''
+    vehiculo_fec_matricula: Optional[str] = ''
+    vehiculo_fec_vencimiento_matricula: Optional[str] = ''
+    vehiculo_fec_importacion: Optional[str] = ''
+    vehicul_clase: Optional[str] = ''
+    vehiculo_tipo: Optional[str] = ''
+    vehiculo_combustible: Optional[str] = ''
+    vehiculo_capacidad: Optional[str] = ''
+    vehiculo_ne: Optional[str] = ''
+    vehiculo_motor: Optional[str] = ''
+    vehiculo_motor_reg: Optional[str] = ''
+    vehiculo_vin: Optional[str] = ''
+    vehiculo_serie: Optional[str] = ''
+    vehiculo_serie_reg: Optional[str] = ''
+    vehiculo_chasis: Optional[str] = ''
+    vehiculo_chasis_reg: Optional[str] = ''
+    vehiculo_propietario: Optional[str] = ''
+    vehiculo_cta_gasto: Optional[str] = ''
+    vehiculo_central: Optional[str] = ''
+    vehiculo_fec_creacion: Optional[str] = ''
+    vehiculo_nro_cupo: Optional[int] = 0
+    vehiculo_permiso_nro: Optional[str] = ''
+    vehiculo_fec_vencimiento_permiso: Optional[str] = ''
+    vehiculo_blindaje: Optional[str] = ''
+    vehiculo_potencia: Optional[str] = ''
+    vehiculo_dec_importacion: Optional[str] = ''
+    vehiculo_restriccion_movilidad: Optional[str] = ''
+    vehiculo_limit_propiedad: Optional[str] = ''
+    vehiculo_organismo_transito: Optional[str] = ''
+    vehiculo_codigo_barras: Optional[str] = ''
+    vehiculo_lateral: Optional[str] = ''
+    vehiculo_kilometraje: Optional[str] = ''
+    vehiculo_modalidad: Optional[str] = ''
+    vehiculo_consulta_panapass: Optional[str] = ''
+    vehiculo_panapass: Optional[str] = ''
+    vehiculo_panapass_pwd: Optional[str] = ''
+    vehiculo_placa_particular: Optional[str] = ''
+    vehiculo_placa_particular_vence: Optional[str] = ''
+    vehiculo_placa_publica: Optional[str] = ''
+    vehiculo_placa_publica_vence: Optional[str] = ''
+    vehiculo_poliza_responsabilidad_civil: Optional[str] = ''
+    vehiculo_poliza_responsabilidad_civil_vence: Optional[str] = ''
+    vehiculo_extinguidor: Optional[str] = ''
+    vehiculo_extinguidor_vence: Optional[str] = ''
+    vehiculo_certificado_operacion: Optional[str] = ''
+    vehiculo_certificado_operacion_fec: Optional[str] = ''
+    vehiculo_nro_total_cuotas: Optional[int] = 0
+    vehiculo_vlr_cuo_diaria: Optional[float] = 0.0
+    vehiculo_renta_diaria: Optional[float] = 0.0
+    vehiculo_ahorro_siniestro: Optional[float] = 0.0
+    vehiculo_cobro_admon: Optional[str] = ''
+    vehiculo_admon: Optional[float] = 0.0
+    vehiculo_reposicion: Optional[float] = 0.0
+    vehiculo_mantenimiento: Optional[float] = 0.0
+    vehiculo_rendimientos_propietario: Optional[float] = 0.0
+    vehiculo_lunes: Optional[str] = ''
+    vehiculo_martes: Optional[str] = ''
+    vehiculo_miercoles: Optional[str] = ''
+    vehiculo_jueves: Optional[str] = ''
+    vehiculo_viernes: Optional[str] = ''
+    vehiculo_sabado: Optional[str] = ''
+    vehiculo_domingo: Optional[str] = ''
+    vehiculo_pago: Optional[str] = ''
+    vehiculo_multa_pago: Optional[str] = ''
+    vehiculo_fec_primer_pago: Optional[str] = ''
+    vehiculo_fec_ultimo_pago: Optional[str] = ''
+    vehiculo_vlr_ultimo_pago: Optional[float] = 0.0
+    vehiculo_recibo: Optional[str] = ''
+    vehiculo_primer_mantenimiento: Optional[str] = ''
+    vehiculo_ultimo_mantenimiento: Optional[str] = ''
+    vehiculo_categoria: Optional[str] = ''
+    vehiculo_tipo_llave: Optional[str] = ''
+    vehiculo_fun_llave: Optional[str] = ''
+    vehiculo_posicion_llave: Optional[str] = ''
+    vehiculo_fec_estado: Optional[str] = ''
+    vehiculo_plan_pago: Optional[str] = ''
+    vehiculo_prendido_apagado: Optional[str] = ''
+    vehiculo_piquera: Optional[str] = ''
+    vehiculo_fec_inicio_piquera: Optional[str] = ''
+    vehiculo_factura_compra: Optional[str] = ''
+    vehiculo_fec_factura_compra: Optional[str] = ''
+    vehiculo_valor_compra: Optional[float] = 0.0
+    vehiculo_num_poliza: Optional[str] = ''
+    vehiculo_fec_poliza: Optional[str] = ''
+    vehiculo_observaciones: Optional[str] = ''
+    vehiculo_picoyplaca_lunes: Optional[str] = ''
+    vehiculo_picoyplaca_martes: Optional[str] = ''
+    vehiculo_picoyplaca_miercoles: Optional[str] = ''
+    vehiculo_picoyplaca_jueves: Optional[str] = ''
+    vehiculo_picoyplaca_viernes: Optional[str] = ''
+    vehiculo_picoyplaca_sabado: Optional[str] = ''
+    vehiculo_picoyplaca_domingo: Optional[str] = ''
