@@ -39,7 +39,6 @@ export class HomeComponent implements OnInit {
     this.changeImagesPeriodically();
     this.obtenerUsuario();
     this.currentVideo = this.videos[this.currentVideoIndex];
-    this.ngAfterViewInit()
   }
 
   obtenerUsuario() {
@@ -89,7 +88,7 @@ export class HomeComponent implements OnInit {
     this.currentVideoIndex = (this.currentVideoIndex + 1) % this.videos.length;
     this.currentVideo = this.videos[this.currentVideoIndex];
     this.videoPlayer.nativeElement.load(); // Cargar el nuevo video
-    this.videoPlayer.nativeElement.muted = true;
+    // this.videoPlayer.nativeElement.muted = true;
   }
 
   convertirValoresBooleanos(obj: any) {
