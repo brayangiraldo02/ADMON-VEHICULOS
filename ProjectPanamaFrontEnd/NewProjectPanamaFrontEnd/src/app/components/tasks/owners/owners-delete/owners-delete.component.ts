@@ -12,6 +12,7 @@ export class OwnersDeleteComponent implements OnInit, OnChanges {
   @Input() owner: string | null = null;
   @Output() close = new EventEmitter<void>();
 
+  isLoading: boolean = true;
   doubleValidation: boolean = false;
   permissionsDelete: any;
   hasPermission: boolean = false;
@@ -37,7 +38,6 @@ export class OwnersDeleteComponent implements OnInit, OnChanges {
 
     }
     else{
-
       this.doubleValidation = true;
     }
   }
@@ -57,6 +57,7 @@ export class OwnersDeleteComponent implements OnInit, OnChanges {
         }
         console.log('Has Permission:', this.hasPermission);
         console.log('Granted Permission:', this.grantedPermission);
+        this.isLoading = false;
       },
       (error) => {
       }
@@ -65,6 +66,9 @@ export class OwnersDeleteComponent implements OnInit, OnChanges {
 
   resetState() {
     this.permissionsDelete = null;
+    this.hasPermission = false;
+    this.grantedPermission = '';
+    this.isLoading = true;
   }
 
   closeModal() {

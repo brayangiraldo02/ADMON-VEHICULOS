@@ -1,23 +1,45 @@
 <div class="modal" *ngIf="isVisible">
   <div class="modal-content">
     <span class="close" (click)="closeModal()">&times;</span>
-    <h2 class="title-container">{{ doubleValidation ? '¿Está seguro de eliminar el propietario ' : '¿Desea eliminar el propietario '}} {{ owner }}?</h2>
-    <div class="options-container">
-      
-      <button class="option" type="button">
-        <span class="material-symbols-outlined" translate="no">
-          check
-        </span>
-        <p class="option-text">{{ doubleValidation ? 'Sí' : 'Aceptar' }}</p>
-      </button>
 
-      <button class="option back" type="button" (click)="closeModal()">
-        <span class="material-symbols-outlined" translate="no">
-          close
-        </span>
-        <p class="option-text">{{ doubleValidation ? 'No' : 'Cancelar' }}</p>
-      </button>
+    <h2 class="title-container" *ngIf="isLoading">Verificando datos del propietario {{ owner }}.</h2>
 
+    <div class="loading-container" *ngIf="!isLoading">
+      <div class="display-container" *ngIf="hasPermission">
+        <h2 class="title-container">No se puede eliminar el propietario {{ owner }}.</h2>
+        <p class="title-container">El propietario {{ owner }} tiene datos en {{ grantedPermission }}.</p>
+  
+        <div class="options-container">
+          <button class="option back" type="button" (click)="closeModal()">
+            <span class="material-symbols-outlined" translate="no">
+              close
+            </span>
+            <p class="option-text">Cerrar</p>
+          </button>
+        </div>
+      </div>
+  
+      <div class="delete-container" *ngIf="!hasPermission">
+        <h2 class="title-container">{{ doubleValidation ? '¿Está seguro de eliminar el propietario ' : '¿Desea eliminar el propietario '}} {{ owner }}?</h2>
+        <div class="options-container">
+          
+          <button class="option" type="button">
+            <span class="material-symbols-outlined" translate="no">
+              check
+            </span>
+            <p class="option-text">{{ doubleValidation ? 'Sí' : 'Aceptar' }}</p>
+          </button>
+  
+          <button class="option back" type="button" (click)="closeModal()">
+            <span class="material-symbols-outlined" translate="no">
+              close
+            </span>
+            <p class="option-text">{{ doubleValidation ? 'No' : 'Cancelar' }}</p>
+          </button>
+  
+        </div>
+      </div> 
     </div>
+    
   </div>
 </div>
