@@ -26,7 +26,6 @@ export class OwnersDeleteComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    console.log('entré')
     if (changes['isVisible'] && changes['isVisible'].currentValue === true) {
       this.resetState();
       this.verifyPermissions();
