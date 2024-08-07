@@ -24,6 +24,7 @@ export class OwnersResumeComponent implements OnInit {
   stateEdited = false;
   OwnersVehiclesView = false;
   OwnersContractView = false;
+  isModalVisible: boolean = false;
 
   constructor(
     private route: ActivatedRoute, 
@@ -289,5 +290,17 @@ export class OwnersResumeComponent implements OnInit {
     this.selectButton('vehiculos')
     this.OwnersContractView = false;
     this.OwnersVehiclesView = true;
+  }
+
+  showModal() {
+    this.isModalVisible = true;
+    document.documentElement.style.overflow = 'hidden';
+    document.body.style.overflow = 'hidden';
+  }
+
+  hideModal() {
+    this.isModalVisible = false;
+    document.documentElement.style.overflow = '';
+    document.body.style.overflow = '';
   }
 }

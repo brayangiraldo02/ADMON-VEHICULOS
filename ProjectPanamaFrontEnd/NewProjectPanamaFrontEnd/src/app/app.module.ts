@@ -34,6 +34,7 @@ import { OwnersResumeComponent } from './components/tasks/owners/owners-resume/o
 import { DriversComponent } from './components/tasks/drivers/drivers.component';
 import { OwnersAddnewComponent } from './components/tasks/owners/owners-addnew/owners-addnew.component';
 import { OwnersReportsComponent } from './components/tasks/owners/owners-reports/owners-reports.component';
+import { OwnersDeleteComponent } from './components/tasks/owners/owners-delete/owners-delete.component';
 
 @NgModule({
   declarations: [
@@ -64,6 +65,7 @@ import { OwnersReportsComponent } from './components/tasks/owners/owners-reports
     DriversComponent,
     OwnersAddnewComponent,
     OwnersReportsComponent,
+    OwnersDeleteComponent,
   ],
   imports: [
     BrowserModule,
