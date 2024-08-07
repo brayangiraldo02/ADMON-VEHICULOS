@@ -3,21 +3,21 @@
   <h1 class="title-container">PROPIETARIO</h1>
   <div class="buttons-container">
     <button class="select back" type="button" routerLink="/owners">
-      <span class="material-symbols-outlined">
+      <span class="material-symbols-outlined" translate="no">
         arrow_back
       </span>
       <p class="select-text">Regresar</p>
     </button>
 
     <button class="select" type="button"  (click)="goToOwnerResume()" [ngClass]="{'selected': selectedButton === 'hoja'}">
-      <span class="material-symbols-outlined">
+      <span class="material-symbols-outlined" translate="no">
         library_books
       </span>
       <p class="select-text">Hoja de Vida</p>
     </button>
 
     <button class="select" type="button" (click)="goToOwnerContract()" [ngClass]="{'selected': selectedButton === 'contrato'}">
-      <span class="material-symbols-outlined">
+      <span class="material-symbols-outlined" translate="no">
         contract
       </span>
       <p class="select-text">Contrato</p>
@@ -396,14 +396,14 @@
 
     <div class="buttons-container">
       <button class="select" type="submit">
-        <span class="material-symbols-outlined">
+        <span class="material-symbols-outlined" translate="no">
           check
         </span>
         <p class="select-text">Guardar</p>
       </button>
 
       <button class="select" type="button" routerLink="/owners">
-        <span class="material-symbols-outlined">
+        <span class="material-symbols-outlined" translate="no">
           close
         </span>
         <p class="select-text">Cancelar</p>

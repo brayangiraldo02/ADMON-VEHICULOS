@@ -5,7 +5,7 @@
   <div class="options-container" *ngIf="!isLoading">
     <input type="text" placeholder="Buscar..." [(ngModel)]="searchTerm" (input)="filterData()" class="search-container">
     <a class="report" (click)="openExternalLink()">
-      <span class="material-symbols-outlined">
+      <span class="material-symbols-outlined" translate="no">
         print
       </span>
       <span class="report-text">Ver Directorio</span>

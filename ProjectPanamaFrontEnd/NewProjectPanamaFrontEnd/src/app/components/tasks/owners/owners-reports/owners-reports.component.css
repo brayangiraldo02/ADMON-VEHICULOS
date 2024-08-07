@@ -1,37 +1,89 @@
-.report-container {
-  height: 90vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding-top: 3vh;
-  /* padding: 40px; */
-  margin: 10px;
-  user-select: none;
+.modal {
+  overflow: auto;
+  display: block;
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.4);
 }
 
-.report{
-  width: 40%; /* 33.33% para 3 elementos por fila, ajustando el margen */
-  margin: 10px;
-  box-sizing: border-box;
-  background: #ffffff; /* Fondo claro por defecto, ajustable */
-  border-radius: 10px; /* Bordes redondeados */
-  border: 1px solid #ccc;
+.modal-content {
+  background-color: #fefefe;
+  margin: 10% auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 50%;
+  border-radius: 10px;
+}
+
+.title-container {
   display: flex;
-  align-items: center; /* Centrado vertical */
-  justify-content: center; /* Centrado horizontal */
-  text-align: center; /* Texto centrado */
-  flex-direction: column; /* Ícono sobre el texto */
+  justify-content: center;
+  margin-top: 0;
+}
+
+.close {
+  margin-bottom: 0;
+  color: #aaa;
+  /* float: right; */
+  display: flex;
+  font-size: 28px;
+  font-weight: bold;
+  justify-content: flex-end;
+}
+
+.close:hover,
+.close:focus {
+  color: black;
+  text-decoration: none;
   cursor: pointer;
 }
 
-.report:hover, 
-.report.selected {
-  /* background: #fff8b4;  */
+.options-container {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+}
+
+.option {
+  width: 40vh;
+  height: 7vh;
+  margin: 10px;
+  box-sizing: border-box;
+  background: #ffffff;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  text-decoration: none;
+  color: black;
+  font-size: 16px;
+  position: relative;  /* Permite posicionamiento absoluto de elementos hijos */
+}
+
+.option span.material-symbols-outlined {
+  margin-right: auto;  /* Empuja el icono a la izquierda */
+  font-size: 3.5vh;
+}
+
+.option-text {
+  flex-grow: 1;
+  text-align: center;  /* Asegura que el texto esté centrado */
+}
+
+.option:hover {
   background: #bcd1ec;
 }
 
 .select-owner {
-  width: 40%; /* Cambia el ancho al 100% para que ocupe todo el contenedor padre */
   margin: 10px;
   box-sizing: border-box;
   background: #ffffff;
@@ -45,7 +97,6 @@
   flex-direction: column;
 }
 
-/* Añade esta clase para que el <select> ocupe todo el ancho disponible */
 .full-width {
   width: 100%; /* Asegura que el <select> ocupe todo el ancho del contenedor */
   padding: 10px; /* Ajuste de padding para mejor apariencia */
@@ -55,42 +106,11 @@
   background-color: #f9f9f9; /* Fondo claro */
 }
 
-.home {
-  background: #ffe9e9;
-}
-
-.home:hover {
-  background: #ffcdcd; 
-}
-
-.report-icon {
-  width: 40px;
-  height: 40px;
-  margin-bottom: 5px;
-}
-
-.report-text {
-  font-size: 20px; /* Ajuste según necesidad */
-  color: #333; /* Color del texto */
-}
-
-.option {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  flex-direction: column;
-}
-
-.select.selected {
-  background: #bcd1ec; /* Cambia este color según sea necesario */
-}
-
 .cuadro-seleccion {
   border: 1px solid #ccc;
   padding: 10px;
   min-height: 20vh;
   max-height: 25vh;
-  width: 40%;
   border-radius: 10px;
   overflow-y: scroll;
   height: auto;
@@ -114,4 +134,17 @@
 
 .cuadro-seleccion label {
   padding-left: 5px;
+}
+
+.back-option {
+  display: flex;
+  justify-content: center;
+}
+
+.back {
+  background: #ffe9e9;
+}
+
+.back:hover {
+  background: #ffcdcd; 
 }

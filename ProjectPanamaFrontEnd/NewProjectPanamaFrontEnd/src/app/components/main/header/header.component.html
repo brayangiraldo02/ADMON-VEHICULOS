@@ -7,43 +7,43 @@
   </div>  
   <nav>
     <button routerLink="/home">
-      <span class="material-symbols-outlined">
+      <span class="material-symbols-outlined" translate="no">
         home
       </span>
       <p>Inicio</p>
     </button>
     <button *ngIf="this.isHome && this.permisos.user_data.tarea01" routerLink="/owners">
-      <span class="material-symbols-outlined">
+      <span class="material-symbols-outlined" translate="no">
         apartment
       </span>
       <p>Propietarios</p>
     </button>
     <button *ngIf="this.isHome && this.permisos.user_data.tarea02" routerLink="/drivers">
-      <span class="material-symbols-outlined">
+      <span class="material-symbols-outlined" translate="no">
         badge
       </span>
       <p>Conductores</p>
     </button>
     <button *ngIf="this.isHome && this.permisos.user_data.tarea03" routerLink="/vehicles">
-      <span class="material-symbols-outlined">
+      <span class="material-symbols-outlined" translate="no">
         local_taxi
       </span>
       <p>Vehículos</p>
     </button>
     <button *ngIf="this.isHome && this.permisos.user_data.tarea04" routerLink="/statevehiclefleet">
-      <span class="material-symbols-outlined">
+      <span class="material-symbols-outlined" translate="no">
         garage
       </span>
       <p>Estado de flota</p>
     </button>
     <button *ngIf="this.isHome && this.permisos.user_data.tarea05" routerLink="/feespaid">
-      <span class="material-symbols-outlined">
+      <span class="material-symbols-outlined" translate="no">
         payments
       </span>
       <p>Informe de cuotas pagas</p>
     </button>
     <button (click)="logout()">
-      <span class="material-symbols-outlined">
+      <span class="material-symbols-outlined" translate="no">
         logout
       </span>
       <p>Cerrar sesión</p>

@@ -192,3 +192,47 @@ def agrupar_vehiculos_por_estado(vehiculos):
         placa = vehiculo["vehiculo_placa"]
         vehiculos_por_estado_nombre[estado_nombre][placa] = vehiculo
     return vehiculos_por_estado_nombre
+
+#------------------------------------------------------------
+
+def valor_compra_vehiculos(data):
+    vehiculos_por_propietario = {}
+
+    for vehiculo in data:
+        propietario_codigo = vehiculo["propietario_codigo"]
+        if propietario_codigo not in vehiculos_por_propietario:
+            vehiculos_por_propietario[propietario_codigo] = {
+                "propietario_codigo": propietario_codigo,
+                "vehiculo_empresa": vehiculo["vehiculo_empresa"],
+                "empty": "1",
+                "vehiculos": {}
+            }
+
+        vehiculo_unidad = vehiculo["vehiculo_unidad"]
+        vehiculos_por_propietario[propietario_codigo]["vehiculos"][vehiculo_unidad] = {
+            "vehiculo_unidad": vehiculo_unidad,
+            "vehiculo_placa": vehiculo["vehiculo_placa"],
+            "vehiculo_marca": vehiculo["vehiculo_marca"],
+            "vehiculo_linea": vehiculo["vehiculo_linea"],
+            "vehiculo_modelo": vehiculo["vehiculo_modelo"],
+            "vehiculo_cupo": vehiculo["vehiculo_cupo"],
+            "vehiculo_motor": vehiculo["vehiculo_motor"],
+            "vehiculo_chasis": vehiculo["vehiculo_chasis"],
+            "vehiculo_estado": vehiculo["vehiculo_estado"],
+            "vehiculo_valor_compra": vehiculo["vehiculo_valor_compra"],
+            "vehiculo_fecha_compra": vehiculo["vehiculo_fecha_compra"]
+        }
+        vehiculos_por_propietario[propietario_codigo]["empty"] = "0"
+
+    return vehiculos_por_propietario
+
+#------------------------------------------------------------
+
+def check_owner_records(owner):
+    return {
+        'vehiculo': owner['vehiculo'] is not None,
+        'cajarecaudos': owner['cajarecaudos'] is not None,
+        'cajarecaudoscontado': owner['cajarecaudoscontado'] is not None,
+        'cartera': owner['cartera'] is not None,
+        'movienca': owner['movienca'] is not None
+    }

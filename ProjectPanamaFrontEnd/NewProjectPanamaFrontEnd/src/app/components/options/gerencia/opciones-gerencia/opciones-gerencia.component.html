@@ -3,12 +3,12 @@
   <h1>INFORMES DE GERENCIA</h1>
   <div class="options-container">
     <ng-container *ngFor="let option of options">
-      <a class="option" [href]="option.url">
-        <span class="material-symbols-outlined">
+      <button class="option" type="button" [routerLink]="option.url">
+        <span class="material-symbols-outlined" translate="no">
           {{ option.icon }}
         </span>
-        <span class="option-text">{{ option.name }}</span>
-      </a>
+        <p class="option-text">{{ option.name }}</p>
+      </button>
     </ng-container>
   </div>
 </div>
