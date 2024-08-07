@@ -4,9 +4,10 @@ header {
   align-items: center; /* Centra verticalmente los elementos */
   /* arriba | derecha | abajo | izquierda */
   padding: 2vh 2vh 2vh 2vh;
-  background-color: white; /* Color de fondo del header */
+  background-color: #e7eeff; /* Color de fondo del header */
   color: black; /* Color del texto */
   user-select: none;
+  box-shadow: 0px 0px 3px black;
 }
 
 h1 {
@@ -46,7 +47,7 @@ nav button {
   margin-right: 15px; /* Agrega un margen entre los enlaces */
   color: black; /* Color del texto */
   text-decoration: none; /* Quita la decoración del texto */
-  background-color: white; /* Color de fondo del botón */
+  background-color: #e7eeff; /* Color de fondo del botón */
   border: none; /* Quita el borde del botón */
   cursor: pointer; /* Cambia el cursor al pasar el ratón */
   display: flex;
