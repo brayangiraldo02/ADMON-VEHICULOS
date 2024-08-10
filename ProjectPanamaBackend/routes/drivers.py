@@ -1,8 +1,14 @@
 from fastapi import APIRouter, Depends
 from fastapi.responses import JSONResponse
 from config.dbconnection import session
+from sqlalchemy.orm import aliased
 from models.conductores import Conductores
 from models.ciudades import Ciudades
+from models.vehiculos import Vehiculos
+from models.cajarecaudos import CajaRecaudos
+from models.cajarecaudoscontado import CajasRecaudosContado
+from models.cartera import Cartera
+from models.movienca import Movienca
 from schemas.reports import *
 from middlewares.JWTBearer import JWTBearer
 from fastapi.encoders import jsonable_encoder
@@ -48,7 +54,7 @@ async def get_drivers():
 
 #-----------------------------------------------------------------------------------------------
 
-@drivers_router.get('/directorio-conductores')
+@drivers_router.get('/directorio-conductores', tags=["Drivers"])
 async def get_conductores_detalles():
     db = session()
     try:
@@ -155,3 +161,60 @@ async def get_conductores_detalles():
         #return JSONResponse(content=jsonable_encoder(data))
     finally:
         db.close()
+
+#-----------------------------------------------------------------------------------------------
+
+#@drivers_router.post("/driver", response_model=DriverCreate, tags=["Drivers"])
+
+#-----------------------------------------------------------------------------------------------
+
+@drivers_router.get("/driver-delete/{owner_id}", tags=["Drivers"])
+async def verify_driver_delete(driver_id: int):
+  db = session()
+  try:
+    MoviencaClient = aliased(Movienca)
+    MoviencaConductor = aliased(Movienca)
+    driver = db.query(
+            CajaRecaudos.CLIENTE.label('cajarecaudos'),
+            CajasRecaudosContado.CLIENTE.label('cajarecaudoscontado'),
+            Cartera.CLIENTE.label('cartera'),
+            MoviencaClient.CLIENTE.label('movienca'),
+            MoviencaConductor.CONDUCTOR.label('movienca_conductor')
+        ).select_from(Conductores).outerjoin(
+            CajaRecaudos, Conductores.CODIGO == CajaRecaudos.CLIENTE
+        ).outerjoin(
+            CajasRecaudosContado, Conductores.CODIGO == CajasRecaudosContado.CLIENTE
+        ).outerjoin(
+            Cartera, Conductores.CODIGO == Cartera.CLIENTE
+        ).outerjoin(
+            MoviencaClient, Conductores.CODIGO == MoviencaClient.CLIENTE
+        ).outerjoin(
+            MoviencaConductor, Conductores.CODIGO == MoviencaConductor.CONDUCTOR
+        ).filter(
+            Conductores.CODIGO == driver_id
+        ).first()
+        
+    if not driver:
+      return JSONResponse(content={"error": "Driver not found"}, status_code=404)
+    driver_conditions = {
+      'cajarecaudos': driver.cajarecaudos,
+      'cajarecaudoscontado': driver.cajarecaudoscontado,
+      'cartera': driver.cartera,
+      'movienca': driver.movienca,
+      'movienca_conductor': driver.movienca_conductor
+    }
+
+    if any(driver_conditions.values()):
+      return JSONResponse(content={"message": "driver cant be deleted"})
+    # Si no hay registros en otras tablas, eliminar al propietario
+    db.query(Conductores).filter(Conductores.CODIGO == driver_id).delete()
+    db.commit()
+    return JSONResponse(content={"message": "Owner deleted successfully"})
+  
+  except Exception as e:
+    db.rollback() 
+    return JSONResponse(content={"error": str(e)})
+  finally:
+    db.close()
+
+#-----------------------------------------------------------------------------------------------

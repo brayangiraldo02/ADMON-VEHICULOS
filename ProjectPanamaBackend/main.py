@@ -13,6 +13,7 @@ from routes.drivers import drivers_router
 from routes.vehicles import vehicles_router
 from routes.cities import cities_router
 from routes.central import central_router
+from routes.operaciones import operations_router
 import os
 
 load_dotenv()
@@ -39,6 +40,7 @@ app.include_router(drivers_router)
 app.include_router(vehicles_router)
 app.include_router(cities_router)
 app.include_router(central_router)
+app.include_router(operations_router)
 
 app.mount("/assets", StaticFiles(directory="assets"), name="assets")
 

@@ -209,6 +209,10 @@ def valor_compra_vehiculos(data):
             }
 
         vehiculo_unidad = vehiculo["vehiculo_unidad"]
+        fecha_compra = vehiculo["vehiculo_fecha_compra"]
+        if fecha_compra == "0000-00-00":
+            fecha_compra = ""
+
         vehiculos_por_propietario[propietario_codigo]["vehiculos"][vehiculo_unidad] = {
             "vehiculo_unidad": vehiculo_unidad,
             "vehiculo_placa": vehiculo["vehiculo_placa"],
@@ -220,19 +224,10 @@ def valor_compra_vehiculos(data):
             "vehiculo_chasis": vehiculo["vehiculo_chasis"],
             "vehiculo_estado": vehiculo["vehiculo_estado"],
             "vehiculo_valor_compra": vehiculo["vehiculo_valor_compra"],
-            "vehiculo_fecha_compra": vehiculo["vehiculo_fecha_compra"]
+            "vehiculo_fecha_compra": fecha_compra  # Usar la fecha modificada
         }
         vehiculos_por_propietario[propietario_codigo]["empty"] = "0"
 
     return vehiculos_por_propietario
 
 #------------------------------------------------------------
-
-def check_owner_records(owner):
-    return {
-        'vehiculo': owner['vehiculo'] is not None,
-        'cajarecaudos': owner['cajarecaudos'] is not None,
-        'cajarecaudoscontado': owner['cajarecaudoscontado'] is not None,
-        'cartera': owner['cartera'] is not None,
-        'movienca': owner['movienca'] is not None
-    }

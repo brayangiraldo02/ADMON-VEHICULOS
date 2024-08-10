@@ -232,7 +232,7 @@ def update_propietario(owner_id: str, propietario: PropietarioUpdate):
 
 #----------------------------------------------------------------------------------------------------------------
 
-@owners_router.post("/owners", response_model=PropietarioCreate)
+@owners_router.post("/owners", response_model=PropietarioCreate, tags=["Owners"])
 def create_propietario(propietario: PropietarioCreate):
   db = session()
   try:
@@ -424,7 +424,7 @@ async def get_owner_codes():
 
 #----------------------------------------------------------------------------------------------------------------
 
-@owners_router.get("/verify-owner-delete/{owner_id}", tags=["Owners"])
+@owners_router.get("/owner-delete/{owner_id}", tags=["Owners"])
 async def verify_owner_delete(owner_id: int):
   db = session()
   try:
@@ -458,10 +458,59 @@ async def verify_owner_delete(owner_id: int):
       'movienca': owner.movienca
     }
 
-    data = check_owner_records(owner_conditions)
+    if any(owner_conditions.values()):
+      return JSONResponse(content={"message": "Owner cant be deleted"})
+    # Si no hay registros en otras tablas, eliminar al propietario
+    db.query(Propietarios).filter(Propietarios.CODIGO == owner_id).delete()
+    db.commit()
+    return JSONResponse(content={"message": "Owner deleted successfully"})
+  
+  except Exception as e:
+    db.rollback() 
+    return JSONResponse(content={"error": str(e)})
+  finally:
+    db.close()
 
-    return JSONResponse(content=jsonable_encoder(data))
+#----------------------------------------------------------------------------------------------------------------
+
+@owners_router.get("/verify-owner-delete/{owner_id}", tags=["Owners"])
+async def verify_owner_delete(owner_id: int):
+  db = session()
+  try:
+    owner = db.query(
+            Vehiculos.PROPI_IDEN.label('vehiculo'),
+            CajaRecaudos.PROPI_IDEN.label('cajarecaudos'),
+            CajasRecaudosContado.PROPI_IDEN.label('cajarecaudoscontado'),
+            Cartera.PROPI_IDEN.label('cartera'),
+            Movienca.PROPI_IDEN.label('movienca')
+        ).select_from(Propietarios).outerjoin(
+            Vehiculos, Propietarios.CODIGO == Vehiculos.PROPI_IDEN
+        ).outerjoin(
+            CajaRecaudos, Propietarios.CODIGO == CajaRecaudos.PROPI_IDEN
+        ).outerjoin(
+            CajasRecaudosContado, Propietarios.CODIGO == CajasRecaudosContado.PROPI_IDEN
+        ).outerjoin(
+            Cartera, Propietarios.CODIGO == Cartera.PROPI_IDEN
+        ).outerjoin(
+            Movienca, Propietarios.CODIGO == Movienca.PROPI_IDEN
+        ).filter(
+            Propietarios.CODIGO == owner_id
+        ).first()
+    
+    if not owner:
+        return JSONResponse(content={"error": "Owner not found"}, status_code=404)
+    owner_conditions = {
+        'vehiculo': bool(owner.vehiculo),
+        'cajarecaudos': bool(owner.cajarecaudos),
+        'cajarecaudoscontado': bool(owner.cajarecaudoscontado),
+        'cartera': bool(owner.cartera),
+        'movienca': bool(owner.movienca)
+    }
+
+    return JSONResponse(content=jsonable_encoder(owner_conditions))
   except Exception as e:
     return JSONResponse(content={"error": str(e)})
   finally:
     db.close()
+
+#----------------------------------------------------------------------------------------------------------------
