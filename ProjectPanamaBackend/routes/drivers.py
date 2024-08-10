@@ -54,7 +54,7 @@ async def get_drivers():
 
 #-----------------------------------------------------------------------------------------------
 
-@drivers_router.get('/directorio-conductores')
+@drivers_router.get('/directorio-conductores', tags=["Drivers"])
 async def get_conductores_detalles():
     db = session()
     try:
@@ -164,7 +164,7 @@ async def get_conductores_detalles():
 
 #-----------------------------------------------------------------------------------------------
 
-#@drivers_router.post("/driver", response_model=OwnerCreate, tags=["Drivers"])
+#@drivers_router.post("/driver", response_model=DriverCreate, tags=["Drivers"])
 
 #-----------------------------------------------------------------------------------------------
 
