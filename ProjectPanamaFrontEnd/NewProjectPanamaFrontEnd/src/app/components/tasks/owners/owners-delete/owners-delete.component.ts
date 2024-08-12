@@ -78,6 +78,8 @@ export class OwnersDeleteComponent implements OnInit, OnChanges {
     this.hasPermission = false;
     this.grantedPermission = '';
     this.isLoading = true;
+    this.doubleValidation = false;
+    this.deleteSuccesful = false;
   }
 
   returnOwners() {
