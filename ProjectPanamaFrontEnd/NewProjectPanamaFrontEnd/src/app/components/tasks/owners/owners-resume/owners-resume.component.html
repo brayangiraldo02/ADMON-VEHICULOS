@@ -270,25 +270,25 @@
   <div class="buttons-container" *ngIf="!isLoading && !OwnersVehiclesView">
 
     <div class="search-buttons-container" *ngIf="!isEditable">
-      <button class="select small-buttons" type="button">
+      <button class="select small-buttons" type="button" (click)="firstOwner()">
         <span class="material-symbols-outlined" translate="no">
           first_page
         </span>
       </button>
   
-      <button class="select small-buttons" type="button">
+      <button class="select small-buttons" type="button" (click)="backOwner()">
         <span class="material-symbols-outlined" translate="no">
           chevron_left
         </span>
       </button>
   
-      <button class="select small-buttons" type="button">
+      <button class="select small-buttons" type="button" (click)="nextOwner()">
         <span class="material-symbols-outlined" translate="no">
           chevron_right
         </span>
       </button>
   
-      <button class="select small-buttons" type="button">
+      <button class="select small-buttons" type="button" (click)="lastOwner()">
         <span class="material-symbols-outlined" translate="no">
           last_page
         </span>
