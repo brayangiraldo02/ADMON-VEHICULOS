@@ -17,6 +17,7 @@ export class OwnersDeleteComponent implements OnInit, OnChanges {
   permissionsDelete: any;
   hasPermission: boolean = false;
   grantedPermission: string = '';
+  deleteSuccesful: boolean = false;
 
   constructor(
     private router: Router,
@@ -35,7 +36,15 @@ export class OwnersDeleteComponent implements OnInit, OnChanges {
 
   acceptRemove() {
     if(this.doubleValidation){
-
+      if(!this.hasPermission){
+        this.apiService.deleteData("owner/"+this.owner).subscribe(
+          (response) => {
+            this.deleteSuccesful = true;
+          },
+          (error) => {
+          }
+        );
+      }
     }
     else{
       this.doubleValidation = true;
@@ -69,6 +78,11 @@ export class OwnersDeleteComponent implements OnInit, OnChanges {
     this.hasPermission = false;
     this.grantedPermission = '';
     this.isLoading = true;
+  }
+
+  returnOwners() {
+    this.closeModal();
+    this.router.navigate(['/owners']);
   }
 
   closeModal() {
