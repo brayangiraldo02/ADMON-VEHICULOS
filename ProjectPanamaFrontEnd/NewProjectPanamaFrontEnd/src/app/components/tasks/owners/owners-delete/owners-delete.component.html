@@ -18,12 +18,25 @@
           </button>
         </div>
       </div>
+
+      <div class="display-container" *ngIf="deleteSuccesful">
+        <h2 class="title-container">Se ha eliminado el propietario {{ owner }}.</h2>
   
-      <div class="delete-container" *ngIf="!hasPermission">
+        <div class="options-container">
+          <button class="option back" type="button" (click)="returnOwners()">
+            <span class="material-symbols-outlined" translate="no">
+              close
+            </span>
+            <p class="option-text">Cerrar</p>
+          </button>
+        </div>
+      </div>
+  
+      <div class="delete-container" *ngIf="!hasPermission && !deleteSuccesful">
         <h2 class="title-container">{{ doubleValidation ? '¿Está seguro de eliminar el propietario ' : '¿Desea eliminar el propietario '}} {{ owner }}?</h2>
         <div class="options-container">
           
-          <button class="option" type="button">
+          <button class="option" type="button" (click)="acceptRemove()">
             <span class="material-symbols-outlined" translate="no">
               check
             </span>
