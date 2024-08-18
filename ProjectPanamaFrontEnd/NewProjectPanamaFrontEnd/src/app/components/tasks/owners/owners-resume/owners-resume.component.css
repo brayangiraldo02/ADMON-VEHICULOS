@@ -4,7 +4,8 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding-top: 3vh;
+  /* padding-top: 3vh; */
+  padding-bottom: 1vh;
   user-select: none;
 }
 
@@ -12,10 +13,12 @@ hr {
   width: 95%;
   height: 1px;
   background-color: #000000;
+  margin: 2px;
 }
 
 .title-container {
   margin-bottom: 5px;
+  font-size: 28px;
 }
 
 .buttons-container {
@@ -23,7 +26,7 @@ hr {
   flex-direction: row;
   justify-content: space-around;
   width: 100%;
-  padding-bottom: 10px;
+  /* padding-bottom: 10px; */
 }
 
 button.selected {
@@ -32,7 +35,7 @@ button.selected {
 
 .select{
   width: 15%;
-  margin: 10px;
+  margin: 8px;
   box-sizing: border-box;
   background: #ffffff; /* Fondo claro por defecto, ajustable */
   border-radius: 10px; /* Bordes redondeados */
@@ -80,7 +83,7 @@ button.selected {
 .select-text {
   flex-grow: 1;
   text-align: center;  /* Asegura que el texto esté centrado */
-  font-size: 15px; /* Ajuste según necesidad */
+  font-size: 13px; /* Ajuste según necesidad */
   color: #333; /* Color del texto */
 }
 
@@ -108,14 +111,16 @@ button.selected {
   padding-right: 10px;
   display: flex;
   align-items: center;
+  font-size: 14px
 }
 
 .form-group input, .form-group select {
-  padding: 10px;
+  padding: 8px;
   background: #eeeeee;
   border: 1px solid #ccc;
   border-radius: 10px;
-  color: rgb(75, 75, 75)
+  color: rgb(75, 75, 75);
+  font-size: 13px;
 }
 
 .form-group input:enabled, .form-group select:enabled {
