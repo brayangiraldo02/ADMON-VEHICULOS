@@ -4,11 +4,11 @@ import { ApiService } from 'src/app/services/api.service';
 import { JwtService } from 'src/app/services/jwt.service';
 
 @Component({
-  selector: 'app-drivers',
-  templateUrl: './drivers.component.html',
-  styleUrls: ['./drivers.component.css']
+  selector: 'app-drivers-table',
+  templateUrl: './drivers-table.component.html',
+  styleUrls: ['./drivers-table.component.css']
 })
-export class DriversComponent implements OnInit {
+export class DriversTableComponent implements OnInit{
   data: any[] = [];
   filteredData: any[] = [];
   searchTerm: string = '';

@@ -1,0 +1,143 @@
+.main-container {
+  min-height: 90vh;
+  height: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  /* padding-top: 3vh; */
+  user-select: none;
+}
+
+hr {
+  width: 95%;
+  height: 1px;
+  background-color: #000000;
+  margin: 2px;
+}
+
+.title-container {
+  margin-bottom: 5px;
+  font-size: 28px;
+}
+
+.buttons-container {
+  display: flex;
+  flex-direction: row;
+  justify-content:space-evenly;
+  width: 100%;
+  /* padding-bottom: 10px; */
+}
+
+button.selected {
+  background: #bcd1ec;
+}
+
+.select{
+  width: 12%;
+  margin: 4px;
+  box-sizing: border-box;
+  background: #ffffff; /* Fondo claro por defecto, ajustable */
+  border-radius: 10px; /* Bordes redondeados */
+  border: 1px solid #ccc;
+  display: flex;
+  align-items: center; /* Centrado vertical */
+  justify-content: center; /* Centrado horizontal */
+  text-align: center; /* Texto centrado */
+  cursor: pointer;
+  position: relative;
+}
+
+.select span.material-symbols-outlined {
+  margin-right: auto;  /* Empuja el icono a la izquierda */
+  font-size: 3.5vh;
+  color: black;
+}
+
+.select.selected {
+  background: #bcd1ec; /* Cambia este color según sea necesario */
+}
+
+.select:hover {
+  /* background: #fff8b4;  */
+  background: #bcd1ec;
+}
+
+.back {
+  background: #ffe9e9;
+}
+
+.back:hover {
+  background: #ffcdcd; 
+}
+
+.small-buttons {
+  width: auto;
+  margin: 5px;
+}
+
+.search-buttons-container {
+  display: flex;
+}
+
+.select-text {
+  flex-grow: 1;
+  text-align: center;  /* Asegura que el texto esté centrado */
+  font-size: 13px; /* Ajuste según necesidad */
+  color: #333; /* Color del texto */
+}
+
+.info-container {
+  width: 95%;
+  margin-top: 5px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: row;
+  flex-shrink: 0;
+  margin-bottom: 10px;
+}
+
+.form-group label {
+  padding-right: 10px;
+  display: flex;
+  align-items: center;
+  font-size: 14px
+}
+
+.form-group input, .form-group select {
+  padding: 8px;
+  background: #eeeeee;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  color: rgb(75, 75, 75);
+  font-size: 13px;
+}
+
+.form-group input:enabled, .form-group select:enabled {
+  background: #ffffff;
+  color: black;
+}
+
+.two-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  width: 90%;
+}
+
+.two-container .form-group {
+  flex: 1;
+}
+
+.large {
+  width: 70%;
+}
+
+.medium {
+  width: 40%;
+}
+
+.small {
+  width: 10%;
+}
