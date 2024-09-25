@@ -87,8 +87,12 @@ button.selected {
 }
 
 .info-container {
-  width: 95%;
+  width: 100%;
+  display: flex;
   margin-top: 5px;
+  flex-direction: column;
+  align-content: center;
+  flex-wrap: wrap;
 }
 
 .form-group {
@@ -126,18 +130,18 @@ button.selected {
   width: 90%;
 }
 
-.two-container .form-group {
+/* .two-container .form-group {
   flex: 1;
-}
+} */
 
 .large {
-  width: 70%;
+  width: 40vh;
 }
 
 .medium {
-  width: 40%;
+  width: 20vh;
 }
 
 .small {
-  width: 10%;
+  width: 10vh;
 }

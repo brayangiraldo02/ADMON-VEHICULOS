@@ -51,36 +51,26 @@
 
   <hr>
 
-  <!-- INPUTS HOJA DE VIDA -->
+  <!-- INPUTS PERSONALES -->
   <!-- -------------------------------------------------------------------------------------- -->
   <div class="info-container">
-    <div class="form-group">
-      <label for="codigo">CÓDIGO:</label><br>
-      <input type="number" id="codigo" name="codigo" [value]="data.codigo" disabled><br>
-    </div>
 
     <div class="two-container">
+      <div class="form-group">
+        <label for="codigo">CÓDIGO:</label><br>
+        <input type="number"><br>
+        <!-- <input type="number" id="codigo" name="codigo" [value]="data.codigo" disabled><br> -->
+      </div>
+
       <div class="form-group">
         <label for="nombre">Nombre:</label><br>
         <input class="large" type="text" id="nombre" name="nombre" [(ngModel)]="data.nombre_propietario" [disabled]="!isEditable"><br>
       </div>
   
       <div class="form-group">
-        <label for="abreviado">Abreviado:</label><br>
-        <input class="medium" type="text" id="abreviado" name="abreviado" [(ngModel)]="data.nombre_abreviado" [disabled]="!isEditable"><br>
-      </div>
-    </div>
-
-    <div class="two-container">
-      <div class="form-group">
         <label for="cc" for="codigo">C.C / N.I.T. :</label><br>
         <input class="small" type="number" id="cc" name="cc" [value]="data.nit" disabled><br>
         <input class="small" type="text" id="codigo" name="codigo" [value]="data.codigo" disabled><br>
-      </div>
-  
-      <div class="form-group">
-        <label for="ruc">R.U.C:</label><br>
-        <input class="medium" type="text" id="ruc" name="ruc" [(ngModel)]="data.ruc" [disabled]="!isEditable"><br>
       </div>
     </div>
 
@@ -107,35 +97,64 @@
 
     <div class="two-container">
       <div class="form-group">
-        <label for="telefono">Teléfono:</label><br>
+        <label for="telefono">Teléfono/Cel:</label><br>
         <input type="text" id="telefono" name="telefono" [(ngModel)]="data.telefono" [disabled]="!isEditable"><br>
-      </div>
-  
-      <div class="form-group">
-        <label for="celular" for="celular1">Celulares:</label><br>
         <input type="text" id="celular" name="celular" [(ngModel)]="data.celular" [disabled]="!isEditable"><br>
-        <input type="text" id="celular1" name="celular1" [(ngModel)]="data.celular1" [disabled]="!isEditable"><br>
+      </div>
+
+      <div class="form-group">
+        <label for="fec_estado">Fecha Nacimiento:</label><br>
+        <input type="text" id="fec_estado" name="fec_estado" [value]="data.fec_estado" disabled><br>
       </div>
       
     </div>
 
     <div class="two-container">
+  
+      <div class="form-group">
+        <label for="correo" for="correo1">Correo:</label><br>
+        <input class="medium" type="text" id="correo" name="correo" [(ngModel)]="data.correo" [disabled]="!isEditable"><br>
+      </div>
+
       <div class="form-group">
         <label for="representante">Representante:</label><br>
         <input class="large" type="text" id="representante" name="representante" [(ngModel)]="data.representante" [disabled]="!isEditable"><br>
       </div>
-  
-      <div class="form-group">
-        <label for="contacto">Contacto:</label><br>
-        <input class="medium" type="text" id="contacto" name="contacto" [(ngModel)]="data.contacto" [disabled]="!isEditable"><br>
-      </div>
     </div>
 
-    <div class="form-group">
-      <label for="correo" for="correo1">Correos:</label><br>
-      <input class="medium" type="text" id="correo" name="correo" [(ngModel)]="data.correo" [disabled]="!isEditable"><br>
-      <input class="medium" type="text" id="correo1" name="correo1" [(ngModel)]="data.correo1" [disabled]="!isEditable"><br>
+    <div class="two-container">
+      <div class="form-group">
+        <label for="estado">Sexo:</label><br>
+        <select class="medium" id="estado" name="estado" [(ngModel)]="data.estado" [disabled]="!isEditable">
+          <option value="Masculino">Masculino/option>
+          <option value="Femenino">Femenino</option>
+        </select><br>
+      </div>
+
+      <div class="form-group">
+        <label for="estado">Estado civil:</label><br>
+        <select class="medium" id="estado" name="estado" [(ngModel)]="data.estado" [disabled]="!isEditable">
+          <option value="Casado">Casado</option>
+          <option value="Soltero">Soltero</option>
+        </select><br>
+      </div>
+
     </div>
+
+    <div class="two-container">
+
+      <div class="form-group">
+        <label for="fec_estado">Fecha Ingresoo:</label><br>
+        <input type="text" id="fec_estado" name="fec_estado" [value]="data.fec_estado" disabled><br>
+      </div>
+
+      <div class="form-group">
+        <label for="fec_estado">Fecha Retiro:</label><br>
+        <input type="text" id="fec_estado" name="fec_estado" [value]="data.fec_estado" disabled><br>
+      </div>
+      
+    </div>
+
   </div>
 
   <hr>
@@ -155,6 +174,24 @@
       <div class="form-group">
         <label for="fec_estado">Fecha Estado:</label><br>
         <input type="text" id="fec_estado" name="fec_estado" [value]="data.fec_estado" disabled><br>
+      </div>
+    </div>
+
+    <div class="two-container">
+      <div class="form-group">
+        <label for="estado">Contrato Auto:</label><br>
+        <select class="medium" id="estado" name="estado" [(ngModel)]="data.estado" [disabled]="!isEditable">
+          <option value="Nuevo">Nuevo</option>
+          <option value="Usado">Usado</option>
+        </select><br>
+      </div>
+  
+      <div class="form-group">
+        <label for="estado">Cruzar Ahorros con Siniestros Mensual:</label><br>
+        <select class="medium" id="estado" name="estado" [(ngModel)]="data.estado" [disabled]="!isEditable">
+          <option value="Si">Sí</option>
+          <option value="No">No</option>
+        </select><br>
       </div>
     </div>
   </div>
