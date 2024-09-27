@@ -36,6 +36,8 @@ async def get_vehicles():
             Vehiculos.CHASISNRO.label('vehiculo_chasis'),
             Vehiculos.FEC_MATRIC.label('vehiculo_fec_matricula'),
             Vehiculos.EMPRESA.label('vehiculo_empresa'),
+            Centrales.NOMBRE.label('vehiculo_central'),
+            Vehiculos.NRO_LLAVES.label('vehiculo_nro_llaves'),
             Conductores.NOMBRE.label('vehiculo_conductor'),
             Estados.NOMBRE.label('vehiculo_estado'),
             Vehiculos.CUO_DIARIA.label('vehiculo_cuota_diaria'),
@@ -45,6 +47,7 @@ async def get_vehicles():
             Vehiculos.SDO_PANAPA.label('vehiculo_saldo_panapass'),
         )   .join(Estados, Estados.CODIGO == Vehiculos.ESTADO) \
             .join(Conductores, Conductores.CODIGO == Vehiculos.CONDUCTOR) \
+            .join(Centrales, Centrales.CODIGO == Vehiculos.CENTRAL) \
             .all()
 
     vehicles_list = [
@@ -58,13 +61,15 @@ async def get_vehicles():
         'chasis': vehicle.vehiculo_chasis,
         'matricula': vehicle.vehiculo_fec_matricula,
         'empresa': vehicle.vehiculo_empresa,
+        'central': vehicle.vehiculo_central,
         'conductor': vehicle.vehiculo_conductor,
         'estado': vehicle.vehiculo_estado,
         'vlr_cta': vehicle.vehiculo_cuota_diaria,
         'nro_ctas': vehicle.vehiculo_nro_Ctas,
         'panapass': vehicle.vehiculo_panapass,
         'clave': vehicle.vehiculo_panapass_pwd,
-        'saldo': vehicle.vehiculo_saldo_panapass
+        'saldo': vehicle.vehiculo_saldo_panapass,
+        'nro_llaves': vehicle.vehiculo_nro_llaves
       }
       for vehicle in vehicles
     ]
