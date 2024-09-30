@@ -56,6 +56,15 @@ export class DriversTableComponent implements OnInit{
     );
   }
 
+  listData(event: any) {
+    const selectedValue = event.target.value;
+    if (selectedValue === '') {
+      this.filteredData = this.data;
+    } else if (selectedValue === '1') {
+      this.filteredData = this.data.filter(item => item.unidad !== ' - ');
+    }
+  }
+
   openExternalLink(): void {
     this.isLoading = true;
     const data = { user: this.user };

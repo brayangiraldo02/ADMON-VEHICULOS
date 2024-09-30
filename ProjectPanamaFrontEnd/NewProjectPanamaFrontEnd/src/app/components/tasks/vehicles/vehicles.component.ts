@@ -32,7 +32,6 @@ export class VehiclesComponent implements OnInit {
         this.data = response.filter((data: any) => data.unidad);
         this.data.sort((a, b) => a.unidad.localeCompare(b.unidad));
         this.filteredData = [...this.data];
-        console.log(this.data);
         this.isLoading = false;
       },
       (error) => {
