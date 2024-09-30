@@ -6,10 +6,10 @@
     <input type="text" placeholder="Buscar..." [(ngModel)]="searchTerm" (input)="filterData()" class="search-container">
     <div class="form-group">
       <label for="estado">Manera de Listar:</label>
-      <select class="medium" id="estado" name="estado">
-        <option value="Defecto">Todos</option>
-        <option value="Activos">Activos</option>
-        <option value="Retirado">Retirados</option>
+      <select class="medium" id="estado" name="estado" (change)="listData($event)">
+        <option value="">Todos</option>
+        <option value="1">Activos</option>
+        <option value="2">Retirados</option>
       </select><br>
     </div>
     <a class="report" (click)="openExternalLink()">
@@ -56,7 +56,7 @@
           <td class="col-campo9">{{ item.central }}</td>
           <td class="col-campo9">{{ item.empresa }}</td>
           <td class="col-campo10">{{ item.conductor }}</td>
-          <td class="col-campo11">{{ item.estado }}</td>
+          <td class="col-campo11">{{ item.nombre_estado }}</td>
           <td class="col-campo12">{{ item.vlr_cta }}</td>
           <td class="col-campo13">{{ item.nro_ctas }}</td>
           <td class="col-campo14">{{ item.panapass }}</td>

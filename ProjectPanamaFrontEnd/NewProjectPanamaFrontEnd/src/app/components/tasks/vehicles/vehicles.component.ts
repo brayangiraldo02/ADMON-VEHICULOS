@@ -32,6 +32,7 @@ export class VehiclesComponent implements OnInit {
         this.data = response.filter((data: any) => data.unidad);
         this.data.sort((a, b) => a.unidad.localeCompare(b.unidad));
         this.filteredData = [...this.data];
+        console.log(this.data);
         this.isLoading = false;
       },
       (error) => {
@@ -50,7 +51,14 @@ export class VehiclesComponent implements OnInit {
       item.permiso.toLowerCase().includes(term) ||
       item.empresa.toLowerCase().includes(term) ||
       item.conductor.toLowerCase().includes(term) ||
-      item.estado.toLowerCase().includes(term)
+      item.nombre_estado.toLowerCase().includes(term)
+    );
+  }
+
+  listData(event: any) {
+    const selectedValue = event.target.value;
+    this.filteredData = this.data.filter(item => 
+      item.estado.toString().toLowerCase().includes(selectedValue)
     );
   }
 
