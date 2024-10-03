@@ -16,6 +16,7 @@ export class OwnersResumeComponent implements OnInit {
   central: any = null;
   users: any = null;
   vehicles: any = null;
+  owners: any = '';
   isLoading = true;
   isEditable = false;
   cityFound = false;
@@ -24,6 +25,7 @@ export class OwnersResumeComponent implements OnInit {
   stateEdited = false;
   OwnersVehiclesView = false;
   OwnersContractView = false;
+  isModalVisible: boolean = false;
 
   constructor(
     private route: ActivatedRoute, 
@@ -41,6 +43,7 @@ export class OwnersResumeComponent implements OnInit {
     this.getCities();
     this.getCentral();
     this.getVehicles();
+    this.getOwners();
   }
 
   async delay(ms: number) {
@@ -185,6 +188,60 @@ export class OwnersResumeComponent implements OnInit {
     );
   }
 
+  getOwners() {
+    this.apiService.getData('owners').subscribe(
+      (response) => {
+        this.owners = response.filter((owners: any) => owners.id);
+        // console.log(this.owners)
+      },
+      (error) => {
+        console.log(error);
+      }
+    );
+  }
+
+  nextOwner() {
+    const currentIndex = this.owners.findIndex((owner: any) => owner.id === this.code);
+    if (currentIndex !== -1 && currentIndex < this.owners.length - 1) {
+      const nextOwnerId = this.owners[currentIndex + 1].id;
+      this.router.navigate(['/owner/' + nextOwnerId]).then(() => {
+        window.location.reload();
+      });
+    }
+
+    if(currentIndex === this.owners.length - 1){
+      this.firstOwner()
+    }
+  }
+  
+  backOwner() {
+    const currentIndex = this.owners.findIndex((owner: any) => owner.id === this.code);
+    if (currentIndex !== -1 && currentIndex > 0) {
+      const previousOwnerId = this.owners[currentIndex - 1].id;
+      this.router.navigate(['/owner/' + previousOwnerId]).then(() => {
+        window.location.reload();
+      });
+    }
+
+    if (currentIndex === 0) {
+      this.lastOwner()
+    }
+  }
+  
+
+  firstOwner() {
+    this.router.navigate(['/owner/' + this.owners[0].id]).then(() => {
+      window.location.reload();
+    });
+  }
+  
+  lastOwner() {
+    this.router.navigate(['/owner/' + this.owners[this.owners.length - 1].id]).then(() => {
+      window.location.reload();
+    });
+  }
+  
+
   selectButton(button: string) {
     this.selectedButton = button;
   }
@@ -289,5 +346,17 @@ export class OwnersResumeComponent implements OnInit {
     this.selectButton('vehiculos')
     this.OwnersContractView = false;
     this.OwnersVehiclesView = true;
+  }
+
+  showModal() {
+    this.isModalVisible = true;
+    document.documentElement.style.overflow = 'hidden';
+    document.body.style.overflow = 'hidden';
+  }
+
+  hideModal() {
+    this.isModalVisible = false;
+    document.documentElement.style.overflow = '';
+    document.body.style.overflow = '';
   }
 }

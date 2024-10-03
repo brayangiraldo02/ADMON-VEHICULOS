@@ -26,6 +26,27 @@ vehicles_router = APIRouter()
 async def get_vehicles():
   db = session()
   try:
+    vehicles = db.query(Vehiculos.NUMERO, Vehiculos.PLACA).all()
+
+    vehicles_list = [
+      {
+        'unidad': vehicle.vehiculo_numero,
+        'placa': vehicle.vehiculo_placa
+      }
+      for vehicle in vehicles
+    ]
+    return JSONResponse(content=jsonable_encoder(vehicles_list))
+  except Exception as e:
+    return JSONResponse(content={"error": str(e)})
+  finally:
+    db.close()
+
+#-------------------------------------------------------------------------------------------
+
+@vehicles_router.get("/vehicles/all", tags=["Vehicles"])
+async def get_vehicles():
+  db = session()
+  try:
     vehicles = db.query(
             Vehiculos.NUMERO.label('vehiculo_numero'),
             Vehiculos.PLACA.label('vehiculo_placa'),
@@ -36,8 +57,11 @@ async def get_vehicles():
             Vehiculos.CHASISNRO.label('vehiculo_chasis'),
             Vehiculos.FEC_MATRIC.label('vehiculo_fec_matricula'),
             Vehiculos.EMPRESA.label('vehiculo_empresa'),
+            Centrales.NOMBRE.label('vehiculo_central'),
+            Vehiculos.NRO_LLAVES.label('vehiculo_nro_llaves'),
             Conductores.NOMBRE.label('vehiculo_conductor'),
-            Estados.NOMBRE.label('vehiculo_estado'),
+            Estados.ESTADO.label('vehiculo_estado'),
+            Estados.NOMBRE.label('vehiculo_nombre_estado'),
             Vehiculos.CUO_DIARIA.label('vehiculo_cuota_diaria'),
             Vehiculos.NROENTREGA.label('vehiculo_nro_Ctas'),
             Vehiculos.PANAPASSNU.label('vehiculo_panapass'),
@@ -45,6 +69,7 @@ async def get_vehicles():
             Vehiculos.SDO_PANAPA.label('vehiculo_saldo_panapass'),
         )   .join(Estados, Estados.CODIGO == Vehiculos.ESTADO) \
             .join(Conductores, Conductores.CODIGO == Vehiculos.CONDUCTOR) \
+            .join(Centrales, Centrales.CODIGO == Vehiculos.CENTRAL) \
             .all()
 
     vehicles_list = [
@@ -58,13 +83,16 @@ async def get_vehicles():
         'chasis': vehicle.vehiculo_chasis,
         'matricula': vehicle.vehiculo_fec_matricula,
         'empresa': vehicle.vehiculo_empresa,
+        'central': vehicle.vehiculo_central,
         'conductor': vehicle.vehiculo_conductor,
         'estado': vehicle.vehiculo_estado,
+        'nombre_estado': vehicle.vehiculo_nombre_estado,
         'vlr_cta': vehicle.vehiculo_cuota_diaria,
         'nro_ctas': vehicle.vehiculo_nro_Ctas,
         'panapass': vehicle.vehiculo_panapass,
         'clave': vehicle.vehiculo_panapass_pwd,
-        'saldo': vehicle.vehiculo_saldo_panapass
+        'saldo': vehicle.vehiculo_saldo_panapass,
+        'nro_llaves': vehicle.vehiculo_nro_llaves
       }
       for vehicle in vehicles
     ]

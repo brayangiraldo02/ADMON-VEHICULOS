@@ -106,7 +106,8 @@ ul {
   margin: 10px;
   box-sizing: border-box;
   background: #ffffff; /* Fondo claro por defecto, ajustable */
-  border: 1px solid #ccc;
+  /* border: 1px solid #ccc; */
+  border: 1px solid #888;
   border-radius: 10px; /* Bordes redondeados */
   padding: 10px;
   display: flex;
@@ -120,6 +121,7 @@ ul {
 .options-if:hover {
   /* background: #fff8b4;  */
   background: #bcd1ec;
+  /* background: #c9c9c9; */
 }
 
 .option-icon {

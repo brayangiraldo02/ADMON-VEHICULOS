@@ -60,8 +60,8 @@
     <div class="two-container">
       <div class="form-group">
         <label for="cc" for="codigo">C.C / N.I.T. :</label><br>
-        <input type="number" id="cc" name="cc" [value]="data.nit" disabled><br>
-        <input type="text" id="codigo" name="codigo" [value]="data.codigo" disabled><br>
+        <input class="small" type="number" id="cc" name="cc" [value]="data.nit" disabled><br>
+        <input class="small" type="text" id="codigo" name="codigo" [value]="data.codigo" disabled><br>
       </div>
   
       <div class="form-group">
@@ -270,25 +270,25 @@
   <div class="buttons-container" *ngIf="!isLoading && !OwnersVehiclesView">
 
     <div class="search-buttons-container" *ngIf="!isEditable">
-      <button class="select small-buttons" type="button">
+      <button class="select small-buttons" type="button" (click)="firstOwner()">
         <span class="material-symbols-outlined" translate="no">
           first_page
         </span>
       </button>
   
-      <button class="select small-buttons" type="button">
+      <button class="select small-buttons" type="button" (click)="backOwner()">
         <span class="material-symbols-outlined" translate="no">
           chevron_left
         </span>
       </button>
   
-      <button class="select small-buttons" type="button">
+      <button class="select small-buttons" type="button" (click)="nextOwner()">
         <span class="material-symbols-outlined" translate="no">
           chevron_right
         </span>
       </button>
   
-      <button class="select small-buttons" type="button">
+      <button class="select small-buttons" type="button" (click)="lastOwner()">
         <span class="material-symbols-outlined" translate="no">
           last_page
         </span>
@@ -302,7 +302,7 @@
       <p class="select-text">Nuevo Propietario</p>
     </button>
 
-    <button class="select" type="button" *ngIf="!isEditable">
+    <button class="select" type="button" *ngIf="!isEditable" (click)="showModal()">
       <span class="material-symbols-outlined" translate="no">
         delete
       </span>
@@ -336,4 +336,6 @@
 
   <p *ngIf="isLoading">Cargando datos, por favor espere...</p>
 </div>
+
+<app-owners-delete [isVisible]="isModalVisible" [owner]="code" (close)="hideModal()"></app-owners-delete>
 <app-footer></app-footer>

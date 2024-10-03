@@ -4,6 +4,13 @@
   <p *ngIf="!isLoading">Total Registros: {{ filteredData.length }}</p>
   <div class="options-container" *ngIf="!isLoading">
     <input type="text" placeholder="Buscar..." [(ngModel)]="searchTerm" (input)="filterData()" class="search-container">
+    <div class="form-group">
+      <label for="estado">Manera de Listar:</label>
+      <select class="medium" id="estado" name="estado" (change)="listData($event)">
+        <option value="">Todos</option>
+        <option value="1">Con unidad</option>
+      </select><br>
+    </div>
     <a class="report" (click)="openExternalLink()">
       <span class="material-symbols-outlined" translate="no">
         print
@@ -30,7 +37,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let item of filteredData">
+        <tr *ngFor="let item of filteredData" (dblclick)="goToOwnerResume(item.codigo)">
           <td class="col-campo1">{{ item.codigo }}</td>
           <td class="col-campo2">{{ item.unidad }}</td>
           <td class="col-campo3">{{ item.nombre }}</td>

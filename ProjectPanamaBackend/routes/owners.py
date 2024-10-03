@@ -424,7 +424,7 @@ async def get_owner_codes():
 
 #----------------------------------------------------------------------------------------------------------------
 
-@owners_router.get("/owner-delete/{owner_id}", tags=["Owners"])
+@owners_router.delete("/owner/{owner_id}", tags=["Owners"])
 async def verify_owner_delete(owner_id: int):
   db = session()
   try:

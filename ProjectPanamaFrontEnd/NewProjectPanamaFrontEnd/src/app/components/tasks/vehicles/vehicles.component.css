@@ -13,20 +13,46 @@
 }
 
 .options-container {
+  height: 4.2vh;
   width: 95%;
   display: flex;
   justify-content: space-between;
 }
 
 .search-container {
-  width: 75%;
+  width: 60%;
   padding: 10px;
   border: 1px solid #ccc;
   border-radius: 10px;
 }
 
+.form-group {
+  display: flex;
+  flex-direction: column;
+  /* margin-bottom: 10px; */
+  width: 15%;
+  justify-content: center;
+  height: 100%;
+}
+
+.form-group label {
+  margin-bottom: 0; /* Elimina el margen inferior del label */
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.form-group select {
+  padding: 8px;
+  background: #ffffff;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  color: black;
+  font-size: 13px;
+  margin-top: 0; /* Asegura que no haya espacio superior */
+}
+
 .report{
-  width: 20%;
+  width: 15%;
   box-sizing: border-box;
   background: #ffffff; /* Fondo claro por defecto, ajustable */
   border-radius: 10px; /* Bordes redondeados */
@@ -42,7 +68,7 @@
 
 .report span.material-symbols-outlined {
   margin-right: auto;  /* Empuja el icono a la izquierda */
-  font-size: 3.5vh;
+  font-size: 3vh;
   color: black;
 }
 
@@ -84,11 +110,12 @@ th, td {
 th {
   background-color: #f4f4f4;
   font-weight: bold;
-  font-size: 1.9vh;
+  font-size: small;
 }
 
 td {
-  font-size: 1.8vh;
+  font-size: small;
+  cursor: pointer;
 }
 
 tbody tr:nth-child(odd) {

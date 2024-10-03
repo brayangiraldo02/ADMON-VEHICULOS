@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { MatCardModule } from '@angular/material/card';
+import { MatDialogModule } from '@angular/material/dialog';
 import {MatButtonModule} from '@angular/material/button';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -30,8 +31,11 @@ import { OpcionesAlmacenComponent } from './components/options/almacen/opciones-
 import { OwnersTableComponent } from './components/tasks/owners/owners-table/owners-table.component';
 import { OwnersVehiclesComponent } from './components/tasks/owners/owners-vehicles/owners-vehicles.component';
 import { OwnersResumeComponent } from './components/tasks/owners/owners-resume/owners-resume.component';
-import { DriversComponent } from './components/tasks/drivers/drivers.component';
 import { OwnersAddnewComponent } from './components/tasks/owners/owners-addnew/owners-addnew.component';
+import { OwnersReportsComponent } from './components/tasks/owners/owners-reports/owners-reports.component';
+import { OwnersDeleteComponent } from './components/tasks/owners/owners-delete/owners-delete.component';
+import { DriversTableComponent } from './components/tasks/drivers/drivers-table/drivers-table.component';
+import { DriversResumeComponent } from './components/tasks/drivers/drivers-resume/drivers-resume.component';
 
 @NgModule({
   declarations: [
@@ -59,14 +63,18 @@ import { OwnersAddnewComponent } from './components/tasks/owners/owners-addnew/o
     OwnersTableComponent,
     OwnersVehiclesComponent,
     OwnersResumeComponent,
-    DriversComponent,
     OwnersAddnewComponent,
+    OwnersReportsComponent,
+    OwnersDeleteComponent,
+    DriversTableComponent,
+    DriversResumeComponent,
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     BrowserAnimationsModule,
     MatCardModule,
+    MatDialogModule,
     MatButtonModule,
     HttpClientModule,
     FormsModule,

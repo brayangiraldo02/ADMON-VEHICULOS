@@ -14,6 +14,7 @@ export class OwnersTableComponent implements OnInit {
   searchTerm: string = '';
   user: any;
   isLoading: boolean = true;
+  isModalVisible: boolean = false;
 
   constructor(
     private apiService: ApiService, 
@@ -68,6 +69,18 @@ export class OwnersTableComponent implements OnInit {
     localStorage.setItem('pdfData', '0');
     window.open(`/pdf`, '_blank')
     this.router.navigate(['/home']);
+  }
+
+  showModal() {
+    this.isModalVisible = true;
+    document.documentElement.style.overflow = 'hidden';
+    document.body.style.overflow = 'hidden';
+  }
+
+  hideModal() {
+    this.isModalVisible = false;
+    document.documentElement.style.overflow = '';
+    document.body.style.overflow = '';
   }
 
   // openExternalLink(): void {

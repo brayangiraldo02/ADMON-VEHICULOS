@@ -26,6 +26,27 @@ drivers_router = APIRouter()
 async def get_drivers():
   db = session()
   try:
+    drivers = db.query(Conductores.CODIGO, Conductores.NOMBRE).all()
+
+    drivers_list = [
+      {
+        'codigo': driver.CODIGO,
+        'nombre': driver.NOMBRE,
+      }
+      for driver in drivers
+    ]
+    return JSONResponse(content=jsonable_encoder(drivers_list))
+  except Exception as e:
+    return JSONResponse(content={"error": str(e)})
+  finally:
+    db.close()
+
+#-----------------------------------------------------------------------------------------------
+
+@drivers_router.get("/drivers/all", tags=["Drivers"])
+async def get_drivers():
+  db = session()
+  try:
     drivers = db.query(Conductores.CODIGO, Conductores.UND_NRO, Conductores.UND_PRE, Conductores.NOMBRE, Conductores.CEDULA, Conductores.TELEFONO, Conductores.FEC_INGRES, Conductores.CUO_DIARIA, Conductores.NROENTREGA, Conductores.NROENTPAGO, Conductores.NROENTSDO, Conductores.LICEN_VCE, Conductores.CONTACTO, Conductores.TEL_CONTAC, Conductores.PAR_CONTAC, Conductores.CONTACTO1, Conductores.TEL_CONTA1, Conductores.PAR_CONTA1).all()
 
     drivers_list = [

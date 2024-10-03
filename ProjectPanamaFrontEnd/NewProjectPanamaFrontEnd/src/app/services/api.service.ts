@@ -70,4 +70,15 @@ export class ApiService {
       catchError(this.errorHandlerService.handleError)
     );
   }
+
+  /**
+   * Delete data at a specified endpoint.
+   * @param {string} endpoint - The endpoint to delete data from.
+   * @returns {Observable<any>} An Observable of the HTTP response.
+   */
+  deleteData(endpoint: string): Observable<any> {
+    return this.http.delete<any>(`${this.baseURL}/${endpoint}/`, { withCredentials: true }).pipe(
+      catchError(this.errorHandlerService.handleError)
+    );
+  }
 }

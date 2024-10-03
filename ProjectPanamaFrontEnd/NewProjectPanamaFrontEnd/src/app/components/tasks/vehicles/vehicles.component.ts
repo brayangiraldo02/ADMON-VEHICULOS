@@ -27,7 +27,7 @@ export class VehiclesComponent implements OnInit {
   }
 
   fetchData() {
-    this.apiService.getData('vehicles').subscribe(
+    this.apiService.getData('vehicles/all').subscribe(
       (response) => {
         this.data = response.filter((data: any) => data.unidad);
         this.data.sort((a, b) => a.unidad.localeCompare(b.unidad));
@@ -50,7 +50,14 @@ export class VehiclesComponent implements OnInit {
       item.permiso.toLowerCase().includes(term) ||
       item.empresa.toLowerCase().includes(term) ||
       item.conductor.toLowerCase().includes(term) ||
-      item.estado.toLowerCase().includes(term)
+      item.nombre_estado.toLowerCase().includes(term)
+    );
+  }
+
+  listData(event: any) {
+    const selectedValue = event.target.value;
+    this.filteredData = this.data.filter(item => 
+      item.estado.toString().toLowerCase().includes(selectedValue)
     );
   }
 
