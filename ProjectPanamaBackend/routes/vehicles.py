@@ -543,8 +543,8 @@ def update_vehicle(vehicle_id: str, vehicle: VehicleUpdate):
 
 #-------------------------------------------------------------------------------------------
 
-@vehicles_router.get("/vehicle-delete/{vehicle_id}", tags=["Vehicles"])
-async def verify_vehicle_delete(vehicle_id: str):
+@vehicles_router.delete("/vehicle-delete/{vehicle_id}", tags=["Vehicles"])
+async def verify_vehicle_delete(vehicle_id: int):
     db = session()
     try:
         vehicle = db.query(
@@ -589,3 +589,38 @@ async def verify_vehicle_delete(vehicle_id: str):
         db.close()
 
 #-------------------------------------------------------------------------------------------
+
+@vehicles_router.get("/verify-vehicle-delete/{vehicle_id}", tags=["Vehicles"])
+async def verify_vehicle_delete(vehicle_id: int):
+  db = session()
+  try: 
+    vehicle = db.query(
+          CajaRecaudos.NUMERO.label('cajarecaudos'),
+          CajasRecaudosContado.NUMERO.label('cajarecaudoscontado'),
+          Cartera.UNIDAD.label('cartera'),
+          Movienca.UNIDAD.label('movienca')
+        ).select_from(Vehiculos).outerjoin(
+            CajaRecaudos, Vehiculos.NUMERO == CajaRecaudos.NUMERO
+        ).outerjoin(
+            CajasRecaudosContado, Vehiculos.NUMERO == CajasRecaudosContado.NUMERO
+        ).outerjoin(
+            Cartera, Vehiculos.NUMERO == Cartera.UNIDAD
+        ).outerjoin(
+            Movienca, Vehiculos.NUMERO == Movienca.UNIDAD
+        ).filter(
+            Vehiculos.NUMERO == vehicle_id
+        ).first()
+
+    if not vehicle:
+      return JSONResponse(content={"error": "Vehicle not found"}, status_code=404)
+    vehicle_conditions = {
+      'cajarecaudos': bool(vehicle.cajarecaudos),
+      'cajarecaudoscontado': bool(vehicle.cajarecaudoscontado),
+      'cartera': bool(vehicle.cartera),
+      'movienca': bool(vehicle.movienca)
+    }
+    return JSONResponse(content=jsonable_encoder(vehicle_conditions))
+  except Exception as e:
+    return JSONResponse(content={"error": str(e)})
+  finally:
+    db.close()
