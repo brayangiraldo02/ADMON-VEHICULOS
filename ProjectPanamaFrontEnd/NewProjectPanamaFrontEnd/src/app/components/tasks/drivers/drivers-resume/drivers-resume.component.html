@@ -53,24 +53,30 @@
 
   <!-- INPUTS PERSONALES -->
   <!-- -------------------------------------------------------------------------------------- -->
-  <div class="info-container">
+  <div class="info-code-container">
+    <div class="div-group">
+      <div class="code-container">
+        <div class="form-group">
+          <label for="codigo">CÓDIGO:</label><br>
+          <input type="number"><br>
+          <!-- <input type="number" id="codigo" name="codigo" [value]="data.codigo" disabled><br> -->
+        </div>
 
-    <div class="two-container">
-      <div class="form-group">
-        <label for="codigo">CÓDIGO:</label><br>
-        <input type="number"><br>
-        <!-- <input type="number" id="codigo" name="codigo" [value]="data.codigo" disabled><br> -->
+        <div class="form-group">
+          <label for="nombre">Nombre:</label><br>
+          <input class="large" type="text" id="nombre" name="nombre" [(ngModel)]="data.nombre_propietario" [disabled]="!isEditable"><br>
+        </div>
+    
+        <div class="form-group">
+          <label for="cc" for="codigo">C.C / N.I.T. :</label><br>
+          <input class="small" type="number" id="cc" name="cc" [value]="data.nit" disabled><br>
+          <input class="small" type="text" id="codigo" name="codigo" [value]="data.codigo" disabled><br>
+        </div>
       </div>
 
-      <div class="form-group">
-        <label for="nombre">Nombre:</label><br>
-        <input class="large" type="text" id="nombre" name="nombre" [(ngModel)]="data.nombre_propietario" [disabled]="!isEditable"><br>
-      </div>
-  
-      <div class="form-group">
-        <label for="cc" for="codigo">C.C / N.I.T. :</label><br>
-        <input class="small" type="number" id="cc" name="cc" [value]="data.nit" disabled><br>
-        <input class="small" type="text" id="codigo" name="codigo" [value]="data.codigo" disabled><br>
+      <div class="media-container">
+        <img class="photo-container" [src]="this.imageDriver">
+        <img class="photo-container" [src]="this.signatureDriver">
       </div>
     </div>
 
@@ -151,6 +157,102 @@
     
 
   </div>
+
+  <hr>
+  <div class="info-container">
+
+    <div class="div-group">
+
+      <div class="group-inputs">
+
+        <div class="title-container">
+          <h3>CONTACTOS</h3>
+        </div>
+
+        <div class="form-group">
+          <label for="estado">1:</label><br>
+          <select class="total" id="estado" name="estado" [(ngModel)]="data.estado" [disabled]="!isEditable">
+            <option value="Activo">Activo</option>
+            <option value="Suspendido">Suspendido</option>
+            <option value="Retirado">Retirado</option>
+          </select><br>
+        </div>
+
+        <div class="form-group">
+          <label for="estado">2:</label><br>
+          <select class="total" id="estado" name="estado" [(ngModel)]="data.estado" [disabled]="!isEditable">
+            <option value="Nuevo">Nuevo</option>
+            <option value="Usado">Usado</option>
+          </select><br>
+        </div>
+
+        <div class="form-group">
+          <label for="estado">3:</label><br>
+          <select class="total" id="estado" name="estado" [(ngModel)]="data.estado" [disabled]="!isEditable">
+            <option value="Nuevo">Nuevo</option>
+            <option value="Usado">Usado</option>
+          </select><br>
+        </div>
+      </div>
+
+      <div class="padding"></div>
+
+      <div class="group-inputs">
+        <div class="title-container">
+          <h3>TEL/CEL</h3>
+        </div>
+
+        <div class="form-group">
+          <input class="total" type="text" id="fec_estado" name="fec_estado" [value]="data.fec_estado" disabled><br>
+        </div>
+  
+        <div class="form-group">
+          <select class="total" id="estado" name="estado" [(ngModel)]="data.estado" [disabled]="!isEditable">
+            <option value="Si">Sí</option>
+            <option value="No">No</option>
+          </select><br>
+        </div>
+
+        <div class="form-group">
+          <select class="total" id="estado" name="estado" [(ngModel)]="data.estado" [disabled]="!isEditable">
+            <option value="Si">Sí</option>
+            <option value="No">No</option>
+          </select><br>
+        </div>
+      </div>
+
+      <div class="padding"></div>
+
+      <div class="group-inputs">
+        <div class="title-container">
+          <h3>PARENTESCO</h3>
+        </div>
+
+        <div class="form-group">
+          <select class="total" id="estado" name="estado" [(ngModel)]="data.estado" [disabled]="!isEditable">
+            <option value="Activo">Activo</option>
+            <option value="Suspendido">Suspendido</option>
+            <option value="Retirado">Retirado</option>
+          </select><br>
+        </div>
+
+        <div class="form-group">
+          <select class="total" id="estado" name="estado" [(ngModel)]="data.estado" [disabled]="!isEditable">
+            <option value="Nuevo">Nuevo</option>
+            <option value="Usado">Usado</option>
+          </select><br>
+        </div>
+
+        <div class="form-group">
+          <select class="total" id="estado" name="estado" [(ngModel)]="data.estado" [disabled]="!isEditable">
+            <option value="Nuevo">Nuevo</option>
+            <option value="Usado">Usado</option>
+          </select><br>
+        </div>
+      </div>
+
+      </div>
+    </div>
 
   <hr>
 
@@ -246,6 +348,22 @@
       </div>
     </div>
 
+  </div>
+
+  <hr>
+
+  <div class="info-container">
+    <div class="div-group">
+      <div class="form-group large-group">
+        <label for="description">Descripción:</label>
+        <textarea id="description" class="large-textarea" placeholder="Escribe tu descripción aquí..."></textarea>
+      </div>
+
+      <div class="form-group large-group">
+        <label for="description">Condiciones del Contrato:</label>
+        <textarea id="description" class="large-textarea" placeholder="Escribe tu condiciones aquí..."></textarea>
+      </div>
+    </div>
   </div>
 
   <!-- -------------------------------------------------------------------------------------- -->

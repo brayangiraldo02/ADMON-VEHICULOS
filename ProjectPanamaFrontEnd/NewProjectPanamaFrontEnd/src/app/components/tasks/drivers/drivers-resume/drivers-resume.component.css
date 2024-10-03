@@ -18,6 +18,14 @@ hr {
 .title-container {
   margin-bottom: 10px;
   font-size: 28px;
+  display: flex;
+  justify-content: center;
+}
+
+.title-container h3 {
+  margin: 0;
+  padding: 0;
+  font-size: 16px;
 }
 
 .buttons-container {
@@ -86,6 +94,16 @@ button.selected {
   color: #333; /* Color del texto */
 }
 
+.media-container {
+  display: flex;
+  flex-direction: row;
+}
+
+.media-container .photo-container {
+  width: 20vh;
+  height: 20vh;
+}
+
 .info-container {
   width: 100%;
   display: flex;
@@ -93,6 +111,14 @@ button.selected {
   flex-direction: column;
   align-content: center;
   flex-wrap: wrap;
+}
+
+.info-code-container {
+  width: 90%;
+  display: flex;
+  margin-top: 5px;
+  flex-direction: row;
+  align-content: center;
 }
 
 .form-group {
@@ -144,6 +170,29 @@ button.selected {
   flex-direction: row;
   justify-content: space-between;
   width: 90%;
+}
+
+.code-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.large-textarea {
+  width: 100%;            /* Toma todo el ancho del contenedor */
+  height: 150px;          /* Altura de la caja de texto */
+  padding: 10px;          /* Espacio interno para el texto */
+  border: 1px solid #ccc; /* Borde */
+  border-radius: 10px;    /* Bordes redondeados */
+  font-size: 16px;        /* Tamaño del texto */
+  background-color: #fff; /* Fondo blanco */
+  resize: none;       /* Permitir redimensionar verticalmente */
+  box-sizing: border-box; /* Asegura que el padding se incluya dentro del tamaño del textarea */
+  color: #333;            /* Color del texto */
+}
+
+.large-group {
+  width: 48%;
 }
 
 /* .two-container .form-group {

@@ -8,6 +8,8 @@ import { ApiService } from 'src/app/services/api.service';
 })
 export class DriversResumeComponent implements OnInit {
   selectedButton: string = "personal";
+  imageDriver: string = "https://www.w3schools.com/howto/img_avatar.png";
+  signatureDriver: string = "https://www.w3schools.com/howto/img_avatar.png";
 
   isEditable = false;
   centralFound = false;
