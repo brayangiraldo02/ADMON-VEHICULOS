@@ -37,7 +37,7 @@ const routes: Routes = [
   { path: 'owner/:code', component: OwnersResumeComponent, canActivate: [AuthGuard]},
   { path: 'new-owner', component: OwnersAddnewComponent, canActivate: [AuthGuard]},
   { path: 'drivers', component: DriversTableComponent, canActivate: [AuthGuard]},
-  { path: 'driver', component: DriversResumeComponent, canActivate: [AuthGuard]},
+  { path: 'driver/:code', component: DriversResumeComponent, canActivate: [AuthGuard]},
   { path: 'operations', component: OpcionesOperacionesComponent, canActivate: [AuthGuard]},
   { path: 'procedures', component: OpcionesTramitesComponent, canActivate: [AuthGuard]},
   { path: 'warehouse', component: OpcionesAlmacenComponent, canActivate: [AuthGuard]},
