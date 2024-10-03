@@ -27,7 +27,7 @@ export class VehiclesComponent implements OnInit {
   }
 
   fetchData() {
-    this.apiService.getData('vehicles').subscribe(
+    this.apiService.getData('vehicles/all').subscribe(
       (response) => {
         this.data = response.filter((data: any) => data.unidad);
         this.data.sort((a, b) => a.unidad.localeCompare(b.unidad));

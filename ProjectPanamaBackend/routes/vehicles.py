@@ -26,6 +26,27 @@ vehicles_router = APIRouter()
 async def get_vehicles():
   db = session()
   try:
+    vehicles = db.query(Vehiculos.NUMERO, Vehiculos.PLACA).all()
+
+    vehicles_list = [
+      {
+        'unidad': vehicle.vehiculo_numero,
+        'placa': vehicle.vehiculo_placa
+      }
+      for vehicle in vehicles
+    ]
+    return JSONResponse(content=jsonable_encoder(vehicles_list))
+  except Exception as e:
+    return JSONResponse(content={"error": str(e)})
+  finally:
+    db.close()
+
+#-------------------------------------------------------------------------------------------
+
+@vehicles_router.get("/vehicles/all", tags=["Vehicles"])
+async def get_vehicles():
+  db = session()
+  try:
     vehicles = db.query(
             Vehiculos.NUMERO.label('vehiculo_numero'),
             Vehiculos.PLACA.label('vehiculo_placa'),
