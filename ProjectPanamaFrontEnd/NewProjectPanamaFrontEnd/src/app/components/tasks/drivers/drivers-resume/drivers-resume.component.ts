@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ApiService } from 'src/app/services/api.service';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-drivers-resume',
@@ -16,22 +17,32 @@ export class DriversResumeComponent implements OnInit {
   usersFound = false;
   cityFound = false;
 
+  drivers: any = '';
+
   data: any = null;
   cities: any = null;
   central: any = null;
   users: any = null;
+
+  code: string | null = null;
   
 
   constructor(
+    private route: ActivatedRoute,
+    private router: Router, 
     private apiService: ApiService
   ) {}
 
   ngOnInit(): void {
+    this.route.paramMap.subscribe(params => {
+      this.code = params.get('code');
+    });
     this.fetchData();
     this.delay(500);
     this.getUsers();
     this.getCities();
     this.getCentral();
+    this.getDrivers()
   }
 
   async delay(ms: number) {
@@ -39,7 +50,7 @@ export class DriversResumeComponent implements OnInit {
   }
 
   fetchData() {
-    this.apiService.getData(`owner/26`).subscribe(
+    this.apiService.getData(`driver/${this.code}`).subscribe(
       (response) => {
         this.data = response;
       },
@@ -137,6 +148,63 @@ export class DriversResumeComponent implements OnInit {
 
   selectButton(button: string) {
     this.selectedButton = button;
+  }
+
+  getDrivers() {
+    this.apiService.getData('drivers').subscribe(
+      (response) => {
+        this.drivers = response
+          .filter((drivers: any) => drivers.codigo)  // Filtramos los drivers con código
+          .sort((a: any, b: any) => a.codigo - b.codigo); // Ordenamos ascendente por código
+        
+        console.log(this.drivers);  // Verificamos el orden
+      },
+      (error) => {
+        console.log(error);
+      }
+    );
+  }
+  
+
+  nextDriver() {
+    const currentIndex = this.drivers.findIndex((driver: any) => driver.codigo === this.code);
+    if (currentIndex !== -1 && currentIndex < this.drivers.length - 1) {
+      const nextDriverId = this.drivers[currentIndex + 1].codigo;
+      this.router.navigate(['/driver/' + nextDriverId]).then(() => {
+        window.location.reload();
+      });
+    }
+
+    if(currentIndex === this.drivers.length - 1){
+      this.firstDriver()
+    }
+  }
+  
+  backDriver() {
+    const currentIndex = this.drivers.findIndex((driver: any) => driver.codigo === this.code);
+    if (currentIndex !== -1 && currentIndex > 0) {
+      const previousDriverId = this.drivers[currentIndex - 1].codigo;
+      this.router.navigate(['/driver/' + previousDriverId]).then(() => {
+        window.location.reload();
+      });
+    }
+
+    if (currentIndex === 0) {
+      this.lastDriver()
+    }
+  }
+  
+
+  firstDriver() {
+    this.router.navigate(['/driver/' + this.drivers[0].codigo]).then(() => {
+      window.location.reload();
+    });
+  }
+  
+  lastDriver() {
+    this.router.navigate(['/driver/' + this.drivers[this.drivers.length - 1].codigo]).then(() => {
+      window.location.reload();
+    });
   }
 
   goToDriverInfo() {

@@ -26,7 +26,7 @@ export class DriversTableComponent implements OnInit{
   }
 
   fetchData() {
-    this.apiService.getData('drivers').subscribe(
+    this.apiService.getData('drivers/all').subscribe(
       (response) => {
         this.data = response.filter((data: any) => data.codigo);
         this.data.sort((a, b) => a.nombre.localeCompare(b.nombre));
@@ -63,6 +63,10 @@ export class DriversTableComponent implements OnInit{
     } else if (selectedValue === '1') {
       this.filteredData = this.data.filter(item => item.unidad !== ' - ');
     }
+  }
+
+  goToOwnerResume(codigo: string) {
+    this.router.navigate(['/driver', codigo]);
   }
 
   openExternalLink(): void {

@@ -372,26 +372,26 @@
 
   <div class="buttons-container">
 
-    <div class="search-buttons-container" *ngIf="!isEditable">
-      <button class="select small-buttons" type="button">
+    <div class="search-buttons-container">
+      <button class="select small-buttons" type="button" (click)="firstDriver()">
         <span class="material-symbols-outlined" translate="no">
           first_page
         </span>
       </button>
   
-      <button class="select small-buttons" type="button">
+      <button class="select small-buttons" type="button" (click)="backDriver()">
         <span class="material-symbols-outlined" translate="no">
           chevron_left
         </span>
       </button>
   
-      <button class="select small-buttons" type="button">
+      <button class="select small-buttons" type="button" (click)="nextDriver()">
         <span class="material-symbols-outlined" translate="no">
           chevron_right
         </span>
       </button>
   
-      <button class="select small-buttons" type="button">
+      <button class="select small-buttons" type="button" (click)="lastDriver()">
         <span class="material-symbols-outlined" translate="no">
           last_page
         </span>
