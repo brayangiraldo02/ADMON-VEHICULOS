@@ -405,7 +405,7 @@
       <p class="select-text">Nuevo Conductor</p>
     </button>
 
-    <button class="select" type="button" *ngIf="!isEditable">
+    <button class="select" type="button" (click)="showModal()">
       <span class="material-symbols-outlined" translate="no">
         delete
       </span>
@@ -437,4 +437,5 @@
 
 </div>
 
+<app-drivers-delete [isVisible]="isModalVisible" [driver]="code" (close)="hideModal()"></app-drivers-delete>
 <app-footer></app-footer>

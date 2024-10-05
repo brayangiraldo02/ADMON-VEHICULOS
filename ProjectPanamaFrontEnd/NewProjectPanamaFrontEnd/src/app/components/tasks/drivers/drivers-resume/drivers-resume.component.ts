@@ -12,10 +12,11 @@ export class DriversResumeComponent implements OnInit {
   imageDriver: string = "https://www.w3schools.com/howto/img_avatar.png";
   signatureDriver: string = "https://www.w3schools.com/howto/img_avatar.png";
 
-  isEditable = false;
+  isEditable = true;
   centralFound = false;
   usersFound = false;
   cityFound = false;
+  isModalVisible: boolean = false;
 
   drivers: any = '';
 
@@ -50,7 +51,7 @@ export class DriversResumeComponent implements OnInit {
   }
 
   fetchData() {
-    this.apiService.getData(`driver/${this.code}`).subscribe(
+    this.apiService.getData(`owner/26`).subscribe(
       (response) => {
         this.data = response;
       },
@@ -225,6 +226,18 @@ export class DriversResumeComponent implements OnInit {
 
   goToDriverDocuments() {
     this.selectButton('documentacion')
+  }
+
+  showModal() {
+    this.isModalVisible = true;
+    document.documentElement.style.overflow = 'hidden';
+    document.body.style.overflow = 'hidden';
+  }
+
+  hideModal() {
+    this.isModalVisible = false;
+    document.documentElement.style.overflow = '';
+    document.body.style.overflow = '';
   }
 
 }
