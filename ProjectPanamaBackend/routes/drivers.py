@@ -189,7 +189,7 @@ async def get_conductores_detalles():
 
 #-----------------------------------------------------------------------------------------------
 
-@drivers_router.get("/driver-delete/{owner_id}", tags=["Drivers"])
+@drivers_router.delete("/driver-delete/{driver_id}", tags=["Drivers"])
 async def verify_driver_delete(driver_id: int):
   db = session()
   try:
@@ -239,3 +239,39 @@ async def verify_driver_delete(driver_id: int):
     db.close()
 
 #-----------------------------------------------------------------------------------------------
+
+@drivers_router.get('/verify-driver-delete/{driver_id}', tags=["Drivers"])
+async def verify_driver_delete(driver_id: int):
+  db = session()
+  try:
+      driver = db.query(
+          CajaRecaudos.CLIENTE.label('cajarecaudos'),
+          CajasRecaudosContado.CLIENTE.label('cajarecaudoscontado'),
+          Cartera.CLIENTE.label('cartera'),
+          Movienca.CLIENTE.label('movienca')
+        ).select_from(Conductores).outerjoin(
+          CajaRecaudos, Conductores.CODIGO == CajaRecaudos.CLIENTE
+        ).outerjoin(
+          CajasRecaudosContado, Conductores.CODIGO == CajasRecaudosContado.CLIENTE
+        ).outerjoin(
+          Cartera, Conductores.CODIGO == Cartera.CLIENTE
+        ).outerjoin(
+          Movienca, Conductores.CODIGO == Movienca.CLIENTE
+        ).filter(
+          Conductores.CODIGO == driver_id
+        ).first()
+      
+      if not driver:
+         return JSONResponse(content={"error": "Driver not found"}, status_code=404)
+      driver_conditions = {
+          'cajarecaudos': bool(driver.cajarecaudos),
+          'cajarecaudoscontado': bool(driver.cajarecaudoscontado),
+          'cartera': bool(driver.cartera),
+          'movienca': bool(driver.movienca)
+      }
+
+      return JSONResponse(content=jsonable_encoder(driver_conditions))
+  except Exception as e:
+    return JSONResponse(content={"error": str(e)})
+  finally:
+    db.close()
