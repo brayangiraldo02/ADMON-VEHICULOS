@@ -40,6 +40,13 @@
       <p class="select-text">Ingresos</p>
     </button>
 
+    <button class="select" type="button" (click)="goToDriverIncome()" [ngClass]="{'selected': selectedButton === 'ingresos'}">
+      <span class="material-symbols-outlined">
+        receipt_long
+      </span>
+      <p class="select-text">Ordenes</p>
+    </button>
+
     <button class="select" type="button" (click)="goToDriverDocuments()" [ngClass]="{'selected': selectedButton === 'documentacion'}">
       <span class="material-symbols-outlined" translate="no">
         file_copy
@@ -54,7 +61,7 @@
   <!-- INPUTS PERSONALES -->
   <!-- -------------------------------------------------------------------------------------- -->
   <div class="info-code-container">
-    <div class="div-group">
+    <div class="div-group all-size">
       <div class="code-container">
         <div class="form-group">
           <label for="codigo">CÓDIGO:</label><br>
@@ -398,7 +405,7 @@
       </button>
     </div>
 
-    <button class="select" type="button" *ngIf="!isEditable" routerLink="/new-owner">
+    <button class="select" type="button" routerLink="/new-driver">
       <span class="material-symbols-outlined" translate="no">
         add_circle
       </span>
