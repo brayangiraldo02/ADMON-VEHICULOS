@@ -75,6 +75,7 @@ async def get_drivers():
 
 #-----------------------------------------------------------------------------------------------
 
+#-------------------------------------------------------------------------------------------
 @drivers_router.get('/directorio-conductores', tags=["Drivers"])
 async def get_conductores_detalles():
     db = session()
@@ -188,6 +189,51 @@ async def get_conductores_detalles():
 #@drivers_router.post("/driver", response_model=DriverCreate, tags=["Drivers"])
 
 #-----------------------------------------------------------------------------------------------
+
+@drivers_router.get("/driver-info{driver_id}", tags=["Drivers"])
+async def get_driver_info(driver_id: int):
+  db = session()
+  try:
+    driver = db.query(
+       Conductores.CODIGO,
+       Conductores.NOMBRE,
+       Conductores.CEDULA,
+       Conductores.CIUDAD,
+       Conductores.DIRECCION,
+       Conductores.TELEFONO,
+       Conductores.CELULAR,
+       Conductores.FEC_NACIMT,
+       Conductores.CORREO,
+       Conductores.REPRESENTA,
+       Conductores.ESTA_CIVIL,
+       Conductores.FEC_RETIRO,
+       Conductores.CONTACTO,
+       Conductores.TEL_CONTAC,
+       Conductores.PAR_CONTAC,
+       Conductores.CONTACTO1,
+       Conductores.TEL_CONTA1,
+       Conductores.PAR_CONTA1,
+       Conductores.CONTACTO2,
+       Conductores.TEL_CONTA2,
+       Conductores.PAR_CONTA2,
+       Conductores.ESTADO,
+       Conductores.FEC_ESTADO,
+       Conductores.CRUCE_AHOR,
+       Conductores.LICEN_NRO,
+       Conductores.LICEN_CAT,
+       Conductores.LICEN_VCE,
+       Conductores.OBSERVA,
+       ).filter(Conductores.CODIGO == driver_id
+       ).first()
+    if not driver:
+      return JSONResponse(content={"error": "Driver not found"}, status_code=404)
+    return JSONResponse(content=jsonable_encoder(driver))
+  except Exception as e:
+    return JSONResponse(content={"error": str(e)})
+  finally:
+    db.close()
+
+#-------------------------------------------------------------------------------------------
 
 @drivers_router.delete("/driver-delete/{driver_id}", tags=["Drivers"])
 async def verify_driver_delete(driver_id: int):
