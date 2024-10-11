@@ -190,44 +190,81 @@ async def get_conductores_detalles():
 
 #-----------------------------------------------------------------------------------------------
 
-@drivers_router.get("/driver-info{driver_id}", tags=["Drivers"])
+@drivers_router.get("/driver/{driver_id}", tags=["Drivers"])
 async def get_driver_info(driver_id: int):
   db = session()
   try:
     driver = db.query(
-       Conductores.CODIGO,
-       Conductores.NOMBRE,
-       Conductores.CEDULA,
-       Conductores.CIUDAD,
-       Conductores.DIRECCION,
-       Conductores.TELEFONO,
-       Conductores.CELULAR,
-       Conductores.FEC_NACIMT,
-       Conductores.CORREO,
-       Conductores.REPRESENTA,
-       Conductores.ESTA_CIVIL,
-       Conductores.FEC_RETIRO,
-       Conductores.CONTACTO,
-       Conductores.TEL_CONTAC,
-       Conductores.PAR_CONTAC,
-       Conductores.CONTACTO1,
-       Conductores.TEL_CONTA1,
-       Conductores.PAR_CONTA1,
-       Conductores.CONTACTO2,
-       Conductores.TEL_CONTA2,
-       Conductores.PAR_CONTA2,
-       Conductores.ESTADO,
-       Conductores.FEC_ESTADO,
-       Conductores.CRUCE_AHOR,
-       Conductores.LICEN_NRO,
-       Conductores.LICEN_CAT,
-       Conductores.LICEN_VCE,
-       Conductores.OBSERVA,
-       ).filter(Conductores.CODIGO == driver_id
-       ).first()
+      Conductores.CODIGO,
+      Conductores.NOMBRE,
+      Conductores.CEDULA,
+      Conductores.CIUDAD,
+      Conductores.DIRECCION,
+      Conductores.TELEFONO,
+      Conductores.CELULAR,
+      Conductores.FEC_NACIMT,
+      Conductores.CORREO,
+      Conductores.REPRESENTA,
+      Conductores.SEXO,
+      Conductores.ESTA_CIVIL,
+      Conductores.FEC_INGRES,
+      Conductores.FEC_RETIRO,
+      Conductores.CONTACTO,
+      Conductores.TEL_CONTAC,
+      Conductores.PAR_CONTAC,
+      Conductores.CONTACTO1,
+      Conductores.TEL_CONTA1,
+      Conductores.PAR_CONTA1,
+      Conductores.CONTACTO2,
+      Conductores.TEL_CONTA2,
+      Conductores.PAR_CONTA2,
+      Conductores.ESTADO,
+      Conductores.FEC_ESTADO,
+      Conductores.CRUCE_AHOR,
+      Conductores.LICEN_NRO,
+      Conductores.LICEN_CAT,
+      Conductores.LICEN_VCE,
+      Conductores.DETALLE,
+      Conductores.OBSERVA,
+      ).filter(Conductores.CODIGO == driver_id
+      ).first()
+
+    driver_dict = {
+      'codigo': driver.CODIGO,
+      'nombre': driver.NOMBRE,
+      'cedula': driver.CEDULA,
+      'ciudad': driver.CIUDAD,
+      'direccion': driver.DIRECCION,
+      'telefono': driver.TELEFONO,
+      'celular': driver.CELULAR,
+      'fecha_nacimiento': driver.FEC_NACIMT,
+      'correo': driver.CORREO,
+      'representa': driver.REPRESENTA,
+      'sexo': driver.SEXO,
+      'estado_civil': driver.ESTA_CIVIL,
+      'fecha_ingreso': driver.FEC_INGRES,
+      'fecha_retiro': driver.FEC_RETIRO,
+      'contacto': driver.CONTACTO,
+      'tel_contacto': driver.TEL_CONTAC,
+      'par_contacto': driver.PAR_CONTAC,
+      'contacto1': driver.CONTACTO1,
+      'tel_contacto1': driver.TEL_CONTA1,
+      'par_contacto1': driver.PAR_CONTA1,
+      'contacto2': driver.CONTACTO2,
+      'tel_contacto2': driver.TEL_CONTA2,
+      'par_contacto2': driver.PAR_CONTA2,
+      'estado': driver.ESTADO,
+      'fecha_estado': driver.FEC_ESTADO,
+      'cruce_ahorros': driver.CRUCE_AHOR,
+      'licencia_numero': driver.LICEN_NRO,
+      'licencia_categoria': driver.LICEN_CAT,
+      'licencia_vencimiento': driver.LICEN_VCE,
+      'detalle': driver.DETALLE,
+      'observaciones': driver.OBSERVA
+    }
     if not driver:
       return JSONResponse(content={"error": "Driver not found"}, status_code=404)
-    return JSONResponse(content=jsonable_encoder(driver))
+    return JSONResponse(content=jsonable_encoder(driver_dict))
   except Exception as e:
     return JSONResponse(content={"error": str(e)})
   finally:
@@ -235,7 +272,7 @@ async def get_driver_info(driver_id: int):
 
 #-------------------------------------------------------------------------------------------
 
-@drivers_router.delete("/driver-delete/{driver_id}", tags=["Drivers"])
+@drivers_router.delete("/driver/{driver_id}", tags=["Drivers"])
 async def verify_driver_delete(driver_id: int):
   db = session()
   try:

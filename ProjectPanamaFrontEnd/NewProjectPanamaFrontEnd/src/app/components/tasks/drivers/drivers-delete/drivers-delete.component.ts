@@ -37,7 +37,7 @@ export class DriversDeleteComponent {
   acceptRemove() {
     if(this.doubleValidation){
       if(!this.hasPermission){
-        this.apiService.deleteData("driver-delete/"+this.driver).subscribe(
+        this.apiService.deleteData("driver/"+this.driver).subscribe(
           (response) => {
             this.deleteSuccesful = true;
           },

@@ -2,6 +2,38 @@ import { Component, OnInit } from '@angular/core';
 import { ApiService } from 'src/app/services/api.service';
 import { ActivatedRoute, Router } from '@angular/router';
 
+interface Driver {
+  auditor: string;
+  cedula: string;
+  celular: string;
+  ciudad: string;
+  codigo: string;
+  contacto: string;
+  contacto1: string;
+  contacto2: string;
+  correo: string;
+  cruce_ahorros: string;
+  direccion: string;
+  estado: string;
+  estado_civil: string;
+  fecha_estado: string;
+  fecha_nacimiento: string;
+  fecha_retiro: string;
+  licencia_categoria: string;
+  licencia_numero: string;
+  licencia_vencimiento: string;
+  nombre: string;
+  observaciones: string;
+  par_contacto: string;
+  par_contacto1: string;
+  par_contacto2: string;
+  representa: string;
+  tel_contacto: string;
+  tel_contacto1: string;
+  tel_contacto2: string;
+  telefono: string;
+}
+
 @Component({
   selector: 'app-drivers-resume',
   templateUrl: './drivers-resume.component.html',
@@ -12,11 +44,13 @@ export class DriversResumeComponent implements OnInit {
   imageDriver: string = "https://www.w3schools.com/howto/img_avatar.png";
   signatureDriver: string = "https://www.w3schools.com/howto/img_avatar.png";
 
-  isEditable = true;
+  isEditable = false;
   centralFound = false;
   usersFound = false;
   cityFound = false;
   isModalVisible: boolean = false;
+  stateEdited = false;
+  isLoading = true;
 
   drivers: any = '';
 
@@ -40,10 +74,8 @@ export class DriversResumeComponent implements OnInit {
     });
     this.fetchData();
     this.delay(500);
-    this.getUsers();
     this.getCities();
-    this.getCentral();
-    this.getDrivers()
+    this.getDrivers();
   }
 
   async delay(ms: number) {
@@ -51,9 +83,12 @@ export class DriversResumeComponent implements OnInit {
   }
 
   fetchData() {
-    this.apiService.getData(`owner/26`).subscribe(
+    this.apiService.getData(`driver/${this.code}`).subscribe(
       (response) => {
         this.data = response;
+        this.stateEdited = false;
+        console.log(this.data);
+        this.isLoading = false;
       },
       (error) => {
         console.log(error);
@@ -86,69 +121,22 @@ export class DriversResumeComponent implements OnInit {
     }
   }
 
-  getCentral() {
-    this.apiService.getData('central').subscribe(
-      (response) => {
-        this.central = response.filter((central: any) => central.codigo);
-        this.checkCentral();
-      },
-      (error) => {
-        console.log(error);
-      }
-    );
-  }
-
-  checkCentral() {
-    if (this.data && this.central) {
-      this.centralFound = this.central.some((central: any) => central.codigo === this.data.central);
-      if (!this.centralFound) {
-        this.central.push({
-          codigo: this.data.central,
-          nombre: "Central no encontrada"
-        });
-      }
-    }
-  }
-
-  getUsers() {
-    this.apiService.getData('users').subscribe(
-      (response) => {
-        this.users = response.filter((users: any) => users.codigo);
-        this.checkUsers();
-      },
-      (error) => {
-        console.log(error);
-      }
-    );
-  }
-
-  checkUsers() {
-    var varCodigo;
-    var varNombre  = "Sin Auditor";
-    if(this.data.auditor == null) {
-      this.data.auditor = '';
-      varCodigo = this.data.auditor;
-    }
-    else {
-      varCodigo = '';
-    }
-    if (this.data && this.users) {
-      this.usersFound = this.users.some((users: any) => users.codigo === this.data.auditor);
-      if (!this.usersFound) {
-        varCodigo = this.data.auditor;
-        if(varCodigo !== '') {
-          varNombre = "Auditor no encontrado";
-        }
-      }
-      this.users.push({
-        codigo: varCodigo,
-        nombre: varNombre
-      });
-    }
-  }
-
   selectButton(button: string) {
     this.selectedButton = button;
+  }
+
+  enableInputs() {
+    if (this.isEditable) {
+      this.disableInputs();
+      window.alert('No se ha modificado ningún dato.');
+      location.reload();
+    }
+
+    this.isEditable = true;
+  }
+
+  disableInputs() {
+    this.isEditable = false;
   }
 
   getDrivers() {
@@ -158,7 +146,7 @@ export class DriversResumeComponent implements OnInit {
           .filter((drivers: any) => drivers.codigo)  // Filtramos los drivers con código
           .sort((a: any, b: any) => a.codigo - b.codigo); // Ordenamos ascendente por código
         
-        console.log(this.drivers);  // Verificamos el orden
+        // console.log(this.drivers); 
       },
       (error) => {
         console.log(error);
