@@ -57,7 +57,7 @@ export class DriversResumeComponent implements OnInit {
         this.data = response;
         this.dataOriginal = { ...this.data };
         this.stateEdited = false;
-        console.log(this.data);
+        // console.log(this.data);
         this.isLoading = false;
         this.checkCity();
       },
@@ -153,7 +153,7 @@ export class DriversResumeComponent implements OnInit {
 
     const modifiedData = this.checkModifiedData();
 
-    console.log(modifiedData)
+    // console.log(modifiedData)
 
     if (!modifiedData) {
       window.alert('No se ha modificado ningún dato.');
@@ -163,18 +163,19 @@ export class DriversResumeComponent implements OnInit {
 
     this.data['stateEdited'] = this.stateEdited;
 
-    console.log('Data to save:', this.data);
+    // console.log('Data to save:', this.data);
   
-    // this.apiService.updateData(`owner/${this.code}`, this.data).subscribe(
-    //   (response) => {
-    //     window.alert('Datos actualizados correctamente');
-    //     this.disableInputs();
-    //     location.reload();
-    //   },
-    //   (error) => {
-    //     console.log(error);
-    //   }
-    // );
+    this.apiService.updateData(`driver/${this.code}`, this.data).subscribe(
+      (response) => {
+        window.alert('Datos actualizados correctamente');
+        this.disableInputs();
+        // console.log(response);
+        location.reload();
+      },
+      (error) => {
+        console.log(error);
+      }
+    );
   }
 
   getDrivers() {
