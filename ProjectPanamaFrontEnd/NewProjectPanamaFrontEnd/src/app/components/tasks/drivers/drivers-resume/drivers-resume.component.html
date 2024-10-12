@@ -178,17 +178,17 @@
 
         <div class="form-group">
           <label>1:</label><br>
-          <input class="total" type="text" id="contacto" name="contacto" [value]="data.contacto" disabled><br>
+          <input class="total" type="text" id="contacto" name="contacto" [value]="data.contacto" [disabled]="!isEditable"><br>
         </div>
 
         <div class="form-group">
           <label>2:</label><br>
-          <input class="total" type="text" id="contacto1" name="contacto1" [value]="data.contacto1" disabled><br>
+          <input class="total" type="text" id="contacto1" name="contacto1" [value]="data.contacto1" [disabled]="!isEditable"><br>
         </div>
 
         <div class="form-group">
           <label>3:</label><br>
-          <input class="total" type="text" id="contacto2" name="contacto2" [value]="data.contacto2" disabled><br>
+          <input class="total" type="text" id="contacto2" name="contacto2" [value]="data.contacto2" [disabled]="!isEditable"><br>
         </div>
       </div>
 
@@ -200,15 +200,15 @@
         </div>
 
         <div class="form-group">
-          <input class="total" type="text" id="tel_contacto" name="tel_contacto" [value]="data.tel_contacto" disabled><br>
+          <input class="total" type="text" id="tel_contacto" name="tel_contacto" [value]="data.tel_contacto" [disabled]="!isEditable"><br>
         </div>
   
         <div class="form-group">
-          <input class="total" type="text" id="tel_contacto1" name="tel_contacto1" [value]="data.tel_contacto1" disabled><br>
+          <input class="total" type="text" id="tel_contacto1" name="tel_contacto1" [value]="data.tel_contacto1" [disabled]="!isEditable"><br>
         </div>
 
         <div class="form-group">
-          <input class="total" type="text" id="tel_contacto2" name="tel_contacto2" [value]="data.tel_contacto2" disabled><br>
+          <input class="total" type="text" id="tel_contacto2" name="tel_contacto2" [value]="data.tel_contacto2" [disabled]="!isEditable"><br>
         </div>
       </div>
 
@@ -220,15 +220,15 @@
         </div>
 
         <div class="form-group">
-          <input class="total" type="text" id="par_contacto" name="par_contacto" [value]="data.par_contacto" disabled><br>
+          <input class="total" type="text" id="par_contacto" name="par_contacto" [value]="data.par_contacto" [disabled]="!isEditable"><br>
         </div>
 
         <div class="form-group">
-          <input class="total" type="text" id="par_contacto1" name="par_contacto1" [value]="data.par_contacto1" disabled><br>
+          <input class="total" type="text" id="par_contacto1" name="par_contacto1" [value]="data.par_contacto1" [disabled]="!isEditable"><br>
         </div>
 
         <div class="form-group">
-          <input class="total" type="text" id="par_contacto2" name="par_contacto2" [value]="data.par_contacto2" disabled><br>
+          <input class="total" type="text" id="par_contacto2" name="par_contacto2" [value]="data.par_contacto2" [disabled]="!isEditable"><br>
         </div>
       </div>
 
@@ -288,7 +288,7 @@
     <div class="two-container">
       <div class="form-group">
         <label for="licencia_numero">No Licencia:</label><br>
-        <input class="medium" type="text" id="licencia_numero" name="licencia_numero" [value]="data.licencia_numero" disabled><br>
+        <input class="medium" type="text" id="licencia_numero" name="licencia_numero" [value]="data.licencia_numero" [disabled]="!isEditable"><br>
       </div>
 
       <div class="form-group">
@@ -298,7 +298,7 @@
   
       <div class="form-group">
         <label for="licencia_vencimiento">Vence:</label><br>
-        <input class="medium" type="text" id="licencia_vencimiento" name="licencia_vencimiento" [value]="data.licencia_vencimiento" disabled><br>
+        <input class="medium" type="date" id="licencia_vencimiento" name="licencia_vencimiento" [value]="data.licencia_vencimiento" [disabled]="!isEditable"><br>
       </div>
     </div>
 
@@ -311,17 +311,17 @@
     <div class="two-container">
       <div class="form-group">
         <label for="fecha_estado">Tarjeta de control No:</label><br>
-        <input class="medium" type="text" id="fecha_estado" name="fecha_estado" [value]="data.fecha_estado" disabled><br>
+        <input class="medium" type="text" id="fecha_estado" name="fecha_estado" [value]="data.fecha_estado" [disabled]="!isEditable"><br>
       </div>
 
       <div class="form-group">
         <label for="fecha_estado">Certificado Operación:</label><br>
-        <input class="medium" type="text" id="fecha_estado" name="fecha_estado" [value]="data.fecha_estado" disabled><br>
+        <input class="medium" type="text" id="fecha_estado" name="fecha_estado" [value]="data.fecha_estado" [disabled]="!isEditable"><br>
       </div>
 
       <div class="form-group">
         <label for="fecha_estado">Vence:</label><br>
-        <input class="medium" type="text" id="fecha_estado" name="fecha_estado" [value]="data.fecha_estado" disabled><br>
+        <input class="medium" type="text" id="fecha_estado" name="fecha_estado" [value]="data.fecha_estado" [disabled]="!isEditable"><br>
       </div>
     </div>
 
@@ -333,12 +333,12 @@
     <div class="div-group">
       <div class="form-group large-group">
         <label for="detalle">Descripción:</label>
-        <textarea id="detalle" class="large-textarea" placeholder="Escribe tu descripción aquí..." [value]="data.detalle" disabled></textarea>
+        <textarea id="detalle" class="large-textarea" placeholder="Escribe tu descripción aquí..." [value]="data.detalle" [disabled]="!isEditable"></textarea>
       </div>
 
       <div class="form-group large-group">
         <label for="observaciones">Condiciones del Contrato:</label>
-        <textarea id="observaciones" class="large-textarea" placeholder="Escribe tu condiciones aquí..." [value]="data.observaciones" disabled></textarea>
+        <textarea id="observaciones" class="large-textarea" placeholder="Escribe tu condiciones aquí..." [value]="data.observaciones" [disabled]="!isEditable"></textarea>
       </div>
     </div>
   </div>
@@ -349,7 +349,7 @@
 
   <div class="buttons-container" *ngIf="!isLoading">
 
-    <div class="search-buttons-container">
+    <div class="search-buttons-container" *ngIf="!isEditable">
       <button class="select small-buttons" type="button" (click)="firstDriver()">
         <span class="material-symbols-outlined" translate="no">
           first_page
@@ -375,35 +375,35 @@
       </button>
     </div>
 
-    <button class="select" type="button" routerLink="/new-driver">
+    <button class="select" type="button" routerLink="/new-driver" *ngIf="!isEditable">
       <span class="material-symbols-outlined" translate="no">
         add_circle
       </span>
       <p class="select-text">Nuevo Conductor</p>
     </button>
 
-    <button class="select" type="button" (click)="showModal()">
+    <button class="select" type="button" (click)="showModal()" *ngIf="!isEditable">
       <span class="material-symbols-outlined" translate="no">
         delete
       </span>
       <p class="select-text">Eliminar Conductor</p>
     </button>
 
-    <button class="select" type="button" *ngIf="!isEditable">
+    <button class="select" type="button" (click)="enableInputs()" *ngIf="!isEditable">
       <span class="material-symbols-outlined" translate="no">
         edit
       </span>
       <p class="select-text">Editar</p>
     </button>
 
-    <button class="select" type="button"  *ngIf="isEditable">
+    <button class="select" type="button" (click)="saveData()" *ngIf="isEditable">
       <span class="material-symbols-outlined" translate="no">
         check
       </span>
       <p class="select-text">Aceptar</p>
     </button>
 
-    <button class="select back" type="button" *ngIf="isEditable">
+    <button class="select back" type="button" (click)="enableInputs()" *ngIf="isEditable">
       <span class="material-symbols-outlined" translate="no">
         close
       </span>

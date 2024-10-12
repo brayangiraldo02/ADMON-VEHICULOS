@@ -2,38 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { ApiService } from 'src/app/services/api.service';
 import { ActivatedRoute, Router } from '@angular/router';
 
-interface Driver {
-  auditor: string;
-  cedula: string;
-  celular: string;
-  ciudad: string;
-  codigo: string;
-  contacto: string;
-  contacto1: string;
-  contacto2: string;
-  correo: string;
-  cruce_ahorros: string;
-  direccion: string;
-  estado: string;
-  estado_civil: string;
-  fecha_estado: string;
-  fecha_nacimiento: string;
-  fecha_retiro: string;
-  licencia_categoria: string;
-  licencia_numero: string;
-  licencia_vencimiento: string;
-  nombre: string;
-  observaciones: string;
-  par_contacto: string;
-  par_contacto1: string;
-  par_contacto2: string;
-  representa: string;
-  tel_contacto: string;
-  tel_contacto1: string;
-  tel_contacto2: string;
-  telefono: string;
-}
-
 @Component({
   selector: 'app-drivers-resume',
   templateUrl: './drivers-resume.component.html',
@@ -55,6 +23,7 @@ export class DriversResumeComponent implements OnInit {
   drivers: any = '';
 
   data: any = null;
+  dataOriginal: any = null;
   cities: any = null;
   central: any = null;
   users: any = null;
@@ -86,9 +55,11 @@ export class DriversResumeComponent implements OnInit {
     this.apiService.getData(`driver/${this.code}`).subscribe(
       (response) => {
         this.data = response;
+        this.dataOriginal = { ...this.data };
         this.stateEdited = false;
         console.log(this.data);
         this.isLoading = false;
+        this.checkCity();
       },
       (error) => {
         console.log(error);
@@ -137,6 +108,73 @@ export class DriversResumeComponent implements OnInit {
 
   disableInputs() {
     this.isEditable = false;
+  }
+
+  newData() {
+    const fields = [
+      'nombre', 'ciudad', 'telefono', 'celular', 'correo', 'sexo', 'direccion', 'representa', 'estado_civil', 'contacto', 'contacto1', 'contacto2', 'tel_contacto', 'tel_contacto1', 'tel_contacto2', 'par_contacto', 'par_contacto1', 'par_contacto2', 'estado', 'cruce_ahorros', 'licencia_numero', 'licencia_categoria', 'licencia_vencimiento', 'detalle', 'observaciones'
+    ]
+    const dataToSave: any = {};
+    fields.forEach(field => {
+      const element = document.getElementById(field) as HTMLInputElement;
+      if (element) {
+        dataToSave[field] = element.value;
+      }
+    });
+    
+    // Add the 'codigo' field which should be read-only
+    const codigoElement = document.getElementById('codigo') as HTMLInputElement;
+    if (codigoElement) {
+      dataToSave['codigo'] = codigoElement.value;
+    }
+
+    return dataToSave;
+  }
+
+  checkModifiedData(): boolean {
+    for (const key in this.data) {
+      // if(key == 'fec_nacimiento' || key == 'fec_ingreso') {
+      //   if(this.data[key] == '') {
+      //     this.data[key] = '0000-00-00';
+      //   }
+      // }
+      if (this.data[key] !== this.dataOriginal[key]) {
+        if(key == 'estado'){
+          this.stateEdited = true;
+        }
+        // console.log(`Difference found at key: ${key}, data: ${this.data[key]}, dataOriginal: ${this.dataOriginal[key]}`);
+        return true;
+      }
+    }
+    return false;
+  }
+
+  saveData() {
+
+    const modifiedData = this.checkModifiedData();
+
+    console.log(modifiedData)
+
+    if (!modifiedData) {
+      window.alert('No se ha modificado ningún dato.');
+      this.disableInputs();
+      return;
+    }
+
+    this.data['stateEdited'] = this.stateEdited;
+
+    console.log('Data to save:', this.data);
+  
+    // this.apiService.updateData(`owner/${this.code}`, this.data).subscribe(
+    //   (response) => {
+    //     window.alert('Datos actualizados correctamente');
+    //     this.disableInputs();
+    //     location.reload();
+    //   },
+    //   (error) => {
+    //     console.log(error);
+    //   }
+    // );
   }
 
   getDrivers() {
