@@ -23,7 +23,9 @@ import { OpcionesAlmacenComponent } from './components/options/almacen/opciones-
 import { OwnersTableComponent } from './components/tasks/owners/owners-table/owners-table.component';
 import { OwnersResumeComponent } from './components/tasks/owners/owners-resume/owners-resume.component';
 import { OwnersAddnewComponent } from './components/tasks/owners/owners-addnew/owners-addnew.component';
-import { DriversComponent } from './components/tasks/drivers/drivers.component';
+import { DriversTableComponent } from './components/tasks/drivers/drivers-table/drivers-table.component';
+import { DriversResumeComponent } from './components/tasks/drivers/drivers-resume/drivers-resume.component';
+import { DriversAddnewComponent } from './components/tasks/drivers/drivers-addnew/drivers-addnew.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -35,7 +37,9 @@ const routes: Routes = [
   { path: 'owners', component: OwnersTableComponent, canActivate: [AuthGuard]},
   { path: 'owner/:code', component: OwnersResumeComponent, canActivate: [AuthGuard]},
   { path: 'new-owner', component: OwnersAddnewComponent, canActivate: [AuthGuard]},
-  { path: 'drivers', component: DriversComponent, canActivate: [AuthGuard]},
+  { path: 'drivers', component: DriversTableComponent, canActivate: [AuthGuard]},
+  { path: 'driver/:code', component: DriversResumeComponent, canActivate: [AuthGuard]},
+  { path: 'new-driver', component: DriversAddnewComponent, canActivate: [AuthGuard]},
   { path: 'operations', component: OpcionesOperacionesComponent, canActivate: [AuthGuard]},
   { path: 'procedures', component: OpcionesTramitesComponent, canActivate: [AuthGuard]},
   { path: 'warehouse', component: OpcionesAlmacenComponent, canActivate: [AuthGuard]},

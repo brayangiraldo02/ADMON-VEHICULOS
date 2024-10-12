@@ -31,10 +31,13 @@ import { OpcionesAlmacenComponent } from './components/options/almacen/opciones-
 import { OwnersTableComponent } from './components/tasks/owners/owners-table/owners-table.component';
 import { OwnersVehiclesComponent } from './components/tasks/owners/owners-vehicles/owners-vehicles.component';
 import { OwnersResumeComponent } from './components/tasks/owners/owners-resume/owners-resume.component';
-import { DriversComponent } from './components/tasks/drivers/drivers.component';
 import { OwnersAddnewComponent } from './components/tasks/owners/owners-addnew/owners-addnew.component';
 import { OwnersReportsComponent } from './components/tasks/owners/owners-reports/owners-reports.component';
 import { OwnersDeleteComponent } from './components/tasks/owners/owners-delete/owners-delete.component';
+import { DriversTableComponent } from './components/tasks/drivers/drivers-table/drivers-table.component';
+import { DriversResumeComponent } from './components/tasks/drivers/drivers-resume/drivers-resume.component';
+import { DriversDeleteComponent } from './components/tasks/drivers/drivers-delete/drivers-delete.component';
+import { DriversAddnewComponent } from './components/tasks/drivers/drivers-addnew/drivers-addnew.component';
 
 @NgModule({
   declarations: [
@@ -62,10 +65,13 @@ import { OwnersDeleteComponent } from './components/tasks/owners/owners-delete/o
     OwnersTableComponent,
     OwnersVehiclesComponent,
     OwnersResumeComponent,
-    DriversComponent,
     OwnersAddnewComponent,
     OwnersReportsComponent,
     OwnersDeleteComponent,
+    DriversTableComponent,
+    DriversResumeComponent,
+    DriversDeleteComponent,
+    DriversAddnewComponent,
   ],
   imports: [
     BrowserModule,

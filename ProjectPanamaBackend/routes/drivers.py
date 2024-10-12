@@ -10,11 +10,13 @@ from models.cajarecaudoscontado import CajasRecaudosContado
 from models.cartera import Cartera
 from models.movienca import Movienca
 from schemas.reports import *
+from schemas.drivers import *
 from middlewares.JWTBearer import JWTBearer
 from fastapi.encoders import jsonable_encoder
 from utils.reports import *
 from datetime import datetime
 
+import pytz
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import FileResponse
 import jinja2
@@ -23,6 +25,27 @@ from utils.pdf import html2pdf
 drivers_router = APIRouter()
 
 @drivers_router.get("/drivers", tags=["Drivers"])
+async def get_drivers():
+  db = session()
+  try:
+    drivers = db.query(Conductores.CODIGO, Conductores.NOMBRE).all()
+
+    drivers_list = [
+      {
+        'codigo': driver.CODIGO,
+        'nombre': driver.NOMBRE,
+      }
+      for driver in drivers
+    ]
+    return JSONResponse(content=jsonable_encoder(drivers_list))
+  except Exception as e:
+    return JSONResponse(content={"error": str(e)})
+  finally:
+    db.close()
+
+#-----------------------------------------------------------------------------------------------
+
+@drivers_router.get("/drivers/all", tags=["Drivers"])
 async def get_drivers():
   db = session()
   try:
@@ -54,6 +77,7 @@ async def get_drivers():
 
 #-----------------------------------------------------------------------------------------------
 
+#-------------------------------------------------------------------------------------------
 @drivers_router.get('/directorio-conductores', tags=["Drivers"])
 async def get_conductores_detalles():
     db = session()
@@ -168,7 +192,137 @@ async def get_conductores_detalles():
 
 #-----------------------------------------------------------------------------------------------
 
-@drivers_router.get("/driver-delete/{owner_id}", tags=["Drivers"])
+@drivers_router.get("/driver/{driver_id}", tags=["Drivers"])
+async def get_driver_info(driver_id: int):
+  db = session()
+  try:
+    driver = db.query(
+      Conductores.CODIGO,
+      Conductores.NOMBRE,
+      Conductores.CEDULA,
+      Conductores.CIUDAD,
+      Conductores.DIRECCION,
+      Conductores.TELEFONO,
+      Conductores.CELULAR,
+      Conductores.FEC_NACIMT,
+      Conductores.CORREO,
+      Conductores.REPRESENTA,
+      Conductores.SEXO,
+      Conductores.ESTA_CIVIL,
+      Conductores.FEC_INGRES,
+      Conductores.FEC_RETIRO,
+      Conductores.CONTACTO,
+      Conductores.TEL_CONTAC,
+      Conductores.PAR_CONTAC,
+      Conductores.CONTACTO1,
+      Conductores.TEL_CONTA1,
+      Conductores.PAR_CONTA1,
+      Conductores.CONTACTO2,
+      Conductores.TEL_CONTA2,
+      Conductores.PAR_CONTA2,
+      Conductores.ESTADO,
+      Conductores.FEC_ESTADO,
+      Conductores.CRUCE_AHOR,
+      Conductores.LICEN_NRO,
+      Conductores.LICEN_CAT,
+      Conductores.LICEN_VCE,
+      Conductores.DETALLE,
+      Conductores.OBSERVA,
+      ).filter(Conductores.CODIGO == driver_id
+      ).first()
+
+    driver_dict = {
+      'codigo': driver.CODIGO,
+      'nombre': driver.NOMBRE,
+      'cedula': driver.CEDULA,
+      'ciudad': driver.CIUDAD,
+      'direccion': driver.DIRECCION,
+      'telefono': driver.TELEFONO,
+      'celular': driver.CELULAR,
+      'fecha_nacimiento': driver.FEC_NACIMT,
+      'correo': driver.CORREO,
+      'representa': driver.REPRESENTA,
+      'sexo': driver.SEXO,
+      'estado_civil': driver.ESTA_CIVIL,
+      'fecha_ingreso': driver.FEC_INGRES,
+      'fecha_retiro': driver.FEC_RETIRO,
+      'contacto': driver.CONTACTO,
+      'tel_contacto': driver.TEL_CONTAC,
+      'par_contacto': driver.PAR_CONTAC,
+      'contacto1': driver.CONTACTO1,
+      'tel_contacto1': driver.TEL_CONTA1,
+      'par_contacto1': driver.PAR_CONTA1,
+      'contacto2': driver.CONTACTO2,
+      'tel_contacto2': driver.TEL_CONTA2,
+      'par_contacto2': driver.PAR_CONTA2,
+      'estado': driver.ESTADO,
+      'fecha_estado': driver.FEC_ESTADO,
+      'cruce_ahorros': driver.CRUCE_AHOR,
+      'licencia_numero': driver.LICEN_NRO,
+      'licencia_categoria': driver.LICEN_CAT,
+      'licencia_vencimiento': driver.LICEN_VCE,
+      'detalle': driver.DETALLE,
+      'observaciones': driver.OBSERVA
+    }
+    if not driver:
+      return JSONResponse(content={"error": "Driver not found"}, status_code=404)
+    return JSONResponse(content=jsonable_encoder(driver_dict))
+  except Exception as e:
+    return JSONResponse(content={"error": str(e)})
+  finally:
+    db.close()
+
+#-------------------------------------------------------------------------------------------
+
+@drivers_router.put("/driver/{driver_id}", tags=["Drivers"])
+async def update_driver(driver_id: int, driver: ConductorUpdate):
+  db = session()
+  try:
+    print(driver)
+    panama_timezone = pytz.timezone('America/Panama')
+    now_in_panama = datetime.now(panama_timezone)
+    fecha = now_in_panama.strftime("%Y-%m-%d")
+    result = db.query(Conductores).filter(Conductores.CODIGO == driver_id).first()
+    if not result:
+      return JSONResponse(content={"error": "Driver not found"}, status_code=404)
+    result.NOMBRE = driver.nombre
+    result.CIUDAD = driver.ciudad
+    result.TELEFONO = driver.telefono
+    result.celular = driver.celular
+    result.correo = driver.correo
+    result.sexo = driver.sexo
+    result.DIRECCION = driver.direccion
+    result.REPRESENTA = driver.representa
+    result.ESTA_CIVIL = driver.estado_civil
+    result.CONTACTO = driver.contacto
+    result.CONTACTO1 = driver.contacto1
+    result.CONTACTO2 = driver.contacto2
+    result.TEL_CONTAC = driver.tel_contacto
+    result.TEL_CONTA1 = driver.tel_contacto1
+    result.TEL_CONTA2 = driver.tel_contacto2
+    result.PAR_CONTAC = driver.par_contacto
+    result.PAR_CONTA1 = driver.par_contacto1
+    result.PAR_CONTA2 = driver.par_contacto2
+    result.CRUCE_AHOR = driver.cruce_ahorros
+    result.LICEN_NRO = driver.licencia_numero
+    result.LICEN_CAT = driver.licencia_categoria
+    result.LICEN_VCE = driver.licencia_vencimiento
+    result.DETALLE = driver.detalle
+    result.OBSERVA = driver.observaciones
+    if driver.stateEdited:
+      result.ESTADO = driver.estado
+      result.FEC_ESTADO = fecha
+    db.commit()
+    return JSONResponse(content={"message": "Driver updated successfully"})
+  except Exception as e:
+    db.rollback()
+    return JSONResponse(content={"error": str(e)})
+  finally:
+    db.close()
+
+#-------------------------------------------------------------------------------------------
+
+@drivers_router.delete("/driver/{driver_id}", tags=["Drivers"])
 async def verify_driver_delete(driver_id: int):
   db = session()
   try:
@@ -218,3 +372,39 @@ async def verify_driver_delete(driver_id: int):
     db.close()
 
 #-----------------------------------------------------------------------------------------------
+
+@drivers_router.get('/verify-driver-delete/{driver_id}', tags=["Drivers"])
+async def verify_driver_delete(driver_id: int):
+  db = session()
+  try:
+      driver = db.query(
+          CajaRecaudos.CLIENTE.label('cajarecaudos'),
+          CajasRecaudosContado.CLIENTE.label('cajarecaudoscontado'),
+          Cartera.CLIENTE.label('cartera'),
+          Movienca.CLIENTE.label('movienca')
+        ).select_from(Conductores).outerjoin(
+          CajaRecaudos, Conductores.CODIGO == CajaRecaudos.CLIENTE
+        ).outerjoin(
+          CajasRecaudosContado, Conductores.CODIGO == CajasRecaudosContado.CLIENTE
+        ).outerjoin(
+          Cartera, Conductores.CODIGO == Cartera.CLIENTE
+        ).outerjoin(
+          Movienca, Conductores.CODIGO == Movienca.CLIENTE
+        ).filter(
+          Conductores.CODIGO == driver_id
+        ).first()
+      
+      if not driver:
+         return JSONResponse(content={"error": "Driver not found"}, status_code=404)
+      driver_conditions = {
+          'cajarecaudos': bool(driver.cajarecaudos),
+          'cajarecaudoscontado': bool(driver.cajarecaudoscontado),
+          'cartera': bool(driver.cartera),
+          'movienca': bool(driver.movienca)
+      }
+
+      return JSONResponse(content=jsonable_encoder(driver_conditions))
+  except Exception as e:
+    return JSONResponse(content={"error": str(e)})
+  finally:
+    db.close()

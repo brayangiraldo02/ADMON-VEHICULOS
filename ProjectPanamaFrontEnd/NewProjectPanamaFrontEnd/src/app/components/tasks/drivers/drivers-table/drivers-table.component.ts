@@ -4,11 +4,11 @@ import { ApiService } from 'src/app/services/api.service';
 import { JwtService } from 'src/app/services/jwt.service';
 
 @Component({
-  selector: 'app-drivers',
-  templateUrl: './drivers.component.html',
-  styleUrls: ['./drivers.component.css']
+  selector: 'app-drivers-table',
+  templateUrl: './drivers-table.component.html',
+  styleUrls: ['./drivers-table.component.css']
 })
-export class DriversComponent implements OnInit {
+export class DriversTableComponent implements OnInit{
   data: any[] = [];
   filteredData: any[] = [];
   searchTerm: string = '';
@@ -26,13 +26,13 @@ export class DriversComponent implements OnInit {
   }
 
   fetchData() {
-    this.apiService.getData('drivers').subscribe(
+    this.apiService.getData('drivers/all').subscribe(
       (response) => {
         this.data = response.filter((data: any) => data.codigo);
         this.data.sort((a, b) => a.nombre.localeCompare(b.nombre));
         this.filteredData = [...this.data];
         this.isLoading = false;
-        console.log(this.data)
+        // console.log(this.data)
       },
       (error) => {
         console.log(error);
@@ -54,6 +54,19 @@ export class DriversComponent implements OnInit {
       item.nombre.toLowerCase().includes(term) ||
       item.cedula.toLowerCase().includes(term)
     );
+  }
+
+  listData(event: any) {
+    const selectedValue = event.target.value;
+    if (selectedValue === '') {
+      this.filteredData = this.data;
+    } else if (selectedValue === '1') {
+      this.filteredData = this.data.filter(item => item.unidad !== ' - ');
+    }
+  }
+
+  goToOwnerResume(codigo: string) {
+    this.router.navigate(['/driver', codigo]);
   }
 
   openExternalLink(): void {
