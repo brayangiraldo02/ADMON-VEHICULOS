@@ -10,11 +10,13 @@ from models.cajarecaudoscontado import CajasRecaudosContado
 from models.cartera import Cartera
 from models.movienca import Movienca
 from schemas.reports import *
+from schemas.drivers import *
 from middlewares.JWTBearer import JWTBearer
 from fastapi.encoders import jsonable_encoder
 from utils.reports import *
 from datetime import datetime
 
+import pytz
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import FileResponse
 import jinja2
@@ -266,6 +268,54 @@ async def get_driver_info(driver_id: int):
       return JSONResponse(content={"error": "Driver not found"}, status_code=404)
     return JSONResponse(content=jsonable_encoder(driver_dict))
   except Exception as e:
+    return JSONResponse(content={"error": str(e)})
+  finally:
+    db.close()
+
+#-------------------------------------------------------------------------------------------
+
+@drivers_router.put("/driver/{driver_id}", tags=["Drivers"])
+async def update_driver(driver_id: int, driver: ConductorUpdate):
+  db = session()
+  try:
+    print(driver)
+    panama_timezone = pytz.timezone('America/Panama')
+    now_in_panama = datetime.now(panama_timezone)
+    fecha = now_in_panama.strftime("%Y-%m-%d")
+    result = db.query(Conductores).filter(Conductores.CODIGO == driver_id).first()
+    if not result:
+      return JSONResponse(content={"error": "Driver not found"}, status_code=404)
+    result.NOMBRE = driver.nombre
+    result.CIUDAD = driver.ciudad
+    result.TELEFONO = driver.telefono
+    result.celular = driver.celular
+    result.correo = driver.correo
+    result.sexo = driver.sexo
+    result.DIRECCION = driver.direccion
+    result.REPRESENTA = driver.representa
+    result.ESTA_CIVIL = driver.estado_civil
+    result.CONTACTO = driver.contacto
+    result.CONTACTO1 = driver.contacto1
+    result.CONTACTO2 = driver.contacto2
+    result.TEL_CONTAC = driver.tel_contacto
+    result.TEL_CONTA1 = driver.tel_contacto1
+    result.TEL_CONTA2 = driver.tel_contacto2
+    result.PAR_CONTAC = driver.par_contacto
+    result.PAR_CONTA1 = driver.par_contacto1
+    result.PAR_CONTA2 = driver.par_contacto2
+    result.CRUCE_AHOR = driver.cruce_ahorros
+    result.LICEN_NRO = driver.licencia_numero
+    result.LICEN_CAT = driver.licencia_categoria
+    result.LICEN_VCE = driver.licencia_vencimiento
+    result.DETALLE = driver.detalle
+    result.OBSERVA = driver.observaciones
+    if driver.stateEdited:
+      result.ESTADO = driver.estado
+      result.FEC_ESTADO = fecha
+    db.commit()
+    return JSONResponse(content={"message": "Driver updated successfully"})
+  except Exception as e:
+    db.rollback()
     return JSONResponse(content={"error": str(e)})
   finally:
     db.close()
