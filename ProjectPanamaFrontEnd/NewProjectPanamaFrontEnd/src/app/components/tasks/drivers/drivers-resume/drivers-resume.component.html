@@ -74,9 +74,8 @@
         </div>
     
         <div class="form-group">
-          <label for="cedula" for="nit">C.C / N.I.T. :</label><br>
+          <label for="cedula" for="nit">C.C:</label><br>
           <input class="small" type="number" id="cedula" name="cedula" [value]="data.cedula" disabled><br>
-          <input class="small" type="text" id="nit" name="nit" disabled><br>
         </div>
       </div>
 
@@ -255,7 +254,12 @@
 
         <div class="form-group">
           <label for="contrato_auto">Contrato Auto:</label><br>
-          <input class="total" type="text" id="contrato_auto" name="contrato_auto" [value]="data.contrato_auto" disabled><br>
+          <!-- <input class="total" type="text" id="contrato_auto" name="contrato_auto" [value]="data.contrato_auto" disabled><br> -->
+          <select class="total" id="contrato_auto" name="contrato_auto" [(ngModel)]="data.contrato_auto" [disabled]="!isEditable">
+            <option value="0" disabled></option>
+            <option value="1">Nuevo</option>
+            <option value="2">Usado</option>
+          </select><br>
         </div>
       </div>
 
@@ -299,29 +303,6 @@
       <div class="form-group">
         <label for="licencia_vencimiento">Vence:</label><br>
         <input class="medium" type="date" id="licencia_vencimiento" name="licencia_vencimiento" [value]="data.licencia_vencimiento" [disabled]="!isEditable"><br>
-      </div>
-    </div>
-
-  </div>
-
-  <hr *ngIf="!isLoading">
-
-  <div class="info-container" *ngIf="!isLoading">
-
-    <div class="two-container">
-      <div class="form-group">
-        <label for="fecha_estado">Tarjeta de control No:</label><br>
-        <input class="medium" type="text" id="fecha_estado" name="fecha_estado" [value]="data.fecha_estado" [disabled]="!isEditable"><br>
-      </div>
-
-      <div class="form-group">
-        <label for="fecha_estado">Certificado Operación:</label><br>
-        <input class="medium" type="text" id="fecha_estado" name="fecha_estado" [value]="data.fecha_estado" [disabled]="!isEditable"><br>
-      </div>
-
-      <div class="form-group">
-        <label for="fecha_estado">Vence:</label><br>
-        <input class="medium" type="text" id="fecha_estado" name="fecha_estado" [value]="data.fecha_estado" [disabled]="!isEditable"><br>
       </div>
     </div>
 
