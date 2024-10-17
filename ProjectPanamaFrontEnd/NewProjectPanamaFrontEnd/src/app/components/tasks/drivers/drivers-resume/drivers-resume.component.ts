@@ -251,6 +251,10 @@ export class DriversResumeComponent implements OnInit {
     this.selectButton('ingresos')
   }
 
+  goToDriverOrder() {
+    this.selectButton('ordenes')
+  }
+
   goToDriverDocuments() {
     this.selectButton('documentacion')
   }
