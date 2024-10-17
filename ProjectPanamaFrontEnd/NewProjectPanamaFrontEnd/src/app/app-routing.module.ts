@@ -6,7 +6,6 @@ import { AuthGuard } from './guards/auth.guard';
 import { NoAuthGuard } from './guards/no-auth.guard';
 import { StatevehiclefleetComponent } from './components/tasks/statevehiclefleet/statevehiclefleet.component';
 import { PdfViewerComponent } from './components/others/pdf-viewer/pdf-viewer.component';
-import { VehiclesComponent } from './components/tasks/vehicles/vehicles.component';
 import { FeespaidComponent } from './components/tasks/feespaid/feespaid.component';
 import { OpcionesGerenciaComponent } from './components/options/gerencia/opciones-gerencia/opciones-gerencia.component';
 import { OpcionesTramitesComponent } from './components/options/tramites/opciones-tramites/opciones-tramites.component';
@@ -26,13 +25,14 @@ import { OwnersAddnewComponent } from './components/tasks/owners/owners-addnew/o
 import { DriversTableComponent } from './components/tasks/drivers/drivers-table/drivers-table.component';
 import { DriversResumeComponent } from './components/tasks/drivers/drivers-resume/drivers-resume.component';
 import { DriversAddnewComponent } from './components/tasks/drivers/drivers-addnew/drivers-addnew.component';
+import { VehiclesTableComponent } from './components/tasks/vehicles/vehicles-table/vehicles-table.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
   { path: 'login', component: LoginComponent, canActivate: [NoAuthGuard]},
   { path: 'home', component: HomeComponent, canActivate: [AuthGuard]},
   { path: 'statevehiclefleet', component: StatevehiclefleetComponent, canActivate: [AuthGuard]},
-  { path: 'vehicles', component: VehiclesComponent, canActivate: [AuthGuard]},
+  { path: 'vehicles', component: VehiclesTableComponent, canActivate: [AuthGuard]},
   { path: 'feespaid', component: FeespaidComponent, canActivate: [AuthGuard]},
   { path: 'owners', component: OwnersTableComponent, canActivate: [AuthGuard]},
   { path: 'owner/:code', component: OwnersResumeComponent, canActivate: [AuthGuard]},
