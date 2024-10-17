@@ -410,3 +410,70 @@ async def verify_driver_delete(driver_id: int):
     return JSONResponse(content={"error": str(e)})
   finally:
     db.close()
+
+#-----------------------------------------------------------------------------------------------
+
+@drivers_router.get("/driver-codes/", tags=["Drivers"])
+async def get_owner_codes():
+  db = session()
+  try:
+    owners = db.query(Conductores.CODIGO).all()
+    owner_codes = [owner.CODIGO for owner in owners]
+    return JSONResponse(content=jsonable_encoder(owner_codes))
+  except Exception as e:
+    return JSONResponse(content={"error": str(e)})
+  finally:
+    db.close()
+
+#-----------------------------------------------------------------------------------------------
+
+@drivers_router.post("/drivers", response_model=ConductorCreate, tags=["Drivers"])
+async def create_driver(driver: ConductorCreate):
+  db = session()
+  try:
+    panama_timezone = pytz.timezone('America/Panama')
+    now_in_panama = datetime.now(panama_timezone)
+    fecha = now_in_panama.strftime("%Y-%m-%d")
+    new_driver = Conductores(
+      CODIGO=driver.codigo,
+      NOMBRE=driver.nombre,
+      CEDULA=driver.cedula,
+      CIUDAD=driver.ciudad,
+      TELEFONO=driver.telefono,
+      CELULAR=driver.celular,
+      CORREO=driver.correo,
+      SEXO=driver.sexo,
+      FEC_INGRES=driver.fecha_ingreso,
+      DIRECCION=driver.direccion,
+      FEC_NACIMT=driver.fecha_nacimiento,
+      REPRESENTA=driver.representa,
+      ESTA_CIVIL=driver.estado_civil,
+      CONTACTO=driver.contacto,
+      TEL_CONTAC=driver.tel_contacto,
+      PAR_CONTAC=driver.par_contacto,
+      CONTACTO1=driver.contacto1,
+      TEL_CONTA1=driver.tel_contacto1,
+      PAR_CONTA1=driver.par_contacto1,
+      CONTACTO2=driver.contacto2,
+      TEL_CONTA2=driver.tel_contacto2,
+      PAR_CONTA2=driver.par_contacto2,
+      ESTADO=driver.estado,
+      FEC_ESTADO=fecha,
+      TIP_CONTRA=driver.contrato_auto,
+      CRUCE_AHOR=driver.cruce_ahorros,
+      LICEN_NRO=driver.licencia_numero,
+      LICEN_CAT=driver.licencia_categoria,
+      LICEN_VCE=driver.licencia_vencimiento,
+      DETALLE=driver.detalle,
+      OBSERVA=driver.observaciones
+    )
+    db.add(new_driver)
+    db.commit()
+    return JSONResponse(content={"message": "Driver created successfully"}, status_code=201)
+  except Exception as e:
+    db.rollback()
+    return JSONResponse(content={"error": str(e)})
+  finally:
+    db.close()
+
+#-----------------------------------------------------------------------------------------------
