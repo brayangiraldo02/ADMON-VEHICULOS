@@ -144,6 +144,29 @@ export class DriversAddnewComponent {
     this.selectButton('documentacion')
   }
 
+  addDateFields(): void {
+    const dateFields = [
+      'fecha_nacimiento',
+      'fecha_retiro',
+      'fecha_inicio',
+      'fecha_prestamo',
+      'fecha_devolucion',
+      'fecha_siniestro',
+      'licencia_vencimiento',
+      'fecha_ingreso',
+      'fecha_tarjeta',
+      'fecha_1pago',
+      'fecha_ultpago',
+      'fecha_extencion',
+    ];
+
+    dateFields.forEach(field => {
+      if (!this.driverForm.get(field) || !this.driverForm.get(field)?.value) {
+        this.driverForm.addControl(field, this.fb.control('0000-00-00', Validators.required));
+      }
+    });
+  }
+
   getDrivers() {
     this.apiService.getData('driver-codes').subscribe(
       (response) => {
@@ -174,6 +197,7 @@ export class DriversAddnewComponent {
     if (this.driverForm.valid) {
       if (this.checkCode()){
         this.isLoading = false;
+        this.addDateFields();
         const formData = this.driverForm.value;
         console.log(formData);
         this.apiService.postData('drivers', formData).subscribe(

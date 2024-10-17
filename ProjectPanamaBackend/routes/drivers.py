@@ -465,7 +465,19 @@ async def create_driver(driver: ConductorCreate):
       LICEN_CAT=driver.licencia_categoria,
       LICEN_VCE=driver.licencia_vencimiento,
       DETALLE=driver.detalle,
-      OBSERVA=driver.observaciones
+      OBSERVA=driver.observaciones,
+
+      FEC_RETIRO=driver.fecha_retiro,
+      FEC_INICIO=driver.fecha_inicio,
+      FEC_PRESTA=driver.fecha_prestamo,
+      FEC_DEVOLU=driver.fecha_devolucion,
+      FEC_SINIES=driver.fecha_siniestro,
+      FEC_TARJET=driver.fecha_tarjeta,
+      FEC_1PAGO=driver.fecha_1pago,
+      FEC_ULTPAG=driver.fecha_ultpago,
+      FEC_EXTENC=driver.fecha_extencion,
+
+      FEC_CREADO=fecha
     )
     db.add(new_driver)
     db.commit()
