@@ -73,6 +73,10 @@ export class VehiclesTableComponent {
     this.user = this.user.user_data.nombre;
   }
 
+  goToDriverResume(codigo: string) {
+    this.router.navigate(['/vehicle', codigo]);
+  }
+
   openExternalLink(): void {
     this.isLoading = true;
     const data = { user: this.user };
