@@ -16,10 +16,14 @@ export class DriversResumeComponent implements OnInit {
   centralFound = false;
   usersFound = false;
   cityFound = false;
+  isModalVisible: boolean = false;
+  stateEdited = false;
+  isLoading = true;
 
   drivers: any = '';
 
   data: any = null;
+  dataOriginal: any = null;
   cities: any = null;
   central: any = null;
   users: any = null;
@@ -39,10 +43,8 @@ export class DriversResumeComponent implements OnInit {
     });
     this.fetchData();
     this.delay(500);
-    this.getUsers();
     this.getCities();
-    this.getCentral();
-    this.getDrivers()
+    this.getDrivers();
   }
 
   async delay(ms: number) {
@@ -53,6 +55,11 @@ export class DriversResumeComponent implements OnInit {
     this.apiService.getData(`driver/${this.code}`).subscribe(
       (response) => {
         this.data = response;
+        this.dataOriginal = { ...this.data };
+        this.stateEdited = false;
+        // console.log(this.data);
+        this.isLoading = false;
+        this.checkCity();
       },
       (error) => {
         console.log(error);
@@ -85,69 +92,90 @@ export class DriversResumeComponent implements OnInit {
     }
   }
 
-  getCentral() {
-    this.apiService.getData('central').subscribe(
-      (response) => {
-        this.central = response.filter((central: any) => central.codigo);
-        this.checkCentral();
-      },
-      (error) => {
-        console.log(error);
-      }
-    );
-  }
-
-  checkCentral() {
-    if (this.data && this.central) {
-      this.centralFound = this.central.some((central: any) => central.codigo === this.data.central);
-      if (!this.centralFound) {
-        this.central.push({
-          codigo: this.data.central,
-          nombre: "Central no encontrada"
-        });
-      }
-    }
-  }
-
-  getUsers() {
-    this.apiService.getData('users').subscribe(
-      (response) => {
-        this.users = response.filter((users: any) => users.codigo);
-        this.checkUsers();
-      },
-      (error) => {
-        console.log(error);
-      }
-    );
-  }
-
-  checkUsers() {
-    var varCodigo;
-    var varNombre  = "Sin Auditor";
-    if(this.data.auditor == null) {
-      this.data.auditor = '';
-      varCodigo = this.data.auditor;
-    }
-    else {
-      varCodigo = '';
-    }
-    if (this.data && this.users) {
-      this.usersFound = this.users.some((users: any) => users.codigo === this.data.auditor);
-      if (!this.usersFound) {
-        varCodigo = this.data.auditor;
-        if(varCodigo !== '') {
-          varNombre = "Auditor no encontrado";
-        }
-      }
-      this.users.push({
-        codigo: varCodigo,
-        nombre: varNombre
-      });
-    }
-  }
-
   selectButton(button: string) {
     this.selectedButton = button;
+  }
+
+  enableInputs() {
+    if (this.isEditable) {
+      this.disableInputs();
+      window.alert('No se ha modificado ningún dato.');
+      location.reload();
+    }
+
+    this.isEditable = true;
+  }
+
+  disableInputs() {
+    this.isEditable = false;
+  }
+
+  newData() {
+    const fields = [
+      'nombre', 'ciudad', 'telefono', 'celular', 'correo', 'sexo', 'direccion', 'representa', 'estado_civil', 'contacto', 'contacto1', 'contacto2', 'tel_contacto', 'tel_contacto1', 'tel_contacto2', 'par_contacto', 'par_contacto1', 'par_contacto2', 'estado', 'cruce_ahorros', 'licencia_numero', 'licencia_categoria', 'licencia_vencimiento', 'detalle', 'observaciones'
+    ]
+    const dataToSave: any = {};
+    fields.forEach(field => {
+      const element = document.getElementById(field) as HTMLInputElement;
+      if (element) {
+        dataToSave[field] = element.value;
+      }
+    });
+    
+    // Add the 'codigo' field which should be read-only
+    const codigoElement = document.getElementById('codigo') as HTMLInputElement;
+    if (codigoElement) {
+      dataToSave['codigo'] = codigoElement.value;
+    }
+
+    return dataToSave;
+  }
+
+  checkModifiedData(): boolean {
+    for (const key in this.data) {
+      // if(key == 'fec_nacimiento' || key == 'fec_ingreso') {
+      //   if(this.data[key] == '') {
+      //     this.data[key] = '0000-00-00';
+      //   }
+      // }
+      if (this.data[key] !== this.dataOriginal[key]) {
+        if(key == 'estado'){
+          this.stateEdited = true;
+        }
+        // console.log(`Difference found at key: ${key}, data: ${this.data[key]}, dataOriginal: ${this.dataOriginal[key]}`);
+        return true;
+      }
+    }
+    return false;
+  }
+
+  saveData() {
+
+    const modifiedData = this.checkModifiedData();
+
+    // console.log(modifiedData)
+
+    if (!modifiedData) {
+      window.alert('No se ha modificado ningún dato.');
+      this.disableInputs();
+      return;
+    }
+
+    this.data['stateEdited'] = this.stateEdited;
+
+    // console.log('Data to save:', this.data);
+  
+    this.apiService.updateData(`driver/${this.code}`, this.data).subscribe(
+      (response) => {
+        window.alert('Datos actualizados correctamente');
+        this.disableInputs();
+        // console.log(response);
+        location.reload();
+      },
+      (error) => {
+        console.log(error);
+      }
+    );
   }
 
   getDrivers() {
@@ -157,7 +185,7 @@ export class DriversResumeComponent implements OnInit {
           .filter((drivers: any) => drivers.codigo)  // Filtramos los drivers con código
           .sort((a: any, b: any) => a.codigo - b.codigo); // Ordenamos ascendente por código
         
-        console.log(this.drivers);  // Verificamos el orden
+        // console.log(this.drivers); 
       },
       (error) => {
         console.log(error);
@@ -223,8 +251,24 @@ export class DriversResumeComponent implements OnInit {
     this.selectButton('ingresos')
   }
 
+  goToDriverOrder() {
+    this.selectButton('ordenes')
+  }
+
   goToDriverDocuments() {
     this.selectButton('documentacion')
+  }
+
+  showModal() {
+    this.isModalVisible = true;
+    document.documentElement.style.overflow = 'hidden';
+    document.body.style.overflow = 'hidden';
+  }
+
+  hideModal() {
+    this.isModalVisible = false;
+    document.documentElement.style.overflow = '';
+    document.body.style.overflow = '';
   }
 
 }
