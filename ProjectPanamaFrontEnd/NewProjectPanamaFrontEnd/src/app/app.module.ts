@@ -14,7 +14,6 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { FooterComponent } from './components/main/footer/footer.component';
 import { StatevehiclefleetComponent } from './components/tasks/statevehiclefleet/statevehiclefleet.component';
 import { PdfViewerComponent } from './components/others/pdf-viewer/pdf-viewer.component';
-import { VehiclesComponent } from './components/tasks/vehicles/vehicles.component';
 import { FeespaidComponent } from './components/tasks/feespaid/feespaid.component';
 import { OpcionesGerenciaComponent } from './components/options/gerencia/opciones-gerencia/opciones-gerencia.component';
 import { OpcionesTramitesComponent } from './components/options/tramites/opciones-tramites/opciones-tramites.component';
@@ -36,6 +35,12 @@ import { OwnersReportsComponent } from './components/tasks/owners/owners-reports
 import { OwnersDeleteComponent } from './components/tasks/owners/owners-delete/owners-delete.component';
 import { DriversTableComponent } from './components/tasks/drivers/drivers-table/drivers-table.component';
 import { DriversResumeComponent } from './components/tasks/drivers/drivers-resume/drivers-resume.component';
+import { DriversDeleteComponent } from './components/tasks/drivers/drivers-delete/drivers-delete.component';
+import { DriversAddnewComponent } from './components/tasks/drivers/drivers-addnew/drivers-addnew.component';
+import { VehiclesTableComponent } from './components/tasks/vehicles/vehicles-table/vehicles-table.component';
+import { VehiclesResumeComponent } from './components/tasks/vehicles/vehicles-resume/vehicles-resume.component';
+import { VehiclesDeleteComponent } from './components/tasks/vehicles/vehicles-delete/vehicles-delete.component';
+import { VehiclesAddnewComponent } from './components/tasks/vehicles/vehicles-addnew/vehicles-addnew.component';
 
 @NgModule({
   declarations: [
@@ -46,7 +51,6 @@ import { DriversResumeComponent } from './components/tasks/drivers/drivers-resum
     FooterComponent,
     StatevehiclefleetComponent,
     PdfViewerComponent,
-    VehiclesComponent,
     FeespaidComponent,
     OpcionesGerenciaComponent,
     OpcionesTramitesComponent,
@@ -68,6 +72,12 @@ import { DriversResumeComponent } from './components/tasks/drivers/drivers-resum
     OwnersDeleteComponent,
     DriversTableComponent,
     DriversResumeComponent,
+    DriversDeleteComponent,
+    DriversAddnewComponent,
+    VehiclesTableComponent,
+    VehiclesResumeComponent,
+    VehiclesDeleteComponent,
+    VehiclesAddnewComponent,
   ],
   imports: [
     BrowserModule,

@@ -226,6 +226,7 @@ def update_propietario(owner_id: str, propietario: PropietarioUpdate):
       db.commit()
       return JSONResponse(content={"message": "Owner updated"}, status_code=200)
     except Exception as e:
+      db.rollback()
       return JSONResponse(content={"error": str(e)}, status_code=500)
     finally:
       db.close()
