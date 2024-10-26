@@ -60,7 +60,7 @@ async def get_vehicles():
             Centrales.NOMBRE.label('vehiculo_central'),
             Vehiculos.NRO_LLAVES.label('vehiculo_nro_llaves'),
             Conductores.NOMBRE.label('vehiculo_conductor'),
-            Estados.ESTADO.label('vehiculo_estado'),
+            Estados.SUMAR.label('vehiculo_estado'),
             Estados.NOMBRE.label('vehiculo_nombre_estado'),
             Vehiculos.CUO_DIARIA.label('vehiculo_cuota_diaria'),
             Vehiculos.NROENTREGA.label('vehiculo_nro_Ctas'),
