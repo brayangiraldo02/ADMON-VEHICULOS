@@ -26,6 +26,7 @@ export class VehiclesResumeComponent {
   cities: any = null;
   central: any = null;
   users: any = null;
+  vehicles: any = null;
 
   code: string | null = null;
 
@@ -45,7 +46,7 @@ export class VehiclesResumeComponent {
     this.fetchData();
     // this.delay(500);
     // this.getCities();
-    // this.getDrivers();
+    this.getVehicles();
   }
 
   async delay(ms: number) {
@@ -174,62 +175,65 @@ export class VehiclesResumeComponent {
     // );
   }
 
-  // getDrivers() {
-  //   this.apiService.getData('drivers').subscribe(
-  //     (response) => {
-  //       this.drivers = response
-  //         .filter((drivers: any) => drivers.codigo)  // Filtramos los drivers con código
-  //         .sort((a: any, b: any) => a.codigo - b.codigo); // Ordenamos ascendente por código
+  getVehicles() {
+    this.apiService.getData('vehicle-codes').subscribe(
+      (response) => {
+        this.vehicles = response
+          .filter((vehicles: any) => vehicles.vehiculo_numero)  // Filtramos los drivers con código
+          .sort((a: any, b: any) => a.vehiculo_consecutivo - b.vehiculo_consecutivo);  // Ordenamos los drivers por código
         
-  //       // console.log(this.drivers); 
-  //     },
-  //     (error) => {
-  //       console.log(error);
-  //     }
-  //   );
-  // }
+        console.log(this.vehicles); 
+      },
+      (error) => {
+        console.log(error);
+      }
+    );
+  }
   
 
-  // nextDriver() {
-  //   const currentIndex = this.drivers.findIndex((driver: any) => driver.codigo === this.code);
-  //   if (currentIndex !== -1 && currentIndex < this.drivers.length - 1) {
-  //     const nextDriverId = this.drivers[currentIndex + 1].codigo;
-  //     this.router.navigate(['/driver/' + nextDriverId]).then(() => {
-  //       window.location.reload();
-  //     });
-  //   }
+  nextVehicle() {
+    // console.log(this.data.vehiculo_consecutivo)
+    const currentIndex = this.vehicles.findIndex((vehicle: any) => vehicle.vehiculo_consecutivo === this.data.vehiculo_consecutivo);
+    // console.log(currentIndex)
+    if (currentIndex !== -1 && currentIndex < this.vehicles.length - 1) {
+      const nextVehicleId = this.vehicles[currentIndex + 1].vehiculo_numero;
+      // console.log(nextVehicleId)
+      this.router.navigate(['/vehicle/' + nextVehicleId]).then(() => {
+        window.location.reload();
+      });
+    }
 
-  //   if(currentIndex === this.drivers.length - 1){
-  //     this.firstDriver()
-  //   }
-  // }
+    if(currentIndex === this.vehicles.length - 1){
+      this.firstVehicle()
+    }
+  }
   
-  // backDriver() {
-  //   const currentIndex = this.drivers.findIndex((driver: any) => driver.codigo === this.code);
-  //   if (currentIndex !== -1 && currentIndex > 0) {
-  //     const previousDriverId = this.drivers[currentIndex - 1].codigo;
-  //     this.router.navigate(['/driver/' + previousDriverId]).then(() => {
-  //       window.location.reload();
-  //     });
-  //   }
+  backVehicle() {
+    const currentIndex = this.vehicles.findIndex((vehicle: any) => vehicle.vehiculo_consecutivo === this.data.vehiculo_consecutivo);
+    if (currentIndex !== -1 && currentIndex > 0) {
+      const previousVehicleId = this.vehicles[currentIndex - 1].vehiculo_numero;
+      this.router.navigate(['/vehicle/' + previousVehicleId]).then(() => {
+        window.location.reload();
+      });
+    }
 
-  //   if (currentIndex === 0) {
-  //     this.lastDriver()
-  //   }
-  // }
+    if (currentIndex === 0) {
+      this.lastVehicle()
+    }
+  }
   
 
-  // firstDriver() {
-  //   this.router.navigate(['/driver/' + this.drivers[0].codigo]).then(() => {
-  //     window.location.reload();
-  //   });
-  // }
+  firstVehicle() {
+    this.router.navigate(['/vehicle/' + this.vehicles[0].vehiculo_numero]).then(() => {
+      window.location.reload();
+    });
+  }
   
-  // lastDriver() {
-  //   this.router.navigate(['/driver/' + this.drivers[this.drivers.length - 1].codigo]).then(() => {
-  //     window.location.reload();
-  //   });
-  // }
+  lastVehicle() {
+    this.router.navigate(['/vehicle/' + this.vehicles[this.vehicles.length - 1].vehiculo_numero]).then(() => {
+      window.location.reload();
+    });
+  }
 
   goToVehicleOwnership() {
     this.selectButton('propiedad')

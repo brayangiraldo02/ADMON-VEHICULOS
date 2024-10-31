@@ -847,3 +847,17 @@ async def verify_vehicle_delete(vehicle_id: str):
     return JSONResponse(content={"error": str(e)})
   finally:
     db.close()
+
+#-------------------------------------------------------------------------------------------
+
+@vehicles_router.get("/vehicle-codes", tags=["Vehicles"])
+async def get_vehicle_codes():
+    db = session()
+    try:
+        vehicles = db.query(Vehiculos.CONSECUTIV, Vehiculos.NUMERO).all()
+        vehicle_codes = [{'vehiculo_consecutivo': vehicle.CONSECUTIV, 'vehiculo_numero': vehicle.NUMERO} for vehicle in vehicles]
+        return JSONResponse(content=jsonable_encoder(vehicle_codes))
+    except Exception as e:
+        return JSONResponse(content={"error": str(e)})
+    finally:
+        db.close()
