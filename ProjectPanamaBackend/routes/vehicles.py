@@ -30,8 +30,8 @@ async def get_vehicles():
 
     vehicles_list = [
       {
-        'unidad': vehicle.vehiculo_numero,
-        'placa': vehicle.vehiculo_placa
+        'unidad': vehicle.NUMERO,
+        'placa': vehicle.PLACA,
       }
       for vehicle in vehicles
     ]
@@ -246,7 +246,7 @@ async def get_vehiculos_detalles():
 #-------------------------------------------------------------------------------------------
 
 @vehicles_router.get("/vehicles/{vehicle_id}", tags=["Vehicles"])
-async def get_vehicle(vehicle_id: int):
+async def get_vehicle(vehicle_id: str):
   db = session()
   try:
     vehicle = db.query(
@@ -295,6 +295,229 @@ async def get_vehicle(vehicle_id: int):
     return JSONResponse(content={"error": str(e)})
   finally:
     db.close()
+
+#-------------------------------------------------------------------------------------------
+
+@vehicles_router.get("/vehicle-details/{vehicle_id}", tags=["Vehicles"])
+async def get_vehicle_details(vehicle_id: str):
+   db = session()
+   try:
+      vehicle = db.query(
+          Vehiculos.NUMERO.label('vehiculo_numero'),
+          Vehiculos.PLACA.label('vehiculo_placa'),
+          Vehiculos.CONSECUTIV.label('vehiculo_consecutivo'),
+          Vehiculos.MARCA.label('vehiculo_marca'),
+          Vehiculos.LINEA.label('vehiculo_modelo'),
+          Vehiculos.MODELO.label('vehiculo_año'),
+          Vehiculos.CILINDRAJE.label('vehiculo_cilindraje'),
+          Vehiculos.PUERTAS.label('vehiculo_nro_puertas'),
+          Vehiculos.LICETRANSI.label('vehiculo_licencia_nro'),
+          Vehiculos.FEC_EXPEDI.label('vehiculo_licencia_fec'),
+          Vehiculos.COLORES.label('vehiculo_color'),
+          Vehiculos.SERVICIO.label('vehiculo_servicio'),
+          Vehiculos.FEC_MATRIC.label('vehiculo_fec_matricula'),
+          Vehiculos.FEC_VENCIM.label('vehiculo_fec_vencimiento_matricula'),
+          Vehiculos.FEC_IMPORT.label('vehiculo_fec_importacion'),
+          Vehiculos.CLASEVEHIC.label('vehicul_clase'),
+          Vehiculos.TIPOCARROC.label('vehiculo_tipo'),
+          Vehiculos.COMBUSTIBL.label('vehiculo_combustible'),
+          Vehiculos.CAPACIDAD.label('vehiculo_capacidad'),
+          Vehiculos.NE.label('vehiculo_ne'),
+          Vehiculos.MOTORNRO.label('vehiculo_motor'),
+          Vehiculos.MOTORREG.label('vehiculo_motor_reg'),
+          Vehiculos.MOTORVIN.label('vehiculo_vin'),
+          Vehiculos.SERIENRO.label('vehiculo_serie'),
+          Vehiculos.SERIEREG.label('vehiculo_serie_reg'),
+          Vehiculos.CHASISNRO.label('vehiculo_chasis'),
+          Vehiculos.CHASISREG.label('vehiculo_chasis_reg'),
+          Vehiculos.PROPI_IDEN.label('vehiculo_propietario'),
+          Vehiculos.CTA_GASTO.label('vehiculo_cta_gasto'),
+          Vehiculos.CENTRAL.label('vehiculo_central'),
+          Vehiculos.FEC_CREADO.label('vehiculo_fec_creacion'),
+          Vehiculos.NRO_CUPO.label('vehiculo_nro_cupo'),
+          Vehiculos.PERMISONRO.label('vehiculo_permiso_nro'),
+          Vehiculos.PERMISOVCE.label('vehiculo_fec_vencimiento_permiso'),
+          Vehiculos.BLINDAJE.label('vehiculo_blindaje'),
+          Vehiculos.POTENCIAHP.label('vehiculo_potencia'),
+          Vehiculos.DECLA_IMPO.label('vehiculo_dec_importacion'),
+          Vehiculos.RESTR_MOBI.label('vehiculo_restriccion_movilidad'),
+          Vehiculos.LIMI_PROPI.label('vehiculo_limit_propiedad'),
+          Vehiculos.ORG_TRANSI.label('vehiculo_organismo_transito'),
+          Vehiculos.COD_BARRAS.label('vehiculo_codigo_barras'),
+          Vehiculos.LATERAL.label('vehiculo_lateral'),
+          Vehiculos.KILOMETRAJ.label('vehiculo_kilometraje'),
+          Vehiculos.MODALIDAD.label('vehiculo_modalidad'),
+          Vehiculos.INFO_PANAP.label('vehiculo_consulta_panapass'),
+          Vehiculos.PANAPASSNU.label('vehiculo_panapass'),
+          Vehiculos.PANAPASSPW.label('vehiculo_panapass_pwd'),
+          Vehiculos.DOC_PLAPAR.label('vehiculo_placa_particular'),
+          Vehiculos.FEC_PLAPAR.label('vehiculo_placa_particular_vence'),
+          Vehiculos.DOC_PLAPUB.label('vehiculo_placa_publica'),
+          Vehiculos.FEC_PLAPUB.label('vehiculo_placa_publica_vence'),
+          Vehiculos.DOC_RESCIV.label('vehiculo_poliza_responsabilidad_civil'),
+          Vehiculos.FEC_RESCIV.label('vehiculo_poliza_responsabilidad_civil_vence'),
+          Vehiculos.DOC_EXTING.label('vehiculo_extinguidor'),
+          Vehiculos.FEC_EXTING.label('vehiculo_extinguidor_vence'),
+          Vehiculos.DOC_CEROPE.label('vehiculo_certificado_operacion'),
+          Vehiculos.FEC_CEROPE.label('vehiculo_certificado_operacion_fec'),
+          Vehiculos.NROENTREGA.label('vehiculo_nro_total_cuotas'),
+          Vehiculos.CUO_DIARIA.label('vehiculo_vlr_cuo_diaria'),
+          Vehiculos.CTA_RENTA.label('vehiculo_renta_diaria'),
+          Vehiculos.CTA_SINIES.label('vehiculo_ahorro_siniestro'),
+          Vehiculos.PAGA_ADMON.label('vehiculo_cobro_admon'),
+          Vehiculos.CUO_ADMON.label('vehiculo_admon'),
+          Vehiculos.CUO_REPVEH.label('vehiculo_reposicion'),
+          Vehiculos.CUO_MANTEN.label('vehiculo_mantenimiento'),
+          Vehiculos.CUO_RENDIM.label('vehiculo_rendimientos_propietario'),
+          Vehiculos.PAGO_LUN.label('vehiculo_pago_lunes'),
+          Vehiculos.PAGO_MAR.label('vehiculo_pago_martes'),
+          Vehiculos.PAGO_MIE.label('vehiculo_pago_miercoles'),
+          Vehiculos.PAGO_JUE.label('vehiculo_pago_jueves'),
+          Vehiculos.PAGO_VIE.label('vehiculo_pago_viernes'),
+          Vehiculos.PAGO_SAB.label('vehiculo_pago_sabado'),
+          Vehiculos.PAGO_DOM.label('vehiculo_pago_domingo'),
+          Vehiculos.FORMAPAGO.label('vehiculo_forma_pago'),
+          Vehiculos.MULTA.label('vehiculo_multa_pago'),
+          Vehiculos.FEC_1PAGO.label('vehiculo_fec_primer_pago'),
+          Vehiculos.FEC_ULTPAG.label('vehiculo_fec_ultimo_pago'),
+          Vehiculos.VLR_ULTPAG.label('vehiculo_vlr_ultimo_pago'),
+          Vehiculos.REC_ULTPAG.label('vehiculo_recibo'),
+          Vehiculos.FEC_1MANTE.label('vehiculo_primer_mantenimiento'),
+          Vehiculos.FEC_ULTMAN.label('vehiculo_ultimo_mantenimiento'),
+          Vehiculos.CATEGORIA.label('vehiculo_categoria'),
+          Vehiculos.tipo_llave.label('vehiculo_tipo_llave'),
+          Vehiculos.NRO_LLAVES.label('vehiculo_posicion_llave'),
+          Vehiculos.FEC_ESTADO.label('vehiculo_fec_estado'),
+          Vehiculos.GRUPODIARI.label('vehiculo_plan_pago'),
+          Vehiculos.PREND_APAG.label('vehiculo_prendido_apagado'),
+          Vehiculos.PIQUERA.label('vehiculo_piquera'),
+          Vehiculos.FEC_PIQUER.label('vehiculo_fec_inicio_piquera'),
+          Vehiculos.FAC_COMPRA.label('vehiculo_factura_compra'),
+          Vehiculos.FEC_COMPRA.label('vehiculo_fec_factura_compra'),
+          Vehiculos.VLR_COMPRA.label('vehiculo_valor_compra'),
+          Vehiculos.POLIZA.label('vehiculo_num_poliza'),
+          Vehiculos.FEC_POLIZA.label('vehiculo_fec_poliza'),
+          Vehiculos.OBSERVA.label('vehiculo_observaciones'),
+          Vehiculos.LUN.label('vehiculo_picoyplaca_lunes'),
+          Vehiculos.MAR.label('vehiculo_picoyplaca_martes'),
+          Vehiculos.MIE.label('vehiculo_picoyplaca_miercoles'),
+          Vehiculos.JUE.label('vehiculo_picoyplaca_jueves'),
+          Vehiculos.VIE.label('vehiculo_picoyplaca_viernes'),
+          Vehiculos.SAB.label('vehiculo_picoyplaca_sabado'),
+          Vehiculos.DOM.label('vehiculo_picoyplaca_domingo'),
+      )   .filter(Vehiculos.NUMERO == vehicle_id) \
+          .first()
+      
+      vehicle_info = {
+          'vehiculo_numero': vehicle.vehiculo_numero,
+          'vehiculo_placa': vehicle.vehiculo_placa,
+          'vehiculo_consecutivo': vehicle.vehiculo_consecutivo,
+          'vehiculo_marca': vehicle.vehiculo_marca,
+          'vehiculo_modelo': vehicle.vehiculo_modelo,
+          'vehiculo_año': vehicle.vehiculo_año,
+          'vehiculo_cilindraje': vehicle.vehiculo_cilindraje,
+          'vehiculo_nro_puertas': vehicle.vehiculo_nro_puertas,
+          'vehiculo_licencia_nro': vehicle.vehiculo_licencia_nro,
+          'vehiculo_licencia_fec': vehicle.vehiculo_licencia_fec,
+          'vehiculo_color': vehicle.vehiculo_color,
+          'vehiculo_servicio': vehicle.vehiculo_servicio,
+          'vehiculo_fec_matricula': vehicle.vehiculo_fec_matricula,
+          'vehiculo_fec_vencimiento_matricula': vehicle.vehiculo_fec_vencimiento_matricula,
+          'vehiculo_fec_importacion': vehicle.vehiculo_fec_importacion,
+          'vehicul_clase': vehicle.vehicul_clase,
+          'vehiculo_tipo': vehicle.vehiculo_tipo,
+          'vehiculo_combustible': vehicle.vehiculo_combustible,
+          'vehiculo_capacidad': vehicle.vehiculo_capacidad,
+          'vehiculo_ne': vehicle.vehiculo_ne,
+          'vehiculo_motor': vehicle.vehiculo_motor,
+          'vehiculo_motor_reg': vehicle.vehiculo_motor_reg,
+          'vehiculo_vin': vehicle.vehiculo_vin,
+          'vehiculo_serie': vehicle.vehiculo_serie,
+          'vehiculo_serie_reg': vehicle.vehiculo_serie_reg,
+          'vehiculo_chasis': vehicle.vehiculo_chasis,
+          'vehiculo_chasis_reg': vehicle.vehiculo_chasis_reg,
+          'vehiculo_propietario': vehicle.vehiculo_propietario,
+          'vehiculo_cta_gasto': vehicle.vehiculo_cta_gasto,
+          'vehiculo_central': vehicle.vehiculo_central,
+          'vehiculo_fec_creacion': vehicle.vehiculo_fec_creacion,
+          'vehiculo_nro_cupo': vehicle.vehiculo_nro_cupo,
+          'vehiculo_permiso_nro': vehicle.vehiculo_permiso_nro,
+          'vehiculo_fec_vencimiento_permiso': vehicle.vehiculo_fec_vencimiento_permiso,
+          'vehiculo_blindaje': vehicle.vehiculo_blindaje,
+          'vehiculo_potencia': vehicle.vehiculo_potencia,
+          'vehiculo_dec_importacion': vehicle.vehiculo_dec_importacion,
+          'vehiculo_restriccion_movilidad': vehicle.vehiculo_restriccion_movilidad,
+          'vehiculo_limit_propiedad': vehicle.vehiculo_limit_propiedad,
+          'vehiculo_organismo_transito': vehicle.vehiculo_organismo_transito, 
+          'vehiculo_codigo_barras': vehicle.vehiculo_codigo_barras,
+          'vehiculo_lateral': vehicle.vehiculo_lateral,
+          'vehiculo_kilometraje': vehicle.vehiculo_kilometraje,
+          'vehiculo_modalidad': vehicle.vehiculo_modalidad,
+          'vehiculo_consulta_panapass': vehicle.vehiculo_consulta_panapass,
+          'vehiculo_panapass': vehicle.vehiculo_panapass, 
+          'vehiculo_panapass_pwd': vehicle.vehiculo_panapass_pwd,
+          'vehiculo_placa_particular': vehicle.vehiculo_placa_particular,
+          'vehiculo_placa_particular_vence': vehicle.vehiculo_placa_particular_vence,
+          'vehiculo_placa_publica': vehicle.vehiculo_placa_publica,
+          'vehiculo_placa_publica_vence': vehicle.vehiculo_placa_publica_vence,
+          'vehiculo_poliza_responsabilidad_civil': vehicle.vehiculo_poliza_responsabilidad_civil,
+          'vehiculo_poliza_responsabilidad_civil_vence': vehicle.vehiculo_poliza_responsabilidad_civil_vence,
+          'vehiculo_extinguidor': vehicle.vehiculo_extinguidor,
+          'vehiculo_extinguidor_vence': vehicle.vehiculo_extinguidor_vence,
+          'vehiculo_certificado_operacion': vehicle.vehiculo_certificado_operacion,
+          'vehiculo_certificado_operacion_fec': vehicle.vehiculo_certificado_operacion_fec,
+          'vehiculo_nro_total_cuotas': vehicle.vehiculo_nro_total_cuotas,
+          'vehiculo_vlr_cuo_diaria': vehicle.vehiculo_vlr_cuo_diaria,
+          'vehiculo_renta_diaria': vehicle.vehiculo_renta_diaria,
+          'vehiculo_ahorro_siniestro': vehicle.vehiculo_ahorro_siniestro,
+          'vehiculo_cobro_admon': vehicle.vehiculo_cobro_admon,
+          'vehiculo_admon': vehicle.vehiculo_admon,
+          'vehiculo_reposicion': vehicle.vehiculo_reposicion,
+          'vehiculo_mantenimiento': vehicle.vehiculo_mantenimiento,
+          'vehiculo_rendimientos_propietario': vehicle.vehiculo_rendimientos_propietario,
+          'vehiculo_pago_lunes': vehicle.vehiculo_pago_lunes,
+          'vehiculo_pago_martes': vehicle.vehiculo_pago_martes,
+          'vehiculo_pago_miercoles': vehicle.vehiculo_pago_miercoles,
+          'vehiculo_pago_jueves': vehicle.vehiculo_pago_jueves,
+          'vehiculo_pago_viernes': vehicle.vehiculo_pago_viernes,
+          'vehiculo_pago_sabado': vehicle.vehiculo_pago_sabado,
+          'vehiculo_pago_domingo': vehicle.vehiculo_pago_domingo,
+          'vehiculo_forma_pago': vehicle.vehiculo_forma_pago,
+          'vehiculo_multa_pago': vehicle.vehiculo_multa_pago,
+          'vehiculo_fec_primer_pago': vehicle.vehiculo_fec_primer_pago,
+          'vehiculo_fec_ultimo_pago': vehicle.vehiculo_fec_ultimo_pago,
+          'vehiculo_vlr_ultimo_pago': vehicle.vehiculo_vlr_ultimo_pago,
+          'vehiculo_recibo': vehicle.vehiculo_recibo,
+          'vehiculo_primer_mantenimiento': vehicle.vehiculo_primer_mantenimiento,
+          'vehiculo_ultimo_mantenimiento': vehicle.vehiculo_ultimo_mantenimiento,
+          'vehiculo_categoria': vehicle.vehiculo_categoria,
+          'vehiculo_tipo_llave': vehicle.vehiculo_tipo_llave,
+          'vehiculo_posicion_llave': vehicle.vehiculo_posicion_llave,
+          'vehiculo_fec_estado': vehicle.vehiculo_fec_estado,
+          'vehiculo_plan_pago': vehicle.vehiculo_plan_pago,
+          'vehiculo_prendido_apagado': vehicle.vehiculo_prendido_apagado,
+          'vehiculo_piquera': vehicle.vehiculo_piquera,
+          'vehiculo_fec_inicio_piquera': vehicle.vehiculo_fec_inicio_piquera,
+          'vehiculo_factura_compra': vehicle.vehiculo_factura_compra,
+          'vehiculo_fec_factura_compra': vehicle.vehiculo_fec_factura_compra,
+          'vehiculo_valor_compra': vehicle.vehiculo_valor_compra,
+          'vehiculo_num_poliza': vehicle.vehiculo_num_poliza,
+          'vehiculo_fec_poliza': vehicle.vehiculo_fec_poliza,
+          'vehiculo_observaciones': vehicle.vehiculo_observaciones,
+          'vehiculo_picoyplaca_lunes': vehicle.vehiculo_picoyplaca_lunes,
+          'vehiculo_picoyplaca_martes': vehicle.vehiculo_picoyplaca_martes,
+          'vehiculo_picoyplaca_miercoles': vehicle.vehiculo_picoyplaca_miercoles,
+          'vehiculo_picoyplaca_jueves': vehicle.vehiculo_picoyplaca_jueves,
+          'vehiculo_picoyplaca_viernes': vehicle.vehiculo_picoyplaca_viernes,
+          'vehiculo_picoyplaca_sabado': vehicle.vehiculo_picoyplaca_sabado,
+          'vehiculo_picoyplaca_domingo': vehicle.vehiculo_picoyplaca_domingo,
+      }
+
+      return JSONResponse(content=jsonable_encoder(vehicle_info))
+   except Exception as e:
+      return JSONResponse(content={"error": str(e)})
+   finally:
+      db.close()
 
 #-------------------------------------------------------------------------------------------
 
@@ -544,7 +767,7 @@ def update_vehicle(vehicle_id: str, vehicle: VehicleUpdate):
 #-------------------------------------------------------------------------------------------
 
 @vehicles_router.delete("/vehicle-delete/{vehicle_id}", tags=["Vehicles"])
-async def verify_vehicle_delete(vehicle_id: int):
+async def verify_vehicle_delete(vehicle_id: str):
     db = session()
     try:
         vehicle = db.query(
@@ -591,7 +814,7 @@ async def verify_vehicle_delete(vehicle_id: int):
 #-------------------------------------------------------------------------------------------
 
 @vehicles_router.get("/verify-vehicle-delete/{vehicle_id}", tags=["Vehicles"])
-async def verify_vehicle_delete(vehicle_id: int):
+async def verify_vehicle_delete(vehicle_id: str):
   db = session()
   try: 
     vehicle = db.query(

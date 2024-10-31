@@ -75,8 +75,6 @@ async def get_drivers():
   finally:
     db.close()
 
-#-----------------------------------------------------------------------------------------------
-
 #-------------------------------------------------------------------------------------------
 @drivers_router.get('/directorio-conductores', tags=["Drivers"])
 async def get_conductores_detalles():
