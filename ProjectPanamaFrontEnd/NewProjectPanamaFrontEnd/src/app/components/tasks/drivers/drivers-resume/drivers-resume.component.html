@@ -75,7 +75,7 @@
     
         <div class="form-group">
           <label for="cedula">C.C:</label><br>
-          <input class="small" type="number" id="cedula" name="cedula" [value]="data.cedula" disabled><br>
+          <input class="small" type="number" id="cedula" name="cedula" [(ngModel)]="data.cedula" [disabled]="!isEditable"><br>
         </div>
       </div>
 
