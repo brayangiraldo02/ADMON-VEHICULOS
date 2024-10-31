@@ -10,7 +10,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 export class DriversResumeComponent implements OnInit {
   selectedButton: string = "personal";
   imageDriver: string = "https://www.w3schools.com/howto/img_avatar.png";
-  signatureDriver: string = "https://www.w3schools.com/howto/img_avatar.png";
+  signatureDriver: string = "https://media.istockphoto.com/id/1346710963/es/vector/icono-de-l%C3%ADnea-de-firma-s%C3%ADmbolo-de-firma-digital-reconocimiento-biom%C3%A9trico-de-escritura-a.jpg?s=612x612&w=0&k=20&c=1tSrVg5-N5qSRy7Y52FOtrehtoM54rRNCcNzlPh6gWg=";
 
   isEditable = false;
   centralFound = false;
