@@ -4,7 +4,7 @@ from typing import Optional
 class ConductorUpdate(BaseModel):
   nombre: Optional[str] = None
   apellido: Optional[str] = None
-  cedula: Optional[str] = None
+  cedula: int = 0
   licencia_numero: Optional[str] = None
   licencia_categoria: Optional[str] = None
   licencia_vencimiento: Optional[str] = None

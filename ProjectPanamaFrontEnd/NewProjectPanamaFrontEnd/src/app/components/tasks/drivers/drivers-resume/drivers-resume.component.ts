@@ -110,26 +110,26 @@ export class DriversResumeComponent implements OnInit {
     this.isEditable = false;
   }
 
-  newData() {
-    const fields = [
-      'nombre', 'ciudad', 'telefono', 'celular', 'correo', 'sexo', 'direccion', 'representa', 'estado_civil', 'contacto', 'contacto1', 'contacto2', 'tel_contacto', 'tel_contacto1', 'tel_contacto2', 'par_contacto', 'par_contacto1', 'par_contacto2', 'estado', 'cruce_ahorros', 'licencia_numero', 'licencia_categoria', 'licencia_vencimiento', 'detalle', 'observaciones'
-    ]
-    const dataToSave: any = {};
-    fields.forEach(field => {
-      const element = document.getElementById(field) as HTMLInputElement;
-      if (element) {
-        dataToSave[field] = element.value;
-      }
-    });
+  // newData() {
+  //   const fields = [
+  //     'nombre', 'ciudad', 'telefono', 'celular', 'correo', 'sexo', 'direccion', 'representa', 'estado_civil', 'contacto', 'contacto1', 'contacto2', 'tel_contacto', 'tel_contacto1', 'tel_contacto2', 'par_contacto', 'par_contacto1', 'par_contacto2', 'estado', 'cruce_ahorros', 'licencia_numero', 'licencia_categoria', 'licencia_vencimiento', 'detalle', 'observaciones', 'cedula'
+  //   ]
+  //   const dataToSave: any = {};
+  //   fields.forEach(field => {
+  //     const element = document.getElementById(field) as HTMLInputElement;
+  //     if (element) {
+  //       dataToSave[field] = element.value;
+  //     }
+  //   });
     
-    // Add the 'codigo' field which should be read-only
-    const codigoElement = document.getElementById('codigo') as HTMLInputElement;
-    if (codigoElement) {
-      dataToSave['codigo'] = codigoElement.value;
-    }
+  //   // Add the 'codigo' field which should be read-only
+  //   const codigoElement = document.getElementById('codigo') as HTMLInputElement;
+  //   if (codigoElement) {
+  //     dataToSave['codigo'] = codigoElement.value;
+  //   }
 
-    return dataToSave;
-  }
+  //   return dataToSave;
+  // }
 
   checkModifiedData(): boolean {
     for (const key in this.data) {
@@ -138,6 +138,7 @@ export class DriversResumeComponent implements OnInit {
       //     this.data[key] = '0000-00-00';
       //   }
       // }
+      // console.log(`Key: ${key}, data: ${this.data[key]}, dataOriginal: ${this.dataOriginal[key]}`)
       if (this.data[key] !== this.dataOriginal[key]) {
         if(key == 'estado'){
           this.stateEdited = true;
@@ -153,7 +154,7 @@ export class DriversResumeComponent implements OnInit {
 
     const modifiedData = this.checkModifiedData();
 
-    // console.log(modifiedData)
+    console.log(modifiedData)
 
     if (!modifiedData) {
       window.alert('No se ha modificado ningún dato.');
@@ -163,7 +164,7 @@ export class DriversResumeComponent implements OnInit {
 
     this.data['stateEdited'] = this.stateEdited;
 
-    // console.log('Data to save:', this.data);
+    console.log('Data to save:', this.data);
   
     this.apiService.updateData(`driver/${this.code}`, this.data).subscribe(
       (response) => {
