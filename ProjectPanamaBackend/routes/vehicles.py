@@ -245,70 +245,70 @@ async def get_vehiculos_detalles():
 
 #-------------------------------------------------------------------------------------------
 
-@vehicles_router.get("/vehicles/{vehicle_id}", tags=["Vehicles"])
-async def get_vehicle(vehicle_id: str):
-  db = session()
-  try:
-    vehicle = db.query(
-            Vehiculos.NUMERO.label('vehiculo_numero'),
-            Vehiculos.PLACA.label('vehiculo_placa'),
-            Vehiculos.MODELO.label('vehiculo_modelo'),
-            Vehiculos.NRO_CUPO.label('vehiculo_nro_cupo'),
-            Vehiculos.PERMISONRO.label('vehiculo_permiso_nro'),
-            Vehiculos.MOTORNRO.label('vehiculo_motor'),
-            Vehiculos.CHASISNRO.label('vehiculo_chasis'),
-            Vehiculos.FEC_MATRIC.label('vehiculo_fec_matricula'),
-            Vehiculos.EMPRESA.label('vehiculo_empresa'),
-            Conductores.NOMBRE.label('vehiculo_conductor'),
-            Estados.NOMBRE.label('vehiculo_estado'),
-            Vehiculos.CUO_DIARIA.label('vehiculo_cuota_diaria'),
-            Vehiculos.NROENTREGA.label('vehiculo_nro_Ctas'),
-            Vehiculos.PANAPASSNU.label('vehiculo_panapass'),
-            Vehiculos.PANAPASSPW.label('vehiculo_panapass_pwd'),
-            Vehiculos.SDO_PANAPA.label('vehiculo_saldo_panapass'),
-        )   .join(Estados, Estados.CODIGO == Vehiculos.ESTADO) \
-            .join(Conductores, Conductores.CODIGO == Vehiculos.CONDUCTOR) \
-            .filter(Vehiculos.PLACA == vehicle_id) \
-            .first()
+# @vehicles_router.get("/vehicles/{vehicle_id}", tags=["Vehicles"])
+# async def get_vehicle(vehicle_id: str):
+#   db = session()
+#   try:
+#     vehicle = db.query(
+#             Vehiculos.NUMERO.label('vehiculo_numero'),
+#             Vehiculos.PLACA.label('vehiculo_placa'),
+#             Vehiculos.MODELO.label('vehiculo_modelo'),
+#             Vehiculos.NRO_CUPO.label('vehiculo_nro_cupo'),
+#             Vehiculos.PERMISONRO.label('vehiculo_permiso_nro'),
+#             Vehiculos.MOTORNRO.label('vehiculo_motor'),
+#             Vehiculos.CHASISNRO.label('vehiculo_chasis'),
+#             Vehiculos.FEC_MATRIC.label('vehiculo_fec_matricula'),
+#             Vehiculos.EMPRESA.label('vehiculo_empresa'),
+#             Conductores.NOMBRE.label('vehiculo_conductor'),
+#             Estados.NOMBRE.label('vehiculo_estado'),
+#             Vehiculos.CUO_DIARIA.label('vehiculo_cuota_diaria'),
+#             Vehiculos.NROENTREGA.label('vehiculo_nro_Ctas'),
+#             Vehiculos.PANAPASSNU.label('vehiculo_panapass'),
+#             Vehiculos.PANAPASSPW.label('vehiculo_panapass_pwd'),
+#             Vehiculos.SDO_PANAPA.label('vehiculo_saldo_panapass'),
+#         )   .join(Estados, Estados.CODIGO == Vehiculos.ESTADO) \
+#             .join(Conductores, Conductores.CODIGO == Vehiculos.CONDUCTOR) \
+#             .filter(Vehiculos.PLACA == vehicle_id) \
+#             .first()
 
-    vehicle_info = {
-      'unidad': vehicle.vehiculo_numero,
-      'placa': vehicle.vehiculo_placa,
-      'modelo': vehicle.vehiculo_modelo,
-      'nro_cupo': vehicle.vehiculo_nro_cupo,
-      'permiso': vehicle.vehiculo_permiso_nro,
-      'motor': vehicle.vehiculo_motor,
-      'chasis': vehicle.vehiculo_chasis,
-      'matricula': vehicle.vehiculo_fec_matricula,
-      'empresa': vehicle.vehiculo_empresa,
-      'conductor': vehicle.vehiculo_conductor,
-      'estado': vehicle.vehiculo_estado,
-      'vlr_cta': vehicle.vehiculo_cuota_diaria,
-      'nro_ctas': vehicle.vehiculo_nro_Ctas,
-      'panapass': vehicle.vehiculo_panapass,
-      'clave': vehicle.vehiculo_panapass_pwd,
-      'saldo': vehicle.vehiculo_saldo_panapass
-    }
+#     vehicle_info = {
+#       'unidad': vehicle.vehiculo_numero,
+#       'placa': vehicle.vehiculo_placa,
+#       'modelo': vehicle.vehiculo_modelo,
+#       'nro_cupo': vehicle.vehiculo_nro_cupo,
+#       'permiso': vehicle.vehiculo_permiso_nro,
+#       'motor': vehicle.vehiculo_motor,
+#       'chasis': vehicle.vehiculo_chasis,
+#       'matricula': vehicle.vehiculo_fec_matricula,
+#       'empresa': vehicle.vehiculo_empresa,
+#       'conductor': vehicle.vehiculo_conductor,
+#       'estado': vehicle.vehiculo_estado,
+#       'vlr_cta': vehicle.vehiculo_cuota_diaria,
+#       'nro_ctas': vehicle.vehiculo_nro_Ctas,
+#       'panapass': vehicle.vehiculo_panapass,
+#       'clave': vehicle.vehiculo_panapass_pwd,
+#       'saldo': vehicle.vehiculo_saldo_panapass
+#     }
     
-    return JSONResponse(content=jsonable_encoder(vehicle_info))
-  except Exception as e:    
-    return JSONResponse(content={"error": str(e)})
-  finally:
-    db.close()
+#     return JSONResponse(content=jsonable_encoder(vehicle_info))
+#   except Exception as e:    
+#     return JSONResponse(content={"error": str(e)})
+#   finally:
+#     db.close()
 
 #-------------------------------------------------------------------------------------------
 
-@vehicles_router.get("/vehicle-details/{vehicle_id}", tags=["Vehicles"])
+@vehicles_router.get("/vehicle/{vehicle_id}", tags=["Vehicles"])
 async def get_vehicle_details(vehicle_id: str):
-   db = session()
-   try:
+  db = session()
+  try:
       vehicle = db.query(
           Vehiculos.NUMERO.label('vehiculo_numero'),
           Vehiculos.PLACA.label('vehiculo_placa'),
           Vehiculos.CONSECUTIV.label('vehiculo_consecutivo'),
           Vehiculos.MARCA.label('vehiculo_marca'),
           Vehiculos.LINEA.label('vehiculo_modelo'),
-          Vehiculos.MODELO.label('vehiculo_año'),
+          Vehiculos.MODELO.label('vehiculo_fec_modelo'),
           Vehiculos.CILINDRAJE.label('vehiculo_cilindraje'),
           Vehiculos.PUERTAS.label('vehiculo_nro_puertas'),
           Vehiculos.LICETRANSI.label('vehiculo_licencia_nro'),
@@ -318,7 +318,7 @@ async def get_vehicle_details(vehicle_id: str):
           Vehiculos.FEC_MATRIC.label('vehiculo_fec_matricula'),
           Vehiculos.FEC_VENCIM.label('vehiculo_fec_vencimiento_matricula'),
           Vehiculos.FEC_IMPORT.label('vehiculo_fec_importacion'),
-          Vehiculos.CLASEVEHIC.label('vehicul_clase'),
+          Vehiculos.CLASEVEHIC.label('vehiculo_clase'),
           Vehiculos.TIPOCARROC.label('vehiculo_tipo'),
           Vehiculos.COMBUSTIBL.label('vehiculo_combustible'),
           Vehiculos.CAPACIDAD.label('vehiculo_capacidad'),
@@ -414,7 +414,7 @@ async def get_vehicle_details(vehicle_id: str):
           'vehiculo_consecutivo': vehicle.vehiculo_consecutivo,
           'vehiculo_marca': vehicle.vehiculo_marca,
           'vehiculo_modelo': vehicle.vehiculo_modelo,
-          'vehiculo_año': vehicle.vehiculo_año,
+          'vehiculo_fec_modelo': vehicle.vehiculo_fec_modelo,
           'vehiculo_cilindraje': vehicle.vehiculo_cilindraje,
           'vehiculo_nro_puertas': vehicle.vehiculo_nro_puertas,
           'vehiculo_licencia_nro': vehicle.vehiculo_licencia_nro,
@@ -424,7 +424,7 @@ async def get_vehicle_details(vehicle_id: str):
           'vehiculo_fec_matricula': vehicle.vehiculo_fec_matricula,
           'vehiculo_fec_vencimiento_matricula': vehicle.vehiculo_fec_vencimiento_matricula,
           'vehiculo_fec_importacion': vehicle.vehiculo_fec_importacion,
-          'vehicul_clase': vehicle.vehicul_clase,
+          'vehiculo_clase': vehicle.vehiculo_clase,
           'vehiculo_tipo': vehicle.vehiculo_tipo,
           'vehiculo_combustible': vehicle.vehiculo_combustible,
           'vehiculo_capacidad': vehicle.vehiculo_capacidad,
@@ -514,14 +514,14 @@ async def get_vehicle_details(vehicle_id: str):
       }
 
       return JSONResponse(content=jsonable_encoder(vehicle_info))
-   except Exception as e:
+  except Exception as e:
       return JSONResponse(content={"error": str(e)})
-   finally:
+  finally:
       db.close()
 
 #-------------------------------------------------------------------------------------------
 
-@vehicles_router.post("/vehicle-create", response_model=VehicleCreate, tags=["Vehicles"])
+@vehicles_router.post("/vehicles", response_model=VehicleCreate, tags=["Vehicles"])
 def create_vehicle(vehicle: VehicleCreate):
     db = session()
     try:
@@ -647,7 +647,7 @@ def create_vehicle(vehicle: VehicleCreate):
 
 #-------------------------------------------------------------------------------------------
 
-@vehicles_router.post("/vehicle/{vehicle_id}", response_model = VehicleUpdate, tags=["Vehicles"])
+@vehicles_router.put("/vehicle/{vehicle_id}", response_model = VehicleUpdate, tags=["Vehicles"])
 def update_vehicle(vehicle_id: str, vehicle: VehicleUpdate):
   db = session()
   try:
@@ -766,7 +766,7 @@ def update_vehicle(vehicle_id: str, vehicle: VehicleUpdate):
 
 #-------------------------------------------------------------------------------------------
 
-@vehicles_router.delete("/vehicle-delete/{vehicle_id}", tags=["Vehicles"])
+@vehicles_router.delete("/vehicle/{vehicle_id}", tags=["Vehicles"])
 async def verify_vehicle_delete(vehicle_id: str):
     db = session()
     try:

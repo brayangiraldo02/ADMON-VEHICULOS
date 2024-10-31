@@ -44,7 +44,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let item of filteredData" (dblclick)="goToDriverResume(item.unidad)">
+        <tr *ngFor="let item of filteredData" (dblclick)="goToVehicleResume(item.unidad)">
           <td class="col-campo1">{{ item.unidad }}</td>
           <td class="col-campo2">{{ item.placa }}</td>
           <td class="col-campo3">{{ item.modelo }}</td>

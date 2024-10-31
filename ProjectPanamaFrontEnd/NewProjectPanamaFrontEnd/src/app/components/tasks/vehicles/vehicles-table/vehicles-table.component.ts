@@ -73,7 +73,7 @@ export class VehiclesTableComponent {
     this.user = this.user.user_data.nombre;
   }
 
-  goToDriverResume(codigo: string) {
+  goToVehicleResume(codigo: string) {
     this.router.navigate(['/vehicle', codigo]);
   }
 

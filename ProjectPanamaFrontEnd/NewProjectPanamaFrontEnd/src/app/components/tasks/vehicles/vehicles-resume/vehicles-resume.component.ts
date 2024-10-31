@@ -28,6 +28,8 @@ export class VehiclesResumeComponent {
   users: any = null;
 
   code: string | null = null;
+
+  createDate: string = '';
   
 
   constructor(
@@ -40,7 +42,7 @@ export class VehiclesResumeComponent {
     this.route.paramMap.subscribe(params => {
       this.code = params.get('code');
     });
-    // this.fetchData();
+    this.fetchData();
     // this.delay(500);
     // this.getCities();
     // this.getDrivers();
@@ -51,12 +53,13 @@ export class VehiclesResumeComponent {
   }
 
   fetchData() {
-    this.apiService.getData(`driver/9412`).subscribe(
+    this.apiService.getData(`vehicle/`+this.code).subscribe(
       (response) => {
         this.data = response;
         this.dataOriginal = { ...this.data };
         this.stateEdited = false;
-        // console.log(this.data);
+        this.formatDate(this.data.vehiculo_fec_creacion)
+        console.log(this.data);
         this.isLoading = false;
         this.checkCity();
       },
@@ -65,6 +68,20 @@ export class VehiclesResumeComponent {
         
       }
     );
+  }
+
+  formatDate(fecha: string) {
+    const date = new Date(fecha);
+    const options: Intl.DateTimeFormatOptions = {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: true
+    };
+    this.createDate = date.toLocaleString('es-ES', options).replace(',', '');
   }
 
   getCities() {
@@ -107,27 +124,6 @@ export class VehiclesResumeComponent {
 
   disableInputs() {
     this.isEditable = false;
-  }
-
-  newData() {
-    const fields = [
-      'nombre', 'ciudad', 'telefono', 'celular', 'correo', 'sexo', 'direccion', 'representa', 'estado_civil', 'contacto', 'contacto1', 'contacto2', 'tel_contacto', 'tel_contacto1', 'tel_contacto2', 'par_contacto', 'par_contacto1', 'par_contacto2', 'estado', 'cruce_ahorros', 'licencia_numero', 'licencia_categoria', 'licencia_vencimiento', 'detalle', 'observaciones'
-    ]
-    const dataToSave: any = {};
-    fields.forEach(field => {
-      const element = document.getElementById(field) as HTMLInputElement;
-      if (element) {
-        dataToSave[field] = element.value;
-      }
-    });
-    
-    // Add the 'codigo' field which should be read-only
-    const codigoElement = document.getElementById('codigo') as HTMLInputElement;
-    if (codigoElement) {
-      dataToSave['codigo'] = codigoElement.value;
-    }
-
-    return dataToSave;
   }
 
   checkModifiedData(): boolean {
