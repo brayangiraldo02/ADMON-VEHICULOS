@@ -1,0 +1,605 @@
+<app-header></app-header>
+
+<div class="main-container">
+  <h1 class="title-container">VEHÍCULO {{code}}</h1>
+
+  <div class="buttons-container" *ngIf="!isLoading">
+
+    <button class="select back" type="button" routerLink="/vehicles">
+      <span class="material-symbols-outlined" translate="no">
+        arrow_back
+      </span>
+      <p class="select-text">Regresar</p>
+    </button>
+
+    <button class="select" type="button" (click)="goToVehicleOwnership()" [ngClass]="{'selected': selectedButton === 'propiedad'}">
+      <span class="material-symbols-outlined" translate="no">
+        badge
+      </span>
+      <p class="select-text">Tarjeta Propiedad</p>
+    </button>
+
+    <button class="select" type="button" (click)="goToVehicleDocuments()" [ngClass]="{'selected': selectedButton === 'documentos'}">
+      <span class="material-symbols-outlined" translate="no">
+        description
+      </span>
+      <p class="select-text">Documentos</p>
+    </button>
+
+    <button class="select" type="button" (click)="goToVehicleDrivers()" [ngClass]="{'selected': selectedButton === 'conductores'}">
+      <span class="material-symbols-outlined" translate="no">
+        id_card
+      </span>
+      <p class="select-text">Conductores</p>
+    </button>
+
+    <button class="select" type="button" (click)="goToVehicleIncome()" [ngClass]="{'selected': selectedButton === 'ingresos'}">
+      <span class="material-symbols-outlined" translate="no">
+        payments
+      </span>
+      <p class="select-text">Ingresos</p>
+    </button>
+
+    <button class="select" type="button" (click)="goToVehicleOrders()" [ngClass]="{'selected': selectedButton === 'ordenes'}">
+      <span class="material-symbols-outlined">
+        receipt_long
+      </span>
+      <p class="select-text">Ordenes</p>
+    </button>
+
+    <button class="select" type="button" (click)="goToVehicleTools()" [ngClass]="{'selected': selectedButton === 'herramientas'}">
+      <span class="material-symbols-outlined" translate="no">
+        handyman
+      </span>
+      <p class="select-text">Herramientas</p>
+    </button>
+
+    <button class="select" type="button" (click)="goToVehiclePhotos()" [ngClass]="{'selected': selectedButton === 'fotos'}">
+      <span class="material-symbols-outlined" translate="no">
+        image
+      </span>
+      <p class="select-text">Fotos</p>
+    </button>
+
+    <button class="select" type="button" (click)="goToVehicleDocumentation()" [ngClass]="{'selected': selectedButton === 'documentacion'}">
+      <span class="material-symbols-outlined" translate="no">
+        file_copy
+      </span>
+      <p class="select-text">Documentación</p>
+    </button>
+
+    <button class="select" type="button" (click)="goToVehiclePyG()" [ngClass]="{'selected': selectedButton === 'pyg'}">
+      <span class="material-symbols-outlined" translate="no">
+        request_quote
+      </span>
+      <p class="select-text">P y G</p>
+    </button>
+
+  </div>
+
+  <hr class="external" *ngIf="!isLoading">
+
+  <!-- INPUTS PERSONALES -->
+  <!-- -------------------------------------------------------------------------------------- -->
+  <div class="first-info">
+    <div class="info-code-container" *ngIf="!isLoading">
+      <div class="div-group all-size">
+        <div class="code-container gray-background">
+          <div class="form-group">
+            <label class="all-size" for="placa">PLACA N°:</label>
+            <input class="all-size" type="text" id="placa" name="placa" [disabled]="!isEditable"><br>
+          </div>
+  
+          <div class="form-group">
+            <label class="all-size" for="unidad">UNIDAD N°:</label>
+            <input class="all-size" type="text" id="unidad" name="unidad" [disabled]="!isEditable"><br>
+          </div>
+      
+          <div class="form-group">
+            <label class="all-size" for="consecutivo">CONSECUTIVO:</label>
+            <input class="all-size" type="number" id="consecutivo" name="consecutivo" disabled><br>
+          </div>
+        </div>
+  
+        <div class="media-container">
+          <img class="photo-container" [src]="this.imageVehicle">
+        </div>
+      </div>
+  
+    </div>
+
+    <div class="last-first-information">
+      <div class="form-group">
+        <label class="medium" for="fec_creacion">Fecha Creación:</label><br>
+        <input class="all-size" type="text" id="fec_creacion" name="fec_creacion" [disabled]="!isEditable"><br>
+      </div>
+    </div>
+  </div>
+
+  <hr class="external" *ngIf="!isLoading">
+
+  <div class="info-container" *ngIf="!isLoading">
+
+    <div class="div-group">
+      <div class="group-inputs">
+        <div class="form-group">
+          <label for="marca">Marca:</label><br>
+          <select class="all-size" id="marca" name="marca" [disabled]="!isEditable">
+            <option *ngFor="let city of cities" [ngValue]="city.codigo">{{ city.codigo }} - {{ city.nombre }}</option>
+          </select><br>
+        </div>
+      </div>
+
+      <div class="padding"></div>
+
+      <div class="group-inputs">
+        <div class="form-group">
+          <label for="modelo">Modelo:</label><br>
+          <input class="all-size" type="text" id="modelo" name="modelo" [disabled]="!isEditable"><br>
+        </div>
+      </div>
+
+      <div class="padding"></div>
+
+      <div class="group-inputs">
+        <div class="form-group">
+          <label for="fec_modelo">Año:</label><br>
+          <input class="all-size" type="text" id="fec_modelo" name="fec_modelo" [disabled]="!isEditable"><br>
+        </div>
+      </div>
+
+      <div class="padding"></div>
+
+      <div class="group-inputs">
+        <div class="form-group">
+          <label for="cilindraje">Cilindraje CC:</label><br>
+          <input class="all-size" type="text" id="cilindraje" name="cilindraje" [disabled]="!isEditable"><br>
+        </div>
+      </div>
+
+      <div class="padding"></div>
+
+      <div class="group-inputs">
+        <div class="form-group">
+          <label for="num_puertas">N° Puertas:</label><br>
+          <input class="all-size" type="text" id="num_puertas" name="num_puertas" [disabled]="!isEditable"><br>
+        </div>
+      </div>
+    </div>
+
+    <hr>
+    <!-- SIGUIENTE RENGLÓN -->
+
+    <div class="div-group">
+      <div class="group-inputs">
+        <div class="form-group">
+          <label for="num_licencia">Licencia Transito N°:</label><br>
+          <input class="all-size" type="text" id="num_licencia" name="num_licencia" [disabled]="!isEditable"><br>
+        </div>
+      </div>
+
+      <div class="padding"></div>
+
+      <div class="group-inputs">
+        <div class="form-group">
+          <label for="fec_licencia">Fecha Lic:</label><br>
+          <input class="all-size" type="text" id="fec_licencia" name="fec_licencia" [disabled]="!isEditable"><br>
+        </div>
+      </div>
+
+      <div class="padding"></div>
+
+      <div class="group-inputs">
+        <div class="form-group">
+          <label for="color">Color:</label><br>
+          <input class="all-size" type="text" id="color" name="color" [disabled]="!isEditable"><br>
+        </div>
+      </div>
+
+      <div class="padding"></div>
+
+      <div class="group-inputs">
+        <div class="form-group">
+          <label for="servicio">Servicio:</label><br>
+          <input class="all-size" type="text" id="servicio" name="servicio" [disabled]="!isEditable"><br>
+        </div>
+      </div>
+    </div>
+
+    <hr>
+    <!-- SIGUIENTE RENGLÓN -->
+    <div class="div-group">
+      <div class="group-inputs">
+        <div class="form-group">
+          <label for="fec_matricula">Fecha de la Matricula:</label><br>
+          <input class="all-size" type="text" id="fec_matricula" name="fec_matricula" [disabled]="!isEditable"><br>
+        </div>
+
+        <div class="form-group">
+          <label for="clase_vehiculo">Clase de Vehículo:</label><br>
+          <input class="all-size" type="text" id="clase_vehiculo" name="clase_vehiculo" [disabled]="!isEditable"><br>
+        </div>
+
+        <div class="form-group">
+          <label for="capacidad_kg">Capacidad Kg/Pasag:</label><br>
+          <input class="all-size" type="text" id="capacidad_kg" name="capacidad_kg" [disabled]="!isEditable"><br>
+        </div>
+      </div>
+
+      <div class="padding"></div>
+
+      <div class="group-inputs">
+        <div class="form-group">
+          <label for="fec_vencimiento">Fecha de Vencimiento:</label><br>
+          <input class="all-size" type="text" id="fec_vencimiento" name="fec_vencimiento" [disabled]="!isEditable"><br>
+        </div>
+
+        <div class="form-group">
+          <label for="tipo_carroceria">Tipo de Carroceria:</label><br>
+          <input class="all-size" type="text" id="tipo_carroceria" name="tipo_carroceria" [disabled]="!isEditable"><br>
+        </div>
+
+        <div class="form-group">
+          <label for="ne">Ne:</label><br>
+          <input class="all-size" type="text" id="ne" name="ne" [disabled]="!isEditable"><br>
+        </div>
+      </div>
+
+      <div class="padding"></div>
+
+      <div class="group-inputs">
+        <div class="form-group">
+          <label for="fec_importacion">Fecha de Importación:</label><br>
+          <input class="all-size" type="text" id="fec_importacion" name="fec_importacion" [disabled]="!isEditable"><br>
+        </div>
+
+        <div class="form-group">
+          <label for="combustible">Combustible:</label><br>
+          <input class="all-size" type="text" id="combustible" name="combustible" [disabled]="!isEditable"><br>
+        </div>
+
+        <div class="form-group">
+          <label for="vin">V.I.N:</label><br>
+          <input class="all-size" type="text" id="vin" name="vin" [disabled]="!isEditable"><br>
+        </div>
+      </div>
+    </div>
+
+    <hr class="internal-forms">
+
+    <!-- SIGUIENTE RENGLÓN -->
+
+    <div class="div-group">
+      <div class="group-inputs">
+        <div class="form-group">
+          <label for="num_motor">N° Motor:</label><br>
+          <input class="all-size" type="text" id="num_motor" name="num_motor" [disabled]="!isEditable"><br>
+        </div>
+
+        <div class="form-group">
+          <label for="num_serie">N° Serie:</label><br>
+          <input class="all-size" type="text" id="num_serie" name="num_serie" [disabled]="!isEditable"><br>
+        </div>
+
+        <div class="form-group">
+          <label for="num_chasis">N° Chasis:</label><br>
+          <input class="all-size" type="text" id="num_chasis" name="num_chasis" [disabled]="!isEditable"><br>
+        </div>
+      </div>
+
+      <div class="padding"></div>
+
+      <div class="group-inputs">
+        <div class="form-group">
+          <label for="reg_num_motor">Reg:</label><br>
+          <input class="all-size" type="text" id="reg_num_motor" name="reg_num_motor" [disabled]="!isEditable"><br>
+        </div>
+
+        <div class="form-group">
+          <label for="reg_num_serie">Reg:</label><br>
+          <input class="all-size" type="text" id="reg_num_serie" name="reg_num_serie" [disabled]="!isEditable"><br>
+        </div>
+
+        <div class="form-group">
+          <label for="reg_num_chasis">Reg:</label><br>
+          <input class="all-size" type="text" id="reg_num_chasis" name="reg_num_chasis" [disabled]="!isEditable"><br>
+        </div>
+      </div>
+    </div>
+
+    <hr class="internal-forms">
+
+    <!-- SIGUIENTE RENGLÓN -->
+    <div class="div-group">
+      <div class="group-inputs">
+        <div class="form-group">
+          <label for="propietario">Propietario:</label><br>
+          <select class="all-size" id="propietario" name="propietario" [disabled]="!isEditable">
+            <option *ngFor="let city of cities" [ngValue]="city.codigo">{{ city.codigo }} - {{ city.nombre }}</option>
+          </select><br>
+        </div>
+      </div>
+
+      <div class="padding"></div>
+
+      <div class="group-inputs">
+        <div class="form-group">
+          <label for="cta_gasto">Cta Gasto:</label><br>
+          <select class="all-size" id="cta_gasto" name="cta_gasto" [disabled]="!isEditable">
+            <option *ngFor="let city of cities" [ngValue]="city.codigo">{{ city.codigo }} - {{ city.nombre }}</option>
+          </select><br>
+        </div>
+      </div>
+
+      <div class="padding"></div>
+
+      <div class="group-inputs">
+        <div class="form-group">
+          <label for="central">Central:</label><br>
+          <select class="all-size" id="marca" name="marca" [disabled]="!isEditable">
+            <option *ngFor="let city of cities" [ngValue]="city.codigo">{{ city.codigo }} - {{ city.nombre }}</option>
+          </select><br>
+        </div>
+      </div>
+    </div>
+    
+  </div>
+
+  <hr class="external" *ngIf="!isLoading">
+
+  <div class="info-container padding-bottom" *ngIf="!isLoading">
+    <div class="div-group gray-background">
+      <div class="group-inputs">
+        <div class="title-container">
+          <h3>CUPO N° o Certificado de Operación:</h3>
+        </div>
+
+        <div class="form-group">
+          <input class="all-size" type="text" id="contacto" name="contacto" [disabled]="!isEditable"><br>
+        </div>
+      </div>
+
+      <div class="padding"></div>
+
+      <div class="group-inputs">
+        <div class="title-container">
+          <h3>PERMISO N°:</h3>
+        </div>
+
+        <div class="form-group">
+          <input class="all-size" type="text" id="contacto" name="contacto" [disabled]="!isEditable"><br>
+        </div>
+      </div>
+
+      <div class="padding"></div>
+
+      <div class="group-inputs">
+        <div class="title-container">
+          <h3>Vence Permiso:</h3>
+        </div>
+
+        <div class="form-group">
+          <input class="all-size" type="text" id="contacto" name="contacto" [disabled]="!isEditable"><br>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- -------------------------------------------------------------------------------------- -->
+
+  <hr class="external" *ngIf="!isLoading">
+
+  <div class="info-container">
+    <div class="div-group">
+      <div class="group-inputs">
+        <div class="form-group">
+          <label for="blindaje">Blindaje:</label><br>
+          <input class="all-size" type="text" id="blindaje" name="blindaje" [disabled]="!isEditable"><br>
+        </div>
+      </div>
+
+      <div class="padding"></div>
+
+      <div class="group-inputs">
+        <div class="form-group">
+          <label for="potencia">Potencia HP:</label><br>
+          <input class="all-size" type="text" id="potencia" name="potencia" [disabled]="!isEditable"><br>
+        </div>
+      </div>
+
+      <div class="padding"></div>
+
+      <div class="group-inputs">
+        <div class="form-group">
+          <label for="declaracion">Declaración Importación:</label><br>
+          <input class="all-size" type="text" id="declaracion" name="declaracion" [disabled]="!isEditable"><br>
+        </div>
+      </div>
+    </div>
+
+    <div class="last-first-information">
+      <div class="form-group">
+        <label for="restriccion_movilidad">Restricción de Movilidad:</label><br>
+        <input class="all-size" type="text" id="restriccion_movilidad" name="restriccion_movilidad" [disabled]="!isEditable"><br>
+      </div>
+    </div>
+
+    <div class="last-first-information">
+      <div class="form-group">
+        <label for="limitacion_propiedad">Limitación a la Propiedad:</label><br>
+        <input class="all-size" type="text" id="limitacion_propiedad" name="limitacion_propiedad" [disabled]="!isEditable"><br>
+      </div>
+    </div>
+
+    <div class="last-first-information">
+      <div class="form-group">
+        <label for="organismo_transito">Organismo de Transito:</label><br>
+        <input class="all-size" type="text" id="organismo_transito" name="organismo_transito" [disabled]="!isEditable"><br>
+      </div>
+    </div>
+
+    <div class="div-group">
+      <div class="group-inputs">
+        <div class="form-group">
+          <label for="codigo_barras">Código Barras:</label><br>
+          <input class="all-size" type="text" id="codigo_barras" name="codigo_barras" [disabled]="!isEditable"><br>
+        </div>
+      </div>
+
+      <div class="padding"></div>
+
+      <div class="group-inputs">
+        <div class="form-group">
+          <label for="lateral">Lateral:</label><br>
+          <input class="all-size" type="text" id="lateral" name="lateral" [disabled]="!isEditable"><br>
+        </div>
+      </div>
+
+      <div class="padding"></div>
+
+      <div class="group-inputs">
+        <div class="form-group">
+          <label for="kilometraje">Kilometraje:</label><br>
+          <input class="all-size" type="text" id="kilometraje" name="kilometraje" [disabled]="!isEditable"><br>
+        </div>
+      </div>
+
+      <div class="padding"></div>
+
+      <div class="group-inputs">
+        <div class="form-group">
+          <label for="modalidad">Modalidad:</label><br>
+          <select class="all-size" id="modalidad" name="modalidad" [disabled]="!isEditable">
+            <option *ngFor="let city of cities" [ngValue]="city.codigo">{{ city.codigo }} - {{ city.nombre }}</option>
+          </select><br>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="external" *ngIf="!isLoading">
+
+  <div class="info-container padding-bottom" *ngIf="!isLoading">
+    <div class="div-group gray-background">
+      <div class="group-inputs">
+        <div class="title-container">
+          <h3>Consultar Panapass:</h3>
+        </div>
+
+        <div class="form-group">
+          <select class="all-size" id="marca" name="marca" [disabled]="!isEditable">
+            <option *ngFor="let city of cities" [ngValue]="city.codigo">{{ city.codigo }} - {{ city.nombre }}</option>
+          </select><br>
+        </div>
+      </div>
+
+      <div class="padding"></div>
+
+      <div class="group-inputs">
+        <div class="title-container">
+          <h3>N° PanaPass:</h3>
+        </div>
+
+        <div class="form-group">
+          <input class="all-size" type="text" id="contacto" name="contacto" [disabled]="!isEditable"><br>
+        </div>
+      </div>
+
+      <div class="padding"></div>
+
+      <div class="group-inputs">
+        <div class="title-container">
+          <h3>Contraseña:</h3>
+        </div>
+
+        <div class="form-group">
+          <input class="all-size" type="text" id="contacto" name="contacto" [disabled]="!isEditable"><br>
+        </div>
+      </div>
+
+      <div class="padding"></div>
+
+      <div class="group-inputs">
+        <div class="title-container">
+          <h3>Saldo:</h3>
+        </div>
+
+        <div class="form-group">
+          <input class="all-size" type="text" id="contacto" name="contacto" [disabled]="!isEditable"><br>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="external" *ngIf="!isLoading">
+
+  <div class="buttons-container" *ngIf="!isLoading">
+
+    <div class="search-buttons-container" *ngIf="!isEditable">
+      <button class="select small-buttons" type="button">
+        <span class="material-symbols-outlined" translate="no">
+          first_page
+        </span>
+      </button>
+  
+      <button class="select small-buttons" type="button">
+        <span class="material-symbols-outlined" translate="no">
+          chevron_left
+        </span>
+      </button>
+  
+      <button class="select small-buttons" type="button">
+        <span class="material-symbols-outlined" translate="no">
+          chevron_right
+        </span>
+      </button>
+  
+      <button class="select small-buttons" type="button">
+        <span class="material-symbols-outlined" translate="no">
+          last_page
+        </span>
+      </button>
+    </div>
+
+    <button class="select" type="button" routerLink="/new-driver" *ngIf="!isEditable">
+      <span class="material-symbols-outlined" translate="no">
+        add_circle
+      </span>
+      <p class="select-text">Nuevo Conductor</p>
+    </button>
+
+    <button class="select" type="button" *ngIf="!isEditable">
+      <span class="material-symbols-outlined" translate="no">
+        delete
+      </span>
+      <p class="select-text">Eliminar Conductor</p>
+    </button>
+
+    <button class="select" type="button" (click)="enableInputs()" *ngIf="!isEditable">
+      <span class="material-symbols-outlined" translate="no">
+        edit
+      </span>
+      <p class="select-text">Editar</p>
+    </button>
+
+    <button class="select" type="button" *ngIf="isEditable">
+      <span class="material-symbols-outlined" translate="no">
+        check
+      </span>
+      <p class="select-text">Aceptar</p>
+    </button>
+
+    <button class="select back" type="button" (click)="enableInputs()" *ngIf="isEditable">
+      <span class="material-symbols-outlined" translate="no">
+        close
+      </span>
+      <p class="select-text">Cancelar</p>
+    </button>
+
+  </div>
+
+  <p *ngIf="isLoading">Cargando datos, por favor espere...</p>
+</div>
+
+<!-- <app-drivers-delete [isVisible]="isModalVisible" [driver]="code" (close)="hideModal()"></app-drivers-delete> -->
+<app-footer></app-footer>

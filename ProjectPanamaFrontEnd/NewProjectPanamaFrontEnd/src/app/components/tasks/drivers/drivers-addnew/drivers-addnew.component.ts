@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { ApiService } from 'src/app/services/api.service';
 import { ActivatedRoute, Router } from '@angular/router';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-drivers-addnew',
@@ -26,21 +27,57 @@ export class DriversAddnewComponent {
   users: any = null;
 
   code: string | null = null;
+
+  driverForm: FormGroup;
   
+  isLoading = true;
 
   constructor(
     private route: ActivatedRoute,
     private router: Router, 
-    private apiService: ApiService
-  ) {}
+    private apiService: ApiService,
+    private fb: FormBuilder
+  ) {
+    this.driverForm = this.fb.group({
+      codigo: ['', [Validators.required, Validators.pattern(/^\d{1,12}$/)]], 
+      nombre: ['', [Validators.required, Validators.maxLength(50)]],
+      cedula: ['', [Validators.required, Validators.pattern(/^\d{1,12}$/)]],
+      ciudad: [''],
+      telefono: ['', Validators.pattern(/^\d{1,30}$/)],
+      celular: ['', Validators.pattern(/^\d{1,30}$/)],
+      correo: ['', Validators.maxLength(40)],
+      sexo: [''],
+      fecha_ingreso: [''],
+      direccion: ['', Validators.maxLength(120)],
+      fecha_nacimiento: [''],
+      representa: ['', Validators.maxLength(30)],
+      estado_civil: [''],
+      fecha_retiro: [''],
+      contacto: ['', Validators.maxLength(40)],
+      contacto1: ['', Validators.maxLength(20)],
+      contacto2: ['', Validators.maxLength(20)],
+      tel_contacto: ['', Validators.pattern(/^\d{1,40}$/)],
+      tel_contacto1: ['', Validators.pattern(/^\d{1,40}$/)],
+      tel_contacto2: ['', Validators.pattern(/^\d{1,40}$/)],
+      par_contacto: ['', Validators.maxLength(20)],
+      par_contacto1: ['', Validators.maxLength(20)],
+      par_contacto2: ['', Validators.maxLength(20)],
+      estado: [''],
+      contrato_auto: [''],
+      cruce_ahorros: [''],
+      licencia_numero: ['', Validators.maxLength(12)],
+      licencia_categoria: ['', Validators.maxLength(2)],
+      licencia_vencimiento: [''],
+      detalle: ['', Validators.maxLength(50)],
+      observaciones: ['', Validators.maxLength(50)],
+    });
+  }
 
   ngOnInit(): void {
     this.fetchData();
     this.delay(500);
-    this.getUsers();
     this.getCities();
-    this.getCentral();
-    this.getDrivers()
+    this.getDrivers();
   }
 
   async delay(ms: number) {
@@ -83,126 +120,8 @@ export class DriversAddnewComponent {
     }
   }
 
-  getCentral() {
-    this.apiService.getData('central').subscribe(
-      (response) => {
-        this.central = response.filter((central: any) => central.codigo);
-        this.checkCentral();
-      },
-      (error) => {
-        console.log(error);
-      }
-    );
-  }
-
-  checkCentral() {
-    if (this.data && this.central) {
-      this.centralFound = this.central.some((central: any) => central.codigo === this.data.central);
-      if (!this.centralFound) {
-        this.central.push({
-          codigo: this.data.central,
-          nombre: "Central no encontrada"
-        });
-      }
-    }
-  }
-
-  getUsers() {
-    this.apiService.getData('users').subscribe(
-      (response) => {
-        this.users = response.filter((users: any) => users.codigo);
-        this.checkUsers();
-      },
-      (error) => {
-        console.log(error);
-      }
-    );
-  }
-
-  checkUsers() {
-    var varCodigo;
-    var varNombre  = "Sin Auditor";
-    if(this.data.auditor == null) {
-      this.data.auditor = '';
-      varCodigo = this.data.auditor;
-    }
-    else {
-      varCodigo = '';
-    }
-    if (this.data && this.users) {
-      this.usersFound = this.users.some((users: any) => users.codigo === this.data.auditor);
-      if (!this.usersFound) {
-        varCodigo = this.data.auditor;
-        if(varCodigo !== '') {
-          varNombre = "Auditor no encontrado";
-        }
-      }
-      this.users.push({
-        codigo: varCodigo,
-        nombre: varNombre
-      });
-    }
-  }
-
   selectButton(button: string) {
     this.selectedButton = button;
-  }
-
-  getDrivers() {
-    this.apiService.getData('drivers').subscribe(
-      (response) => {
-        this.drivers = response
-          .filter((drivers: any) => drivers.codigo)  // Filtramos los drivers con código
-          .sort((a: any, b: any) => a.codigo - b.codigo); // Ordenamos ascendente por código
-        
-        console.log(this.drivers);  // Verificamos el orden
-      },
-      (error) => {
-        console.log(error);
-      }
-    );
-  }
-  
-
-  nextDriver() {
-    const currentIndex = this.drivers.findIndex((driver: any) => driver.codigo === this.code);
-    if (currentIndex !== -1 && currentIndex < this.drivers.length - 1) {
-      const nextDriverId = this.drivers[currentIndex + 1].codigo;
-      this.router.navigate(['/driver/' + nextDriverId]).then(() => {
-        window.location.reload();
-      });
-    }
-
-    if(currentIndex === this.drivers.length - 1){
-      this.firstDriver()
-    }
-  }
-  
-  backDriver() {
-    const currentIndex = this.drivers.findIndex((driver: any) => driver.codigo === this.code);
-    if (currentIndex !== -1 && currentIndex > 0) {
-      const previousDriverId = this.drivers[currentIndex - 1].codigo;
-      this.router.navigate(['/driver/' + previousDriverId]).then(() => {
-        window.location.reload();
-      });
-    }
-
-    if (currentIndex === 0) {
-      this.lastDriver()
-    }
-  }
-  
-
-  firstDriver() {
-    this.router.navigate(['/driver/' + this.drivers[0].codigo]).then(() => {
-      window.location.reload();
-    });
-  }
-  
-  lastDriver() {
-    this.router.navigate(['/driver/' + this.drivers[this.drivers.length - 1].codigo]).then(() => {
-      window.location.reload();
-    });
   }
 
   goToDriverInfo() {
@@ -225,16 +144,77 @@ export class DriversAddnewComponent {
     this.selectButton('documentacion')
   }
 
-  showModal() {
-    this.isModalVisible = true;
-    document.documentElement.style.overflow = 'hidden';
-    document.body.style.overflow = 'hidden';
+  addDateFields(): void {
+    const dateFields = [
+      'fecha_nacimiento',
+      'fecha_retiro',
+      'fecha_inicio',
+      'fecha_prestamo',
+      'fecha_devolucion',
+      'fecha_siniestro',
+      'licencia_vencimiento',
+      'fecha_ingreso',
+      'fecha_tarjeta',
+      'fecha_1pago',
+      'fecha_ultpago',
+      'fecha_extencion',
+    ];
+
+    dateFields.forEach(field => {
+      if (!this.driverForm.get(field) || !this.driverForm.get(field)?.value) {
+        this.driverForm.addControl(field, this.fb.control('0000-00-00', Validators.required));
+      }
+    });
   }
 
-  hideModal() {
-    this.isModalVisible = false;
-    document.documentElement.style.overflow = '';
-    document.body.style.overflow = '';
+  getDrivers() {
+    this.apiService.getData('driver-codes').subscribe(
+      (response) => {
+        this.drivers = response.filter((drivers: any) => drivers);
+      },
+      (error) => {
+        console.log(error);
+      }
+    );
+  }
+
+  checkCode(): boolean {
+    const code = this.driverForm.get('codigo')?.value;
+    this.code = code;
+    if (code !== null && code !== undefined && code !== '') {
+      const owner = this.drivers.find((owner: any) => owner === code.toString());
+      if (owner) {
+        window.alert('El código ya existe.');
+        this.driverForm.get('codigo')?.setValue('');
+        return false;
+      }
+      return true;
+    }
+    return false;
+  }
+
+  onSubmit() {
+    if (this.driverForm.valid) {
+      if (this.checkCode()){
+        this.isLoading = false;
+        this.addDateFields();
+        const formData = this.driverForm.value;
+        console.log(formData);
+        this.apiService.postData('drivers', formData).subscribe(
+          (response) => {
+            window.alert('Propietario creado exitosamente.');
+            this.driverForm.reset();
+            this.router.navigate(['/driver/'+this.code]);
+          },
+          (error) => {
+            console.log(error);
+          }
+        );
+      }
+    }
+    else {
+      window.alert('Por favor, llene los campos correctamente.');
+    }
   }
 
 }

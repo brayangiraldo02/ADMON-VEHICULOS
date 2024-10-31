@@ -3,14 +3,13 @@ import { ApiService } from 'src/app/services/api.service';
 import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
-  selector: 'app-drivers-resume',
-  templateUrl: './drivers-resume.component.html',
-  styleUrls: ['./drivers-resume.component.css']
+  selector: 'app-vehicles-resume',
+  templateUrl: './vehicles-resume.component.html',
+  styleUrls: ['./vehicles-resume.component.css']
 })
-export class DriversResumeComponent implements OnInit {
-  selectedButton: string = "personal";
-  imageDriver: string = "https://www.w3schools.com/howto/img_avatar.png";
-  signatureDriver: string = "https://www.w3schools.com/howto/img_avatar.png";
+export class VehiclesResumeComponent {
+  selectedButton: string = "propiedad";
+  imageVehicle: string = "https://cdn5.dibujos.net/dibujos/pintados/202013/coche-urbano-vehiculos-coches-11735143.jpg";
 
   isEditable = false;
   centralFound = false;
@@ -18,9 +17,9 @@ export class DriversResumeComponent implements OnInit {
   cityFound = false;
   isModalVisible: boolean = false;
   stateEdited = false;
-  isLoading = true;
+  isLoading = false;
 
-  drivers: any = '';
+  // drivers: any = '';
 
   data: any = null;
   dataOriginal: any = null;
@@ -41,10 +40,10 @@ export class DriversResumeComponent implements OnInit {
     this.route.paramMap.subscribe(params => {
       this.code = params.get('code');
     });
-    this.fetchData();
-    this.delay(500);
-    this.getCities();
-    this.getDrivers();
+    // this.fetchData();
+    // this.delay(500);
+    // this.getCities();
+    // this.getDrivers();
   }
 
   async delay(ms: number) {
@@ -52,7 +51,7 @@ export class DriversResumeComponent implements OnInit {
   }
 
   fetchData() {
-    this.apiService.getData(`driver/${this.code}`).subscribe(
+    this.apiService.getData(`driver/9412`).subscribe(
       (response) => {
         this.data = response;
         this.dataOriginal = { ...this.data };
@@ -163,100 +162,113 @@ export class DriversResumeComponent implements OnInit {
 
     this.data['stateEdited'] = this.stateEdited;
 
-    // console.log('Data to save:', this.data);
+    console.log('Data to save:', this.data);
+    this.disableInputs();
   
-    this.apiService.updateData(`driver/${this.code}`, this.data).subscribe(
-      (response) => {
-        window.alert('Datos actualizados correctamente');
-        this.disableInputs();
-        // console.log(response);
-        location.reload();
-      },
-      (error) => {
-        console.log(error);
-      }
-    );
+    // this.apiService.updateData(`driver/${this.code}`, this.data).subscribe(
+    //   (response) => {
+    //     window.alert('Datos actualizados correctamente');
+    //     this.disableInputs();
+    //     // console.log(response);
+    //     location.reload();
+    //   },
+    //   (error) => {
+    //     console.log(error);
+    //   }
+    // );
   }
 
-  getDrivers() {
-    this.apiService.getData('drivers').subscribe(
-      (response) => {
-        this.drivers = response
-          .filter((drivers: any) => drivers.codigo)  // Filtramos los drivers con código
-          .sort((a: any, b: any) => a.codigo - b.codigo); // Ordenamos ascendente por código
+  // getDrivers() {
+  //   this.apiService.getData('drivers').subscribe(
+  //     (response) => {
+  //       this.drivers = response
+  //         .filter((drivers: any) => drivers.codigo)  // Filtramos los drivers con código
+  //         .sort((a: any, b: any) => a.codigo - b.codigo); // Ordenamos ascendente por código
         
-        // console.log(this.drivers); 
-      },
-      (error) => {
-        console.log(error);
-      }
-    );
-  }
+  //       // console.log(this.drivers); 
+  //     },
+  //     (error) => {
+  //       console.log(error);
+  //     }
+  //   );
+  // }
   
 
-  nextDriver() {
-    const currentIndex = this.drivers.findIndex((driver: any) => driver.codigo === this.code);
-    if (currentIndex !== -1 && currentIndex < this.drivers.length - 1) {
-      const nextDriverId = this.drivers[currentIndex + 1].codigo;
-      this.router.navigate(['/driver/' + nextDriverId]).then(() => {
-        window.location.reload();
-      });
-    }
+  // nextDriver() {
+  //   const currentIndex = this.drivers.findIndex((driver: any) => driver.codigo === this.code);
+  //   if (currentIndex !== -1 && currentIndex < this.drivers.length - 1) {
+  //     const nextDriverId = this.drivers[currentIndex + 1].codigo;
+  //     this.router.navigate(['/driver/' + nextDriverId]).then(() => {
+  //       window.location.reload();
+  //     });
+  //   }
 
-    if(currentIndex === this.drivers.length - 1){
-      this.firstDriver()
-    }
-  }
+  //   if(currentIndex === this.drivers.length - 1){
+  //     this.firstDriver()
+  //   }
+  // }
   
-  backDriver() {
-    const currentIndex = this.drivers.findIndex((driver: any) => driver.codigo === this.code);
-    if (currentIndex !== -1 && currentIndex > 0) {
-      const previousDriverId = this.drivers[currentIndex - 1].codigo;
-      this.router.navigate(['/driver/' + previousDriverId]).then(() => {
-        window.location.reload();
-      });
-    }
+  // backDriver() {
+  //   const currentIndex = this.drivers.findIndex((driver: any) => driver.codigo === this.code);
+  //   if (currentIndex !== -1 && currentIndex > 0) {
+  //     const previousDriverId = this.drivers[currentIndex - 1].codigo;
+  //     this.router.navigate(['/driver/' + previousDriverId]).then(() => {
+  //       window.location.reload();
+  //     });
+  //   }
 
-    if (currentIndex === 0) {
-      this.lastDriver()
-    }
-  }
+  //   if (currentIndex === 0) {
+  //     this.lastDriver()
+  //   }
+  // }
   
 
-  firstDriver() {
-    this.router.navigate(['/driver/' + this.drivers[0].codigo]).then(() => {
-      window.location.reload();
-    });
-  }
+  // firstDriver() {
+  //   this.router.navigate(['/driver/' + this.drivers[0].codigo]).then(() => {
+  //     window.location.reload();
+  //   });
+  // }
   
-  lastDriver() {
-    this.router.navigate(['/driver/' + this.drivers[this.drivers.length - 1].codigo]).then(() => {
-      window.location.reload();
-    });
+  // lastDriver() {
+  //   this.router.navigate(['/driver/' + this.drivers[this.drivers.length - 1].codigo]).then(() => {
+  //     window.location.reload();
+  //   });
+  // }
+
+  goToVehicleOwnership() {
+    this.selectButton('propiedad')
   }
 
-  goToDriverInfo() {
-    this.selectButton('personal')
+  goToVehicleDocuments() {
+    this.selectButton('documentos')
   }
 
-  goToDriverGeneral() {
-    this.selectButton('general')
+  goToVehicleDrivers() {
+    this.selectButton('conductores')
   }
 
-  goToDriverVehicles() {
-    this.selectButton('vehiculos')
-  }
-
-  goToDriverIncome() {
+  goToVehicleIncome() {
     this.selectButton('ingresos')
   }
 
-  goToDriverOrder() {
+  goToVehicleOrders() {
     this.selectButton('ordenes')
   }
 
-  goToDriverDocuments() {
+  goToVehicleTools() {
+    this.selectButton('herramientas')
+  }
+
+  goToVehiclePhotos() {
+    this.selectButton('fotos')
+  }
+
+  goToVehicleDocumentation() {
     this.selectButton('documentacion')
+  }
+
+  goToVehiclePyG() {
+    this.selectButton('pyg')
   }
 
   showModal() {

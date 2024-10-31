@@ -4,11 +4,11 @@ import { Router } from '@angular/router';
 import { JwtService } from 'src/app/services/jwt.service';
 
 @Component({
-  selector: 'app-vehicles',
-  templateUrl: './vehicles.component.html',
-  styleUrls: ['./vehicles.component.css']
+  selector: 'app-vehicles-table',
+  templateUrl: './vehicles-table.component.html',
+  styleUrls: ['./vehicles-table.component.css']
 })
-export class VehiclesComponent implements OnInit {
+export class VehiclesTableComponent {
   data: any[] = [];
   user: any;
   filteredData: any[] = [];
@@ -73,6 +73,10 @@ export class VehiclesComponent implements OnInit {
     this.user = this.user.user_data.nombre;
   }
 
+  goToDriverResume(codigo: string) {
+    this.router.navigate(['/vehicle', codigo]);
+  }
+
   openExternalLink(): void {
     this.isLoading = true;
     const data = { user: this.user };
@@ -81,4 +85,5 @@ export class VehiclesComponent implements OnInit {
     window.open(`/pdf`, '_blank')
     this.router.navigate(['/home']);
   }
+
 }

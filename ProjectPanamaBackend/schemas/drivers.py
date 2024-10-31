@@ -34,3 +34,44 @@ class ConductorUpdate(BaseModel):
   fecha_ingreso: Optional[str] = None
   fecha_retiro: Optional[str] = None
   stateEdited: Optional[bool] = False
+
+class ConductorCreate(BaseModel):
+  codigo: int
+  nombre: str
+  cedula: int
+  ciudad: Optional[str] = ''
+  telefono: Optional[str] = ''
+  celular: Optional[str] = ''
+  correo: Optional[str] = ''
+  sexo: Optional[str] = ''
+  fecha_ingreso: Optional[str] = ''
+  direccion: Optional[str] = ''
+  fecha_nacimiento: Optional[str] = ''
+  representa: Optional[str] = ''
+  estado_civil: Optional[str] = ''
+  fecha_retiro: Optional[str] = ''
+  contacto: Optional[str] = ''
+  contacto1: Optional[str] = ''
+  contacto2: Optional[str] = ''
+  tel_contacto: Optional[str] = ''
+  tel_contacto1: Optional[str] = ''
+  tel_contacto2: Optional[str] = ''
+  par_contacto: Optional[str] = ''
+  par_contacto1: Optional[str] = ''
+  par_contacto2: Optional[str] = ''
+  estado: Optional[str] = ''
+  contrato_auto: Optional[str] = ''
+  cruce_ahorros: Optional[str] = ''
+  licencia_numero: Optional[str] = ''
+  licencia_categoria: Optional[str] = ''
+  licencia_vencimiento: Optional[str] = ''
+  detalle: Optional[str] = ''
+  observaciones: Optional[str] = ''
+  fecha_prestamo: Optional[str] = ''
+  fecha_inicio: Optional[str] = ''
+  fecha_devolucion: Optional[str] = ''
+  fecha_siniestro: Optional[str] = ''
+  fecha_tarjeta: Optional[str] = ''
+  fecha_1pago: Optional[str] = ''
+  fecha_ultpago: Optional[str] = ''
+  fecha_extencion: Optional[str] = ''
