@@ -125,7 +125,7 @@
         <div class="form-group">
           <label for="marca">Marca:</label><br>
           <select class="all-size" id="marca" name="marca" [disabled]="!isEditable">
-            <option *ngFor="let city of cities" [ngValue]="city.codigo">{{ city.codigo }} - {{ city.nombre }}</option>
+            <option *ngFor="let brand of brands" [ngValue]="data.vehiculo_marca" [selected]="brand.codigo === data.vehiculo_marca">{{ brand.codigo }} - {{ brand.nombre }}</option>
           </select><br>
         </div>
       </div>
@@ -315,7 +315,7 @@
         <div class="form-group">
           <label for="propietario">Propietario:</label><br>
           <select class="all-size" id="propietario" name="propietario" [disabled]="!isEditable">
-            <option *ngFor="let city of cities" [ngValue]="city.codigo">{{ city.codigo }} - {{ city.nombre }}</option>
+            <option *ngFor="let owner of owners" [ngValue]="data.vehiculo_propietario" [selected]="owner.id === data.vehiculo_propietario">{{ owner.id }} - {{ owner.name }}</option>
           </select><br>
         </div>
       </div>
@@ -326,7 +326,7 @@
         <div class="form-group">
           <label for="cta_gasto">Cta Gasto:</label><br>
           <select class="all-size" id="cta_gasto" name="cta_gasto" [disabled]="!isEditable">
-            <option *ngFor="let city of cities" [ngValue]="city.codigo">{{ city.codigo }} - {{ city.nombre }}</option>
+            <!-- <option *ngFor="let city of cities" [ngValue]="city.codigo">{{ city.codigo }} - {{ city.nombre }}</option> -->
           </select><br>
         </div>
       </div>
@@ -336,8 +336,8 @@
       <div class="group-inputs">
         <div class="form-group">
           <label for="central">Central:</label><br>
-          <select class="all-size" id="marca" name="marca" [disabled]="!isEditable">
-            <option *ngFor="let city of cities" [ngValue]="city.codigo">{{ city.codigo }} - {{ city.nombre }}</option>
+          <select class="all-size" id="central" name="central" [disabled]="!isEditable">
+            <option *ngFor="let central of central" [ngValue]="data.vehiculo_central" [selected]="central.codigo === data.vehiculo_central">{{ central.codigo }} - {{ central.nombre }}</option>
           </select><br>
         </div>
       </div>
@@ -389,7 +389,7 @@
 
   <hr class="external" *ngIf="!isLoading">
 
-  <div class="info-container">
+  <div class="info-container" *ngIf="!isLoading">
     <div class="div-group">
       <div class="group-inputs">
         <div class="form-group">

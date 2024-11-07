@@ -17,14 +17,15 @@ export class VehiclesResumeComponent {
   cityFound = false;
   isModalVisible: boolean = false;
   stateEdited = false;
-  isLoading = false;
+  isLoading = true;
 
   // drivers: any = '';
 
   data: any = null;
   dataOriginal: any = null;
-  cities: any = null;
   central: any = null;
+  brands: any = null;
+  owners: any = null;
   users: any = null;
   vehicles: any = null;
 
@@ -44,9 +45,11 @@ export class VehiclesResumeComponent {
       this.code = params.get('code');
     });
     this.fetchData();
-    // this.delay(500);
-    // this.getCities();
+    this.delay(500);
     this.getVehicles();
+    this.getBrands();
+    this.getOwners();
+    this.getCentral();
   }
 
   async delay(ms: number) {
@@ -62,7 +65,7 @@ export class VehiclesResumeComponent {
         this.formatDate(this.data.vehiculo_fec_creacion)
         console.log(this.data);
         this.isLoading = false;
-        this.checkCity();
+        this.checkBrand();
       },
       (error) => {
         console.log(error);
@@ -85,11 +88,11 @@ export class VehiclesResumeComponent {
     this.createDate = date.toLocaleString('es-ES', options).replace(',', '');
   }
 
-  getCities() {
-    this.apiService.getData('cities').subscribe(
+  getBrands() {
+    this.apiService.getData('brands').subscribe(
       (response) => {
-        this.cities = response;
-        this.checkCity();
+        this.brands = response;
+        this.checkBrand();
       },
       (error) => {
         console.log(error);
@@ -97,13 +100,61 @@ export class VehiclesResumeComponent {
     );
   }
 
-  checkCity() {
-    if (this.data && this.cities) {
-      this.cityFound = this.cities.some((city: any) => city.codigo === this.data.ciudad);
-      if (!this.cityFound) {
-        this.cities.push({
-          codigo: this.data.ciudad,
-          nombre: "Ciudad no encontrada"
+  checkBrand() {
+    if (this.data && this.brands) {
+      const brandFound = this.brands.some((brand: any) => brand.codigo === this.data.vehiculo_marca);
+      if (!brandFound) {
+        this.brands.push({
+          codigo: this.data.vehiculo_marca,
+          nombre: "Marca no encontrada"
+        });
+      }
+    }
+  }
+
+  getOwners() {
+    this.apiService.getData('owners').subscribe(
+      (response) => {
+        this.owners = response;
+        this.checkOwner();
+      },
+      (error) => {
+        console.log(error);
+      }
+    );
+  }
+
+  checkOwner() {
+    if (this.data && this.owners) {
+      const ownerFound = this.owners.some((owner: any) => owner.id === this.data.vehiculo_propietario);
+      if (!ownerFound) {
+        this.owners.push({
+          id: this.data.vehiculo_propietario,
+          name: "Propietario no encontrado"
+        });
+      }
+    }
+  }
+
+  getCentral() {
+    this.apiService.getData('central').subscribe(
+      (response) => {
+        this.central = response;
+        this.checkCentral();
+      },
+      (error) => {
+        console.log(error);
+      }
+    );
+  }
+
+  checkCentral() {
+    if (this.data && this.central) {
+      const centralFound = this.central.some((central: any) => central.codigo === this.data.vehiculo_central);
+      if (!centralFound) {
+        this.central.push({
+          codigo: this.data.vehiculo_propietario,
+          nombre: "Propietario no encontrado"
         });
       }
     }
