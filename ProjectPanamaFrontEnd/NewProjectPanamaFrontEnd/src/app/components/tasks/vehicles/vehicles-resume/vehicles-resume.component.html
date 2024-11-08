@@ -326,7 +326,9 @@
         <div class="form-group">
           <label for="cta_gasto">Cta Gasto:</label><br>
           <select class="all-size" id="cta_gasto" name="cta_gasto" [disabled]="!isEditable">
-            <!-- <option *ngFor="let city of cities" [ngValue]="city.codigo">{{ city.codigo }} - {{ city.nombre }}</option> -->
+            <option value="" [selected]="data.vehiculo_cta_gasto === ''"> - </option>
+            <option *ngFor="let expenseAccount of expenseAccounts" [ngValue]="data.vehiculo_cta_gasto" [selected]="expenseAccount.codigo === data.vehiculo_cta_gasto
+            ">{{ expenseAccount.codigo }} - {{ expenseAccount.nombre }}</option>
           </select><br>
         </div>
       </div>
@@ -470,7 +472,7 @@
         <div class="form-group">
           <label for="vehiculo_modalidad">Modalidad:</label><br>
           <select class="all-size" id="vehiculo_modalidad" name="vehiculo_modalidad" [(ngModel)]="data.vehiculo_modalidad" [disabled]="!isEditable">
-            <option value="" disabled></option>
+            <option value="" [selected]="data.vehiculo_modalidad === ''" disabled> - </option>
             <option value="01">01 - Taxi</option>
           </select><br>
         </div>

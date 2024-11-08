@@ -28,6 +28,7 @@ export class VehiclesResumeComponent {
   owners: any = null;
   users: any = null;
   vehicles: any = null;
+  expenseAccounts: any = null;
 
   code: string | null = null;
 
@@ -49,6 +50,7 @@ export class VehiclesResumeComponent {
     this.getBrands();
     this.getOwners();
     this.getCentral();
+    this.getExpenseAccounts();
   }
 
   async delay(ms: number) {
@@ -69,6 +71,7 @@ export class VehiclesResumeComponent {
         console.log(this.data);
         this.isLoading = false;
         this.checkBrand();
+        // this.checkExpenseAccount();
       },
       (error) => {
         console.log(error);
@@ -182,6 +185,30 @@ export class VehiclesResumeComponent {
       }
     }
   }
+
+  getExpenseAccounts() {
+    this.apiService.getData('expense-accounts').subscribe(
+      (response) => {
+        this.expenseAccounts = response;
+        // this.checkExpenseAccount();
+      },
+      (error) => {
+        console.log(error);
+      }
+    );
+  }
+
+  // checkExpenseAccount() {
+  //   if (this.data && this.expenseAccounts) {
+  //     const expenseAccountFound = this.expenseAccounts.some((expenseAccount: any) => expenseAccount.codigo === this.data.vehiculo_cta_gasto);
+  //     if (!expenseAccountFound) {
+  //       this.expenseAccounts.push({
+  //         codigo: this.data.vehiculo_cuenta_gasto,
+  //         nombre: "Cuenta de gasto no encontrada"
+  //       });
+  //     }
+  //   }
+  // }
 
   selectButton(button: string) {
     this.selectedButton = button;
