@@ -183,7 +183,7 @@
       <div class="group-inputs">
         <div class="form-group">
           <label for="fec_licencia">Fecha Lic:</label><br>
-          <input class="all-size" type="text" id="fec_licencia" name="fec_licencia" [disabled]="!isEditable"><br>
+          <input class="all-size" type="date" id="fec_licencia" name="fec_licencia" [(ngModel)]="data.vehiculo_licencia_fec" [disabled]="!isEditable"><br>
         </div>
       </div>
 
@@ -212,7 +212,7 @@
       <div class="group-inputs">
         <div class="form-group">
           <label for="fec_matricula">Fecha de la Matricula:</label><br>
-          <input class="all-size" type="text" id="fec_matricula" name="fec_matricula" [disabled]="!isEditable"><br>
+          <input class="all-size" type="date" id="fec_matricula" name="fec_matricula" [disabled]="!isEditable"><br>
         </div>
 
         <div class="form-group">
@@ -231,7 +231,7 @@
       <div class="group-inputs">
         <div class="form-group">
           <label for="fec_vencimiento">Fecha de Vencimiento:</label><br>
-          <input class="all-size" type="text" id="fec_vencimiento" name="fec_vencimiento" [disabled]="!isEditable"><br>
+          <input class="all-size" type="date" id="fec_vencimiento" name="fec_vencimiento" [disabled]="!isEditable"><br>
         </div>
 
         <div class="form-group">
@@ -250,7 +250,7 @@
       <div class="group-inputs">
         <div class="form-group">
           <label for="fec_importacion">Fecha de Importación:</label><br>
-          <input class="all-size" type="text" id="fec_importacion" name="fec_importacion" [disabled]="!isEditable"><br>
+          <input class="all-size" type="date" id="fec_importacion" name="fec_importacion" [value]="data.vehiculo_fec_importacion" [disabled]="!isEditable"><br>
         </div>
 
         <div class="form-group">
@@ -584,7 +584,7 @@
       <p class="select-text">Editar</p>
     </button>
 
-    <button class="select" type="button" *ngIf="isEditable">
+    <button class="select" type="button" *ngIf="isEditable" (click)="saveData()">
       <span class="material-symbols-outlined" translate="no">
         check
       </span>

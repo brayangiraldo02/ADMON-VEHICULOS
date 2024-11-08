@@ -32,7 +32,6 @@ export class VehiclesResumeComponent {
   code: string | null = null;
 
   createDate: string = '';
-  
 
   constructor(
     private route: ActivatedRoute,
@@ -62,7 +61,11 @@ export class VehiclesResumeComponent {
         this.data = response;
         this.dataOriginal = { ...this.data };
         this.stateEdited = false;
-        this.formatDate(this.data.vehiculo_fec_creacion)
+        this.formatDate(this.data.vehiculo_fec_creacion);
+        this.data.vehiculo_licencia_fec = this.changeDate(this.data.vehiculo_licencia_fec);
+        this.data.vehiculo_fec_importacion = this.changeDate(this.data.vehiculo_fec_importacion);
+        this.data.vehiculo_fec_vencimiento_matricula = this.changeDate(this.data.vehiculo_fec_vencimiento_matricula);
+        this.data.vehiculo_fec_matricula = this.changeDate(this.data.vehiculo_fec_matricula);
         console.log(this.data);
         this.isLoading = false;
         this.checkBrand();
@@ -86,6 +89,26 @@ export class VehiclesResumeComponent {
       hour12: true
     };
     this.createDate = date.toLocaleString('es-ES', options).replace(',', '');
+  }
+
+  changeDate(fecha: string): string {
+    console.log("Fecha recibida: ", fecha);
+    
+    // Validar que la fecha no sea nula ni esté en formato incorrecto
+    if (fecha && fecha !== '0000-00-00') {
+      // Si tiene espacio y hora, dividir y tomar solo la parte de la fecha
+      return fecha.includes(' ') ? fecha.split(' ')[0] : fecha; // Extrae solo "YYYY-MM-DD"
+    }
+    return ''; // Si la fecha no es válida, devuelve una cadena vacía
+  }
+
+
+  // Función para convertir la fecha de "YYYY-MM-DD" a "YYYY-MM-DD 00:00:00"
+  finalDate(fecha: string): string {
+    if (fecha) {
+      return `${fecha} 00:00:00`; // Añade la hora "00:00:00" al final de la fecha
+    }
+    return '0000-00-00 00:00:00'; // Si la fecha no es válida, devuelve una fecha nula
   }
 
   getBrands() {
@@ -209,6 +232,11 @@ export class VehiclesResumeComponent {
     }
 
     this.data['stateEdited'] = this.stateEdited;
+
+    this.data.vehiculo_licencia_fec = this.finalDate(this.data.vehiculo_licencia_fec);
+    this.data.vehiculo_fec_importacion = this.finalDate(this.data.vehiculo_fec_importacion);
+    this.data.vehiculo_fec_vencimiento_matricula = this.finalDate(this.data.vehiculo_fec_vencimiento_matricula);
+    this.data.vehiculo_fec_matricula = this.finalDate(this.data.vehiculo_fec_matricula);
 
     console.log('Data to save:', this.data);
     this.disableInputs();

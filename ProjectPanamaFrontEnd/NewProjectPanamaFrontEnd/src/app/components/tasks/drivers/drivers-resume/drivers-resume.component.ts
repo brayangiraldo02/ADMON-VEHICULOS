@@ -57,7 +57,7 @@ export class DriversResumeComponent implements OnInit {
         this.data = response;
         this.dataOriginal = { ...this.data };
         this.stateEdited = false;
-        // console.log(this.data);
+        console.log(this.data);
         this.isLoading = false;
         this.checkCity();
       },
