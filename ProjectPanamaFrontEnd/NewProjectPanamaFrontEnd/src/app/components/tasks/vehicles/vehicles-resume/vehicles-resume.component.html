@@ -124,8 +124,8 @@
       <div class="group-inputs">
         <div class="form-group">
           <label for="marca">Marca:</label><br>
-          <select class="all-size" id="marca" name="marca" [disabled]="!isEditable">
-            <option *ngFor="let brand of brands" [ngValue]="data.vehiculo_marca" [selected]="brand.codigo === data.vehiculo_marca">{{ brand.codigo }} - {{ brand.nombre }}</option>
+          <select class="all-size" id="marca" name="marca" [(ngModel)]="data.vehiculo_marca" [disabled]="!isEditable">
+            <option *ngFor="let brand of brands" [ngValue]="brand.codigo" [selected]="brand.codigo === data.vehiculo_marca">{{ brand.codigo }} - {{ brand.nombre }}</option>
           </select><br>
         </div>
       </div>
@@ -314,8 +314,8 @@
       <div class="group-inputs">
         <div class="form-group">
           <label for="propietario">Propietario:</label><br>
-          <select class="all-size" id="propietario" name="propietario" [disabled]="!isEditable">
-            <option *ngFor="let owner of owners" [ngValue]="data.vehiculo_propietario" [selected]="owner.id === data.vehiculo_propietario">{{ owner.id }} - {{ owner.name }}</option>
+          <select class="all-size" id="propietario" name="propietario" [(ngModel)]="data.vehiculo_propietario" [disabled]="!isEditable">
+            <option *ngFor="let owner of owners" [ngValue]="owner.id" [selected]="owner.id === data.vehiculo_propietario">{{ owner.id }} - {{ owner.name }}</option>
           </select><br>
         </div>
       </div>
@@ -325,9 +325,9 @@
       <div class="group-inputs">
         <div class="form-group">
           <label for="cta_gasto">Cta Gasto:</label><br>
-          <select class="all-size" id="cta_gasto" name="cta_gasto" [disabled]="!isEditable">
-            <option value="" [selected]="data.vehiculo_cta_gasto === ''"> - </option>
-            <option *ngFor="let expenseAccount of expenseAccounts" [ngValue]="data.vehiculo_cta_gasto" [selected]="expenseAccount.codigo === data.vehiculo_cta_gasto
+          <select class="all-size" id="cta_gasto" name="cta_gasto" [(ngModel)]="data.vehiculo_cta_gasto" [disabled]="!isEditable">
+            <option [ngValue]="" [selected]="data.vehiculo_cta_gasto === ''"> - </option>
+            <option *ngFor="let expenseAccount of expenseAccounts" [ngValue]="expenseAccount.codigo" [selected]="expenseAccount.codigo === data.vehiculo_cta_gasto
             ">{{ expenseAccount.codigo }} - {{ expenseAccount.nombre }}</option>
           </select><br>
         </div>
@@ -338,8 +338,8 @@
       <div class="group-inputs">
         <div class="form-group">
           <label for="central">Central:</label><br>
-          <select class="all-size" id="central" name="central" [disabled]="!isEditable">
-            <option *ngFor="let central of central" [ngValue]="data.vehiculo_central" [selected]="central.codigo === data.vehiculo_central">{{ central.codigo }} - {{ central.nombre }}</option>
+          <select class="all-size" id="central" name="central" [(ngModel)]="data.vehiculo_central" [disabled]="!isEditable">
+            <option *ngFor="let central of central" [ngValue]="central.codigo" [selected]="central.codigo === data.vehiculo_central">{{ central.codigo }} - {{ central.nombre }}</option>
           </select><br>
         </div>
       </div>
@@ -472,8 +472,8 @@
         <div class="form-group">
           <label for="vehiculo_modalidad">Modalidad:</label><br>
           <select class="all-size" id="vehiculo_modalidad" name="vehiculo_modalidad" [(ngModel)]="data.vehiculo_modalidad" [disabled]="!isEditable">
-            <option value="" [selected]="data.vehiculo_modalidad === ''" disabled> - </option>
-            <option value="01">01 - Taxi</option>
+            <option [ngValue]="" [selected]="data.vehiculo_modalidad === ''"> - </option>
+            <option *ngFor="let modality of modalities" [ngValue]="modality.codigo" [selected]="modality.codigo === data.vehiculo_modalidad">{{ modality.codigo }} - {{ modality.nombre }}</option>
           </select><br>
         </div>
       </div>
@@ -490,9 +490,9 @@
         </div>
 
         <div class="form-group">
-          <select class="all-size" id="vehiculo_consulta_panapass" name="vehiculo_consulta_panapass" [disabled]="!isEditable">
-            <option [ngValue]="1">Sí</option>
-            <option [ngValue]="2">No</option>
+          <select class="all-size" id="vehiculo_consulta_panapass" name="vehiculo_consulta_panapass" [(ngModel)]="data.vehiculo_consulta_panapass"  [disabled]="!isEditable">
+            <option [ngValue]="'1'">Sí</option>
+            <option [ngValue]="'2'">No</option>
           </select><br>
         </div>
       </div>
@@ -529,7 +529,7 @@
         </div>
 
         <div class="form-group">
-          <input class="all-size" type="text" id="contacto" name="contacto" [disabled]="!isEditable"><br>
+          <input class="all-size" type="text" id="vehiculo_saldo_panapass" name="vehiculo_saldo_panapass" [(ngModel)]="data.vehiculo_saldo_panapass" disabled><br>
         </div>
       </div>
     </div>

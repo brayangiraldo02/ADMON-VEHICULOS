@@ -29,6 +29,7 @@ export class VehiclesResumeComponent {
   users: any = null;
   vehicles: any = null;
   expenseAccounts: any = null;
+  modalities: any = null;
 
   code: string | null = null;
 
@@ -51,6 +52,7 @@ export class VehiclesResumeComponent {
     this.getOwners();
     this.getCentral();
     this.getExpenseAccounts();
+    this.getModalities();
   }
 
   async delay(ms: number) {
@@ -61,13 +63,13 @@ export class VehiclesResumeComponent {
     this.apiService.getData(`vehicle/`+this.code).subscribe(
       (response) => {
         this.data = response;
-        this.dataOriginal = { ...this.data };
         this.stateEdited = false;
         this.formatDate(this.data.vehiculo_fec_creacion);
         this.data.vehiculo_licencia_fec = this.changeDate(this.data.vehiculo_licencia_fec);
         this.data.vehiculo_fec_importacion = this.changeDate(this.data.vehiculo_fec_importacion);
         this.data.vehiculo_fec_vencimiento_matricula = this.changeDate(this.data.vehiculo_fec_vencimiento_matricula);
         this.data.vehiculo_fec_matricula = this.changeDate(this.data.vehiculo_fec_matricula);
+        this.dataOriginal = { ...this.data };
         console.log(this.data);
         this.isLoading = false;
         this.checkBrand();
@@ -95,7 +97,7 @@ export class VehiclesResumeComponent {
   }
 
   changeDate(fecha: string): string {
-    console.log("Fecha recibida: ", fecha);
+    // console.log("Fecha recibida: ", fecha);
     
     // Validar que la fecha no sea nula ni esté en formato incorrecto
     if (fecha && fecha !== '0000-00-00') {
@@ -133,6 +135,30 @@ export class VehiclesResumeComponent {
         this.brands.push({
           codigo: this.data.vehiculo_marca,
           nombre: "Marca no encontrada"
+        });
+      }
+    }
+  }
+
+  getModalities() {
+    this.apiService.getData('modalities').subscribe(
+      (response) => {
+        this.modalities = response;
+        this.checkModality();
+      },
+      (error) => {
+        console.log(error);
+      }
+    );
+  }
+
+  checkModality() {
+    if (this.data && this.modalities) {
+      const modalityFound = this.modalities.some((modality: any) => modality.codigo === this.data.vehiculo_modalidad);
+      if (!modalityFound && this.data.vehiculo_modalidad !== '') {
+        this.modalities.push({
+          codigo: this.data.vehiculo_modalidad,
+          nombre: "Modalidad no encontrada"
         });
       }
     }
@@ -239,7 +265,7 @@ export class VehiclesResumeComponent {
         if(key == 'estado'){
           this.stateEdited = true;
         }
-        // console.log(`Difference found at key: ${key}, data: ${this.data[key]}, dataOriginal: ${this.dataOriginal[key]}`);
+        console.log(`Difference found at key: ${key}, data: ${this.data[key]}, dataOriginal: ${this.dataOriginal[key]}`);
         return true;
       }
     }
@@ -288,7 +314,7 @@ export class VehiclesResumeComponent {
           .filter((vehicles: any) => vehicles.vehiculo_numero)  // Filtramos los drivers con código
           .sort((a: any, b: any) => a.vehiculo_consecutivo - b.vehiculo_consecutivo);  // Ordenamos los drivers por código
         
-        console.log(this.vehicles); 
+        // console.log(this.vehicles); 
       },
       (error) => {
         console.log(error);
