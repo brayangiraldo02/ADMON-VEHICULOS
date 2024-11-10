@@ -572,7 +572,7 @@
       <p class="select-text">Nuevo Conductor</p>
     </button>
 
-    <button class="select" type="button" *ngIf="!isEditable">
+    <button class="select" type="button" *ngIf="!isEditable" (click)="showModal()">
       <span class="material-symbols-outlined" translate="no">
         delete
       </span>
@@ -605,5 +605,5 @@
   <p *ngIf="isLoading">Cargando datos, por favor espere...</p>
 </div>
 
-<!-- <app-drivers-delete [isVisible]="isModalVisible" [driver]="code" (close)="hideModal()"></app-drivers-delete> -->
+<app-vehicles-delete [isVisible]="isModalVisible" [vehicle]="code" (close)="hideModal()"></app-vehicles-delete>
 <app-footer></app-footer>
