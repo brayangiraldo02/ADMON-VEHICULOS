@@ -16,6 +16,8 @@ export class VehiclesResumeComponent {
   usersFound = false;
   cityFound = false;
   isModalVisible: boolean = false;
+  hasPermission: boolean = false;
+  grantedPermission: string = '';
   stateEdited = false;
   isLoading = true;
 
@@ -45,6 +47,7 @@ export class VehiclesResumeComponent {
     this.route.paramMap.subscribe(params => {
       this.code = params.get('code');
     });
+    this.modifyUnity();
     this.fetchData();
     this.delay(500);
     this.getVehicles();
@@ -114,6 +117,25 @@ export class VehiclesResumeComponent {
       return `${fecha} 00:00:00`; // Añade la hora "00:00:00" al final de la fecha
     }
     return '0000-00-00 00:00:00'; // Si la fecha no es válida, devuelve una fecha nula
+  }
+
+  modifyUnity() {
+    this.apiService.getData("verify-vehicle-delete/"+this.code).subscribe(
+      (response) => {
+
+        for (const [key, value] of Object.entries(response)) {
+          if (value === true) {
+            this.hasPermission = true;
+            this.grantedPermission = key;
+            break; 
+          }
+        }
+        console.log('Has Permission:', this.hasPermission);
+        console.log('Granted Permission:', this.grantedPermission);
+      },
+      (error) => {
+      }
+    );
   }
 
   getBrands() {

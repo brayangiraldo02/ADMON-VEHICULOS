@@ -92,7 +92,7 @@
   
           <div class="form-group">
             <label class="all-size" for="vehiculo_numero">UNIDAD N°:</label>
-            <input class="all-size" type="text" id="vehiculo_numero" name="vehiculo_numero" [(ngModel)]="data.vehiculo_numero" [disabled]="!isEditable"><br>
+            <input class="all-size" type="text" id="vehiculo_numero" name="vehiculo_numero" [(ngModel)]="data.vehiculo_numero" [disabled]="!isEditable || hasPermission"><br>
           </div>
       
           <div class="form-group">
