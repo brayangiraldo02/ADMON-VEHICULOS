@@ -656,17 +656,61 @@ def update_vehicle(vehicle_id: str, vehicle: VehicleUpdate):
   db = session()
   try:
     data = db.query(Vehiculos).filter(Vehiculos.CONSECUTIV == vehicle_id).first()
-    print(data)
-    print(vehicle)
-    print('Sí llega')
+   
     if not data:
       return JSONResponse(content={"error": "Vehicle not found"}, status_code=404)
     
+    data.PLACA = vehicle.vehiculo_placa
+    data.NUMERO = vehicle.vehiculo_numero
+    data.MARCA = vehicle.vehiculo_marca
+    data.LINEA = vehicle.vehiculo_modelo
+    data.MODELO = vehicle.vehiculo_fec_modelo
+    data.CILINDRAJE = vehicle.vehiculo_cilindraje
+    data.PUERTAS = vehicle.vehiculo_nro_puertas
+    data.LICETRANSI = vehicle.vehiculo_licencia_nro
+    data.FEC_EXPEDI = vehicle.vehiculo_licencia_fec
+    data.COLORES = vehicle.vehiculo_color
+    data.SERVICIO = vehicle.vehiculo_servicio
+    data.FEC_MATRIC = vehicle.vehiculo_fec_matricula
+    data.FEC_VENCIM = vehicle.vehiculo_fec_vencimiento_matricula
+    data.FEC_IMPORT = vehicle.vehiculo_fec_importacion
+    data.CLASEVEHIC = vehicle.vehiculo_clase
+    data.TIPOCARROC = vehicle.vehiculo_tipo
+    data.COMBUSTIBL = vehicle.vehiculo_combustible
+    data.CAPACIDAD = vehicle.vehiculo_capacidad
+    data.NE = vehicle.vehiculo_ne
+    data.MOTORVIN = vehicle.vehiculo_vin
+    data.MOTORNRO = vehicle.vehiculo_motor
+    data.MOTORREG = vehicle.vehiculo_motor_reg
+    data.SERIENRO = vehicle.vehiculo_serie
+    data.SERIEREG = vehicle.vehiculo_serie_reg
+    data.CHASISNRO = vehicle.vehiculo_chasis
+    data.CHASISREG = vehicle.vehiculo_chasis_reg
+    data.PROPI_IDEN = vehicle.vehiculo_propietario
+    data.CTA_GASTO = vehicle.vehiculo_cta_gasto
+    data.CENTRAL = vehicle.vehiculo_central
+    data.NRO_CUPO = vehicle.vehiculo_nro_cupo
+    data.PERMISONRO = vehicle.vehiculo_permiso_nro
+    data.PERMISOVCE = vehicle.vehiculo_fec_vencimiento_permiso
+    data.BLINDAJE = vehicle.vehiculo_blindaje
+    data.POTENCIAHP = vehicle.vehiculo_potencia
+    data.DECLA_IMPO = vehicle.vehiculo_dec_importacion
+    data.RESTR_MOBI = vehicle.vehiculo_restriccion_movilidad
+    data.LIMI_PROPI = vehicle.vehiculo_limit_propiedad
+    data.ORG_TRANSI = vehicle.vehiculo_organismo_transito
+    data.COD_BARRAS = vehicle.vehiculo_codigo_barras
+    data.LATERAL = vehicle.vehiculo_lateral
+    data.KILOMETRAJ = vehicle.vehiculo_kilometraje
+    data.MODALIDAD = vehicle.vehiculo_modalidad
+    data.INFO_PANAP = vehicle.vehiculo_consulta_panapass
+    data.PANAPASSNU = vehicle.vehiculo_panapass
+    data.PANAPASSPW = vehicle.vehiculo_panapass_pwd
+
     db.commit()
 
-    return JSONResponse(content={"message": "Vehicle updated successfully"})
+    return JSONResponse(content={"message": "Vehicle updated successfully"}, status_code=200)
   except Exception as e:
-    return JSONResponse(content={"error": str(e)})
+    return JSONResponse(content={"error": str(e)}, status_code=500)
   finally:
     db.close()
 

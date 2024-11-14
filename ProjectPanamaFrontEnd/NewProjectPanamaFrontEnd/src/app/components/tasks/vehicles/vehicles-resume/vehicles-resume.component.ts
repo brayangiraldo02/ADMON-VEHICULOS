@@ -100,16 +100,14 @@ export class VehiclesResumeComponent {
   }
 
   changeDate(fecha: string): string {
-    // console.log("Fecha recibida: ", fecha);
-    
-    // Validar que la fecha no sea nula ni esté en formato incorrecto
+    // Validar que la fecha no sea nula ni tenga el valor "0000-00-00"
     if (fecha && fecha !== '0000-00-00') {
-      // Si tiene espacio y hora, dividir y tomar solo la parte de la fecha
-      return fecha.includes(' ') ? fecha.split(' ')[0] : fecha; // Extrae solo "YYYY-MM-DD"
+        // Si la fecha tiene el formato 'YYYY-MM-DDTHH:MM:SS', separamos la parte de la fecha
+        const partes = fecha.split('T');
+        return partes[0]; // Retorna solo la parte de la fecha "YYYY-MM-DD"
     }
-    return ''; // Si la fecha no es válida, devuelve una cadena vacía
-  }
-
+    return ''; // Si la fecha no es válida o es "0000-00-00", devolver cadena vacía
+}
 
   // Función para convertir la fecha de "YYYY-MM-DD" a "YYYY-MM-DD 00:00:00"
   finalDate(fecha: string): string {
@@ -314,7 +312,6 @@ export class VehiclesResumeComponent {
     this.data.vehiculo_fec_matricula = this.finalDate(this.data.vehiculo_fec_matricula);
 
     console.log('Data to save:', this.data);
-    this.disableInputs();
   
     this.apiService.updateData(`vehicle/${this.code}`, this.data).subscribe(
       (response) => {
