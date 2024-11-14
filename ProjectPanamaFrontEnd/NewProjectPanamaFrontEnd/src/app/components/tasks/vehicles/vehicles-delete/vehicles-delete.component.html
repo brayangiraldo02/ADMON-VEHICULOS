@@ -2,12 +2,12 @@
   <div class="modal-content">
     <span class="close" (click)="closeModal()">&times;</span>
 
-    <h2 class="title-container" *ngIf="isLoading">Verificando datos del vehículo {{ vehicle }}.</h2>
+    <h2 class="title-container" *ngIf="isLoading">Verificando datos del vehículo {{ number }}.</h2>
 
     <div class="loading-container" *ngIf="!isLoading">
       <div class="display-container" *ngIf="hasPermission">
-        <h2 class="title-container">No se puede eliminar el vehículo {{ vehicle }}.</h2>
-        <p class="title-container">El vehículo {{ vehicle }} tiene datos en {{ grantedPermission }}.</p>
+        <h2 class="title-container">No se puede eliminar el vehículo {{ number }}.</h2>
+        <p class="title-container">El vehículo {{ number }} tiene datos en {{ grantedPermission }}.</p>
   
         <div class="options-container">
           <button class="option back" type="button" (click)="closeModal()">
@@ -20,7 +20,7 @@
       </div>
 
       <div class="display-container" *ngIf="deleteSuccesful">
-        <h2 class="title-container">Se ha eliminado el vehículo {{ vehicle }}.</h2>
+        <h2 class="title-container">Se ha eliminado el vehículo {{ number }}.</h2>
   
         <div class="options-container">
           <button class="option back" type="button" (click)="returnOwners()">
@@ -33,7 +33,7 @@
       </div>
   
       <div class="delete-container" *ngIf="!hasPermission && !deleteSuccesful">
-        <h2 class="title-container">{{ doubleValidation ? '¿Está seguro de eliminar el vehículo ' : '¿Desea eliminar el vehículo '}} {{ vehicle }}?</h2>
+        <h2 class="title-container">{{ doubleValidation ? '¿Está seguro de eliminar el vehículo ' : '¿Desea eliminar el vehículo '}} {{ number }}?</h2>
         <div class="options-container">
           
           <button class="option" type="button" (click)="acceptRemove()">

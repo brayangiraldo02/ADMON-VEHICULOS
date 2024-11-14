@@ -49,6 +49,7 @@ async def get_vehicles():
   try:
     vehicles = db.query(
             Vehiculos.NUMERO.label('vehiculo_numero'),
+            Vehiculos.CONSECUTIV.label('vehiculo_consecutivo'),
             Vehiculos.PLACA.label('vehiculo_placa'),
             Vehiculos.MODELO.label('vehiculo_modelo'),
             Vehiculos.NRO_CUPO.label('vehiculo_nro_cupo'),
@@ -75,6 +76,7 @@ async def get_vehicles():
     vehicles_list = [
       {
         'unidad': vehicle.vehiculo_numero,
+        'consecutivo': vehicle.vehiculo_consecutivo,
         'placa': vehicle.vehiculo_placa,
         'modelo': vehicle.vehiculo_modelo,
         'nro_cupo': vehicle.vehiculo_nro_cupo,
@@ -406,7 +408,7 @@ async def get_vehicle_details(vehicle_id: str):
           Vehiculos.VIE.label('vehiculo_picoyplaca_viernes'),
           Vehiculos.SAB.label('vehiculo_picoyplaca_sabado'),
           Vehiculos.DOM.label('vehiculo_picoyplaca_domingo'),
-      )   .filter(Vehiculos.NUMERO == vehicle_id) \
+      )   .filter(Vehiculos.CONSECUTIV == vehicle_id) \
           .first()
       
       vehicle_info = {
@@ -653,111 +655,13 @@ def create_vehicle(vehicle: VehicleCreate):
 def update_vehicle(vehicle_id: str, vehicle: VehicleUpdate):
   db = session()
   try:
-    data = db.query(Vehiculos).filter(Vehiculos.NUMERO == vehicle_id).first()
+    data = db.query(Vehiculos).filter(Vehiculos.CONSECUTIV == vehicle_id).first()
+    print(data)
+    print(vehicle)
+    print('Sí llega')
     if not data:
       return JSONResponse(content={"error": "Vehicle not found"}, status_code=404)
-    data.NUMERO = vehicle.vehiculo_numero
-    data.PLACA = vehicle.vehiculo_placa
-    data.CONSECUTIV = vehicle.vehiculo_consecutivo
-    data.MARCA = vehicle.vehiculo_marca
-    data.LINEA = vehicle.vehiculo_modelo
-    data.MODELO = vehicle.vehiculo_año
-    data.CILINDRAJE = vehicle.vehiculo_cilindraje
-    data.PUERTAS = vehicle.vehiculo_nro_puertas
-    data.LICETRANSI = vehicle.vehiculo_licencia_nro
-    data.FEC_EXPEDI = vehicle.vehiculo_licencia_fec
-    data.COLORES = vehicle.vehiculo_color
-    data.SERVICIO = vehicle.vehiculo_servicio
-    data.FEC_MATRIC = vehicle.vehiculo_fec_matricula
-    data.FEC_VENCIM = vehicle.vehiculo_fec_vencimiento_matricula
-    data.FEC_IMPORT = vehicle.vehiculo_fec_importacion
-    data.CLASEVEHIC = vehicle.vehicul_clase
-    data.TIPOCARROC = vehicle.vehiculo_tipo
-    data.COMBUSTIBL = vehicle.vehiculo_combustible
-    data.CAPACIDAD = vehicle.vehiculo_capacidad
-    data.NE = vehicle.vehiculo_ne
-    data.MOTORNRO = vehicle.vehiculo_motor
-    data.MOTORREG = vehicle.vehiculo_motor_reg
-    data.MOTORVIN = vehicle.vehiculo_vin
-    data.SERIENRO = vehicle.vehiculo_serie
-    data.SERIEREG = vehicle.vehiculo_serie_reg
-    data.CHASISNRO = vehicle.vehiculo_chasis
-    data.CHASISREG = vehicle.vehiculo_chasis_reg
-    data.PROPI_IDEN = vehicle.vehiculo_propietario
-    data.CTA_GASTO = vehicle.vehiculo_cta_gasto
-    data.CENTRAL = vehicle.vehiculo_central
-    data.FEC_CREADO = vehicle.vehiculo_fec_creacion
-    data.NRO_CUPO = vehicle.vehiculo_nro_cupo
-    data.PERMISONRO = vehicle.vehiculo_permiso_nro
-    data.PERMISOVCE = vehicle.vehiculo_fec_vencimiento_permiso
-    data.BLINDAJE = vehicle.vehiculo_blindaje
-    data.POTENCIAHP = vehicle.vehiculo_potencia
-    data.DECLA_IMPO = vehicle.vehiculo_dec_importacion
-    data.RESTR_MOBI = vehicle.vehiculo_restriccion_movilidad
-    data.LIMI_PROPI = vehicle.vehiculo_limit_propiedad
-    data.ORG_TRANSI = vehicle.vehiculo_organismo_transito
-    data.COD_BARRAS = vehicle.vehiculo_codigo_barras
-    data.LATERAL = vehicle.vehiculo_lateral
-    data.KILOMETRAJ = vehicle.vehiculo_kilometraje
-    data.MODALIDAD = vehicle.vehiculo_modalidad
-    data.INFO_PANAP = vehicle.vehiculo_consulta_panapass
-    data.PANAPASSNU = vehicle.vehiculo_panapass
-    data.PANAPASSPW = vehicle.vehiculo_panapass_pwd  
-    data.DOC_PLAPAR = vehicle.vehiculo_placa_particular  
-    data.FEC_PLAPAR = vehicle.vehiculo_placa_particular_vence
-    data.DOC_PLAPUB = vehicle.vehiculo_placa_publica
-    data.FEC_PLAPUB = vehicle.vehiculo_placa_publica_vence
-    data.DOC_RESCIV = vehicle.vehiculo_poliza_responsabilidad_civil
-    data.FEC_RESCIV = vehicle.vehiculo_poliza_responsabilidad_civil_vence
-    data.DOC_EXTING = vehicle.vehiculo_extinguidor
-    data.FEC_EXTING = vehicle.vehiculo_extinguidor_vence
-    data.DOC_CEROPE = vehicle.vehiculo_certificado_operacion
-    data.FEC_CEROPE = vehicle.vehiculo_certificado_operacion_fec
-    data.NROENTREGA = vehicle.vehiculo_nro_total_cuotas
-    data.CUO_DIARIA = vehicle.vehiculo_vlr_cuo_diaria
-    data.CTA_RENTA = vehicle.vehiculo_renta_diaria
-    data.CTA_SINIES = vehicle.vehiculo_ahorro_siniestro
-    data.PAGA_ADMON = vehicle.vehiculo_cobro_admon
-    data.CUO_ADMON = vehicle.vehiculo_admon
-    data.CUO_REPVEH = vehicle.vehiculo_reposicion
-    data.CUO_MANTEN = vehicle.vehiculo_mantenimiento
-    data.CUO_RENDIM = vehicle.vehiculo_rendimientos_propietario
-    data.PAGO_LUN = vehicle.vehiculo_lunes
-    data.PAGO_MAR = vehicle.vehiculo_martes
-    data.PAGO_MIE = vehicle.vehiculo_miercoles
-    data.PAGO_JUE = vehicle.vehiculo_jueves
-    data.PAGO_VIE = vehicle.vehiculo_viernes
-    data.PAGO_SAB = vehicle.vehiculo_sabado
-    data.PAGO_DOM = vehicle.vehiculo_domingo
-    data.FORMAPAGO = vehicle.vehiculo_pago
-    data.MULTA = vehicle.vehiculo_multa_pago
-    data.FEC_1PAGO = vehicle.vehiculo_fec_primer_pago
-    data.FEC_ULTPAG = vehicle.vehiculo_fec_ultimo_pago
-    data.VLR_ULTPAG = vehicle.vehiculo_vlr_ultimo_pago
-    data.REC_ULTPAG = vehicle.vehiculo_recibo
-    data.FEC_1MANTE = vehicle.vehiculo_primer_mantenimiento
-    data.FEC_ULTMAN = vehicle.vehiculo_ultimo_mantenimiento
-    data.CATEGORIA = vehicle.vehiculo_categoria
-    data.tipo_llave = vehicle.vehiculo_tipo_llave
-    data.NRO_LLAVES = vehicle.vehiculo_posicion_llave
-    data.FEC_ESTADO = vehicle.vehiculo_fec_estado
-    data.GRUPODIARI = vehicle.vehiculo_plan_pago
-    data.PREND_APAG = vehicle.vehiculo_prendido_apagado
-    data.PIQUERA = vehicle.vehiculo_piquera
-    data.FEC_PIQUER = vehicle.vehiculo_fec_inicio_piquera
-    data.FAC_COMPRA = vehicle.vehiculo_factura_compra
-    data.FEC_COMPRA = vehicle.vehiculo_fec_factura_compra
-    data.VLR_COMPRA = vehicle.vehiculo_valor_compra
-    data.POLIZA = vehicle.vehiculo_num_poliza
-    data.FEC_POLIZA = vehicle.vehiculo_fec_poliza
-    data.OBSERVA = vehicle.vehiculo_observaciones
-    data.LUN = vehicle.vehiculo_picoyplaca_lunes
-    data.MAR = vehicle.vehiculo_picoyplaca_martes
-    data.MIE = vehicle.vehiculo_picoyplaca_miercoles
-    data.JUE = vehicle.vehiculo_picoyplaca_jueves
-    data.VIE = vehicle.vehiculo_picoyplaca_viernes
-    data.SAB = vehicle.vehiculo_picoyplaca_sabado
-    data.DOM = vehicle.vehiculo_picoyplaca_domingo
+    
     db.commit()
 
     return JSONResponse(content={"message": "Vehicle updated successfully"})
@@ -786,7 +690,7 @@ async def verify_vehicle_delete(vehicle_id: str):
         ).outerjoin(
             Movienca, Vehiculos.NUMERO == Movienca.UNIDAD
         ).filter(
-            Vehiculos.NUMERO == vehicle_id
+            Vehiculos.CONSECUTIV == vehicle_id
         ).first()
 
         if not vehicle:
@@ -833,7 +737,7 @@ async def verify_vehicle_delete(vehicle_id: str):
         ).outerjoin(
             Movienca, Vehiculos.NUMERO == Movienca.UNIDAD
         ).filter(
-            Vehiculos.NUMERO == vehicle_id
+            Vehiculos.CONSECUTIV == vehicle_id
         ).first()
 
     if not vehicle:

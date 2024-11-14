@@ -10,6 +10,7 @@ import { ApiService } from 'src/app/services/api.service';
 export class VehiclesDeleteComponent {
   @Input() isVisible: boolean = false;
   @Input() vehicle: string | null = null;
+  @Input() number: string | null = null;
   @Output() close = new EventEmitter<void>();
 
   isLoading: boolean = true;

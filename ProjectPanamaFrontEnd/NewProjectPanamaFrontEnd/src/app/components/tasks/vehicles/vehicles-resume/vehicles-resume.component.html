@@ -1,7 +1,7 @@
 <app-header></app-header>
 
 <div class="main-container">
-  <h1 class="title-container">VEHÍCULO {{code}}</h1>
+  <h1 class="title-container">VEHÍCULO {{data.vehiculo_numero}}</h1>
 
   <div class="buttons-container" *ngIf="!isLoading">
 
@@ -605,5 +605,5 @@
   <p *ngIf="isLoading">Cargando datos, por favor espere...</p>
 </div>
 
-<app-vehicles-delete [isVisible]="isModalVisible" [vehicle]="code" (close)="hideModal()"></app-vehicles-delete>
+<app-vehicles-delete [isVisible]="isModalVisible" [vehicle]="code" [number]="data.vehiculo_numero" (close)="hideModal()"></app-vehicles-delete>
 <app-footer></app-footer>

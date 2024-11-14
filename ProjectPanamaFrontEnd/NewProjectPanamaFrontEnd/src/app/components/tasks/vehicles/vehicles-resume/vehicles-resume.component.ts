@@ -316,17 +316,17 @@ export class VehiclesResumeComponent {
     console.log('Data to save:', this.data);
     this.disableInputs();
   
-    // this.apiService.updateData(`driver/${this.code}`, this.data).subscribe(
-    //   (response) => {
-    //     window.alert('Datos actualizados correctamente');
-    //     this.disableInputs();
-    //     // console.log(response);
-    //     location.reload();
-    //   },
-    //   (error) => {
-    //     console.log(error);
-    //   }
-    // );
+    this.apiService.updateData(`vehicle/${this.code}`, this.data).subscribe(
+      (response) => {
+        window.alert('Datos actualizados correctamente');
+        this.disableInputs();
+        // console.log(response);
+        location.reload();
+      },
+      (error) => {
+        console.log(error);
+      }
+    );
   }
 
   getVehicles() {
@@ -350,7 +350,7 @@ export class VehiclesResumeComponent {
     const currentIndex = this.vehicles.findIndex((vehicle: any) => vehicle.vehiculo_consecutivo === this.data.vehiculo_consecutivo);
     // console.log(currentIndex)
     if (currentIndex !== -1 && currentIndex < this.vehicles.length - 1) {
-      const nextVehicleId = this.vehicles[currentIndex + 1].vehiculo_numero;
+      const nextVehicleId = this.vehicles[currentIndex + 1].vehiculo_consecutivo
       // console.log(nextVehicleId)
       this.router.navigate(['/vehicle/' + nextVehicleId]).then(() => {
         window.location.reload();
@@ -365,7 +365,7 @@ export class VehiclesResumeComponent {
   backVehicle() {
     const currentIndex = this.vehicles.findIndex((vehicle: any) => vehicle.vehiculo_consecutivo === this.data.vehiculo_consecutivo);
     if (currentIndex !== -1 && currentIndex > 0) {
-      const previousVehicleId = this.vehicles[currentIndex - 1].vehiculo_numero;
+      const previousVehicleId = this.vehicles[currentIndex - 1].vehiculo_consecutivo;
       this.router.navigate(['/vehicle/' + previousVehicleId]).then(() => {
         window.location.reload();
       });
@@ -378,13 +378,13 @@ export class VehiclesResumeComponent {
   
 
   firstVehicle() {
-    this.router.navigate(['/vehicle/' + this.vehicles[0].vehiculo_numero]).then(() => {
+    this.router.navigate(['/vehicle/' + this.vehicles[0].vehiculo_consecutivo]).then(() => {
       window.location.reload();
     });
   }
   
   lastVehicle() {
-    this.router.navigate(['/vehicle/' + this.vehicles[this.vehicles.length - 1].vehiculo_numero]).then(() => {
+    this.router.navigate(['/vehicle/' + this.vehicles[this.vehicles.length - 1].vehiculo_consecutivo]).then(() => {
       window.location.reload();
     });
   }
