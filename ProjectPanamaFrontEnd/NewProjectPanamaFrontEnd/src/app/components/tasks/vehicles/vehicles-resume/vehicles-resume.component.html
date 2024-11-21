@@ -1,7 +1,7 @@
 <app-header></app-header>
 
 <div class="main-container">
-  <h1 class="title-container">VEHÍCULO {{data.vehiculo_numero}}</h1>
+  <h1 class="title-container">VEHÍCULO {{code}}</h1>
 
   <div class="buttons-container" *ngIf="!isLoading">
 
@@ -462,7 +462,7 @@
       <div class="group-inputs">
         <div class="form-group">
           <label for="vehiculo_kilometraje">Kilometraje:</label><br>
-          <input class="all-size" type="int" id="vehiculo_kilometraje" name="vehiculo_kilometraje" [(ngModel)]="data.vehiculo_kilometraje" [disabled]="!isEditable"><br>
+          <input class="all-size" type="int" id="vehiculo_kilometraje" name="vehiculo_kilometraje" [(ngModel)]="data.vehiculo_kilometraje" disabled><br>
         </div>
       </div>
 
@@ -565,7 +565,7 @@
       </button>
     </div>
 
-    <button class="select" type="button" routerLink="/new-driver" *ngIf="!isEditable">
+    <button class="select" type="button" routerLink="/new-vehicle" *ngIf="!isEditable">
       <span class="material-symbols-outlined" translate="no">
         add_circle
       </span>
