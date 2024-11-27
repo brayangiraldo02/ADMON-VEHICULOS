@@ -33,6 +33,7 @@ export class VehiclesTableComponent {
         this.data.sort((a, b) => a.unidad.localeCompare(b.unidad));
         this.filteredData = [...this.data];
         this.isLoading = false;
+        console.log(this.data);
       },
       (error) => {
         console.log(error);
@@ -71,6 +72,10 @@ export class VehiclesTableComponent {
   getUser() {
     this.user = this.jwtService.decodeToken();
     this.user = this.user.user_data.nombre;
+  }
+
+  goToVehicleResume(codigo: string) {
+    this.router.navigate(['/vehicle', codigo]);
   }
 
   openExternalLink(): void {

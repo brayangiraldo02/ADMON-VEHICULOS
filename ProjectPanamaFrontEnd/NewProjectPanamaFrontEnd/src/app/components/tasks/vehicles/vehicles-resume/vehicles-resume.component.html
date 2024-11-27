@@ -1,1 +1,609 @@
-<p>vehicles-resume works!</p>
+<app-header></app-header>
+
+<div class="main-container">
+  <h1 class="title-container">VEHÍCULO {{code}}</h1>
+
+  <div class="buttons-container" *ngIf="!isLoading">
+
+    <button class="select back" type="button" routerLink="/vehicles">
+      <span class="material-symbols-outlined" translate="no">
+        arrow_back
+      </span>
+      <p class="select-text">Regresar</p>
+    </button>
+
+    <button class="select" type="button" (click)="goToVehicleOwnership()" [ngClass]="{'selected': selectedButton === 'propiedad'}">
+      <span class="material-symbols-outlined" translate="no">
+        badge
+      </span>
+      <p class="select-text">Tarjeta Propiedad</p>
+    </button>
+
+    <button class="select" type="button" (click)="goToVehicleDocuments()" [ngClass]="{'selected': selectedButton === 'documentos'}">
+      <span class="material-symbols-outlined" translate="no">
+        description
+      </span>
+      <p class="select-text">Documentos</p>
+    </button>
+
+    <button class="select" type="button" (click)="goToVehicleDrivers()" [ngClass]="{'selected': selectedButton === 'conductores'}">
+      <span class="material-symbols-outlined" translate="no">
+        id_card
+      </span>
+      <p class="select-text">Conductores</p>
+    </button>
+
+    <button class="select" type="button" (click)="goToVehicleIncome()" [ngClass]="{'selected': selectedButton === 'ingresos'}">
+      <span class="material-symbols-outlined" translate="no">
+        payments
+      </span>
+      <p class="select-text">Ingresos</p>
+    </button>
+
+    <button class="select" type="button" (click)="goToVehicleOrders()" [ngClass]="{'selected': selectedButton === 'ordenes'}">
+      <span class="material-symbols-outlined">
+        receipt_long
+      </span>
+      <p class="select-text">Ordenes</p>
+    </button>
+
+    <button class="select" type="button" (click)="goToVehicleTools()" [ngClass]="{'selected': selectedButton === 'herramientas'}">
+      <span class="material-symbols-outlined" translate="no">
+        handyman
+      </span>
+      <p class="select-text">Herramientas</p>
+    </button>
+
+    <button class="select" type="button" (click)="goToVehiclePhotos()" [ngClass]="{'selected': selectedButton === 'fotos'}">
+      <span class="material-symbols-outlined" translate="no">
+        image
+      </span>
+      <p class="select-text">Fotos</p>
+    </button>
+
+    <button class="select" type="button" (click)="goToVehicleDocumentation()" [ngClass]="{'selected': selectedButton === 'documentacion'}">
+      <span class="material-symbols-outlined" translate="no">
+        file_copy
+      </span>
+      <p class="select-text">Documentación</p>
+    </button>
+
+    <button class="select" type="button" (click)="goToVehiclePyG()" [ngClass]="{'selected': selectedButton === 'pyg'}">
+      <span class="material-symbols-outlined" translate="no">
+        request_quote
+      </span>
+      <p class="select-text">P y G</p>
+    </button>
+
+  </div>
+
+  <hr class="external" *ngIf="!isLoading">
+
+  <!-- INPUTS PERSONALES -->
+  <!-- -------------------------------------------------------------------------------------- -->
+  <div class="first-info" *ngIf="!isLoading">
+    <div class="info-code-container">
+      <div class="div-group all-size">
+        <div class="code-container gray-background">
+          <div class="form-group">
+            <label class="all-size" for="vehiculo_placa">PLACA N°:</label>
+            <input class="all-size" type="text" id="vehiculo_placa" name="vehiculo_placa" [(ngModel)]="data.vehiculo_placa" [disabled]="!isEditable"><br>
+          </div>
+  
+          <div class="form-group">
+            <label class="all-size" for="vehiculo_numero">UNIDAD N°:</label>
+            <input class="all-size" type="text" id="vehiculo_numero" name="vehiculo_numero" [(ngModel)]="data.vehiculo_numero" [disabled]="!isEditable || hasPermission"><br>
+          </div>
+      
+          <div class="form-group">
+            <label class="all-size" for="vehiculo_consecutivo">CONSECUTIVO:</label>
+            <input class="all-size" type="number" id="vehiculo_consecutivo" name="vehiculo_consecutivo" [value]="data.vehiculo_consecutivo" disabled><br>
+          </div>
+        </div>
+  
+        <div class="media-container">
+          <img class="photo-container" [src]="this.imageVehicle">
+        </div>
+      </div>
+  
+    </div>
+
+    <div class="last-first-information">
+      <div class="form-group">
+        <label class="medium" for="fec_creacion">Fecha Creación:</label><br>
+        <input class="all-size" type="text" id="fec_creacion" name="fec_creacion" [value]="createDate" disabled><br>
+      </div>
+    </div>
+  </div>
+
+  <hr class="external" *ngIf="!isLoading">
+
+  <div class="info-container" *ngIf="!isLoading">
+
+    <div class="div-group">
+      <div class="group-inputs">
+        <div class="form-group">
+          <label for="marca">Marca:</label><br>
+          <select class="all-size" id="marca" name="marca" [(ngModel)]="data.vehiculo_marca" [disabled]="!isEditable">
+            <option *ngFor="let brand of brands" [ngValue]="brand.codigo" [selected]="brand.codigo === data.vehiculo_marca">{{ brand.codigo }} - {{ brand.nombre }}</option>
+          </select><br>
+        </div>
+      </div>
+
+      <div class="padding"></div>
+
+      <div class="group-inputs">
+        <div class="form-group">
+          <label for="vehiculo_modelo">Modelo:</label><br>
+          <input class="all-size" type="text" id="vehiculo_modelo" name="vehiculo_modelo" [(ngModel)]="data.vehiculo_modelo" [disabled]="!isEditable"><br>
+        </div>
+      </div>
+
+      <div class="padding"></div>
+
+      <div class="group-inputs">
+        <div class="form-group">
+          <label for="vehiculo_fec_modelo">Año:</label><br>
+          <input class="all-size" type="int" id="vehiculo_fec_modelo" name="vehiculo_fec_modelo" [(ngModel)]="data.vehiculo_fec_modelo" [disabled]="!isEditable"><br>
+        </div>
+      </div>
+
+      <div class="padding"></div>
+
+      <div class="group-inputs">
+        <div class="form-group">
+          <label for="vehiculo_cilindraje">Cilindraje CC:</label><br>
+          <input class="all-size" type="text" id="vehiculo_cilindraje" name="vehiculo_cilindraje" [(ngModel)]="data.vehiculo_cilindraje" [disabled]="!isEditable"><br>
+        </div>
+      </div>
+
+      <div class="padding"></div>
+
+      <div class="group-inputs">
+        <div class="form-group">
+          <label for="vehiculo_nro_puertas">N° Puertas:</label><br>
+          <input class="all-size" type="text" id="vehiculo_nro_puertas" name="vehiculo_nro_puertas" [(ngModel)]="data.vehiculo_nro_puertas" [disabled]="!isEditable"><br>
+        </div>
+      </div>
+    </div>
+
+    <hr>
+    <!-- SIGUIENTE RENGLÓN -->
+
+    <div class="div-group">
+      <div class="group-inputs">
+        <div class="form-group">
+          <label for="vehiculo_licencia_nro">Licencia Transito N°:</label><br>
+          <input class="all-size" type="text" id="vehiculo_licencia_nro" name="vehiculo_licencia_nro" [(ngModel)]="data.vehiculo_licencia_nro" [disabled]="!isEditable"><br>
+        </div>
+      </div>
+
+      <div class="padding"></div>
+
+      <div class="group-inputs">
+        <div class="form-group">
+          <label for="fec_licencia">Fecha Lic:</label><br>
+          <input class="all-size" type="date" id="fec_licencia" name="fec_licencia" [(ngModel)]="data.vehiculo_licencia_fec" [disabled]="!isEditable"><br>
+        </div>
+      </div>
+
+      <div class="padding"></div>
+
+      <div class="group-inputs">
+        <div class="form-group">
+          <label for="vehiculo_color">Color:</label><br>
+          <input class="all-size" type="text" id="vehiculo_color" name="vehiculo_color" [(ngModel)]="data.vehiculo_color" [disabled]="!isEditable"><br>
+        </div>
+      </div>
+
+      <div class="padding"></div>
+
+      <div class="group-inputs">
+        <div class="form-group">
+          <label for="servicio">Servicio:</label><br>
+          <input class="all-size" type="text" id="servicio" name="servicio" [(ngModel)]="data.vehiculo_servicio" [disabled]="!isEditable"><br>
+        </div>
+      </div>
+    </div>
+
+    <hr>
+    <!-- SIGUIENTE RENGLÓN -->
+    <div class="div-group">
+      <div class="group-inputs">
+        <div class="form-group">
+          <label for="fec_matricula">Fecha de la Matricula:</label><br>
+          <input class="all-size" type="date" id="fec_matricula" name="fec_matricula" [(ngModel)]="data.vehiculo_fec_matricula" [disabled]="!isEditable"><br>
+        </div>
+
+        <div class="form-group">
+          <label for="vehiculo_clase">Clase de Vehículo:</label><br>
+          <input class="all-size" type="text" id="vehiculo_clase" name="vehiculo_clase" [(ngModel)]="data.vehiculo_clase" [disabled]="!isEditable"><br>
+        </div>
+
+        <div class="form-group">
+          <label for="vehiculo_capacidad">Capacidad Kg/Pasag:</label><br>
+          <input class="all-size" type="text" id="vehiculo_capacidad" name="vehiculo_capacidad" [(ngModel)]="data.vehiculo_capacidad" [disabled]="!isEditable"><br>
+        </div>
+      </div>
+
+      <div class="padding"></div>
+
+      <div class="group-inputs">
+        <div class="form-group">
+          <label for="fec_vencimiento">Fecha de Vencimiento:</label><br>
+          <input class="all-size" type="date" id="fec_vencimiento" name="fec_vencimiento" [(ngModel)]="data.vehiculo_fec_vencimiento_matricula" [disabled]="!isEditable"><br>
+        </div>
+
+        <div class="form-group">
+          <label for="vehiculo_tipo">Tipo de Carroceria:</label><br>
+          <input class="all-size" type="text" id="vehiculo_tipo" name="vehiculo_tipo" [(ngModel)]="data.vehiculo_tipo" [disabled]="!isEditable"><br>
+        </div>
+
+        <div class="form-group">
+          <label for="vehiculo_ne">Ne:</label><br>
+          <input class="all-size" type="text" id="vehiculo_ne" name="vehiculo_ne" [(ngModel)]="data.vehiculo_ne" [disabled]="!isEditable"><br>
+        </div>
+      </div>
+
+      <div class="padding"></div>
+
+      <div class="group-inputs">
+        <div class="form-group">
+          <label for="fec_importacion">Fecha de Importación:</label><br>
+          <input class="all-size" type="date" id="fec_importacion" name="fec_importacion" [(ngModel)]="data.vehiculo_fec_importacion" [disabled]="!isEditable"><br>
+        </div>
+        
+        <div class="form-group">
+          <label for="vehiculo_combustible">Combustible:</label><br>
+          <input class="all-size" type="text" id="vehiculo_combustible" name="vehiculo_combustible" [(ngModel)]="data.vehiculo_combustible" [disabled]="!isEditable"><br>
+        </div>
+
+        <div class="form-group">
+          <label for="vehiculo_vin">V.I.N:</label><br>
+          <input class="all-size" type="text" id="vehiculo_vin" name="vehiculo_vin" [(ngModel)]="data.vehiculo_vin" [disabled]="!isEditable"><br>
+        </div>
+      </div>
+    </div>
+
+    <hr class="internal-forms">
+
+    <!-- SIGUIENTE RENGLÓN -->
+
+    <div class="div-group">
+      <div class="group-inputs">
+        <div class="form-group">
+          <label for="vehiculo_motor">N° Motor:</label><br>
+          <input class="all-size" type="text" id="vehiculo_motor" name="vehiculo_motor" [(ngModel)]="data.vehiculo_motor" [disabled]="!isEditable"><br>
+        </div>
+
+        <div class="form-group">
+          <label for="vehiculo_serie">N° Serie:</label><br>
+          <input class="all-size" type="text" id="vehiculo_serie" name="vehiculo_serie" [(ngModel)]="data.vehiculo_serie" [disabled]="!isEditable"><br>
+        </div>
+
+        <div class="form-group">
+          <label for="vehiculo_chasis">N° Chasis:</label><br>
+          <input class="all-size" type="text" id="vehiculo_chasis" name="vehiculo_chasis" [(ngModel)]="data.vehiculo_chasis" [disabled]="!isEditable"><br>
+        </div>
+      </div>
+
+      <div class="padding"></div>
+
+      <div class="group-inputs">
+        <div class="form-group">
+          <label for="vehiculo_motor_reg">Reg:</label><br>
+          <input class="all-size" type="text" id="vehiculo_motor_reg" name="vehiculo_motor_reg" [(ngModel)]="data.vehiculo_motor_reg" [disabled]="!isEditable"><br>
+        </div>
+
+        <div class="form-group">
+          <label for="vehiculo_serie_reg">Reg:</label><br>
+          <input class="all-size" type="text" id="vehiculo_serie_reg" name="vehiculo_serie_reg" [(ngModel)]="data.vehiculo_serie_reg" [disabled]="!isEditable"><br>
+        </div>
+
+        <div class="form-group">
+          <label for="vehiculo_chasis_reg">Reg:</label><br>
+          <input class="all-size" type="text" id="vehiculo_chasis_reg" name="vehiculo_chasis_reg" [(ngModel)]="data.vehiculo_chasis_reg" [disabled]="!isEditable"><br>
+        </div>
+      </div>
+    </div>
+
+    <hr class="internal-forms">
+
+    <!-- SIGUIENTE RENGLÓN -->
+    <div class="div-group">
+      <div class="group-inputs">
+        <div class="form-group">
+          <label for="propietario">Propietario:</label><br>
+          <select class="all-size" id="propietario" name="propietario" [(ngModel)]="data.vehiculo_propietario" [disabled]="!isEditable">
+            <option *ngFor="let owner of owners" [ngValue]="owner.id" [selected]="owner.id === data.vehiculo_propietario">{{ owner.id }} - {{ owner.name }}</option>
+          </select><br>
+        </div>
+      </div>
+
+      <div class="padding"></div>
+
+      <div class="group-inputs">
+        <div class="form-group">
+          <label for="cta_gasto">Cta Gasto:</label><br>
+          <select class="all-size" id="cta_gasto" name="cta_gasto" [(ngModel)]="data.vehiculo_cta_gasto" [disabled]="!isEditable">
+            <option [ngValue]="" [selected]="data.vehiculo_cta_gasto === ''"> - </option>
+            <option *ngFor="let expenseAccount of expenseAccounts" [ngValue]="expenseAccount.codigo" [selected]="expenseAccount.codigo === data.vehiculo_cta_gasto
+            ">{{ expenseAccount.codigo }} - {{ expenseAccount.nombre }}</option>
+          </select><br>
+        </div>
+      </div>
+
+      <div class="padding"></div>
+
+      <div class="group-inputs">
+        <div class="form-group">
+          <label for="central">Central:</label><br>
+          <select class="all-size" id="central" name="central" [(ngModel)]="data.vehiculo_central" [disabled]="!isEditable">
+            <option *ngFor="let central of central" [ngValue]="central.codigo" [selected]="central.codigo === data.vehiculo_central">{{ central.codigo }} - {{ central.nombre }}</option>
+          </select><br>
+        </div>
+      </div>
+    </div>
+    
+  </div>
+
+  <hr class="external" *ngIf="!isLoading">
+
+  <div class="info-container padding-bottom" *ngIf="!isLoading">
+    <div class="div-group gray-background">
+      <div class="group-inputs">
+        <div class="title-container">
+          <h3>CUPO N° o Certificado de Operación:</h3>
+        </div>
+
+        <div class="form-group">
+          <input class="all-size" type="text" id="vehiculo_nro_cupo" name="vehiculo_nro_cupo" [(ngModel)]="data.vehiculo_nro_cupo" [disabled]="!isEditable"><br>
+        </div>
+      </div>
+
+      <div class="padding"></div>
+
+      <div class="group-inputs">
+        <div class="title-container">
+          <h3>PERMISO N°:</h3>
+        </div>
+
+        <div class="form-group">
+          <input class="all-size" type="text" id="vehiculo_permiso_nro" name="vehiculo_permiso_nro" [(ngModel)]="data.vehiculo_permiso_nro" [disabled]="!isEditable"><br>
+        </div>
+      </div>
+
+      <div class="padding"></div>
+
+      <div class="group-inputs">
+        <div class="title-container">
+          <h3>Vence Permiso:</h3>
+        </div>
+
+        <div class="form-group">
+          <input class="all-size" type="date" id="vehiculo_fec_vencimiento_permiso" name="vehiculo_fec_vencimiento_permiso" [(ngModel)]="data.vehiculo_fec_vencimiento_permiso" [disabled]="!isEditable"><br>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- -------------------------------------------------------------------------------------- -->
+
+  <hr class="external" *ngIf="!isLoading">
+
+  <div class="info-container" *ngIf="!isLoading">
+    <div class="div-group">
+      <div class="group-inputs">
+        <div class="form-group">
+          <label for="vehiculo_blindaje">Blindaje:</label><br>
+          <input class="all-size" type="text" id="vehiculo_blindaje" name="vehiculo_blindaje" [(ngModel)]="data.vehiculo_blindaje" [disabled]="!isEditable"><br>
+        </div>
+      </div>
+
+      <div class="padding"></div>
+
+      <div class="group-inputs">
+        <div class="form-group">
+          <label for="vehiculo_potencia">Potencia HP:</label><br>
+          <input class="all-size" type="text" id="vehiculo_potencia" name="vehiculo_potencia" [(ngModel)]="data.vehiculo_potencia" [disabled]="!isEditable"><br>
+        </div>
+      </div>
+
+      <div class="padding"></div>
+
+      <div class="group-inputs">
+        <div class="form-group">
+          <label for="vehiculo_dec_importacion">Declaración Importación:</label><br>
+          <input class="all-size" type="text" id="vehiculo_dec_importacion" name="vehiculo_dec_importacion" [(ngModel)]="data.vehiculo_dec_importacion" [disabled]="!isEditable"><br>
+        </div>
+      </div>
+    </div>
+
+    <div class="last-first-information">
+      <div class="form-group">
+        <label for="vehiculo_restriccion_movilidad">Restricción de Movilidad:</label><br>
+        <input class="all-size" type="text" id="vehiculo_restriccion_movilidad" name="vehiculo_restriccion_movilidad" [(ngModel)]="data.vehiculo_restriccion_movilidad" [disabled]="!isEditable"><br>
+      </div>
+    </div>
+
+    <div class="last-first-information">
+      <div class="form-group">
+        <label for="vehiculo_limit_propiedad">Limitación a la Propiedad:</label><br>
+        <input class="all-size" type="text" id="vehiculo_limit_propiedad" name="vehiculo_limit_propiedad" [(ngModel)]="data.vehiculo_limit_propiedad" [disabled]="!isEditable"><br>
+      </div>
+    </div>
+
+    <div class="last-first-information">
+      <div class="form-group">
+        <label for="vehiculo_organismo_transito">Organismo de Transito:</label><br>
+        <input class="all-size" type="text" id="vehiculo_organismo_transito" name="vehiculo_organismo_transito" [(ngModel)]="data.vehiculo_organismo_transito" [disabled]="!isEditable"><br>
+      </div>
+    </div>
+
+    <div class="div-group">
+      <div class="group-inputs">
+        <div class="form-group">
+          <label for="vehiculo_codigo_barras">Código Barras:</label><br>
+          <input class="all-size" type="text" id="vehiculo_codigo_barras" name="vehiculo_codigo_barras" [(ngModel)]="data.vehiculo_codigo_barras" [disabled]="!isEditable"><br>
+        </div>
+      </div>
+
+      <div class="padding"></div>
+
+      <div class="group-inputs">
+        <div class="form-group">
+          <label for="vehiculo_lateral">Lateral:</label><br>
+          <input class="all-size" type="text" id="vehiculo_lateral" name="vehiculo_lateral" [(ngModel)]="data.vehiculo_lateral" [disabled]="!isEditable"><br>
+        </div>
+      </div>
+
+      <div class="padding"></div>
+
+      <div class="group-inputs">
+        <div class="form-group">
+          <label for="vehiculo_kilometraje">Kilometraje:</label><br>
+          <input class="all-size" type="int" id="vehiculo_kilometraje" name="vehiculo_kilometraje" [(ngModel)]="data.vehiculo_kilometraje" disabled><br>
+        </div>
+      </div>
+
+      <div class="padding"></div>
+
+      <div class="group-inputs">
+        <div class="form-group">
+          <label for="vehiculo_modalidad">Modalidad:</label><br>
+          <select class="all-size" id="vehiculo_modalidad" name="vehiculo_modalidad" [(ngModel)]="data.vehiculo_modalidad" [disabled]="!isEditable">
+            <option [ngValue]="" [selected]="data.vehiculo_modalidad === ''"> - </option>
+            <option *ngFor="let modality of modalities" [ngValue]="modality.codigo" [selected]="modality.codigo === data.vehiculo_modalidad">{{ modality.codigo }} - {{ modality.nombre }}</option>
+          </select><br>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="external" *ngIf="!isLoading">
+
+  <div class="info-container padding-bottom" *ngIf="!isLoading">
+    <div class="div-group gray-background">
+      <div class="group-inputs">
+        <div class="title-container">
+          <h3>Consultar Panapass:</h3>
+        </div>
+
+        <div class="form-group">
+          <select class="all-size" id="vehiculo_consulta_panapass" name="vehiculo_consulta_panapass" [(ngModel)]="data.vehiculo_consulta_panapass"  [disabled]="!isEditable">
+            <option [ngValue]="'1'">Sí</option>
+            <option [ngValue]="'2'">No</option>
+          </select><br>
+        </div>
+      </div>
+
+      <div class="padding"></div>
+
+      <div class="group-inputs">
+        <div class="title-container">
+          <h3>N° PanaPass:</h3>
+        </div>
+
+        <div class="form-group">
+          <input class="all-size" type="text" id="vehiculo_panapass" name="vehiculo_panapass" [(ngModel)]="data.vehiculo_panapass" [disabled]="!isEditable"><br>
+        </div>
+      </div>
+
+      <div class="padding"></div>
+
+      <div class="group-inputs">
+        <div class="title-container">
+          <h3>Contraseña:</h3>
+        </div>
+
+        <div class="form-group">
+          <input class="all-size" type="text" id="vehiculo_panapass_pwd" name="vehiculo_panapass_pwd" [(ngModel)]="data.vehiculo_panapass_pwd" [disabled]="!isEditable"><br>
+        </div>
+      </div>
+
+      <div class="padding"></div>
+
+      <div class="group-inputs">
+        <div class="title-container">
+          <h3>Saldo:</h3>
+        </div>
+
+        <div class="form-group">
+          <input class="all-size" type="text" id="vehiculo_saldo_panapass" name="vehiculo_saldo_panapass" [(ngModel)]="data.vehiculo_saldo_panapass" disabled><br>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="external" *ngIf="!isLoading">
+
+  <div class="buttons-container" *ngIf="!isLoading">
+
+    <div class="search-buttons-container" *ngIf="!isEditable">
+      <button class="select small-buttons" type="button" (click)="firstVehicle()">
+        <span class="material-symbols-outlined" translate="no">
+          first_page
+        </span>
+      </button>
+  
+      <button class="select small-buttons" type="button" (click)="backVehicle()">
+        <span class="material-symbols-outlined" translate="no">
+          chevron_left
+        </span>
+      </button>
+  
+      <button class="select small-buttons" type="button" (click)="nextVehicle()">
+        <span class="material-symbols-outlined" translate="no">
+          chevron_right
+        </span>
+      </button>
+  
+      <button class="select small-buttons" type="button" (click)="lastVehicle()">
+        <span class="material-symbols-outlined" translate="no">
+          last_page
+        </span>
+      </button>
+    </div>
+
+    <button class="select" type="button" routerLink="/new-vehicle" *ngIf="!isEditable">
+      <span class="material-symbols-outlined" translate="no">
+        add_circle
+      </span>
+      <p class="select-text">Nuevo Conductor</p>
+    </button>
+
+    <button class="select" type="button" *ngIf="!isEditable" (click)="showModal()">
+      <span class="material-symbols-outlined" translate="no">
+        delete
+      </span>
+      <p class="select-text">Eliminar Conductor</p>
+    </button>
+
+    <button class="select" type="button" (click)="enableInputs()" *ngIf="!isEditable">
+      <span class="material-symbols-outlined" translate="no">
+        edit
+      </span>
+      <p class="select-text">Editar</p>
+    </button>
+
+    <button class="select" type="button" *ngIf="isEditable" (click)="saveData()">
+      <span class="material-symbols-outlined" translate="no">
+        check
+      </span>
+      <p class="select-text">Aceptar</p>
+    </button>
+
+    <button class="select back" type="button" (click)="enableInputs()" *ngIf="isEditable">
+      <span class="material-symbols-outlined" translate="no">
+        close
+      </span>
+      <p class="select-text">Cancelar</p>
+    </button>
+
+  </div>
+
+  <p *ngIf="isLoading">Cargando datos, por favor espere...</p>
+</div>
+
+<app-vehicles-delete [isVisible]="isModalVisible" [vehicle]="code" [number]="data.vehiculo_numero" (close)="hideModal()"></app-vehicles-delete>
+<app-footer></app-footer>

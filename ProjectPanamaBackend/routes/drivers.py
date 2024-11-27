@@ -286,11 +286,12 @@ async def update_driver(driver_id: int, driver: ConductorUpdate):
     if not result:
       return JSONResponse(content={"error": "Driver not found"}, status_code=404)
     result.NOMBRE = driver.nombre
+    result.CEDULA = driver.cedula
     result.CIUDAD = driver.ciudad
     result.TELEFONO = driver.telefono
-    result.celular = driver.celular
-    result.correo = driver.correo
-    result.sexo = driver.sexo
+    result.CELULAR = driver.celular
+    result.CORREO = driver.correo
+    result.SEXO = driver.sexo
     result.DIRECCION = driver.direccion
     result.REPRESENTA = driver.representa
     result.ESTA_CIVIL = driver.estado_civil

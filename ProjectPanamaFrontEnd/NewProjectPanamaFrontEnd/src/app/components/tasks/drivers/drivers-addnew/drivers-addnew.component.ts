@@ -11,7 +11,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 export class DriversAddnewComponent {
   selectedButton: string = "personal";
   imageDriver: string = "https://www.w3schools.com/howto/img_avatar.png";
-  signatureDriver: string = "https://www.w3schools.com/howto/img_avatar.png";
+  signatureDriver: string = "https://media.istockphoto.com/id/1346710963/es/vector/icono-de-l%C3%ADnea-de-firma-s%C3%ADmbolo-de-firma-digital-reconocimiento-biom%C3%A9trico-de-escritura-a.jpg?s=612x612&w=0&k=20&c=1tSrVg5-N5qSRy7Y52FOtrehtoM54rRNCcNzlPh6gWg=";
 
   isEditable = true;
   centralFound = false;
@@ -41,7 +41,7 @@ export class DriversAddnewComponent {
     this.driverForm = this.fb.group({
       codigo: ['', [Validators.required, Validators.pattern(/^\d{1,12}$/)]], 
       nombre: ['', [Validators.required, Validators.maxLength(50)]],
-      cedula: ['', [Validators.required, Validators.pattern(/^\d{1,12}$/)]],
+      cedula: [''],
       ciudad: [''],
       telefono: ['', Validators.pattern(/^\d{1,30}$/)],
       celular: ['', Validators.pattern(/^\d{1,30}$/)],
@@ -74,6 +74,7 @@ export class DriversAddnewComponent {
   }
 
   ngOnInit(): void {
+    this.driverForm.get('codigo')?.disable();
     this.fetchData();
     this.delay(500);
     this.getCities();
@@ -170,7 +171,8 @@ export class DriversAddnewComponent {
   getDrivers() {
     this.apiService.getData('driver-codes').subscribe(
       (response) => {
-        this.drivers = response.filter((drivers: any) => drivers);
+        this.drivers = response.filter((drivers: any) => drivers).sort((a: any, b: any) => parseInt(a, 10) - parseInt(b, 10));
+        this.asignCode();
       },
       (error) => {
         console.log(error);
@@ -191,6 +193,11 @@ export class DriversAddnewComponent {
       return true;
     }
     return false;
+  }
+
+  asignCode() {
+    const code = parseInt(this.drivers[this.drivers.length - 1],10) + 1;
+    this.driverForm.get('codigo')?.setValue(code);
   }
 
   onSubmit() {

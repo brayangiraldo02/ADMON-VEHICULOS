@@ -1,1 +1,561 @@
-<p>vehicles-addnew works!</p>
+<app-header></app-header>
+
+<div class="main-container">
+  <h1 class="title-container">VEHÍCULO</h1>
+
+  <div class="buttons-container">
+
+    <button class="select back" type="button" routerLink="/vehicles">
+      <span class="material-symbols-outlined" translate="no">
+        arrow_back
+      </span>
+      <p class="select-text">Regresar</p>
+    </button>
+
+    <button class="select" type="button" (click)="goToVehicleOwnership()" [ngClass]="{'selected': selectedButton === 'propiedad'}">
+      <span class="material-symbols-outlined" translate="no">
+        badge
+      </span>
+      <p class="select-text">Tarjeta Propiedad</p>
+    </button>
+
+    <button class="select" type="button" (click)="goToVehicleDocuments()" [ngClass]="{'selected': selectedButton === 'documentos'}">
+      <span class="material-symbols-outlined" translate="no">
+        description
+      </span>
+      <p class="select-text">Documentos</p>
+    </button>
+
+    <!-- <button class="select" type="button" (click)="goToVehicleDrivers()" [ngClass]="{'selected': selectedButton === 'conductores'}">
+      <span class="material-symbols-outlined" translate="no">
+        id_card
+      </span>
+      <p class="select-text">Conductores</p>
+    </button>
+
+    <button class="select" type="button" (click)="goToVehicleIncome()" [ngClass]="{'selected': selectedButton === 'ingresos'}">
+      <span class="material-symbols-outlined" translate="no">
+        payments
+      </span>
+      <p class="select-text">Ingresos</p>
+    </button>
+
+    <button class="select" type="button" (click)="goToVehicleOrders()" [ngClass]="{'selected': selectedButton === 'ordenes'}">
+      <span class="material-symbols-outlined">
+        receipt_long
+      </span>
+      <p class="select-text">Ordenes</p>
+    </button>
+
+    <button class="select" type="button" (click)="goToVehicleTools()" [ngClass]="{'selected': selectedButton === 'herramientas'}">
+      <span class="material-symbols-outlined" translate="no">
+        handyman
+      </span>
+      <p class="select-text">Herramientas</p>
+    </button>
+
+    <button class="select" type="button" (click)="goToVehiclePhotos()" [ngClass]="{'selected': selectedButton === 'fotos'}">
+      <span class="material-symbols-outlined" translate="no">
+        image
+      </span>
+      <p class="select-text">Fotos</p>
+    </button>
+
+    <button class="select" type="button" (click)="goToVehicleDocumentation()" [ngClass]="{'selected': selectedButton === 'documentacion'}">
+      <span class="material-symbols-outlined" translate="no">
+        file_copy
+      </span>
+      <p class="select-text">Documentación</p>
+    </button>
+
+    <button class="select" type="button" (click)="goToVehiclePyG()" [ngClass]="{'selected': selectedButton === 'pyg'}">
+      <span class="material-symbols-outlined" translate="no">
+        request_quote
+      </span>
+      <p class="select-text">P y G</p>
+    </button> -->
+
+  </div>
+
+  <hr class="external">
+
+  <!-- INPUTS PERSONALES -->
+  <!-- -------------------------------------------------------------------------------------- -->
+  <form [formGroup]="vehicleForm" (ngSubmit)="saveData()">
+    <div class="first-info">
+      <div class="info-code-container">
+        <div class="div-group all-size">
+          <div class="code-container gray-background">
+            <div class="form-group">
+              <label class="all-size" for="vehiculo_placa">PLACA N°:</label>
+              <input class="all-size" type="text" id="vehiculo_placa" formControlName="vehiculo_placa"><br>
+            </div>
+    
+            <div class="form-group">
+              <label class="all-size" for="vehiculo_numero">UNIDAD N°:</label>
+              <input class="all-size" type="text" id="vehiculo_numero" formControlName="vehiculo_numero"><br>
+            </div>
+        
+            <div class="form-group">
+              <label class="all-size" for="vehiculo_consecutivo">CONSECUTIVO:</label>
+              <input class="all-size" type="number" id="vehiculo_consecutivo" name="vehiculo_consecutivo" disabled><br>
+            </div>
+          </div>
+    
+          <div class="media-container">
+            <img class="photo-container" [src]="this.imageVehicle">
+          </div>
+        </div>
+    
+      </div>
+
+      <div class="last-first-information">
+        <div class="form-group">
+          <label class="medium" for="fec_creacion">Fecha Creación:</label><br>
+          <input class="all-size" type="text" id="fec_creacion" name="fec_creacion" disabled><br>
+        </div>
+      </div>
+    </div>
+
+    <hr class="external">
+
+    <div class="info-container">
+
+      <div class="div-group">
+        <div class="group-inputs">
+          <div class="form-group">
+            <label for="marca">Marca:</label><br>
+            <select class="all-size" id="marca" formControlName="vehiculo_marca">
+              <option *ngFor="let brand of brands" value="brand.codigo">{{ brand.codigo }} - {{ brand.nombre }}</option>
+            </select><br>
+          </div>
+        </div>
+
+        <div class="padding"></div>
+
+        <div class="group-inputs">
+          <div class="form-group">
+            <label for="vehiculo_modelo">Modelo:</label><br>
+            <input class="all-size" type="text" id="vehiculo_modelo" formControlName="vehiculo_modelo"><br>
+          </div>
+        </div>
+
+        <div class="padding"></div>
+
+        <div class="group-inputs">
+          <div class="form-group">
+            <label for="vehiculo_fec_modelo">Año:</label><br>
+            <input class="all-size" type="int" id="vehiculo_fec_modelo" formControlName="vehiculo_fec_modelo"><br>
+          </div>
+        </div>
+
+        <div class="padding"></div>
+
+        <div class="group-inputs">
+          <div class="form-group">
+            <label for="vehiculo_cilindraje">Cilindraje CC:</label><br>
+            <input class="all-size" type="text" id="vehiculo_cilindraje" formControlName="vehiculo_cilindraje"><br>
+          </div>
+        </div>
+
+        <div class="padding"></div>
+
+        <div class="group-inputs">
+          <div class="form-group">
+            <label for="vehiculo_nro_puertas">N° Puertas:</label><br>
+            <input class="all-size" type="text" id="vehiculo_nro_puertas" formControlName="vehiculo_nro_puertas"><br>
+          </div>
+        </div>
+      </div>
+
+      <hr>
+      <!-- SIGUIENTE RENGLÓN -->
+
+      <div class="div-group">
+        <div class="group-inputs">
+          <div class="form-group">
+            <label for="vehiculo_licencia_nro">Licencia Transito N°:</label><br>
+            <input class="all-size" type="text" id="vehiculo_licencia_nro" formControlName="vehiculo_licencia_nro"><br>
+          </div>
+        </div>
+
+        <div class="padding"></div>
+
+        <div class="group-inputs">
+          <div class="form-group">
+            <label for="fec_licencia">Fecha Lic:</label><br>
+            <input class="all-size" type="date" id="fec_licencia" formControlName="vehiculo_licencia_fec"><br>
+          </div>
+        </div>
+
+        <div class="padding"></div>
+
+        <div class="group-inputs">
+          <div class="form-group">
+            <label for="vehiculo_color">Color:</label><br>
+            <input class="all-size" type="text" id="vehiculo_color" formControlName="vehiculo_color"><br>
+          </div>
+        </div>
+
+        <div class="padding"></div>
+
+        <div class="group-inputs">
+          <div class="form-group">
+            <label for="servicio">Servicio:</label><br>
+            <input class="all-size" type="text" id="servicio" formControlName="vehiculo_servicio"><br>
+          </div>
+        </div>
+      </div>
+
+      <hr>
+      <!-- SIGUIENTE RENGLÓN -->
+      <div class="div-group">
+        <div class="group-inputs">
+          <div class="form-group">
+            <label for="fec_matricula">Fecha de la Matricula:</label><br>
+            <input class="all-size" type="date" id="fec_matricula" formControlName="vehiculo_fec_matricula"><br>
+          </div>
+
+          <div class="form-group">
+            <label for="vehiculo_clase">Clase de Vehículo:</label><br>
+            <input class="all-size" type="text" id="vehiculo_clase" formControlName="vehiculo_clase"><br>
+          </div>
+
+          <div class="form-group">
+            <label for="vehiculo_capacidad">Capacidad Kg/Pasag:</label><br>
+            <input class="all-size" type="text" id="vehiculo_capacidad" formControlName="vehiculo_capacidad"><br>
+          </div>
+        </div>
+
+        <div class="padding"></div>
+
+        <div class="group-inputs">
+          <div class="form-group">
+            <label for="fec_vencimiento">Fecha de Vencimiento:</label><br>
+            <input class="all-size" type="date" id="fec_vencimiento" formControlName="vehiculo_fec_vencimiento_matricula"><br>
+          </div>
+
+          <div class="form-group">
+            <label for="vehiculo_tipo">Tipo de Carroceria:</label><br>
+            <input class="all-size" type="text" id="vehiculo_tipo" formControlName="vehiculo_tipo"><br>
+          </div>
+
+          <div class="form-group">
+            <label for="vehiculo_ne">Ne:</label><br>
+            <input class="all-size" type="text" id="vehiculo_ne" formControlName="vehiculo_ne"><br>
+          </div>
+        </div>
+
+        <div class="padding"></div>
+
+        <div class="group-inputs">
+          <div class="form-group">
+            <label for="fec_importacion">Fecha de Importación:</label><br>
+            <input class="all-size" type="date" id="fec_importacion" formControlName="vehiculo_fec_importacion"><br>
+          </div>
+          
+          <div class="form-group">
+            <label for="vehiculo_combustible">Combustible:</label><br>
+            <input class="all-size" type="text" id="vehiculo_combustible" formControlName="vehiculo_combustible"><br>
+          </div>
+
+          <div class="form-group">
+            <label for="vehiculo_vin">V.I.N:</label><br>
+            <input class="all-size" type="text" id="vehiculo_vin" formControlName="vehiculo_vin"><br>
+          </div>
+        </div>
+      </div>
+
+      <hr class="internal-forms">
+
+      <!-- SIGUIENTE RENGLÓN -->
+
+      <div class="div-group">
+        <div class="group-inputs">
+          <div class="form-group">
+            <label for="vehiculo_motor">N° Motor:</label><br>
+            <input class="all-size" type="text" id="vehiculo_motor" formControlName="vehiculo_motor"><br>
+          </div>
+
+          <div class="form-group">
+            <label for="vehiculo_serie">N° Serie:</label><br>
+            <input class="all-size" type="text" id="vehiculo_serie" formControlName="vehiculo_serie"><br>
+          </div>
+
+          <div class="form-group">
+            <label for="vehiculo_chasis">N° Chasis:</label><br>
+            <input class="all-size" type="text" id="vehiculo_chasis" formControlName="vehiculo_chasis"><br>
+          </div>
+        </div>
+
+        <div class="padding"></div>
+
+        <div class="group-inputs">
+          <div class="form-group">
+            <label for="vehiculo_motor_reg">Reg:</label><br>
+            <input class="all-size" type="text" id="vehiculo_motor_reg" formControlName="vehiculo_motor_reg"><br>
+          </div>
+
+          <div class="form-group">
+            <label for="vehiculo_serie_reg">Reg:</label><br>
+            <input class="all-size" type="text" id="vehiculo_serie_reg" formControlName="vehiculo_serie_reg"><br>
+          </div>
+
+          <div class="form-group">
+            <label for="vehiculo_chasis_reg">Reg:</label><br>
+            <input class="all-size" type="text" id="vehiculo_chasis_reg" formControlName="vehiculo_chasis_reg"><br>
+          </div>
+        </div>
+      </div>
+
+      <hr class="internal-forms">
+
+      <!-- SIGUIENTE RENGLÓN -->
+      <div class="div-group">
+        <div class="group-inputs">
+          <div class="form-group">
+            <label for="propietario">Propietario:</label><br>
+            <select class="all-size" id="propietario" formControlName="vehiculo_propietario">
+              <option value="" selected> - </option>
+              <option *ngFor="let owner of owners" value="owner.id">{{ owner.id }} - {{ owner.name }}</option>
+            </select><br>
+          </div>
+        </div>
+
+        <div class="padding"></div>
+
+        <div class="group-inputs">
+          <div class="form-group">
+            <label for="cta_gasto">Cta Gasto:</label><br>
+            <select class="all-size" id="cta_gasto" formControlName="vehiculo_cta_gasto">
+              <option value="" selected> - </option>
+              <option *ngFor="let expenseAccount of expenseAccounts" value="expenseAccount.codigo">{{ expenseAccount.codigo }} - {{ expenseAccount.nombre }}</option>
+            </select><br>
+          </div>
+        </div>
+
+        <div class="padding"></div>
+
+        <div class="group-inputs">
+          <div class="form-group">
+            <label for="central">Central:</label><br>
+            <select class="all-size" id="central" formControlName="vehiculo_central">
+              <option *ngFor="let central of central" value="central.codigo">{{ central.codigo }} - {{ central.nombre }}</option>
+            </select><br>
+          </div>
+        </div>
+      </div>
+      
+    </div>
+
+    <hr class="external">
+
+    <div class="info-container padding-bottom">
+      <div class="div-group gray-background">
+        <div class="group-inputs">
+          <div class="title-container">
+            <h3>CUPO N° o Certificado de Operación:</h3>
+          </div>
+
+          <div class="form-group">
+            <input class="all-size" type="text" id="vehiculo_nro_cupo" formControlName="vehiculo_nro_cupo"><br>
+          </div>
+        </div>
+
+        <div class="padding"></div>
+
+        <div class="group-inputs">
+          <div class="title-container">
+            <h3>PERMISO N°:</h3>
+          </div>
+
+          <div class="form-group">
+            <input class="all-size" type="text" id="vehiculo_permiso_nro" formControlName="vehiculo_permiso_nro"><br>
+          </div>
+        </div>
+
+        <div class="padding"></div>
+
+        <div class="group-inputs">
+          <div class="title-container">
+            <h3>Vence Permiso:</h3>
+          </div>
+
+          <div class="form-group">
+            <input class="all-size" type="date" id="vehiculo_fec_vencimiento_permiso" formControlName="vehiculo_fec_vencimiento_permiso"><br>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- -------------------------------------------------------------------------------------- -->
+
+    <hr class="external">
+
+    <div class="info-container">
+      <div class="div-group">
+        <div class="group-inputs">
+          <div class="form-group">
+            <label for="vehiculo_blindaje">Blindaje:</label><br>
+            <input class="all-size" type="text" id="vehiculo_blindaje" formControlName="vehiculo_blindaje"><br>
+          </div>
+        </div>
+
+        <div class="padding"></div>
+
+        <div class="group-inputs">
+          <div class="form-group">
+            <label for="vehiculo_potencia">Potencia HP:</label><br>
+            <input class="all-size" type="text" id="vehiculo_potencia" formControlName="vehiculo_potencia"><br>
+          </div>
+        </div>
+
+        <div class="padding"></div>
+
+        <div class="group-inputs">
+          <div class="form-group">
+            <label for="vehiculo_dec_importacion">Declaración Importación:</label><br>
+            <input class="all-size" type="text" id="vehiculo_dec_importacion" formControlName="vehiculo_dec_importacion"><br>
+          </div>
+        </div>
+      </div>
+
+      <div class="last-first-information">
+        <div class="form-group">
+          <label for="vehiculo_restriccion_movilidad">Restricción de Movilidad:</label><br>
+          <input class="all-size" type="text" id="vehiculo_restriccion_movilidad" formControlName="vehiculo_restriccion_movilidad"><br>
+        </div>
+      </div>
+
+      <div class="last-first-information">
+        <div class="form-group">
+          <label for="vehiculo_limit_propiedad">Limitación a la Propiedad:</label><br>
+          <input class="all-size" type="text" id="vehiculo_limit_propiedad" formControlName="vehiculo_limit_propiedad"><br>
+        </div>
+      </div>
+
+      <div class="last-first-information">
+        <div class="form-group">
+          <label for="vehiculo_organismo_transito">Organismo de Transito:</label><br>
+          <input class="all-size" type="text" id="vehiculo_organismo_transito" formControlName="vehiculo_organismo_transito"><br>
+        </div>
+      </div>
+
+      <div class="div-group">
+        <div class="group-inputs">
+          <div class="form-group">
+            <label for="vehiculo_codigo_barras">Código Barras:</label><br>
+            <input class="all-size" type="text" id="vehiculo_codigo_barras" formControlName="vehiculo_codigo_barras"><br>
+          </div>
+        </div>
+
+        <div class="padding"></div>
+
+        <div class="group-inputs">
+          <div class="form-group">
+            <label for="vehiculo_lateral">Lateral:</label><br>
+            <input class="all-size" type="text" id="vehiculo_lateral" formControlName="vehiculo_lateral"><br>
+          </div>
+        </div>
+
+        <div class="padding"></div>
+
+        <div class="group-inputs">
+          <div class="form-group">
+            <label for="vehiculo_kilometraje">Kilometraje:</label><br>
+            <input class="all-size" type="int" id="vehiculo_kilometraje" formControlName="vehiculo_kilometraje"><br>
+          </div>
+        </div>
+
+        <div class="padding"></div>
+
+        <div class="group-inputs">
+          <div class="form-group">
+            <label for="vehiculo_modalidad">Modalidad:</label><br>
+            <select class="all-size" id="vehiculo_modalidad" formControlName="vehiculo_modalidad">
+              <option value="" selected> - </option>
+              <option *ngFor="let modality of modalities" value="modality.codigo">{{ modality.codigo }} - {{ modality.nombre }}</option>
+            </select><br>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <hr class="external">
+
+    <div class="info-container padding-bottom">
+      <div class="div-group gray-background">
+        <div class="group-inputs">
+          <div class="title-container">
+            <h3>Consultar Panapass:</h3>
+          </div>
+
+          <div class="form-group">
+            <select class="all-size" id="vehiculo_consulta_panapass" formControlName="vehiculo_consulta_panapass" >
+              <option value="'1'">Sí</option>
+              <option value="'2'">No</option>
+            </select><br>
+          </div>
+        </div>
+
+        <div class="padding"></div>
+
+        <div class="group-inputs">
+          <div class="title-container">
+            <h3>N° PanaPass:</h3>
+          </div>
+
+          <div class="form-group">
+            <input class="all-size" type="text" id="vehiculo_panapass" formControlName="vehiculo_panapass"><br>
+          </div>
+        </div>
+
+        <div class="padding"></div>
+
+        <div class="group-inputs">
+          <div class="title-container">
+            <h3>Contraseña:</h3>
+          </div>
+
+          <div class="form-group">
+            <input class="all-size" type="text" id="vehiculo_panapass_pwd" formControlName="vehiculo_panapass_pwd"><br>
+          </div>
+        </div>
+
+        <div class="padding"></div>
+
+        <div class="group-inputs">
+          <div class="title-container">
+            <h3>Saldo:</h3>
+          </div>
+
+          <div class="form-group">
+            <input class="all-size" type="text" id="vehiculo_saldo_panapass" disabled><br>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <hr class="external">
+
+    <div class="buttons-container">
+
+      <button class="select" type="button" (click)="saveData()">
+        <span class="material-symbols-outlined" translate="no">
+          check
+        </span>
+        <p class="select-text">Aceptar</p>
+      </button>
+
+      <button class="select back" type="button" routerLink="/vehicles">
+        <span class="material-symbols-outlined" translate="no">
+          close
+        </span>
+        <p class="select-text">Cancelar</p>
+      </button>
+
+    </div>
+  </form>
+</div>
+
+<app-footer></app-footer>

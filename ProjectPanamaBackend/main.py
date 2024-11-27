@@ -14,6 +14,9 @@ from routes.vehicles import vehicles_router
 from routes.cities import cities_router
 from routes.central import central_router
 from routes.operaciones import operations_router
+from routes.brands import brands_router
+from routes.expense_account import expenseAccount_router
+from routes.modalities import modalities_router
 import os
 
 load_dotenv()
@@ -41,6 +44,9 @@ app.include_router(vehicles_router)
 app.include_router(cities_router)
 app.include_router(central_router)
 app.include_router(operations_router)
+app.include_router(brands_router)
+app.include_router(expenseAccount_router)
+app.include_router(modalities_router)
 
 app.mount("/assets", StaticFiles(directory="assets"), name="assets")
 
