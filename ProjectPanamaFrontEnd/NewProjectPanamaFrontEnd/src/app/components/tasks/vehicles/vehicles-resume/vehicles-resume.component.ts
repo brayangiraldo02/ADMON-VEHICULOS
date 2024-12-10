@@ -330,8 +330,8 @@ export class VehiclesResumeComponent {
     this.apiService.getData('vehicle-codes').subscribe(
       (response) => {
         this.vehicles = response
-          .filter((vehicles: any) => vehicles.vehiculo_numero)  // Filtramos los drivers con código
-          .sort((a: any, b: any) => a.vehiculo_consecutivo - b.vehiculo_consecutivo);  // Ordenamos los drivers por código
+          .filter((vehicles: any) => vehicles.vehiculo_numero)  // Filtramos los drivers con número
+          .sort((a: any, b: any) => a.vehiculo_consecutivo - b.vehiculo_consecutivo);  // Ordenamos los drivers por consecutivo
         
         // console.log(this.vehicles); 
       },

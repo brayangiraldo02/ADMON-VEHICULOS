@@ -100,6 +100,7 @@ export class VehiclesAddnewComponent {
     this.getCentral();
     this.getExpenseAccounts();
     this.getModalities();
+    this.getVehicles();
   }
 
   getBrands() {
@@ -168,6 +169,20 @@ export class VehiclesAddnewComponent {
     return '0000-00-00 00:00:00'; // Si la fecha no es válida, devuelve una fecha nula
   }
 
+  getVehicles() {
+    this.apiService.getData('vehicle-codes').subscribe(
+      (response) => {
+        this.vehicles = response
+          .sort((a: any, b: any) => a.vehiculo_consecutivo - b.vehiculo_consecutivo);  // Ordenamos los drivers por código
+        
+        console.log(this.vehicles); 
+      },
+      (error) => {
+        console.log(error);
+      }
+    );
+  }
+
   saveData() {
 
     const formValues = this.vehicleForm.value;
@@ -181,18 +196,20 @@ export class VehiclesAddnewComponent {
     formValues.vehiculo_fec_vencimiento_matricula = this.finalDate(formValues.vehiculo_fec_vencimiento_matricula);
     formValues.vehiculo_fec_matricula = this.finalDate(formValues.vehiculo_fec_matricula);
 
+    formValues.vehiculo_consecutivo = Number(this.vehicles[this.vehicles.length - 1].vehiculo_consecutivo) + 1;
+
     console.log('Data to save:', formValues);
   
-    // this.apiService.updateData(`vehicle/${this.code}`, this.data).subscribe(
-    //   (response) => {
-    //     window.alert('Datos actualizados correctamente');
-    //     // console.log(response);
-    //     location.reload();
-    //   },
-    //   (error) => {
-    //     console.log(error);
-    //   }
-    // );
+    this.apiService.postData(`vehicles`, formValues).subscribe(
+      (response) => {
+        window.alert('Vehículo creado correctamente');
+        // console.log(response);
+        this.router.navigate(['/vehicles']);
+      },
+      (error) => {
+        console.log(error);
+      }
+    );
   }
 
   goToVehicleOwnership() {

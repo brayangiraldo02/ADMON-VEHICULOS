@@ -126,7 +126,7 @@
           <div class="form-group">
             <label for="marca">Marca:</label><br>
             <select class="all-size" id="marca" formControlName="vehiculo_marca">
-              <option *ngFor="let brand of brands" value="brand.codigo">{{ brand.codigo }} - {{ brand.nombre }}</option>
+              <option *ngFor="let brand of brands" [value]="brand.codigo">{{ brand.codigo }} - {{ brand.nombre }}</option>
             </select><br>
           </div>
         </div>
@@ -316,8 +316,8 @@
           <div class="form-group">
             <label for="propietario">Propietario:</label><br>
             <select class="all-size" id="propietario" formControlName="vehiculo_propietario">
-              <option value="" selected> - </option>
-              <option *ngFor="let owner of owners" value="owner.id">{{ owner.id }} - {{ owner.name }}</option>
+              <option [value]="" selected> - </option>
+              <option *ngFor="let owner of owners" [value]="owner.id">{{ owner.id }} - {{ owner.name }}</option>
             </select><br>
           </div>
         </div>
@@ -328,8 +328,8 @@
           <div class="form-group">
             <label for="cta_gasto">Cta Gasto:</label><br>
             <select class="all-size" id="cta_gasto" formControlName="vehiculo_cta_gasto">
-              <option value="" selected> - </option>
-              <option *ngFor="let expenseAccount of expenseAccounts" value="expenseAccount.codigo">{{ expenseAccount.codigo }} - {{ expenseAccount.nombre }}</option>
+              <option [value]="" selected> - </option>
+              <option *ngFor="let expenseAccount of expenseAccounts" [value]="expenseAccount.codigo">{{ expenseAccount.codigo }} - {{ expenseAccount.nombre }}</option>
             </select><br>
           </div>
         </div>
@@ -340,7 +340,7 @@
           <div class="form-group">
             <label for="central">Central:</label><br>
             <select class="all-size" id="central" formControlName="vehiculo_central">
-              <option *ngFor="let central of central" value="central.codigo">{{ central.codigo }} - {{ central.nombre }}</option>
+              <option *ngFor="let central of central" [value]="central.codigo">{{ central.codigo }} - {{ central.nombre }}</option>
             </select><br>
           </div>
         </div>
@@ -473,8 +473,8 @@
           <div class="form-group">
             <label for="vehiculo_modalidad">Modalidad:</label><br>
             <select class="all-size" id="vehiculo_modalidad" formControlName="vehiculo_modalidad">
-              <option value="" selected> - </option>
-              <option *ngFor="let modality of modalities" value="modality.codigo">{{ modality.codigo }} - {{ modality.nombre }}</option>
+              <option [value]="" selected> - </option>
+              <option *ngFor="let modality of modalities" [value]="modality.codigo">{{ modality.codigo }} - {{ modality.nombre }}</option>
             </select><br>
           </div>
         </div>
@@ -492,8 +492,8 @@
 
           <div class="form-group">
             <select class="all-size" id="vehiculo_consulta_panapass" formControlName="vehiculo_consulta_panapass" >
-              <option value="'1'">Sí</option>
-              <option value="'2'">No</option>
+              <option [value]="'1'">Sí</option>
+              <option [value]="'2'">No</option>
             </select><br>
           </div>
         </div>
