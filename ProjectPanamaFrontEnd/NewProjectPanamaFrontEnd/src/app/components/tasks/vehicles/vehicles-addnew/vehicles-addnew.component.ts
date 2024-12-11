@@ -204,7 +204,7 @@ export class VehiclesAddnewComponent {
       (response) => {
         window.alert('Vehículo creado correctamente');
         // console.log(response);
-        this.router.navigate(['/vehicles']);
+        this.router.navigate(['/vehicle/'+formValues.vehiculo_consecutivo]);
       },
       (error) => {
         console.log(error);
