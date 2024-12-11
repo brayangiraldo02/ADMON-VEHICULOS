@@ -62,6 +62,8 @@ export class DriversAddnewComponent {
       par_contacto: ['', Validators.maxLength(20)],
       par_contacto1: ['', Validators.maxLength(20)],
       par_contacto2: ['', Validators.maxLength(20)],
+      recome_nom: ['', Validators.maxLength(50)],
+      recome_ced: ['', Validators.maxLength(12)],
       estado: [''],
       contrato_auto: [''],
       cruce_ahorros: [''],
@@ -206,6 +208,7 @@ export class DriversAddnewComponent {
         this.isLoading = false;
         this.addDateFields();
         const formData = this.driverForm.value;
+        formData['codigo'] = this.driverForm.get('codigo')?.value;
         console.log(formData);
         this.apiService.postData('drivers', formData).subscribe(
           (response) => {
