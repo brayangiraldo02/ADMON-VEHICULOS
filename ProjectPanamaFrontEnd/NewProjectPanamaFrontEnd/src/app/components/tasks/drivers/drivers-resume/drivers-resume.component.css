@@ -208,6 +208,10 @@ button.selected {
   width: 100%;
 }
 
+.semitotal {
+  width: 80%;
+}
+
 .large {
   width: 40vh;
 }

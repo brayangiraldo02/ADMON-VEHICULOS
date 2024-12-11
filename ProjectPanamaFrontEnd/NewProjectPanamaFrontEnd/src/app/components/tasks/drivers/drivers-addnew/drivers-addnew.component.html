@@ -255,6 +255,18 @@
         </div>
       </div>
 
+      <div class="two-container">
+        <div class="form-group semitotal">
+          <label for="recome_nom">RECOMENDADO:</label>
+          <input class="total" type="text" id="recome_nom" formControlName="recome_nom"><br>
+        </div>
+    
+        <div class="form-group ">
+          <label for="recome_ced">Cédula:</label>
+          <input class="small" type="text" id="recome_ced" formControlName="recome_ced"><br>
+        </div>
+      </div>
+
       <div *ngIf="driverForm.get('contacto')?.invalid && (driverForm.get('contacto')?.dirty || driverForm.get('contacto')?.touched)" class="validators">
         <!-- <div *ngIf="driverForm.get('contacto')?.errors?.['required']"><p>- Contacto 1 es requerido.</p></div> -->
         <div *ngIf="driverForm.get('contacto')?.errors?.['maxlength']"><p>- Contacto 1 no puede exceder 40 caracteres.</p></div>
@@ -298,6 +310,16 @@
       <div *ngIf="driverForm.get('par_contacto2')?.invalid && (driverForm.get('par_contacto2')?.dirty || driverForm.get('par_contacto2')?.touched)" class="validators">
         <!-- <div *ngIf="driverForm.get('par_contacto2')?.errors?.['required']"><p>- Parentesco del contacto 3 es requerido.</p></div> -->
         <div *ngIf="driverForm.get('par_contacto2')?.errors?.['maxlength']"><p>- Parentesco del contacto 3 no puede exceder 20 caracteres.</p></div>
+      </div>
+
+      <div *ngIf="driverForm.get('recome_nom')?.invalid && (driverForm.get('recome_nom')?.dirty || driverForm.get('recome_nom')?.touched)" class="validators">
+        <!-- <div *ngIf="driverForm.get('recome_nom')?.errors?.['required']"><p>- Parentesco del contacto 3 es requerido.</p></div> -->
+        <div *ngIf="driverForm.get('recome_nom')?.errors?.['maxlength']"><p>- RECOMENDADO no puede exceder 50 caracteres.</p></div>
+      </div>
+
+      <div *ngIf="driverForm.get('recome_ced')?.invalid && (driverForm.get('recome_ced')?.dirty || driverForm.get('recome_ced')?.touched)" class="validators">
+        <!-- <div *ngIf="driverForm.get('recome_ced')?.errors?.['required']"><p>- Parentesco del contacto 3 es requerido.</p></div> -->
+        <div *ngIf="driverForm.get('recome_ced')?.errors?.['maxlength']"><p>- Cédula del recomendado no puede exceder 12 caracteres.</p></div>
       </div>
 
     <hr>

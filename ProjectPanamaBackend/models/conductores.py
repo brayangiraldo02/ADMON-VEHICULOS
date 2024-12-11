@@ -167,3 +167,5 @@ class Conductores(Base):
   USU_MODIFI = Column(CHAR(12), default="")
   EX = Column(Boolean, default=False)
   SEL = Column(Boolean, default=False)
+  RECOME_NOM = Column(CHAR(50), default="")
+  RECOME_CED = Column(CHAR(12), default="")

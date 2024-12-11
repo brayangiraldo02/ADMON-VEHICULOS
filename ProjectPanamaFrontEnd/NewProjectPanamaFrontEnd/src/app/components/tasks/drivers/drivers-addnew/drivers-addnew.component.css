@@ -212,6 +212,10 @@ button.selected {
   flex: 1;
 } */
 
+.semitotal {
+  width: 80%;
+}
+
 .total {
   width: 100%;
 }

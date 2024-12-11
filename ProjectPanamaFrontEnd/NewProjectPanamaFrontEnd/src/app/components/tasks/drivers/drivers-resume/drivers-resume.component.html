@@ -231,8 +231,20 @@
         </div>
       </div>
 
-      </div>
     </div>
+  </div>
+
+  <div class="two-container" *ngIf="!isLoading">
+      <div class="form-group semitotal">
+        <label for="recome_nom">RECOMENDADO:</label>
+        <input class="total" type="text" id="recome_nom" name="recome_nom" [(ngModel)]="data.recome_nom" [disabled]="!isEditable"><br>
+      </div>
+  
+      <div class="form-group ">
+        <label for="recome_ced">Cédula:</label>
+        <input class="small" type="text" id="recome_ced" name="recome_ced" [(ngModel)]="data.recome_ced" [disabled]="!isEditable"><br>
+    </div>
+  </div>
 
   <hr *ngIf="!isLoading">
 

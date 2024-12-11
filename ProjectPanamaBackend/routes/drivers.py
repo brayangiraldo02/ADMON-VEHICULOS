@@ -218,6 +218,8 @@ async def get_driver_info(driver_id: int):
       Conductores.CONTACTO2,
       Conductores.TEL_CONTA2,
       Conductores.PAR_CONTA2,
+      Conductores.RECOME_NOM,
+      Conductores.RECOME_CED,
       Conductores.ESTADO,
       Conductores.FEC_ESTADO,
       Conductores.TIP_CONTRA,
@@ -254,6 +256,8 @@ async def get_driver_info(driver_id: int):
       'contacto2': driver.CONTACTO2,
       'tel_contacto2': driver.TEL_CONTA2,
       'par_contacto2': driver.PAR_CONTA2,
+      'recome_nom': driver.RECOME_NOM,
+      'recome_ced': driver.RECOME_CED,
       'estado': driver.ESTADO,
       'fecha_estado': driver.FEC_ESTADO,
       'contrato_auto': driver.TIP_CONTRA,
@@ -304,6 +308,8 @@ async def update_driver(driver_id: int, driver: ConductorUpdate):
     result.PAR_CONTAC = driver.par_contacto
     result.PAR_CONTA1 = driver.par_contacto1
     result.PAR_CONTA2 = driver.par_contacto2
+    result.RECOME_NOM = driver.recome_nom
+    result.RECOME_CED = driver.recome_ced
     result.CRUCE_AHOR = driver.cruce_ahorros
     result.LICEN_NRO = driver.licencia_numero
     result.LICEN_CAT = driver.licencia_categoria
@@ -456,6 +462,8 @@ async def create_driver(driver: ConductorCreate):
       CONTACTO2=driver.contacto2,
       TEL_CONTA2=driver.tel_contacto2,
       PAR_CONTA2=driver.par_contacto2,
+      RECOME_NOM=driver.recome_nom,
+      RECOME_CED=driver.recome_ced,
       ESTADO=driver.estado,
       FEC_ESTADO=fecha,
       TIP_CONTRA=driver.contrato_auto,
