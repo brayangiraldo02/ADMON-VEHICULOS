@@ -3,7 +3,7 @@
 <div class="main-container">
   <h1 class="title-container">VEHÍCULO</h1>
 
-  <div class="buttons-container">
+  <div class="buttons-container" *ngIf="isLoading">
 
     <button class="select back" type="button" routerLink="/vehicles">
       <span class="material-symbols-outlined" translate="no">
@@ -81,7 +81,7 @@
 
   <!-- INPUTS PERSONALES -->
   <!-- -------------------------------------------------------------------------------------- -->
-  <form [formGroup]="vehicleForm" (ngSubmit)="saveData()">
+  <form [formGroup]="vehicleForm" (ngSubmit)="saveData()" *ngIf="isLoading">
     <div class="first-info">
       <div class="info-code-container">
         <div class="div-group all-size">
@@ -556,6 +556,8 @@
 
     </div>
   </form>
+
+  <p *ngIf="!isLoading">Creando vehículo, por favor espere...</p>
 </div>
 
 <app-footer></app-footer>

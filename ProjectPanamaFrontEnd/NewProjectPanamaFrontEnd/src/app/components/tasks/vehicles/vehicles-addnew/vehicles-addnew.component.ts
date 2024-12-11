@@ -39,6 +39,8 @@ export class VehiclesAddnewComponent {
 
   createDate: string = '';
 
+  isLoading = true;
+
   constructor(
     private fb: FormBuilder,
     private route: ActivatedRoute,
@@ -199,6 +201,8 @@ export class VehiclesAddnewComponent {
     formValues.vehiculo_consecutivo = Number(this.vehicles[this.vehicles.length - 1].vehiculo_consecutivo) + 1;
 
     console.log('Data to save:', formValues);
+
+    this.isLoading = false;
   
     this.apiService.postData(`vehicles`, formValues).subscribe(
       (response) => {
