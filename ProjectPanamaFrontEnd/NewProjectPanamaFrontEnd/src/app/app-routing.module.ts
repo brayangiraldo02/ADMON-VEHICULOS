@@ -27,6 +27,7 @@ import { DriversResumeComponent } from './components/tasks/drivers/drivers-resum
 import { DriversAddnewComponent } from './components/tasks/drivers/drivers-addnew/drivers-addnew.component';
 import { VehiclesTableComponent } from './components/tasks/vehicles/vehicles-table/vehicles-table.component';
 import { VehiclesResumeComponent } from './components/tasks/vehicles/vehicles-resume/vehicles-resume.component';
+import { VehiclesAddnewComponent } from './components/tasks/vehicles/vehicles-addnew/vehicles-addnew.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -35,6 +36,7 @@ const routes: Routes = [
   { path: 'statevehiclefleet', component: StatevehiclefleetComponent, canActivate: [AuthGuard]},
   { path: 'vehicles', component: VehiclesTableComponent, canActivate: [AuthGuard]},
   { path: 'vehicle/:code', component: VehiclesResumeComponent, canActivate: [AuthGuard]},
+  { path: 'new-vehicle', component: VehiclesAddnewComponent, canActivate: [AuthGuard]},
   { path: 'feespaid', component: FeespaidComponent, canActivate: [AuthGuard]},
   { path: 'owners', component: OwnersTableComponent, canActivate: [AuthGuard]},
   { path: 'owner/:code', component: OwnersResumeComponent, canActivate: [AuthGuard]},

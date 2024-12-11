@@ -136,6 +136,7 @@ class Vehiculos(Base):
     CTA_RENTA = Column(DECIMAL(8, 2), default=0)
     NUEVOUSADO = Column(CHAR(1), default="")
     CTA_SINIES = Column(DECIMAL(8, 2), default=0)
+    CON_CUPO = Column(CHAR(1), default="1")
     PAGA_ADMON = Column(CHAR(1), default="")
     CUO_ADMON = Column(DECIMAL(10, 2), default=0)
     CUO_REPVEH = Column(DECIMAL(10, 2), default=0)

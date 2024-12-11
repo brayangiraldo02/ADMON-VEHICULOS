@@ -16,19 +16,26 @@ export class VehiclesResumeComponent {
   usersFound = false;
   cityFound = false;
   isModalVisible: boolean = false;
+  hasPermission: boolean = false;
+  grantedPermission: string = '';
   stateEdited = false;
-  isLoading = false;
+  isLoading = true;
 
   // drivers: any = '';
 
   data: any = null;
   dataOriginal: any = null;
-  cities: any = null;
   central: any = null;
+  brands: any = null;
+  owners: any = null;
   users: any = null;
+  vehicles: any = null;
+  expenseAccounts: any = null;
+  modalities: any = null;
 
   code: string | null = null;
-  
+
+  createDate: string = '';
 
   constructor(
     private route: ActivatedRoute,
@@ -40,10 +47,15 @@ export class VehiclesResumeComponent {
     this.route.paramMap.subscribe(params => {
       this.code = params.get('code');
     });
-    // this.fetchData();
-    // this.delay(500);
-    // this.getCities();
-    // this.getDrivers();
+    this.modifyUnity();
+    this.fetchData();
+    this.delay(500);
+    this.getVehicles();
+    this.getBrands();
+    this.getOwners();
+    this.getCentral();
+    this.getExpenseAccounts();
+    this.getModalities();
   }
 
   async delay(ms: number) {
@@ -51,14 +63,20 @@ export class VehiclesResumeComponent {
   }
 
   fetchData() {
-    this.apiService.getData(`driver/9412`).subscribe(
+    this.apiService.getData(`vehicle/`+this.code).subscribe(
       (response) => {
         this.data = response;
-        this.dataOriginal = { ...this.data };
         this.stateEdited = false;
-        // console.log(this.data);
+        this.formatDate(this.data.vehiculo_fec_creacion);
+        this.data.vehiculo_licencia_fec = this.changeDate(this.data.vehiculo_licencia_fec);
+        this.data.vehiculo_fec_importacion = this.changeDate(this.data.vehiculo_fec_importacion);
+        this.data.vehiculo_fec_vencimiento_matricula = this.changeDate(this.data.vehiculo_fec_vencimiento_matricula);
+        this.data.vehiculo_fec_matricula = this.changeDate(this.data.vehiculo_fec_matricula);
+        this.dataOriginal = { ...this.data };
+        console.log(this.data);
         this.isLoading = false;
-        this.checkCity();
+        this.checkBrand();
+        // this.checkExpenseAccount();
       },
       (error) => {
         console.log(error);
@@ -67,11 +85,62 @@ export class VehiclesResumeComponent {
     );
   }
 
-  getCities() {
-    this.apiService.getData('cities').subscribe(
+  formatDate(fecha: string) {
+    const date = new Date(fecha);
+    const options: Intl.DateTimeFormatOptions = {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: true
+    };
+    this.createDate = date.toLocaleString('es-ES', options).replace(',', '');
+  }
+
+  changeDate(fecha: string): string {
+    // Validar que la fecha no sea nula ni tenga el valor "0000-00-00"
+    if (fecha && fecha !== '0000-00-00') {
+        // Si la fecha tiene el formato 'YYYY-MM-DDTHH:MM:SS', separamos la parte de la fecha
+        const partes = fecha.split('T');
+        return partes[0]; // Retorna solo la parte de la fecha "YYYY-MM-DD"
+    }
+    return ''; // Si la fecha no es válida o es "0000-00-00", devolver cadena vacía
+}
+
+  // Función para convertir la fecha de "YYYY-MM-DD" a "YYYY-MM-DD 00:00:00"
+  finalDate(fecha: string): string {
+    if (fecha) {
+      return `${fecha} 00:00:00`; // Añade la hora "00:00:00" al final de la fecha
+    }
+    return '0000-00-00 00:00:00'; // Si la fecha no es válida, devuelve una fecha nula
+  }
+
+  modifyUnity() {
+    this.apiService.getData("verify-vehicle-delete/"+this.code).subscribe(
       (response) => {
-        this.cities = response;
-        this.checkCity();
+
+        for (const [key, value] of Object.entries(response)) {
+          if (value === true) {
+            this.hasPermission = true;
+            this.grantedPermission = key;
+            break; 
+          }
+        }
+        console.log('Has Permission:', this.hasPermission);
+        console.log('Granted Permission:', this.grantedPermission);
+      },
+      (error) => {
+      }
+    );
+  }
+
+  getBrands() {
+    this.apiService.getData('brands').subscribe(
+      (response) => {
+        this.brands = response;
+        this.checkBrand();
       },
       (error) => {
         console.log(error);
@@ -79,17 +148,113 @@ export class VehiclesResumeComponent {
     );
   }
 
-  checkCity() {
-    if (this.data && this.cities) {
-      this.cityFound = this.cities.some((city: any) => city.codigo === this.data.ciudad);
-      if (!this.cityFound) {
-        this.cities.push({
-          codigo: this.data.ciudad,
-          nombre: "Ciudad no encontrada"
+  checkBrand() {
+    if (this.data && this.brands) {
+      const brandFound = this.brands.some((brand: any) => brand.codigo === this.data.vehiculo_marca);
+      if (!brandFound) {
+        this.brands.push({
+          codigo: this.data.vehiculo_marca,
+          nombre: "Marca no encontrada"
         });
       }
     }
   }
+
+  getModalities() {
+    this.apiService.getData('modalities').subscribe(
+      (response) => {
+        this.modalities = response;
+        this.checkModality();
+      },
+      (error) => {
+        console.log(error);
+      }
+    );
+  }
+
+  checkModality() {
+    if (this.data && this.modalities) {
+      const modalityFound = this.modalities.some((modality: any) => modality.codigo === this.data.vehiculo_modalidad);
+      if (!modalityFound && this.data.vehiculo_modalidad !== '') {
+        this.modalities.push({
+          codigo: this.data.vehiculo_modalidad,
+          nombre: "Modalidad no encontrada"
+        });
+      }
+    }
+  }
+
+  getOwners() {
+    this.apiService.getData('owners').subscribe(
+      (response) => {
+        this.owners = response;
+        this.checkOwner();
+      },
+      (error) => {
+        console.log(error);
+      }
+    );
+  }
+
+  checkOwner() {
+    if (this.data && this.owners) {
+      const ownerFound = this.owners.some((owner: any) => owner.id === this.data.vehiculo_propietario);
+      if (!ownerFound) {
+        this.owners.push({
+          id: this.data.vehiculo_propietario,
+          name: "Propietario no encontrado"
+        });
+      }
+    }
+  }
+
+  getCentral() {
+    this.apiService.getData('central').subscribe(
+      (response) => {
+        this.central = response;
+        this.checkCentral();
+      },
+      (error) => {
+        console.log(error);
+      }
+    );
+  }
+
+  checkCentral() {
+    if (this.data && this.central) {
+      const centralFound = this.central.some((central: any) => central.codigo === this.data.vehiculo_central);
+      if (!centralFound) {
+        this.central.push({
+          codigo: this.data.vehiculo_propietario,
+          nombre: "Propietario no encontrado"
+        });
+      }
+    }
+  }
+
+  getExpenseAccounts() {
+    this.apiService.getData('expense-accounts').subscribe(
+      (response) => {
+        this.expenseAccounts = response;
+        // this.checkExpenseAccount();
+      },
+      (error) => {
+        console.log(error);
+      }
+    );
+  }
+
+  // checkExpenseAccount() {
+  //   if (this.data && this.expenseAccounts) {
+  //     const expenseAccountFound = this.expenseAccounts.some((expenseAccount: any) => expenseAccount.codigo === this.data.vehiculo_cta_gasto);
+  //     if (!expenseAccountFound) {
+  //       this.expenseAccounts.push({
+  //         codigo: this.data.vehiculo_cuenta_gasto,
+  //         nombre: "Cuenta de gasto no encontrada"
+  //       });
+  //     }
+  //   }
+  // }
 
   selectButton(button: string) {
     this.selectedButton = button;
@@ -109,27 +274,6 @@ export class VehiclesResumeComponent {
     this.isEditable = false;
   }
 
-  newData() {
-    const fields = [
-      'nombre', 'ciudad', 'telefono', 'celular', 'correo', 'sexo', 'direccion', 'representa', 'estado_civil', 'contacto', 'contacto1', 'contacto2', 'tel_contacto', 'tel_contacto1', 'tel_contacto2', 'par_contacto', 'par_contacto1', 'par_contacto2', 'estado', 'cruce_ahorros', 'licencia_numero', 'licencia_categoria', 'licencia_vencimiento', 'detalle', 'observaciones'
-    ]
-    const dataToSave: any = {};
-    fields.forEach(field => {
-      const element = document.getElementById(field) as HTMLInputElement;
-      if (element) {
-        dataToSave[field] = element.value;
-      }
-    });
-    
-    // Add the 'codigo' field which should be read-only
-    const codigoElement = document.getElementById('codigo') as HTMLInputElement;
-    if (codigoElement) {
-      dataToSave['codigo'] = codigoElement.value;
-    }
-
-    return dataToSave;
-  }
-
   checkModifiedData(): boolean {
     for (const key in this.data) {
       // if(key == 'fec_nacimiento' || key == 'fec_ingreso') {
@@ -141,7 +285,7 @@ export class VehiclesResumeComponent {
         if(key == 'estado'){
           this.stateEdited = true;
         }
-        // console.log(`Difference found at key: ${key}, data: ${this.data[key]}, dataOriginal: ${this.dataOriginal[key]}`);
+        console.log(`Difference found at key: ${key}, data: ${this.data[key]}, dataOriginal: ${this.dataOriginal[key]}`);
         return true;
       }
     }
@@ -162,78 +306,85 @@ export class VehiclesResumeComponent {
 
     this.data['stateEdited'] = this.stateEdited;
 
+    this.data.vehiculo_licencia_fec = this.finalDate(this.data.vehiculo_licencia_fec);
+    this.data.vehiculo_fec_importacion = this.finalDate(this.data.vehiculo_fec_importacion);
+    this.data.vehiculo_fec_vencimiento_matricula = this.finalDate(this.data.vehiculo_fec_vencimiento_matricula);
+    this.data.vehiculo_fec_matricula = this.finalDate(this.data.vehiculo_fec_matricula);
+
     console.log('Data to save:', this.data);
-    this.disableInputs();
   
-    // this.apiService.updateData(`driver/${this.code}`, this.data).subscribe(
-    //   (response) => {
-    //     window.alert('Datos actualizados correctamente');
-    //     this.disableInputs();
-    //     // console.log(response);
-    //     location.reload();
-    //   },
-    //   (error) => {
-    //     console.log(error);
-    //   }
-    // );
+    this.apiService.updateData(`vehicle/${this.code}`, this.data).subscribe(
+      (response) => {
+        window.alert('Datos actualizados correctamente');
+        this.disableInputs();
+        // console.log(response);
+        location.reload();
+      },
+      (error) => {
+        console.log(error);
+      }
+    );
   }
 
-  // getDrivers() {
-  //   this.apiService.getData('drivers').subscribe(
-  //     (response) => {
-  //       this.drivers = response
-  //         .filter((drivers: any) => drivers.codigo)  // Filtramos los drivers con código
-  //         .sort((a: any, b: any) => a.codigo - b.codigo); // Ordenamos ascendente por código
+  getVehicles() {
+    this.apiService.getData('vehicle-codes').subscribe(
+      (response) => {
+        this.vehicles = response
+          .filter((vehicles: any) => vehicles.vehiculo_numero)  // Filtramos los drivers con número
+          .sort((a: any, b: any) => a.vehiculo_consecutivo - b.vehiculo_consecutivo);  // Ordenamos los drivers por consecutivo
         
-  //       // console.log(this.drivers); 
-  //     },
-  //     (error) => {
-  //       console.log(error);
-  //     }
-  //   );
-  // }
+        // console.log(this.vehicles); 
+      },
+      (error) => {
+        console.log(error);
+      }
+    );
+  }
   
 
-  // nextDriver() {
-  //   const currentIndex = this.drivers.findIndex((driver: any) => driver.codigo === this.code);
-  //   if (currentIndex !== -1 && currentIndex < this.drivers.length - 1) {
-  //     const nextDriverId = this.drivers[currentIndex + 1].codigo;
-  //     this.router.navigate(['/driver/' + nextDriverId]).then(() => {
-  //       window.location.reload();
-  //     });
-  //   }
+  nextVehicle() {
+    // console.log(this.data.vehiculo_consecutivo)
+    const currentIndex = this.vehicles.findIndex((vehicle: any) => vehicle.vehiculo_consecutivo === this.data.vehiculo_consecutivo);
+    // console.log(currentIndex)
+    if (currentIndex !== -1 && currentIndex < this.vehicles.length - 1) {
+      const nextVehicleId = this.vehicles[currentIndex + 1].vehiculo_consecutivo
+      // console.log(nextVehicleId)
+      this.router.navigate(['/vehicle/' + nextVehicleId]).then(() => {
+        window.location.reload();
+      });
+    }
 
-  //   if(currentIndex === this.drivers.length - 1){
-  //     this.firstDriver()
-  //   }
-  // }
+    if(currentIndex === this.vehicles.length - 1){
+      this.firstVehicle()
+    }
+  }
   
-  // backDriver() {
-  //   const currentIndex = this.drivers.findIndex((driver: any) => driver.codigo === this.code);
-  //   if (currentIndex !== -1 && currentIndex > 0) {
-  //     const previousDriverId = this.drivers[currentIndex - 1].codigo;
-  //     this.router.navigate(['/driver/' + previousDriverId]).then(() => {
-  //       window.location.reload();
-  //     });
-  //   }
+  backVehicle() {
+    const currentIndex = this.vehicles.findIndex((vehicle: any) => vehicle.vehiculo_consecutivo === this.data.vehiculo_consecutivo);
+    if (currentIndex !== -1 && currentIndex > 0) {
+      const previousVehicleId = this.vehicles[currentIndex - 1].vehiculo_consecutivo;
+      this.router.navigate(['/vehicle/' + previousVehicleId]).then(() => {
+        window.location.reload();
+      });
+    }
 
-  //   if (currentIndex === 0) {
-  //     this.lastDriver()
-  //   }
-  // }
+    if (currentIndex === 0) {
+      this.lastVehicle()
+    }
+  }
   
 
-  // firstDriver() {
-  //   this.router.navigate(['/driver/' + this.drivers[0].codigo]).then(() => {
-  //     window.location.reload();
-  //   });
-  // }
+  firstVehicle() {
+    this.router.navigate(['/vehicle/' + this.vehicles[0].vehiculo_consecutivo]).then(() => {
+      window.location.reload();
+    });
+  }
   
-  // lastDriver() {
-  //   this.router.navigate(['/driver/' + this.drivers[this.drivers.length - 1].codigo]).then(() => {
-  //     window.location.reload();
-  //   });
-  // }
+  lastVehicle() {
+    this.router.navigate(['/vehicle/' + this.vehicles[this.vehicles.length - 1].vehiculo_consecutivo]).then(() => {
+      window.location.reload();
+    });
+  }
 
   goToVehicleOwnership() {
     this.selectButton('propiedad')
