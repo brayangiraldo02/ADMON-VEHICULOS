@@ -252,3 +252,16 @@ button.selected {
 .small {
   width: 10vh;
 }
+
+.validators {
+  color: #FE0108;
+  cursor: default;
+  margin: 0;
+  font-size:small;
+  width: 90%;
+}
+
+.validators p {
+  margin: 0;
+  margin-bottom: 5px;
+}

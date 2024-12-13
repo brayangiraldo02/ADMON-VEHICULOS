@@ -117,6 +117,16 @@
       </div>
     </div>
 
+    <div *ngIf="vehicleForm.get('vehiculo_placa')?.invalid && (vehicleForm.get('vehiculo_placa')?.dirty || vehicleForm.get('vehiculo_placa')?.touched)" class="validators">
+      <div *ngIf="vehicleForm.get('vehiculo_placa')?.errors?.['required']"><p>- Placa N° es requerido.</p></div>
+      <div *ngIf="vehicleForm.get('vehiculo_placa')?.errors?.['maxlength']"><p>- Placa N° no puede exceder 8 caracteres.</p></div>
+    </div>
+
+    <div *ngIf="vehicleForm.get('vehiculo_numero')?.invalid && (vehicleForm.get('vehiculo_numero')?.dirty || vehicleForm.get('vehiculo_numero')?.touched)" class="validators">
+      <!-- <div *ngIf="vehicleForm.get('vehiculo_numero')?.errors?.['required']"><p>- Unidad N° es requerido.</p></div> -->
+      <div *ngIf="vehicleForm.get('vehiculo_numero')?.errors?.['maxlength']"><p>- Unidad N° no puede exceder 8 caracteres.</p></div>
+    </div>
+
     <hr class="external">
 
     <div class="info-container">
@@ -145,7 +155,7 @@
         <div class="group-inputs">
           <div class="form-group">
             <label for="vehiculo_fec_modelo">Año:</label><br>
-            <input class="all-size" type="int" id="vehiculo_fec_modelo" formControlName="vehiculo_fec_modelo"><br>
+            <input class="all-size" type="number" id="vehiculo_fec_modelo" formControlName="vehiculo_fec_modelo" min="1900" max="2100"><br>
           </div>
         </div>
 
@@ -163,10 +173,32 @@
         <div class="group-inputs">
           <div class="form-group">
             <label for="vehiculo_nro_puertas">N° Puertas:</label><br>
-            <input class="all-size" type="text" id="vehiculo_nro_puertas" formControlName="vehiculo_nro_puertas"><br>
+            <input class="all-size" type="number" id="vehiculo_nro_puertas" formControlName="vehiculo_nro_puertas"><br>
           </div>
         </div>
       </div>
+
+      <div *ngIf="vehicleForm.get('vehiculo_modelo')?.invalid && (vehicleForm.get('vehiculo_modelo')?.dirty || vehicleForm.get('vehiculo_modelo')?.touched)" class="validators">
+        <!-- <div *ngIf="vehicleForm.get('vehiculo_modelo')?.errors?.['required']"><p>- Modelo es requerido.</p></div> -->
+        <div *ngIf="vehicleForm.get('vehiculo_modelo')?.errors?.['maxlength']"><p>- Modelo no puede exceder 25 caracteres.</p></div>
+      </div>
+  
+      <div *ngIf="vehicleForm.get('vehiculo_fec_modelo')?.invalid && (vehicleForm.get('vehiculo_fec_modelo')?.dirty || vehicleForm.get('vehiculo_fec_modelo')?.touched)" class="validators">
+        <!-- <div *ngIf="vehicleForm.get('vehiculo_fec_modelo')?.errors?.['required']"><p>- Año es requerido.</p></div> -->
+        <div *ngIf="vehicleForm.get('vehiculo_fec_modelo')?.errors?.['min']"><p>- Año no puede ser menor a 1900.</p></div>
+        <div *ngIf="vehicleForm.get('vehiculo_fec_modelo')?.errors?.['max']"><p>- Año no puede ser mayor a 2100.</p></div>
+      </div>
+
+      <div *ngIf="vehicleForm.get('vehiculo_cilindraje')?.invalid && (vehicleForm.get('vehiculo_cilindraje')?.dirty || vehicleForm.get('vehiculo_cilindraje')?.touched)" class="validators">
+        <!-- <div *ngIf="vehicleForm.get('vehiculo_cilindraje')?.errors?.['required']"><p>- Cilindraje es requerido.</p></div> -->
+        <div *ngIf="vehicleForm.get('vehiculo_cilindraje')?.errors?.['maxlength']"><p>- Cilindraje no puede exceder 4 caracteres.</p></div>
+      </div>
+
+      <div *ngIf="vehicleForm.get('vehiculo_nro_puertas')?.invalid && (vehicleForm.get('vehiculo_nro_puertas')?.dirty || vehicleForm.get('vehiculo_nro_puertas')?.touched)" class="validators">
+        <!-- <div *ngIf="vehicleForm.get('vehiculo_nro_puertas')?.errors?.['required']"><p>- Código es requerido.</p></div> -->
+        <div *ngIf="vehicleForm.get('vehiculo_nro_puertas')?.errors?.['pattern']"><p>- N° Puertas no puede exceder 1 caracter.</p></div>
+      </div>
+      
 
       <hr>
       <!-- SIGUIENTE RENGLÓN -->
@@ -207,6 +239,21 @@
         </div>
       </div>
 
+      <div *ngIf="vehicleForm.get('vehiculo_licencia_nro')?.invalid && (vehicleForm.get('vehiculo_licencia_nro')?.dirty || vehicleForm.get('vehiculo_licencia_nro')?.touched)" class="validators">
+        <!-- <div *ngIf="vehicleForm.get('vehiculo_licencia_nro')?.errors?.['required']"><p>- Licencia Transito N° es requerido.</p></div> -->
+        <div *ngIf="vehicleForm.get('vehiculo_licencia_nro')?.errors?.['maxlength']"><p>- Licencia Transito N° no puede exceder 20 caracteres.</p></div>
+      </div>
+
+      <div *ngIf="vehicleForm.get('vehiculo_color')?.invalid && (vehicleForm.get('vehiculo_color')?.dirty || vehicleForm.get('vehiculo_color')?.touched)" class="validators">
+        <!-- <div *ngIf="vehicleForm.get('vehiculo_color')?.errors?.['required']"><p>- Color es requerido.</p></div> -->
+        <div *ngIf="vehicleForm.get('vehiculo_color')?.errors?.['maxlength']"><p>- Color no puede exceder 20 caracteres.</p></div>
+      </div>
+
+      <div *ngIf="vehicleForm.get('vehiculo_servicio')?.invalid && (vehicleForm.get('vehiculo_servicio')?.dirty || vehicleForm.get('vehiculo_servicio')?.touched)" class="validators">
+        <!-- <div *ngIf="vehicleForm.get('vehiculo_servicio')?.errors?.['required']"><p>- Servicio es requerido.</p></div> -->
+        <div *ngIf="vehicleForm.get('vehiculo_servicio')?.errors?.['maxlength']"><p>- Servicio no puede exceder 30 caracteres.</p></div>
+      </div>
+
       <hr>
       <!-- SIGUIENTE RENGLÓN -->
       <div class="div-group">
@@ -223,7 +270,7 @@
 
           <div class="form-group">
             <label for="vehiculo_capacidad">Capacidad Kg/Pasag:</label><br>
-            <input class="all-size" type="text" id="vehiculo_capacidad" formControlName="vehiculo_capacidad"><br>
+            <input class="all-size" type="number" id="vehiculo_capacidad" formControlName="vehiculo_capacidad"><br>
           </div>
         </div>
 
@@ -266,6 +313,36 @@
         </div>
       </div>
 
+      <div *ngIf="vehicleForm.get('vehiculo_clase')?.invalid && (vehicleForm.get('vehiculo_clase')?.dirty || vehicleForm.get('vehiculo_clase')?.touched)" class="validators">
+        <!-- <div *ngIf="vehicleForm.get('vehiculo_clase')?.errors?.['required']"><p>- Clase de Vehículo es requerido.</p></div> -->
+        <div *ngIf="vehicleForm.get('vehiculo_clase')?.errors?.['maxlength']"><p>- Clase de Vehículo no puede exceder 30 caracteres.</p></div>
+      </div>
+
+      <div *ngIf="vehicleForm.get('vehiculo_capacidad')?.invalid && (vehicleForm.get('vehiculo_capacidad')?.dirty || vehicleForm.get('vehiculo_capacidad')?.touched)" class="validators">
+        <!-- <div *ngIf="vehicleForm.get('vehiculo_capacidad')?.errors?.['required']"><p>- Capacidad es requerido.</p></div> -->
+        <div *ngIf="vehicleForm.get('vehiculo_capacidad')?.errors?.['pattern']"><p>- Capacidad no puede exceder 8 caracteres</p></div>
+      </div>
+
+      <div *ngIf="vehicleForm.get('vehiculo_tipo')?.invalid && (vehicleForm.get('vehiculo_tipo')?.dirty || vehicleForm.get('vehiculo_tipo')?.touched)" class="validators">
+        <!-- <div *ngIf="vehicleForm.get('vehiculo_tipo')?.errors?.['required']"><p>- Tipo de carrocería es requerido.</p></div> -->
+        <div *ngIf="vehicleForm.get('vehiculo_tipo')?.errors?.['maxlength']"><p>- Tipo de carrocería no puede exceder 30 caracteres.</p></div>
+      </div>
+
+      <div *ngIf="vehicleForm.get('vehiculo_ne')?.invalid && (vehicleForm.get('vehiculo_ne')?.dirty || vehicleForm.get('vehiculo_ne')?.touched)" class="validators">
+        <!-- <div *ngIf="vehicleForm.get('vehiculo_ne')?.errors?.['required']"><p>- Ne es requerido.</p></div> -->
+        <div *ngIf="vehicleForm.get('vehiculo_ne')?.errors?.['maxlength']"><p>- Ne no puede exceder 3 caracteres.</p></div>
+      </div>
+
+      <div *ngIf="vehicleForm.get('vehiculo_combustible')?.invalid && (vehicleForm.get('vehiculo_combustible')?.dirty || vehicleForm.get('vehiculo_combustible')?.touched)" class="validators">
+        <!-- <div *ngIf="vehicleForm.get('vehiculo_combustible')?.errors?.['required']"><p>- Combustible es requerido.</p></div> -->
+        <div *ngIf="vehicleForm.get('vehiculo_combustible')?.errors?.['maxlength']"><p>- Combustible no puede exceder 20 caracteres.</p></div>
+      </div>
+
+      <div *ngIf="vehicleForm.get('vehiculo_vin')?.invalid && (vehicleForm.get('vehiculo_vin')?.dirty || vehicleForm.get('vehiculo_vin')?.touched)" class="validators">
+        <!-- <div *ngIf="vehicleForm.get('vehiculo_vin')?.errors?.['required']"><p>- V.I.N es requerido.</p></div> -->
+        <div *ngIf="vehicleForm.get('vehiculo_vin')?.errors?.['maxlength']"><p>- V.I.N no puede exceder 20 caracteres.</p></div>
+      </div>
+
       <hr class="internal-forms">
 
       <!-- SIGUIENTE RENGLÓN -->
@@ -306,6 +383,36 @@
             <input class="all-size" type="text" id="vehiculo_chasis_reg" formControlName="vehiculo_chasis_reg"><br>
           </div>
         </div>
+      </div>
+
+      <div *ngIf="vehicleForm.get('vehiculo_motor')?.invalid && (vehicleForm.get('vehiculo_motor')?.dirty || vehicleForm.get('vehiculo_motor')?.touched)" class="validators">
+        <!-- <div *ngIf="vehicleForm.get('vehiculo_motor')?.errors?.['required']"><p>- N° Motor es requerido.</p></div> -->
+        <div *ngIf="vehicleForm.get('vehiculo_motor')?.errors?.['maxlength']"><p>- N° Motor no puede exceder 20 caracteres.</p></div>
+      </div>
+
+      <div *ngIf="vehicleForm.get('vehiculo_serie')?.invalid && (vehicleForm.get('vehiculo_serie')?.dirty || vehicleForm.get('vehiculo_serie')?.touched)" class="validators">
+        <!-- <div *ngIf="vehicleForm.get('vehiculo_serie')?.errors?.['required']"><p>- N° Serie es requerido.</p></div> -->
+        <div *ngIf="vehicleForm.get('vehiculo_serie')?.errors?.['maxlength']"><p>- N° Serie no puede exceder 20 caracteres.</p></div>
+      </div>
+
+      <div *ngIf="vehicleForm.get('vehiculo_chasis')?.invalid && (vehicleForm.get('vehiculo_chasis')?.dirty || vehicleForm.get('vehiculo_chasis')?.touched)" class="validators">
+        <!-- <div *ngIf="vehicleForm.get('vehiculo_chasis')?.errors?.['required']"><p>- N° Chasis es requerido.</p></div> -->
+        <div *ngIf="vehicleForm.get('vehiculo_chasis')?.errors?.['maxlength']"><p>- N° Chasis no puede exceder 20 caracteres.</p></div>
+      </div>
+
+      <div *ngIf="vehicleForm.get('vehiculo_motor_reg')?.invalid && (vehicleForm.get('vehiculo_motor_reg')?.dirty || vehicleForm.get('vehiculo_motor_reg')?.touched)" class="validators">
+        <!-- <div *ngIf="vehicleForm.get('vehiculo_motor_reg')?.errors?.['required']"><p>- Reg del N° Motor es requerido.</p></div> -->
+        <div *ngIf="vehicleForm.get('vehiculo_motor_reg')?.errors?.['maxlength']"><p>- Reg del N° Motor no puede exceder 3 caracteres.</p></div>
+      </div>
+
+      <div *ngIf="vehicleForm.get('vehiculo_serie_reg')?.invalid && (vehicleForm.get('vehiculo_serie_reg')?.dirty || vehicleForm.get('vehiculo_serie_reg')?.touched)" class="validators">
+        <!-- <div *ngIf="vehicleForm.get('vehiculo_serie_reg')?.errors?.['required']"><p>- Reg del N° Serie es requerido.</p></div> -->
+        <div *ngIf="vehicleForm.get('vehiculo_serie_reg')?.errors?.['maxlength']"><p>- Reg del N° Serie no puede exceder 3 caracteres.</p></div>
+      </div>
+
+      <div *ngIf="vehicleForm.get('vehiculo_chasis_reg')?.invalid && (vehicleForm.get('vehiculo_chasis_reg')?.dirty || vehicleForm.get('vehiculo_chasis_reg')?.touched)" class="validators">
+        <!-- <div *ngIf="vehicleForm.get('vehiculo_chasis_reg')?.errors?.['required']"><p>- Reg del N° Chasis es requerido.</p></div> -->
+        <div *ngIf="vehicleForm.get('vehiculo_chasis_reg')?.errors?.['maxlength']"><p>- Reg del N° Chasis no puede exceder 3 caracteres.</p></div>
       </div>
 
       <hr class="internal-forms">
@@ -386,6 +493,16 @@
           </div>
         </div>
       </div>
+    </div>
+
+    <div *ngIf="vehicleForm.get('vehiculo_nro_cupo')?.invalid && (vehicleForm.get('vehiculo_nro_cupo')?.dirty || vehicleForm.get('vehiculo_nro_cupo')?.touched)" class="validators">
+      <!-- <div *ngIf="vehicleForm.get('vehiculo_nro_cupo')?.errors?.['required']"><p>- Cupo N° es requerido.</p></div> -->
+      <div *ngIf="vehicleForm.get('vehiculo_nro_cupo')?.errors?.['maxlength']"><p>- Cupo N° no puede exceder 12 caracteres.</p></div>
+    </div>
+
+    <div *ngIf="vehicleForm.get('vehiculo_permiso_nro')?.invalid && (vehicleForm.get('vehiculo_permiso_nro')?.dirty || vehicleForm.get('vehiculo_permiso_nro')?.touched)" class="validators">
+      <!-- <div *ngIf="vehicleForm.get('vehiculo_permiso_nro')?.errors?.['required']"><p>- Permiso N° es requerido.</p></div> -->
+      <div *ngIf="vehicleForm.get('vehiculo_permiso_nro')?.errors?.['maxlength']"><p>- Permiso N° no puede exceder 12 caracteres.</p></div>
     </div>
 
     <!-- -------------------------------------------------------------------------------------- -->
@@ -481,6 +598,46 @@
       </div>
     </div>
 
+    <div *ngIf="vehicleForm.get('vehiculo_blindaje')?.invalid && (vehicleForm.get('vehiculo_blindaje')?.dirty || vehicleForm.get('vehiculo_blindaje')?.touched)" class="validators">
+      <!-- <div *ngIf="vehicleForm.get('vehiculo_blindaje')?.errors?.['required']"><p>- Blindaje es requerido.</p></div> -->
+      <div *ngIf="vehicleForm.get('vehiculo_blindaje')?.errors?.['maxlength']"><p>- Blindaje no puede exceder 15 caracteres.</p></div>
+    </div>
+
+    <div *ngIf="vehicleForm.get('vehiculo_potencia')?.invalid && (vehicleForm.get('vehiculo_potencia')?.dirty || vehicleForm.get('vehiculo_potencia')?.touched)" class="validators">
+      <!-- <div *ngIf="vehicleForm.get('vehiculo_potencia')?.errors?.['required']"><p>- Potencia HP es requerido.</p></div> -->
+      <div *ngIf="vehicleForm.get('vehiculo_potencia')?.errors?.['maxlength']"><p>- Potencia HP no puede exceder 6 caracteres.</p></div>
+    </div>
+
+    <div *ngIf="vehicleForm.get('vehiculo_dec_importacion')?.invalid && (vehicleForm.get('vehiculo_dec_importacion')?.dirty || vehicleForm.get('vehiculo_dec_importacion')?.touched)" class="validators">
+      <!-- <div *ngIf="vehicleForm.get('vehiculo_dec_importacion')?.errors?.['required']"><p>- Declaración Importación es requerido.</p></div> -->
+      <div *ngIf="vehicleForm.get('vehiculo_dec_importacion')?.errors?.['maxlength']"><p>- Declaración Importación no puede exceder 20 caracteres.</p></div>
+    </div>
+
+    <div *ngIf="vehicleForm.get('vehiculo_limit_propiedad')?.invalid && (vehicleForm.get('vehiculo_limit_propiedad')?.dirty || vehicleForm.get('vehiculo_limit_propiedad')?.touched)" class="validators">
+      <!-- <div *ngIf="vehicleForm.get('vehiculo_limit_propiedad')?.errors?.['required']"><p>- Limitación de Propiedad es requerido.</p></div> -->
+      <div *ngIf="vehicleForm.get('vehiculo_limit_propiedad')?.errors?.['maxlength']"><p>- Limitación de Propiedad no puede exceder 80 caracteres.</p></div>
+    </div>
+
+    <div *ngIf="vehicleForm.get('vehiculo_organismo_transito')?.invalid && (vehicleForm.get('vehiculo_organismo_transito')?.dirty || vehicleForm.get('vehiculo_organismo_transito')?.touched)" class="validators">
+      <!-- <div *ngIf="vehicleForm.get('vehiculo_organismo_transito')?.errors?.['required']"><p>- Organismo de Transito es requerido.</p></div> -->
+      <div *ngIf="vehicleForm.get('vehiculo_organismo_transito')?.errors?.['maxlength']"><p>- Organismo de Transito no puede exceder 50 caracteres.</p></div>
+    </div>
+
+    <div *ngIf="vehicleForm.get('vehiculo_codigo_barras')?.invalid && (vehicleForm.get('vehiculo_codigo_barras')?.dirty || vehicleForm.get('vehiculo_codigo_barras')?.touched)" class="validators">
+      <!-- <div *ngIf="vehicleForm.get('vehiculo_codigo_barras')?.errors?.['required']"><p>- Código Barras es requerido.</p></div> -->
+      <div *ngIf="vehicleForm.get('vehiculo_codigo_barras')?.errors?.['maxlength']"><p>- Código Barras no puede exceder 18 caracteres.</p></div>
+    </div>
+
+    <div *ngIf="vehicleForm.get('vehiculo_lateral')?.invalid && (vehicleForm.get('vehiculo_lateral')?.dirty || vehicleForm.get('vehiculo_lateral')?.touched)" class="validators">
+      <!-- <div *ngIf="vehicleForm.get('vehiculo_lateral')?.errors?.['required']"><p>- Lateral es requerido.</p></div> -->
+      <div *ngIf="vehicleForm.get('vehiculo_lateral')?.errors?.['maxlength']"><p>- Lateral no puede exceder 8 caracteres.</p></div>
+    </div>
+
+    <div *ngIf="vehicleForm.get('vehiculo_kilometraje')?.invalid && (vehicleForm.get('vehiculo_kilometraje')?.dirty || vehicleForm.get('vehiculo_kilometraje')?.touched)" class="validators">
+      <!-- <div *ngIf="vehicleForm.get('vehiculo_kilometraje')?.errors?.['required']"><p>- Kilometraje es requerido.</p></div> -->
+      <div *ngIf="vehicleForm.get('vehiculo_kilometraje')?.errors?.['pattern']"><p>- Kilometraje no tiene un formato válido.</p></div>
+    </div>
+
     <hr class="external">
 
     <div class="info-container padding-bottom">
@@ -534,6 +691,16 @@
           </div>
         </div>
       </div>
+    </div>
+
+    <div *ngIf="vehicleForm.get('vehiculo_panapass')?.invalid && (vehicleForm.get('vehiculo_panapass')?.dirty || vehicleForm.get('vehiculo_panapass')?.touched)" class="validators">
+      <!-- <div *ngIf="vehicleForm.get('vehiculo_panapass')?.errors?.['required']"><p>- N° PanaPass es requerido.</p></div> -->
+      <div *ngIf="vehicleForm.get('vehiculo_panapass')?.errors?.['maxlength']"><p>- N° PanaPass no puede exceder 12 caracteres.</p></div>
+    </div>
+
+    <div *ngIf="vehicleForm.get('vehiculo_panapass_pwd')?.invalid && (vehicleForm.get('vehiculo_panapass_pwd')?.dirty || vehicleForm.get('vehiculo_panapass_pwd')?.touched)" class="validators">
+      <!-- <div *ngIf="vehicleForm.get('vehiculo_panapass_pwd')?.errors?.['required']"><p>- Contraseña es requerido.</p></div> -->
+      <div *ngIf="vehicleForm.get('vehiculo_panapass_pwd')?.errors?.['maxlength']"><p>- Contraseña no puede exceder 12 caracteres.</p></div>
     </div>
 
     <hr class="external">
