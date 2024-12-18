@@ -79,9 +79,11 @@
 
   <hr class="external" *ngIf="!isLoading">
 
+  <app-vehicles-documentation *ngIf="VehiclesDocumentation"></app-vehicles-documentation>
+
   <!-- INPUTS PERSONALES -->
   <!-- -------------------------------------------------------------------------------------- -->
-  <div class="first-info" *ngIf="!isLoading">
+  <div class="first-info" *ngIf="!isLoading && (!VehiclesDocumentation)">
     <div class="info-code-container">
       <div class="div-group all-size">
         <div class="code-container gray-background">
@@ -116,9 +118,9 @@
     </div>
   </div>
 
-  <hr class="external" *ngIf="!isLoading">
+  <hr class="external" *ngIf="!isLoading && (!VehiclesDocumentation)">
 
-  <div class="info-container" *ngIf="!isLoading">
+  <div class="info-container" *ngIf="!isLoading && (!VehiclesDocumentation)">
 
     <div class="div-group">
       <div class="group-inputs">
@@ -347,9 +349,9 @@
     
   </div>
 
-  <hr class="external" *ngIf="!isLoading">
+  <hr class="external" *ngIf="!isLoading && (!VehiclesDocumentation)">
 
-  <div class="info-container padding-bottom" *ngIf="!isLoading">
+  <div class="info-container padding-bottom" *ngIf="!isLoading && (!VehiclesDocumentation)">
     <div class="div-group gray-background">
       <div class="group-inputs">
         <div class="title-container">
@@ -389,9 +391,9 @@
 
   <!-- -------------------------------------------------------------------------------------- -->
 
-  <hr class="external" *ngIf="!isLoading">
+  <hr class="external" *ngIf="!isLoading && (!VehiclesDocumentation)">
 
-  <div class="info-container" *ngIf="!isLoading">
+  <div class="info-container" *ngIf="!isLoading && (!VehiclesDocumentation)">
     <div class="div-group">
       <div class="group-inputs">
         <div class="form-group">
@@ -480,9 +482,9 @@
     </div>
   </div>
 
-  <hr class="external" *ngIf="!isLoading">
+  <hr class="external" *ngIf="!isLoading && (!VehiclesDocumentation)">
 
-  <div class="info-container padding-bottom" *ngIf="!isLoading">
+  <div class="info-container padding-bottom" *ngIf="!isLoading && (!VehiclesDocumentation)">
     <div class="div-group gray-background">
       <div class="group-inputs">
         <div class="title-container">
