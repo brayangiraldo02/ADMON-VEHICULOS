@@ -29,6 +29,7 @@ import { VehiclesTableComponent } from './components/tasks/vehicles/vehicles-tab
 import { VehiclesResumeComponent } from './components/tasks/vehicles/vehicles-resume/vehicles-resume.component';
 import { VehiclesAddnewComponent } from './components/tasks/vehicles/vehicles-addnew/vehicles-addnew.component';
 import { VehiclesDocumentationComponent } from './components/tasks/vehicles/vehicles-documentation/vehicles-documentation.component';
+import { DriversDocumentationComponent } from './components/tasks/drivers/drivers-documentation/drivers-documentation.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -58,7 +59,7 @@ const routes: Routes = [
   { path: 'cnt', component: OpcionesCntComponent, canActivate: [AuthGuard]},
   { path: 'utilities', component: OpcionesUtilidadesComponent, canActivate: [AuthGuard]},
   { path: 'pdf', component: PdfViewerComponent, canActivate: [AuthGuard]},
-  { path: 'prueba', component: VehiclesDocumentationComponent}
+  { path: 'prueba', component: DriversDocumentationComponent}
 ];
 
 @NgModule({

@@ -30,6 +30,7 @@ export class DriversResumeComponent implements OnInit {
 
   code: string | null = null;
   
+  VehiclesDocumentation: boolean = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -238,26 +239,32 @@ export class DriversResumeComponent implements OnInit {
 
   goToDriverInfo() {
     this.selectButton('personal')
+    this.VehiclesDocumentation = false;
   }
 
   goToDriverGeneral() {
     this.selectButton('general')
+    this.VehiclesDocumentation = false;
   }
 
   goToDriverVehicles() {
     this.selectButton('vehiculos')
+    this.VehiclesDocumentation = false;
   }
 
   goToDriverIncome() {
     this.selectButton('ingresos')
+    this.VehiclesDocumentation = false;
   }
 
   goToDriverOrder() {
     this.selectButton('ordenes')
+    this.VehiclesDocumentation = false;
   }
 
   goToDriverDocuments() {
     this.selectButton('documentacion')
+    this.VehiclesDocumentation = true;
   }
 
   showModal() {

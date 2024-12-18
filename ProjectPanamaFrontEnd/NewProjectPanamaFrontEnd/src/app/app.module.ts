@@ -42,6 +42,7 @@ import { VehiclesResumeComponent } from './components/tasks/vehicles/vehicles-re
 import { VehiclesDeleteComponent } from './components/tasks/vehicles/vehicles-delete/vehicles-delete.component';
 import { VehiclesAddnewComponent } from './components/tasks/vehicles/vehicles-addnew/vehicles-addnew.component';
 import { VehiclesDocumentationComponent } from './components/tasks/vehicles/vehicles-documentation/vehicles-documentation.component';
+import { DriversDocumentationComponent } from './components/tasks/drivers/drivers-documentation/drivers-documentation.component';
 
 @NgModule({
   declarations: [
@@ -80,6 +81,7 @@ import { VehiclesDocumentationComponent } from './components/tasks/vehicles/vehi
     VehiclesDeleteComponent,
     VehiclesAddnewComponent,
     VehiclesDocumentationComponent,
+    DriversDocumentationComponent,
   ],
   imports: [
     BrowserModule,
