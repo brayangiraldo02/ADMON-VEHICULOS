@@ -19,28 +19,28 @@
       <p class="select-text">Personales</p>
     </button>
 
-    <button class="select" type="button" (click)="goToDriverGeneral()" [ngClass]="{'selected': selectedButton === 'general'}">
+    <button class="select" type="button" (click)="goToDriverGeneral()" [ngClass]="{'selected': selectedButton === 'general'}" disabled>
       <span class="material-symbols-outlined" translate="no">
         import_contacts
       </span>
       <p class="select-text">Generales</p>
     </button>
 
-    <button class="select" type="button" (click)="goToDriverVehicles()" [ngClass]="{'selected': selectedButton === 'vehiculos'}">
+    <button class="select" type="button" (click)="goToDriverVehicles()" [ngClass]="{'selected': selectedButton === 'vehiculos'}" disabled>
       <span class="material-symbols-outlined" translate="no">
         traffic_jam
       </span>
       <p class="select-text">Vehículos</p>
     </button>
 
-    <button class="select" type="button" (click)="goToDriverIncome()" [ngClass]="{'selected': selectedButton === 'ingresos'}">
+    <button class="select" type="button" (click)="goToDriverIncome()" [ngClass]="{'selected': selectedButton === 'ingresos'}" disabled>
       <span class="material-symbols-outlined" translate="no">
         payments
       </span>
       <p class="select-text">Ingresos</p>
     </button>
 
-    <button class="select" type="button" (click)="goToDriverOrder()" [ngClass]="{'selected': selectedButton === 'ordenes'}">
+    <button class="select" type="button" (click)="goToDriverOrder()" [ngClass]="{'selected': selectedButton === 'ordenes'}" disabled>
       <span class="material-symbols-outlined">
         receipt_long
       </span>

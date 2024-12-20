@@ -8,7 +8,7 @@
       <h2>GASTOS GENERALES</h2>
       <div class="options-container">
         <ng-container *ngFor="let option of gastos_generales">
-          <button class="option" type="button" [routerLink]="option.url">
+          <button class="option" type="button" [routerLink]="option.url" [disabled]="option.disabled">
             <span class="material-symbols-outlined" translate="no">
               {{ option.icon }}
             </span>
@@ -22,7 +22,7 @@
       <h2>GASTOS CON CHEQUE</h2>
       <div class="options-container">
         <ng-container *ngFor="let option of gastos_cheque">
-          <button class="option" type="button" [routerLink]="option.url">
+          <button class="option" type="button" [routerLink]="option.url" [disabled]="option.disabled">
             <span class="material-symbols-outlined" translate="no">
               {{ option.icon }}
             </span>

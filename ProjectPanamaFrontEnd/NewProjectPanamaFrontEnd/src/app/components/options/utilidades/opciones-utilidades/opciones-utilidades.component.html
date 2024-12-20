@@ -13,7 +13,7 @@
       <h2>TABLAS</h2>
       <div class="options-container">
         <ng-container *ngFor="let option of tablas">
-          <button class="option" type="button" [routerLink]="option.url">
+          <button class="option" type="button" [routerLink]="option.url" [disabled]="option.disabled">
             <span class="material-symbols-outlined" translate="no">
               {{ option.icon }}
             </span>
@@ -28,7 +28,7 @@
         <h2>UTILIDADES</h2>
         <div class="options-container">
           <ng-container *ngFor="let option of utilidades">
-            <button class="option" type="button" [routerLink]="option.url">
+            <button class="option" type="button" [routerLink]="option.url" [disabled]="option.disabled">
               <span class="material-symbols-outlined" translate="no">
                 {{ option.icon }}
               </span>
@@ -42,7 +42,7 @@
         <h2>SEGURIDAD</h2>
         <div class="options-container">
           <ng-container *ngFor="let option of seguridad">
-            <button class="option" type="button" [routerLink]="option.url">
+            <button class="option" type="button" [routerLink]="option.url" [disabled]="option.disabled">
               <span class="material-symbols-outlined" translate="no">
                 {{ option.icon }}
               </span>

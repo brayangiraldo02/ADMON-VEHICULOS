@@ -7,11 +7,11 @@ import { Component } from '@angular/core';
 })
 export class OpcionesLlaveroComponent {
   options = [
-    { name: 'Consultar Llavero de una Empresa', icon: 'info', url: 'hoalalalal' },
-    { name: 'Funcionarios para el Manejo de Llaves', icon: 'info', url: 'hoalalalal' },
-    { name: 'Préstamo de Llaves', icon: 'info', url: 'hoalalalal' },
-    { name: 'Devolución de Llaves', icon: 'info', url: 'hoalalalal' },
-    { name: 'Informe de Llaves Prestados', icon: 'info', url: 'hoalalalal' },
-    { name: 'Consultar Historial de una Llave', icon: 'info', url: 'hoalalalal' }
+    { name: 'Consultar Llavero de una Empresa', icon: 'info', url: 'hoalalalal', disabled: true },
+    { name: 'Funcionarios para el Manejo de Llaves', icon: 'info', url: 'hoalalalal', disabled: true },
+    { name: 'Préstamo de Llaves', icon: 'info', url: 'hoalalalal', disabled: true },
+    { name: 'Devolución de Llaves', icon: 'info', url: 'hoalalalal', disabled: true },
+    { name: 'Informe de Llaves Prestados', icon: 'info', url: 'hoalalalal', disabled: true },
+    { name: 'Consultar Historial de una Llave', icon: 'info', url: 'hoalalalal', disabled: true }
   ];
 }

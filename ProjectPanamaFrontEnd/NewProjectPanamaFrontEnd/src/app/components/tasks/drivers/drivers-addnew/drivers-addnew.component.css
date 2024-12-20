@@ -70,6 +70,13 @@ button.selected {
   background: #bcd1ec;
 }
 
+.select:disabled {
+  background: #e0e0e0;
+  color: #888;
+  cursor: not-allowed;
+  border-color: #aaa;
+}
+
 .back {
   background: #ffe9e9;
 }

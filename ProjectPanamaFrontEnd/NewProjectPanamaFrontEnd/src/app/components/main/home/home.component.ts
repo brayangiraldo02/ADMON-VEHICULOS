@@ -48,21 +48,21 @@ export class HomeComponent implements OnInit {
     this.convertirValoresBooleanos(this.permisos.user_data);
 
     this.options = [
-      { name: 'Caja', icon: '../../../../assets/icons/caja.svg', url: 'hoalalalal', enabled: this.permisos.user_data.opcion01 },
-      { name: 'Operaciones', icon: '../../../../assets/icons/operaciones.svg', url: '/operations', enabled: this.permisos.user_data.opcion02 },
-      { name: 'Cobros', icon: '../../../../assets/icons/cobros.svg', url: 'hoalalalal', enabled: this.permisos.user_data.opcion03 },
-      { name: 'Trámites', icon: '../../../../assets/icons/tramites.svg', url: '/procedures', enabled: this.permisos.user_data.opcion04 },
-      { name: 'Almacén', icon: '../../../../assets/icons/almacen.svg', url: '/warehouse', enabled: this.permisos.user_data.opcion05 },
-      { name: 'Sucursal', icon: '../../../../assets/icons/taller.svg', url: '/workshop', enabled: this.permisos.user_data.opcion06 },
-      { name: 'Chapistería', icon: '../../../../assets/icons/chapisteria.svg', url: '/sheet-metal-work', enabled: this.permisos.user_data.opcion07 },
-      { name: 'Llavero', icon: '../../../../assets/icons/llavero.svg', url: '/keychain', enabled: this.permisos.user_data.opcion08 },
-      { name: 'Reclamos', icon: '../../../../assets/icons/reclamos.svg', url: '/claims', enabled: this.permisos.user_data.opcion09 },
-      { name: 'Cartera', icon: '../../../../assets/icons/cartera.svg', url: '/wallet', enabled: this.permisos.user_data.opcion10 },
-      { name: 'Gerencia', icon: '../../../../assets/icons/gerencia.svg', url: '/management', enabled: this.permisos.user_data.opcion11 },
-      { name: 'Gastos', icon: '../../../../assets/icons/gastos.svg', url: '/expenses', enabled: this.permisos.user_data.opcion12 },
-      { name: 'CNT', icon: '../../../../assets/icons/cnt.svg', url: '/cnt', enabled: this.permisos.user_data.opcion13 },
-      { name: 'Contado', icon: '../../../../assets/icons/contado.svg', url: 'hoalalalal', enabled: this.permisos.user_data.opcion14 },
-      { name: 'Utilidades', icon: '../../../../assets/icons/utilidades1.svg', url: '/utilities', enabled: this.permisos.user_data.opcion15 }
+      { name: 'Caja', icon: '../../../../assets/icons/caja.svg', url: 'hoalalalal', enabled: this.permisos.user_data.opcion01, disabled: true },
+      { name: 'Operaciones', icon: '../../../../assets/icons/operaciones.svg', url: '/operations', enabled: this.permisos.user_data.opcion02, disabled: false },
+      { name: 'Cobros', icon: '../../../../assets/icons/cobros.svg', url: 'hoalalalal', enabled: this.permisos.user_data.opcion03, disabled: true },
+      { name: 'Trámites', icon: '../../../../assets/icons/tramites.svg', url: '/procedures', enabled: this.permisos.user_data.opcion04, disabled: false },
+      { name: 'Almacén', icon: '../../../../assets/icons/almacen.svg', url: '/warehouse', enabled: this.permisos.user_data.opcion05, disabled: false },
+      { name: 'Sucursal', icon: '../../../../assets/icons/taller.svg', url: '/workshop', enabled: this.permisos.user_data.opcion06, disabled: false },
+      { name: 'Chapistería', icon: '../../../../assets/icons/chapisteria.svg', url: '/sheet-metal-work', enabled: this.permisos.user_data.opcion07, disabled: false },
+      { name: 'Llavero', icon: '../../../../assets/icons/llavero.svg', url: '/keychain', enabled: this.permisos.user_data.opcion08, disabled: false },
+      { name: 'Reclamos', icon: '../../../../assets/icons/reclamos.svg', url: '/claims', enabled: this.permisos.user_data.opcion09, disabled: false },
+      { name: 'Cartera', icon: '../../../../assets/icons/cartera.svg', url: '/wallet', enabled: this.permisos.user_data.opcion10, disabled: false },
+      { name: 'Gerencia', icon: '../../../../assets/icons/gerencia.svg', url: '/management', enabled: this.permisos.user_data.opcion11, disabled: false },
+      { name: 'Gastos', icon: '../../../../assets/icons/gastos.svg', url: '/expenses', enabled: this.permisos.user_data.opcion12, disabled: false },
+      { name: 'CNT', icon: '../../../../assets/icons/cnt.svg', url: '/cnt', enabled: this.permisos.user_data.opcion13, disabled: false },
+      { name: 'Contado', icon: '../../../../assets/icons/contado.svg', url: 'hoalalalal', enabled: this.permisos.user_data.opcion14, disabled: true },
+      { name: 'Utilidades', icon: '../../../../assets/icons/utilidades1.svg', url: '/utilities', enabled: this.permisos.user_data.opcion15, disabled: false }
     ];
   }
 

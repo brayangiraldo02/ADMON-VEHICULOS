@@ -9,7 +9,7 @@
         <h2>CONTEOS ALEATORIOS</h2>
         <div class="options-container">
           <ng-container *ngFor="let option of conteos_aleatorios">
-            <button class="option" type="button" [routerLink]="option.url">
+            <button class="option" type="button" [routerLink]="option.url" [disabled]="option.disabled">
               <span class="material-symbols-outlined" translate="no">
                 {{ option.icon }}
               </span>
@@ -23,7 +23,7 @@
         <h2>MOVIMIENTOS</h2>
         <div class="options-container">
           <ng-container *ngFor="let option of movimientos">
-            <button class="option" type="button" [routerLink]="option.url">
+            <button class="option" type="button" [routerLink]="option.url" [disabled]="option.disabled">
               <span class="material-symbols-outlined" translate="no">
                 {{ option.icon }}
               </span>
@@ -40,7 +40,7 @@
         <h2>INVENTARIO FÍSICO</h2>
         <div class="options-container">
           <ng-container *ngFor="let option of inventario_fisico">
-            <button class="option" type="button" [routerLink]="option.url">
+            <button class="option" type="button" [routerLink]="option.url" [disabled]="option.disabled">
               <span class="material-symbols-outlined" translate="no">
                 {{ option.icon }}
               </span>
@@ -54,7 +54,7 @@
         <h2>ESPECIALES</h2>
         <div class="options-container">
           <ng-container *ngFor="let option of especiales">
-            <button class="option" type="button" [routerLink]="option.url">
+            <button class="option" type="button" [routerLink]="option.url" [disabled]="option.disabled">
               <span class="material-symbols-outlined" translate="no">
                 {{ option.icon }}
               </span>
@@ -68,7 +68,7 @@
         <h2>CONSULTAS</h2>
         <div class="options-container">
           <ng-container *ngFor="let option of consultas">
-            <button class="option" type="button" [routerLink]="option.url">
+            <button class="option" type="button" [routerLink]="option.url" [disabled]="option.disabled">
               <span class="material-symbols-outlined" translate="no">
                 {{ option.icon }}
               </span>
@@ -83,7 +83,7 @@
       <h2>GENERALES</h2>
       <div class="options-container">
         <ng-container *ngFor="let option of generales">
-          <button class="option" type="button" [routerLink]="option.url">
+          <button class="option" type="button" [routerLink]="option.url" [disabled]="option.disabled">
             <span class="material-symbols-outlined" translate="no">
               {{ option.icon }}
             </span>

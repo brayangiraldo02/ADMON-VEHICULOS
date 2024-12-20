@@ -124,6 +124,13 @@ ul {
   /* background: #c9c9c9; */
 }
 
+.options-if:disabled {
+  background: #e0e0e0;
+  color: #888;
+  cursor: not-allowed;
+  border-color: #aaa;
+}
+
 .option-icon {
   width: 35px;
   height: 35px;

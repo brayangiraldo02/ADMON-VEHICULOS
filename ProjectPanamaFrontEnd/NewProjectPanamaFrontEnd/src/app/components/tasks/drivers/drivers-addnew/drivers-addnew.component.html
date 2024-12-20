@@ -19,14 +19,14 @@
       <p class="select-text">Personales</p>
     </button>
 
-    <button class="select" type="button" (click)="goToDriverGeneral()" [ngClass]="{'selected': selectedButton === 'general'}">
+    <button class="select" type="button" (click)="goToDriverGeneral()" [ngClass]="{'selected': selectedButton === 'general'}" disabled>
       <span class="material-symbols-outlined" translate="no">
         import_contacts
       </span>
       <p class="select-text">Generales</p>
     </button>
 
-    <button class="select" type="button" (click)="goToDriverDocuments()" [ngClass]="{'selected': selectedButton === 'documentacion'}">
+    <button class="select" type="button" (click)="goToDriverDocuments()" [ngClass]="{'selected': selectedButton === 'documentacion'}" disabled>
       <span class="material-symbols-outlined" translate="no">
         file_copy
       </span>
