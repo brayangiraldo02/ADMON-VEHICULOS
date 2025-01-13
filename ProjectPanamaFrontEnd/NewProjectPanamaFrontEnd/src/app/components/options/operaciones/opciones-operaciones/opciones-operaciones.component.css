@@ -60,6 +60,14 @@
   border-color: #aaa;
 }
 
+@media (max-width: 1024px){
+  .option {
+    width: 80%;
+    margin: 10px 0;
+    font-size: 18px;
+  }
+}
+
 @media (max-width: 768px) {
 
   .container h1 {
@@ -69,11 +77,6 @@
   .options-container {
     flex-direction: column;
     align-items: center;
-  }
-
-  .option {
-    width: 80%;
-    margin: 10px 0;
   }
 }
 

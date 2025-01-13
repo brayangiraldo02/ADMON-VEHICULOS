@@ -43,6 +43,7 @@ import { VehiclesDeleteComponent } from './components/tasks/vehicles/vehicles-de
 import { VehiclesAddnewComponent } from './components/tasks/vehicles/vehicles-addnew/vehicles-addnew.component';
 import { VehiclesDocumentationComponent } from './components/tasks/vehicles/vehicles-documentation/vehicles-documentation.component';
 import { DriversDocumentationComponent } from './components/tasks/drivers/drivers-documentation/drivers-documentation.component';
+import { OperacionesEntregaVehiculoConductorComponent } from './components/options/operaciones/operaciones-entrega-vehiculo-conductor/operaciones-entrega-vehiculo-conductor.component';
 
 @NgModule({
   declarations: [
@@ -82,6 +83,7 @@ import { DriversDocumentationComponent } from './components/tasks/drivers/driver
     VehiclesAddnewComponent,
     VehiclesDocumentationComponent,
     DriversDocumentationComponent,
+    OperacionesEntregaVehiculoConductorComponent,
   ],
   imports: [
     BrowserModule,

@@ -3,6 +3,10 @@ from fastapi.responses import JSONResponse
 from config.dbconnection import session
 from sqlalchemy.orm import aliased
 from models.conductores import Conductores
+from models.vehiculos import Vehiculos
+from models.marcas import Marcas
+from models.propietarios import Propietarios
+from models.estados import Estados
 from schemas.reports import *
 from middlewares.JWTBearer import JWTBearer
 from fastapi.encoders import jsonable_encoder
@@ -13,42 +17,78 @@ from fastapi.responses import FileResponse
 import jinja2
 from utils.pdf import html2pdf
 
-
 operations_router = APIRouter()
 
-""" @operations_router.get("/operations/", tags=["Operations"])
-async def verify_driver(driver_id: int):
+@operations_router.get("/operations/vehicle/{vehicle_number}", tags=["Operations"])
+async def get_vehicle_operations(vehicle_number: str):
   db = session()
   try:
-        driver_condition = db.query(
-            Conductores.CODIGO, Conductores.UND_NRO, Conductores.UND_PRE, Conductores.NOMBRE, Conductores.CEDULA,
-            Conductores.TELEFONO, Conductores.FEC_INGRES, Conductores.CUO_DIARIA, Conductores.NROENTREGA,
-            Conductores.NROENTPAGO, Conductores.NROENTSDO, Conductores.LICEN_VCE, Conductores.CONTACTO,
-            Conductores.TEL_CONTAC, Conductores.PAR_CONTAC, Conductores.CONTACTO1, Conductores.TEL_CONTA1,
-            Conductores.PAR_CONTA1
-        ).filter(
-            Conductores.CODIGO == driver_id
-        ).first()
+    vehicle_operations = db.query(
+      Marcas.NOMBRE.label('MARCA'), Vehiculos.PLACA, Vehiculos.NRO_CUPO,
+      Vehiculos.NROENTREGA, Vehiculos.CUO_DIARIA, Vehiculos.ESTADO, 
+      Estados.NOMBRE.label('NOMBRE_ESTADO'), Vehiculos.PROPI_IDEN, 
+      Propietarios.NOMBRE.label('NOMBRE_PROPI'), Vehiculos.CONDUCTOR
+    ).join(
+      Vehiculos, Vehiculos.MARCA == Marcas.CODIGO
+    ).join(
+      Estados, Vehiculos.ESTADO == Estados.CODIGO
+    ).join(
+      Propietarios, Vehiculos.PROPI_IDEN == Propietarios.CODIGO
+    ).filter(
+      Vehiculos.NUMERO == vehicle_number
+    ).first()
+
+    if not vehicle_operations:
+      return JSONResponse(content={"error": "Vehicle not found"}, status_code=404)
     
-  if not driver_condition:
-    return JSONResponse(content={"error": "Driver not found"})
-  driver_conditions = {
-        'codigo': driver_condition.CODIGO,
-        'unidad': driver_condition.UND_NRO + ' - ' + driver_condition.UND_PRE,
-        'nombre': driver_condition.NOMBRE,
-        'cedula': driver_condition.CEDULA,
-        'telefono': driver_condition.TELEFONO,
-        'fecha_ingreso': driver_condition.FEC_INGRES,
-        'cuota_diaria': driver_condition.CUO_DIARIA,
-        'nro_entrega': driver_condition.NROENTREGA,
-        'nro_pago': driver_condition.NROENTPAGO,
-        'nro_saldo': driver_condition.NROENTSDO,
-        'vce_licen': driver_condition.LICEN_VCE,
-        'contacto': driver_condition.CONTACTO + ' - ' + driver_condition.TEL_CONTAC + ' - ' + driver_condition.PAR_CONTAC,
-        'contacto1': driver_condition.CONTACTO1 + ' - ' + driver_condition.TEL_CONTA1 + ' - ' + driver_condition.PAR_CONTA1
-  }
-  return JSONResponse(content=jsonable_encoder(driver_conditions))
+    vehicle = {
+      'marca': vehicle_operations.MARCA,
+      'placa': vehicle_operations.PLACA,
+      'cupo': vehicle_operations.NRO_CUPO,
+      'nro_entrega': vehicle_operations.NROENTREGA,
+      'cuota_diaria': vehicle_operations.CUO_DIARIA,
+      'estado': vehicle_operations.ESTADO + ' - ' + vehicle_operations.NOMBRE_ESTADO,
+      'propietario': vehicle_operations.PROPI_IDEN + ' - ' + vehicle_operations.NOMBRE_PROPI,
+      'conductor': vehicle_operations.CONDUCTOR
+    }
+
+    return JSONResponse(content=jsonable_encoder(vehicle), status_code=200)
+  
   except Exception as e:
-    return JSONResponse(content={"error": str(e)})
+    return JSONResponse(content={"error": str(e)}, status_code=500)
+  
   finally:
-        db.close() """
+    db.close()
+
+@operations_router.get("/operations/driver/{driver_number}", tags=["Operations"])
+async def get_driver_operations(driver_number: str):
+  db = session()
+  try:
+    driver_operations = db.query(
+      Conductores.NOMBRE, Conductores.CEDULA, 
+      Conductores.TELEFONO, Conductores.CELULAR, Conductores.DIRECCION,
+      Conductores.LICEN_NRO, Conductores.LICEN_VCE, Conductores.ESTADO
+    ).filter(
+      Conductores.CODIGO == driver_number
+    ).first()
+
+    if not driver_operations:
+      return JSONResponse(content={"error": "Driver not found"}, status_code=404)
+    
+    driver = {
+      'nombre': driver_operations.NOMBRE,
+      'cedula': driver_operations.CEDULA,
+      'telefono': driver_operations.TELEFONO + ' | ' + driver_operations.CELULAR,
+      'direccion': driver_operations.DIRECCION,
+      'licencia_numero': driver_operations.LICEN_NRO,
+      'licencia_vencimiento': driver_operations.LICEN_VCE,
+      'estado': driver_operations.ESTADO
+    }
+
+    return JSONResponse(content=jsonable_encoder(driver), status_code=200)
+  
+  except Exception as e:
+    return JSONResponse(content={"error": str(e)}, status_code=500)
+  
+  finally:
+    db.close()

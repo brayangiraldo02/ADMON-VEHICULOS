@@ -1,0 +1,119 @@
+<div class="modal">
+  <div class="modal-content">
+    <span class="close" (click)="closeModal()">&times;</span>
+
+    <h2 class="title-container">Entrega de Vehículo al Conductor.</h2>
+
+    <div class="loading-container">
+      <div class="sub-options-display-container">
+        <div class="display-info-container">
+          <h2 class="subtitle-container">Vehículo.</h2>
+    
+          <div class="input-group">
+            <label for="unidadN">Unidad N°:</label><br>
+            <input type="text" (keydown.enter)="vehicleSearch($event)" id="unidadN" name="unidadN"><br>
+          </div>
+  
+          <div class="info-container">
+            <div class="text-info-container">
+              <h4>Marca: </h4><p>{{vehicleData.marca}}</p>
+            </div>
+            <div class="text-info-container">
+              <h4>Placa: </h4><p>{{vehicleData.placa}}</p>
+            </div>
+            <div class="text-info-container">
+              <h4>Cupo N°: </h4><p>{{vehicleData.cupo}}</p>
+            </div>
+            <div class="text-info-container">
+              <h4>N° de Cuotas: </h4><p>{{vehicleData.nro_entrega}}</p>
+            </div>
+            <div class="text-info-container">
+              <h4>Valor Cuota: </h4><p>{{vehicleData.cuota_diaria}}</p>
+            </div>
+            <div class="text-info-container">
+              <h4>Estado: </h4><p>{{vehicleData.estado}}</p>
+            </div>
+            <div class="text-info-container">
+              <h4>Propietario: </h4><p>{{vehicleData.propietario}}</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="display-info-container">
+          <h2 class="subtitle-container">Conductor.</h2>
+    
+          <div class="input-group">
+            <label for="unidadN">Código:</label><br>
+            <input type="text" (keydown.enter)="driverSearch($event)" id="unidadN" name="unidadN"><br>
+          </div>
+  
+          <div class="info-container">
+            <div class="text-info-container">
+              <h4>Nombre: </h4><p>{{driverData.nombre}}</p>
+            </div>
+            <div class="text-info-container">
+              <h4>N° CC: </h4><p>{{driverData.cedula}}</p>
+            </div>
+            <div class="text-info-container">
+              <h4>Celular: </h4><p>{{driverData.telefono}}</p>
+            </div>
+            <div class="text-info-container">
+              <h4>Dirección: </h4><p>{{driverData.direccion}}</p>
+            </div>
+            <div class="text-info-container">
+              <h4>Licencia: </h4><p>{{driverData.licencia_numero}}</p>
+            </div>
+            <div class="text-info-container">
+              <h4>Vence: </h4><p>{{driverData.licencia_vencimiento}}</p>
+            </div>
+            <div class="text-info-container">
+              <h4>Estado: </h4>
+              <p *ngIf="driverData.estado === '1'">Activo</p>
+              <p *ngIf="driverData.estado === '2'">Suspendido</p>
+              <p *ngIf="driverData.estado === '3'">Retirado</p>
+              <p *ngIf="driverData.estado === '4'">Reportado</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="sub-options-display-container">
+        <div class="display-info-container">
+  
+          <div class="input-group">
+            <label>Saldo Pendiente:</label><br>
+            <input type="text" disabled><br>
+          </div>
+        </div>
+
+        <div class="display-info-container">
+  
+          <div class="input-group">
+            <label for="unidadN">Fecha Entrega Vehículo:</label><br>
+            <input type="date" id="unidadN" name="unidadN"><br>
+          </div>
+        </div>
+      </div>
+      
+      <div class="display-container"> 
+  
+        <div class="options-container">
+          <button class="option" type="button" disabled>
+            <span class="material-symbols-outlined" translate="no">
+              check
+            </span>
+            <p class="option-text">Confirmar</p>
+          </button>
+
+          <button class="option back" type="button">
+            <span class="material-symbols-outlined" translate="no">
+              close
+            </span>
+            <p class="option-text">Regresar</p>
+          </button>
+        </div>
+      </div>
+    </div>
+    
+  </div>
+</div>
