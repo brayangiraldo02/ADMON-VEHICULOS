@@ -11,7 +11,7 @@
     
           <div class="input-group">
             <label for="unidadN">Unidad N°:</label><br>
-            <input type="text" (keydown.enter)="vehicleSearch($event)" id="unidadN" name="unidadN"><br>
+            <input type="text" (keydown.enter)="vehicleInput($event)" id="unidadN" name="unidadN" [(ngModel)]="vehicleInputValue"><br>
           </div>
   
           <div class="info-container">
@@ -31,10 +31,10 @@
               <h4>Valor Cuota: </h4><p>{{vehicleData.cuota_diaria}}</p>
             </div>
             <div class="text-info-container">
-              <h4>Estado: </h4><p>{{vehicleData.estado}}</p>
+              <h4>Propietario: </h4><p>{{vehicleData.propietario}}</p>
             </div>
             <div class="text-info-container">
-              <h4>Propietario: </h4><p>{{vehicleData.propietario}}</p>
+              <h4>Estado: </h4><p>{{vehicleData.estado}}</p>
             </div>
           </div>
         </div>
@@ -43,8 +43,8 @@
           <h2 class="subtitle-container">Conductor.</h2>
     
           <div class="input-group">
-            <label for="unidadN">Código:</label><br>
-            <input type="text" (keydown.enter)="driverSearch($event)" id="unidadN" name="unidadN"><br>
+            <label for="codigo">Código:</label><br>
+            <input type="text" (keydown.enter)="driverInput($event)" id="codigo" name="codigo" [(ngModel)]="driverInputValue" [disabled]="driverInputDisabled"><br>
           </div>
   
           <div class="info-container">
@@ -66,7 +66,10 @@
             <div class="text-info-container">
               <h4>Vence: </h4><p>{{driverData.licencia_vencimiento}}</p>
             </div>
-            <div class="text-info-container">
+            <div class="text-info-container" *ngIf="driverData.vehiculo !== '' && !driverInputDisabled">
+              <h4>Vehículo: </h4><p>{{driverData.vehiculo}}</p>
+            </div>
+            <div class="text-info-container" *ngIf="driverData.vehiculo === ''">
               <h4>Estado: </h4>
               <p *ngIf="driverData.estado === '1'">Activo</p>
               <p *ngIf="driverData.estado === '2'">Suspendido</p>
@@ -89,8 +92,8 @@
         <div class="display-info-container">
   
           <div class="input-group">
-            <label for="unidadN">Fecha Entrega Vehículo:</label><br>
-            <input type="date" id="unidadN" name="unidadN"><br>
+            <label for="time">Fecha Entrega Vehículo:</label><br>
+            <input type="date" id="time" name="time" [(ngModel)]="day.time" [max]="day.time" disabled><br>
           </div>
         </div>
       </div>
@@ -98,14 +101,14 @@
       <div class="display-container"> 
   
         <div class="options-container">
-          <button class="option" type="button" disabled>
+          <button class="option" type="button" [disabled]="deliveryVehicleDriverDisabled">
             <span class="material-symbols-outlined" translate="no">
               check
             </span>
             <p class="option-text">Confirmar</p>
           </button>
 
-          <button class="option back" type="button">
+          <button class="option back" type="button" (click)="closeModal()">
             <span class="material-symbols-outlined" translate="no">
               close
             </span>

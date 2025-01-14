@@ -40,6 +40,7 @@
   border-radius: 10px;
   border: 1px solid #aaa;
   width: 45%;
+  height: 100%;
 }
 
 .subtitle-container {
@@ -105,6 +106,7 @@
   display: flex;
   align-items: flex-start;
   flex-direction: column;
+  height: 100%;
 }
 
 .text-info-container {
@@ -114,7 +116,6 @@
 
 .text-info-container h4, .text-info-container p{
   margin: 0;
-  margin-left: 5px;
   /* font-size: 14px; */
   text-align: left;
   padding: 5px;
@@ -122,6 +123,11 @@
 
 .text-info-container h4 {
   font-weight: bold;
+  margin-left: 5px;
+}
+
+.text-info-container p {
+  padding-left: 0px;
 }
 
 .options-container {

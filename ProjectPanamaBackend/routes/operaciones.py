@@ -19,7 +19,7 @@ from utils.pdf import html2pdf
 
 operations_router = APIRouter()
 
-@operations_router.get("/operations/vehicle/{vehicle_number}", tags=["Operations"])
+@operations_router.get("/operations/deliveryvehicledriver/vehicle/{vehicle_number}", tags=["Operations"])
 async def get_vehicle_operations(vehicle_number: str):
   db = session()
   try:
@@ -27,7 +27,8 @@ async def get_vehicle_operations(vehicle_number: str):
       Marcas.NOMBRE.label('MARCA'), Vehiculos.PLACA, Vehiculos.NRO_CUPO,
       Vehiculos.NROENTREGA, Vehiculos.CUO_DIARIA, Vehiculos.ESTADO, 
       Estados.NOMBRE.label('NOMBRE_ESTADO'), Vehiculos.PROPI_IDEN, 
-      Propietarios.NOMBRE.label('NOMBRE_PROPI'), Vehiculos.CONDUCTOR
+      Propietarios.NOMBRE.label('NOMBRE_PROPI'), Vehiculos.CONDUCTOR,
+      Vehiculos.CON_CUPO, Vehiculos.FEC_ESTADO
     ).join(
       Vehiculos, Vehiculos.MARCA == Marcas.CODIGO
     ).join(
@@ -49,7 +50,9 @@ async def get_vehicle_operations(vehicle_number: str):
       'cuota_diaria': vehicle_operations.CUO_DIARIA,
       'estado': vehicle_operations.ESTADO + ' - ' + vehicle_operations.NOMBRE_ESTADO,
       'propietario': vehicle_operations.PROPI_IDEN + ' - ' + vehicle_operations.NOMBRE_PROPI,
-      'conductor': vehicle_operations.CONDUCTOR
+      'conductor': vehicle_operations.CONDUCTOR,
+      'con_cupo': vehicle_operations.CON_CUPO,
+      'fecha_estado': vehicle_operations.FEC_ESTADO
     }
 
     return JSONResponse(content=jsonable_encoder(vehicle), status_code=200)
@@ -60,14 +63,14 @@ async def get_vehicle_operations(vehicle_number: str):
   finally:
     db.close()
 
-@operations_router.get("/operations/driver/{driver_number}", tags=["Operations"])
+@operations_router.get("/operations/deliveryvehicledriver/driver/{driver_number}", tags=["Operations"])
 async def get_driver_operations(driver_number: str):
   db = session()
   try:
     driver_operations = db.query(
-      Conductores.NOMBRE, Conductores.CEDULA, 
-      Conductores.TELEFONO, Conductores.CELULAR, Conductores.DIRECCION,
-      Conductores.LICEN_NRO, Conductores.LICEN_VCE, Conductores.ESTADO
+      Conductores.NOMBRE, Conductores.CEDULA, Conductores.TELEFONO, 
+      Conductores.CELULAR, Conductores.DIRECCION, Conductores.LICEN_NRO, 
+      Conductores.LICEN_VCE, Conductores.UND_NRO, Conductores.ESTADO
     ).filter(
       Conductores.CODIGO == driver_number
     ).first()
@@ -82,6 +85,7 @@ async def get_driver_operations(driver_number: str):
       'direccion': driver_operations.DIRECCION,
       'licencia_numero': driver_operations.LICEN_NRO,
       'licencia_vencimiento': driver_operations.LICEN_VCE,
+      'vehiculo': driver_operations.UND_NRO,
       'estado': driver_operations.ESTADO
     }
 

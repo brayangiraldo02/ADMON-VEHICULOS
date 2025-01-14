@@ -11,6 +11,8 @@ interface vehicleInfo {
   estado: string;
   propietario: string;
   conductor: string;
+  con_cupo: number; //1 ES SÍ, 2 ES NO
+  fecha_estado: string;
 }
 
 interface driverInfo {
@@ -20,7 +22,12 @@ interface driverInfo {
   direccion: string;
   licencia_numero: string;
   licencia_vencimiento: string;
+  vehiculo: string;
   estado: string;
+}
+
+interface panamaTime {
+  time: string;
 }
 
 @Component({
@@ -31,6 +38,12 @@ interface driverInfo {
 export class OperacionesEntregaVehiculoConductorComponent {
   @Output() close = new EventEmitter<void>();
 
+  driverInputValue: string = '';
+  vehicleInputValue: string = '';
+
+  driverInputDisabled: boolean = true;
+  deliveryVehicleDriverDisabled: boolean = true;
+
   vehicleData: vehicleInfo = {
     marca: '',
     placa: '',
@@ -39,7 +52,9 @@ export class OperacionesEntregaVehiculoConductorComponent {
     cuota_diaria: '',
     estado: '',
     propietario: '',
-    conductor: ''
+    conductor: '',
+    con_cupo: 0, //1 ES SÍ, 2 ES NO
+    fecha_estado: ''
   }
 
   driverData: driverInfo = {
@@ -49,7 +64,16 @@ export class OperacionesEntregaVehiculoConductorComponent {
     direccion: '',
     licencia_numero: '',
     licencia_vencimiento: '',
+    vehiculo: '',
     estado: ''
+  }
+
+  day: panamaTime = {
+    time: ''
+  }
+
+  dayBackup: panamaTime = {
+    time: ''
   }
 
   constructor(
@@ -57,47 +81,127 @@ export class OperacionesEntregaVehiculoConductorComponent {
   ) { }
 
   ngOnInit(): void {
+    this.getTodayDate();
   }
 
-  vehicleSearch(event: any){
+  getTodayDate() {
+    this.apiService.getData('extras/time').subscribe({
+      next: (data: panamaTime) => {
+        this.day = JSON.parse(JSON.stringify(data));
+        this.dayBackup = JSON.parse(JSON.stringify(data));
+      },
+      error: (error: HttpErrorResponse) => {
+        console.log('Error al obtener el día de Panamá');
+      }
+    });
+  }
+
+  vehicleValidations(){
+    if (this.vehicleData.estado.substring(0, 2) !== '06'){
+      window.alert('Vehículo debe estar esperando operador.');
+
+      if (this.vehicleData.estado.substring(0, 2) === '01' && this.vehicleData.conductor !== ''){
+        this.driverInputValue = this.vehicleData.conductor;
+        this.day.time = this.vehicleData.fecha_estado;
+        this.driverSearch(this.vehicleData.conductor, false);
+      }
+
+      return;
+    }
+
+    if (this.vehicleData.con_cupo === 2) {
+      window.alert('Vehículo sin cupo.');
+      return;
+    }
+
+    this.driverInputDisabled = false;
+  }
+
+  vehicleSearch(vehicleValue: string){
+    this.apiService.getData(`operations/deliveryvehicledriver/vehicle/${vehicleValue}`).subscribe({
+      next: (data: vehicleInfo) => {
+        this.vehicleData = data;
+        console.log(this.vehicleData);
+        this.vehicleValidations();
+      },
+      error: (error: HttpErrorResponse) => {
+        if (error.status === 404) {
+          window.alert('No se encontró el vehículo');
+        }
+        else {
+          window.alert('Error al buscar el vehículo. Vuelva a intentarlo.');
+        }
+      }
+    });
+  }
+
+  vehicleInput(event: any){
     const vehicleInputValue = (event.target as HTMLInputElement).value;
     if (vehicleInputValue.length > 0) {
-      console.log(vehicleInputValue);
-      this.apiService.getData(`operations/vehicle/${vehicleInputValue}`).subscribe({
-        next: (data: vehicleInfo) => {
-          this.vehicleData = data;
-          console.log(this.vehicleData);
-        },
-        error: (error: HttpErrorResponse) => {
-          if (error.status === 404) {
-            window.alert('No se encontró el vehículo');
-          }
-          else {
-            window.alert('Error al buscar el vehículo. Vuelva a intentarlo.');
-          }
-        }
-      });
+      this.deliveryVehicleDriverDisabled = true;
+      this.driverInputDisabled = true;
+      this.driverInputValue = '';
+      this.day.time = this.dayBackup.time;
+      this.driverData = {
+        nombre: '',
+        cedula: '',
+        telefono: '',
+        direccion: '',
+        licencia_numero: '',
+        licencia_vencimiento: '',
+        vehiculo: '',
+        estado: ''
+      };
+      this.vehicleSearch(vehicleInputValue);
     }
   }
 
-  driverSearch(event: any){
+  driverValidations() {
+    if (this.driverData.estado !== '1') {
+      window.alert('Conductor debe estar activo.');
+    }
+
+    if (this.driverData.vehiculo !== '') {
+      window.alert('Conductor tiene el vehículo ' + this.driverData.vehiculo + ' asignado.');
+    }
+  }
+
+  driverSearch(driverValue: string, validations?: boolean){
+    this.deliveryVehicleDriverDisabled = true;
+    this.apiService.getData(`operations/deliveryvehicledriver/driver/${driverValue}`).subscribe({
+      next: (data: driverInfo) => {
+        this.driverData = data;
+        console.log(this.driverData);
+        if (validations !== false) {
+          this.driverValidations();
+          this.deliveryVehicleDriverValidations();
+        };
+      },
+      error: (error: HttpErrorResponse) => {
+        if (error.status === 404) {
+          window.alert('No se encontró el conductor');
+        }
+        else {
+          window.alert('Error al buscar el conducto. Vuelva a intentarlo.');
+        }
+      }
+    });
+  }
+
+  driverInput(event: any){
     const driverInputValue = (event.target as HTMLInputElement).value;
     if (driverInputValue.length > 0) {
-      this.apiService.getData(`operations/driver/${driverInputValue}`).subscribe({
-        next: (data: driverInfo) => {
-          this.driverData = data;
-          console.log(this.driverData);
-        },
-        error: (error: HttpErrorResponse) => {
-          if (error.status === 404) {
-            window.alert('No se encontró el conductor');
-          }
-          else {
-            window.alert('Error al buscar el conducto. Vuelva a intentarlo.');
-          }
-        }
-      });
-      console.log(driverInputValue);
+      this.driverSearch(driverInputValue);
+    }
+  }
+
+  deliveryVehicleDriverValidations() {
+    if (this.driverData.estado === '1' && 
+        this.driverData.vehiculo === '' &&
+        this.vehicleData.estado.substring(0, 2) === '06' &&
+        this.vehicleData.con_cupo === 1 &&
+        this.vehicleData.conductor === '') {
+      this.deliveryVehicleDriverDisabled = false;
     }
   }
 
