@@ -7,7 +7,7 @@ from models.vehiculos import Vehiculos
 from models.marcas import Marcas
 from models.propietarios import Propietarios
 from models.estados import Estados
-from schemas.reports import *
+from schemas.operations import *
 from middlewares.JWTBearer import JWTBearer
 from fastapi.encoders import jsonable_encoder
 from utils.reports import *
@@ -43,6 +43,7 @@ async def get_vehicle_operations(vehicle_number: str):
       return JSONResponse(content={"error": "Vehicle not found"}, status_code=404)
     
     vehicle = {
+      'numero': vehicle_number,
       'marca': vehicle_operations.MARCA,
       'placa': vehicle_operations.PLACA,
       'cupo': vehicle_operations.NRO_CUPO,
@@ -79,6 +80,7 @@ async def get_driver_operations(driver_number: str):
       return JSONResponse(content={"error": "Driver not found"}, status_code=404)
     
     driver = {
+      'codigo': driver_number,
       'nombre': driver_operations.NOMBRE,
       'cedula': driver_operations.CEDULA,
       'telefono': driver_operations.TELEFONO + ' | ' + driver_operations.CELULAR,
@@ -92,6 +94,42 @@ async def get_driver_operations(driver_number: str):
     return JSONResponse(content=jsonable_encoder(driver), status_code=200)
   
   except Exception as e:
+    return JSONResponse(content={"error": str(e)}, status_code=500)
+  
+  finally:
+    db.close()
+
+@operations_router.post("/operations/deliveryvehicledriver", tags=["Operations"])
+async def delivery_vehicle_driver(data: DeliveryVehicleDriver):
+  db = session()
+  try:
+    vehicle = db.query(Vehiculos).filter(Vehiculos.NUMERO == data.vehicle_number).first()
+    if not vehicle:
+      return JSONResponse(content={"error": "Vehicle not found"}, status_code=404)
+    
+    driver = db.query(Conductores).filter(Conductores.CODIGO == data.driver_number).first()
+    if not driver:
+      return JSONResponse(content={"error": "Driver not found"}, status_code=404)
+    
+    if(driver.ESTADO != '1' and 
+       driver.UND_NRO != '' and 
+       vehicle.ESTADO != '06' and 
+       vehicle.CON_CUPO != 1 and
+       vehicle.CONDUCTOR != ''):
+      return JSONResponse(content={"error": "Driver already has a vehicle assigned"}, status_code=400)
+    
+    vehicle.CONDUCTOR = driver.CODIGO
+    vehicle.ESTADO = '01'
+    vehicle.FEC_ESTADO = data.delivery_date
+    driver.UND_NRO = data.vehicle_number
+    driver.CUO_DIARIA = vehicle.CUO_DIARIA
+
+    db.commit()
+
+    return JSONResponse(content={"message": "Vehicle delivered successfully"}, status_code=200)
+  
+  except Exception as e:
+    db.rollback()
     return JSONResponse(content={"error": str(e)}, status_code=500)
   
   finally:
