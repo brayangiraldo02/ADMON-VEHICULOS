@@ -46,6 +46,8 @@ export class OperacionesEntregaVehiculoConductorComponent {
   driverInputDisabled: boolean = true;
   deliveryVehicleDriverDisabled: boolean = true;
 
+  confirmation: boolean = false;
+
   vehicleData: vehicleInfo = {
     numero: '',
     marca: '',
@@ -208,6 +210,10 @@ export class OperacionesEntregaVehiculoConductorComponent {
         this.vehicleData.conductor === '') {
       this.deliveryVehicleDriverDisabled = false;
     }
+  }
+
+  confirmationChange(){
+    this.confirmation = !this.confirmation;
   }
 
   saveDeliveryVehicleDriver() {
