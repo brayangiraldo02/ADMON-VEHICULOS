@@ -39,7 +39,7 @@ export class LoginComponent implements OnInit {
       this.apiService.postData('login', userLogin).subscribe(
         (response) => {
           this.jwtService.setToken(response.token);
-          this.router.navigate(['/home']);
+          this.router.navigate(['/users-home']);
         },
         (error) => {
           if (error.status === 404) {

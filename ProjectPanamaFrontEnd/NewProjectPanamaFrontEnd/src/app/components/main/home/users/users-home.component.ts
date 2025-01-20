@@ -4,11 +4,11 @@ import { ApiService } from 'src/app/services/api.service';
 import { Router } from '@angular/router';
 
 @Component({
-  selector: 'app-home',
-  templateUrl: './home.component.html',
-  styleUrls: ['./home.component.css']
+  selector: 'app-users-home',
+  templateUrl: './users-home.component.html',
+  styleUrls: ['./users-home.component.css']
 })
-export class HomeComponent implements OnInit {
+export class UsersHomeComponent implements OnInit {
   constructor(private jwtService: JwtService, private apiService: ApiService, private router: Router) { }
   @ViewChild('videoPlayer') videoPlayer!: ElementRef<HTMLVideoElement>;
 

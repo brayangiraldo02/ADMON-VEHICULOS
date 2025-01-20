@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { HomeComponent } from './components/main/home/home.component';
+import { UsersHomeComponent } from './components/main/home/users/users-home.component';
 import { LoginComponent } from './components/users/login/login.component';
 import { AuthGuard } from './guards/auth.guard';
 import { NoAuthGuard } from './guards/no-auth.guard';
@@ -30,11 +30,13 @@ import { VehiclesResumeComponent } from './components/tasks/vehicles/vehicles-re
 import { VehiclesAddnewComponent } from './components/tasks/vehicles/vehicles-addnew/vehicles-addnew.component';
 import { VehiclesDocumentationComponent } from './components/tasks/vehicles/vehicles-documentation/vehicles-documentation.component';
 import { DriversDocumentationComponent } from './components/tasks/drivers/drivers-documentation/drivers-documentation.component';
+import { OwnersHomeComponent } from './components/main/home/owners-home/owners-home.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
   { path: 'login', component: LoginComponent, canActivate: [NoAuthGuard]},
-  { path: 'home', component: HomeComponent, canActivate: [AuthGuard]},
+  { path: 'users-home', component: UsersHomeComponent, canActivate: [AuthGuard]},
+  { path: 'owners-home', component: OwnersHomeComponent, canActivate: [AuthGuard]},
   { path: 'statevehiclefleet', component: StatevehiclefleetComponent, canActivate: [AuthGuard]},
   { path: 'vehicles', component: VehiclesTableComponent, canActivate: [AuthGuard]},
   { path: 'vehicle/:code', component: VehiclesResumeComponent, canActivate: [AuthGuard]},

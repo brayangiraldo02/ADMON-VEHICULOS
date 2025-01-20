@@ -7,7 +7,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HeaderComponent } from './components/main/header/header.component';
-import { HomeComponent } from './components/main/home/home.component';
+import { UsersHomeComponent } from './components/main/home/users/users-home.component';
 import { LoginComponent } from './components/users/login/login.component';
 import { HttpClientModule } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -44,12 +44,13 @@ import { VehiclesAddnewComponent } from './components/tasks/vehicles/vehicles-ad
 import { VehiclesDocumentationComponent } from './components/tasks/vehicles/vehicles-documentation/vehicles-documentation.component';
 import { DriversDocumentationComponent } from './components/tasks/drivers/drivers-documentation/drivers-documentation.component';
 import { OperacionesEntregaVehiculoConductorComponent } from './components/options/operaciones/operaciones-entrega-vehiculo-conductor/operaciones-entrega-vehiculo-conductor.component';
+import { OwnersHomeComponent } from './components/main/home/owners-home/owners-home.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     HeaderComponent,
-    HomeComponent,
+    UsersHomeComponent,
     LoginComponent,
     FooterComponent,
     StatevehiclefleetComponent,
@@ -84,6 +85,7 @@ import { OperacionesEntregaVehiculoConductorComponent } from './components/optio
     VehiclesDocumentationComponent,
     DriversDocumentationComponent,
     OperacionesEntregaVehiculoConductorComponent,
+    OwnersHomeComponent,
   ],
   imports: [
     BrowserModule,
