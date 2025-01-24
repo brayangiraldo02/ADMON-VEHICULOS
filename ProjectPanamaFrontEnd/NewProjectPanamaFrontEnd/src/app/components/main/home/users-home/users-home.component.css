@@ -137,6 +137,34 @@ ul {
   margin-bottom: 5px;
 }
 
+.option {
+  height: 6vh;
+  margin: 6px;
+  box-sizing: border-box;
+  background: #ffffff;
+  border: 1px solid #888;
+  border-radius: 10px;
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  text-decoration: none;
+  color: black;
+  font-size: 15px;
+  position: relative;  /* Permite posicionamiento absoluto de elementos hijos */
+}
+
+.option span.material-symbols-outlined {
+  margin-right: 10px;  /* Empuja el icono a la izquierda */
+  font-size: 3.5vh;
+}
+
+.option:hover {
+  background: #bcd1ec;
+}
+
+
 .option-text {
   font-size: 16px; /* Ajuste según necesidad */
   color: #333; /* Color del texto */

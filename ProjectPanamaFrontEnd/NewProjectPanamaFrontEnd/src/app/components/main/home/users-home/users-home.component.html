@@ -28,6 +28,12 @@
             </a>
           </button>
         </ng-container>
+        <button class="option" type="button" *ngIf="this.isAdmin" [routerLink]="['/owners-home']">
+          <span class="material-symbols-outlined" translate="no">
+            apartment
+          </span>
+          <p class="option-text">Inicio de Propietarios</p>
+        </button>
       </ul>
     </div>  
   </div>

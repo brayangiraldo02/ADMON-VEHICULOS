@@ -12,7 +12,7 @@ export class AuthGuard implements CanActivate {
     if (this.jwtService.tokenExistsAndValid()) {
       return true;
     } else {
-      this.router.navigate(['/login']);
+      this.jwtService.verifyOwner() ? this.router.navigate(['/owners-home']) : this.router.navigate(['/login']);
       return false;
     }
   }

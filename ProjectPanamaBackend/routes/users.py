@@ -56,6 +56,7 @@ async def login(data: userLogin, response: Response):
         "codigo": user_admin,
       }
       user_data_localStorage = {
+        "id": user_admin,
         "nombre": "Administrador",
         "opcion01": "T",
         "opcion02": "T",
@@ -72,6 +73,7 @@ async def login(data: userLogin, response: Response):
         "opcion13": "T",
         "opcion14": "T",
         "opcion15": "T",
+        "opcion16": "T",
         "tarea01": "T",
         "tarea02": "T",
         "tarea03": "T",
@@ -84,7 +86,7 @@ async def login(data: userLogin, response: Response):
       response.set_cookie(key="access_token", value=token_cookie, httponly=True, secure=True, samesite='strict')
       return JSONResponse(content=jsonable_encoder({'token': token_localStorage}), status_code=200)
     
-    user = db.query(PermisosUsuario.CODIGO, PermisosUsuario.NOMBRE, PermisosUsuario.PASSSWORD, PermisosUsuario.ESTADO, PermisosUsuario.OPCION01, PermisosUsuario.OPCION02, PermisosUsuario.OPCION03, PermisosUsuario.OPCION04, PermisosUsuario.OPCION05, PermisosUsuario.OPCION06, PermisosUsuario.OPCION07, PermisosUsuario.OPCION08, PermisosUsuario.OPCION09, PermisosUsuario.OPCION10, PermisosUsuario.OPCION11, PermisosUsuario.OPCION12, PermisosUsuario.OPCION13, PermisosUsuario.OPCION14, PermisosUsuario.OPCION15, PermisosUsuario.TAREA01, PermisosUsuario.TAREA02, PermisosUsuario.TAREA03, PermisosUsuario.TAREA04, PermisosUsuario.TAREA05, PermisosUsuario.FOTO).filter(PermisosUsuario.CODIGO == data.user).first()
+    user = db.query(PermisosUsuario.CODIGO, PermisosUsuario.NOMBRE, PermisosUsuario.PASSSWORD, PermisosUsuario.ESTADO, PermisosUsuario.OPCION01, PermisosUsuario.OPCION02, PermisosUsuario.OPCION03, PermisosUsuario.OPCION04, PermisosUsuario.OPCION05, PermisosUsuario.OPCION06, PermisosUsuario.OPCION07, PermisosUsuario.OPCION08, PermisosUsuario.OPCION09, PermisosUsuario.OPCION10, PermisosUsuario.OPCION11, PermisosUsuario.OPCION12, PermisosUsuario.OPCION13, PermisosUsuario.OPCION14, PermisosUsuario.OPCION15, PermisosUsuario.OPCION16, PermisosUsuario.TAREA01, PermisosUsuario.TAREA02, PermisosUsuario.TAREA03, PermisosUsuario.TAREA04, PermisosUsuario.TAREA05, PermisosUsuario.FOTO).filter(PermisosUsuario.CODIGO == data.user).first()
     if user is None:
       return JSONResponse(content=jsonable_encoder({'error': 'Usuario no encontrado'}), status_code=404)
     if user.PASSSWORD != data.password:
@@ -95,6 +97,7 @@ async def login(data: userLogin, response: Response):
       "codigo": user.CODIGO,
     }
     user_data_localStorage = {
+      "id": user.CODIGO,
       "nombre": user.NOMBRE,
       "opcion01": user.OPCION01,
       "opcion02": user.OPCION02,
@@ -111,6 +114,7 @@ async def login(data: userLogin, response: Response):
       "opcion13": user.OPCION13,
       "opcion14": user.OPCION14,
       "opcion15": user.OPCION15,
+      "opcion16": user.OPCION16,
       "tarea01": user.TAREA01,
       "tarea02": user.TAREA02,
       "tarea03": user.TAREA03,

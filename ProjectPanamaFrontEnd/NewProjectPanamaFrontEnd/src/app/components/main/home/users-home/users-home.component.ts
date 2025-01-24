@@ -14,6 +14,8 @@ export class UsersHomeComponent implements OnInit {
 
   options: any[] = []
 
+  isAdmin: boolean = false;
+
   logoutIcon: string = '../../../../assets/icons/logout.svg';
   rightIcon: string = '../../../../assets/icons/rightArrow.svg';
 
@@ -43,6 +45,7 @@ export class UsersHomeComponent implements OnInit {
 
   obtenerUsuario() {
     this.permisos = this.jwtService.decodeToken();
+    this.isAdmin = this.jwtService.isAdmin();
     // console.log(this.permisos.user_data);
 
     this.convertirValoresBooleanos(this.permisos.user_data);

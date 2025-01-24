@@ -45,6 +45,7 @@ import { VehiclesDocumentationComponent } from './components/tasks/vehicles/vehi
 import { DriversDocumentationComponent } from './components/tasks/drivers/drivers-documentation/drivers-documentation.component';
 import { OperacionesEntregaVehiculoConductorComponent } from './components/options/operaciones/operaciones-entrega-vehiculo-conductor/operaciones-entrega-vehiculo-conductor.component';
 import { OwnersHomeComponent } from './components/main/home/owners-home/owners-home.component';
+import { OwnersFeespaidComponent } from './components/owners/owners-feespaid/owners-feespaid.component';
 
 @NgModule({
   declarations: [
@@ -86,6 +87,7 @@ import { OwnersHomeComponent } from './components/main/home/owners-home/owners-h
     DriversDocumentationComponent,
     OperacionesEntregaVehiculoConductorComponent,
     OwnersHomeComponent,
+    OwnersFeespaidComponent,
   ],
   imports: [
     BrowserModule,

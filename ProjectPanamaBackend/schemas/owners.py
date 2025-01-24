@@ -81,3 +81,6 @@ class RepresentantePropietario(BaseModel):
     nacionalidad: Optional[str] = None
     ficha: Optional[str] = None
     documento: Optional[str] = None
+
+class Owner(BaseModel):
+    propietario: str
