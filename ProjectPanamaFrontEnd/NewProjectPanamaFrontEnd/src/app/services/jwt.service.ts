@@ -32,6 +32,18 @@ export class JwtService {
     const now = Date.now() / 1000; // Fecha/hora actual como Unix timestamp (segundos)
     
     // Verificar si el token aún no ha expirado
+    return expiration > now;
+  }
+
+  tokenExistsAndValidForUsers(): boolean {
+    const token = this.getToken();
+    if (!token) return false;
+
+    const decoded: any = jwtDecode(token);
+    const expiration = decoded.exp; // Tiempo de expiración como Unix timestamp (segundos)
+    const now = Date.now() / 1000; // Fecha/hora actual como Unix timestamp (segundos)
+    
+    // Verificar si el token aún no ha expirado
     return expiration > now && (decoded.user_data.opcion16 !== 'T' || decoded.user_data.nombre === 'Administrador');
   }
 

@@ -33,6 +33,7 @@ import { DriversDocumentationComponent } from './components/tasks/drivers/driver
 import { OwnersHomeComponent } from './components/main/home/owners-home/owners-home.component';
 import { OwnersGuard } from './guards/owners.guard';
 import { OwnersFeespaidComponent } from './components/owners/owners-feespaid/owners-feespaid.component';
+import { UsersGuard } from './guards/users.guard';
 
 const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -62,7 +63,7 @@ const routes: Routes = [
   { path: 'expenses', component: OpcionesGastosComponent, canActivate: [AuthGuard]},
   { path: 'cnt', component: OpcionesCntComponent, canActivate: [AuthGuard]},
   { path: 'utilities', component: OpcionesUtilidadesComponent, canActivate: [AuthGuard]},
-  { path: 'pdf', component: PdfViewerComponent, canActivate: [AuthGuard]},
+  { path: 'pdf', component: PdfViewerComponent, canActivate: [UsersGuard]},
   { path: 'prueba', component: OwnersFeespaidComponent}
 ];
 
