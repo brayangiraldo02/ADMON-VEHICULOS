@@ -21,13 +21,19 @@
       <ul>
         <!-- ng-container para aplicar ngIf sin afectar el layout -->
         <ng-container *ngFor="let option of options">
-          <li class="options-if" *ngIf="option.enabled"  [routerLink]="option.url">
+          <button class="options-if" *ngIf="option.enabled"  [routerLink]="option.url" [disabled]="option.disabled">
             <a>
               <img [src]="option.icon" class="option-icon">
               <span class="option-text">{{ option.name }}</span>
             </a>
-          </li>
+          </button>
         </ng-container>
+        <button class="option" type="button" *ngIf="this.isAdmin" [routerLink]="['/owners-home']">
+          <span class="material-symbols-outlined" translate="no">
+            apartment
+          </span>
+          <p class="option-text">Inicio de Propietarios</p>
+        </button>
       </ul>
     </div>  
   </div>

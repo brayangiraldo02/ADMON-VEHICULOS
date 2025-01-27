@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { HomeComponent } from './components/main/home/home.component';
+import { UsersHomeComponent } from './components/main/home/users-home/users-home.component';
 import { LoginComponent } from './components/users/login/login.component';
 import { AuthGuard } from './guards/auth.guard';
 import { NoAuthGuard } from './guards/no-auth.guard';
@@ -28,11 +28,18 @@ import { DriversAddnewComponent } from './components/tasks/drivers/drivers-addne
 import { VehiclesTableComponent } from './components/tasks/vehicles/vehicles-table/vehicles-table.component';
 import { VehiclesResumeComponent } from './components/tasks/vehicles/vehicles-resume/vehicles-resume.component';
 import { VehiclesAddnewComponent } from './components/tasks/vehicles/vehicles-addnew/vehicles-addnew.component';
+import { VehiclesDocumentationComponent } from './components/tasks/vehicles/vehicles-documentation/vehicles-documentation.component';
+import { DriversDocumentationComponent } from './components/tasks/drivers/drivers-documentation/drivers-documentation.component';
+import { OwnersHomeComponent } from './components/main/home/owners-home/owners-home.component';
+import { OwnersGuard } from './guards/owners.guard';
+import { OwnersFeespaidComponent } from './components/owners/owners-feespaid/owners-feespaid.component';
+import { UsersGuard } from './guards/users.guard';
 
 const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
   { path: 'login', component: LoginComponent, canActivate: [NoAuthGuard]},
-  { path: 'home', component: HomeComponent, canActivate: [AuthGuard]},
+  { path: 'users-home', component: UsersHomeComponent, canActivate: [AuthGuard]},
+  { path: 'owners-home', component: OwnersHomeComponent, canActivate: [OwnersGuard]},
   { path: 'statevehiclefleet', component: StatevehiclefleetComponent, canActivate: [AuthGuard]},
   { path: 'vehicles', component: VehiclesTableComponent, canActivate: [AuthGuard]},
   { path: 'vehicle/:code', component: VehiclesResumeComponent, canActivate: [AuthGuard]},
@@ -56,7 +63,8 @@ const routes: Routes = [
   { path: 'expenses', component: OpcionesGastosComponent, canActivate: [AuthGuard]},
   { path: 'cnt', component: OpcionesCntComponent, canActivate: [AuthGuard]},
   { path: 'utilities', component: OpcionesUtilidadesComponent, canActivate: [AuthGuard]},
-  { path: 'pdf', component: PdfViewerComponent, canActivate: [AuthGuard]}
+  { path: 'pdf', component: PdfViewerComponent, canActivate: [UsersGuard]},
+  { path: 'prueba', component: OwnersFeespaidComponent}
 ];
 
 @NgModule({

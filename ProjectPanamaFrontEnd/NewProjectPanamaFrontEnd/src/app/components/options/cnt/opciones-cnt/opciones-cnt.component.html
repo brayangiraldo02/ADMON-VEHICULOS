@@ -8,7 +8,7 @@
       <h2>ALMACEN</h2>
       <div class="options-container">
         <ng-container *ngFor="let option of almacen">
-          <button class="option" type="button" [routerLink]="option.url">
+          <button class="option" type="button" [routerLink]="option.url" [disabled]="option.disabled">
             <span class="material-symbols-outlined" translate="no">
               {{ option.icon }}
             </span>
@@ -22,7 +22,7 @@
       <h2>CONSULTAS</h2>
       <div class="options-container">
         <ng-container *ngFor="let option of consultas">
-          <button class="option" type="button" [routerLink]="option.url">
+          <button class="option" type="button" [routerLink]="option.url" [disabled]="option.disabled">
             <span class="material-symbols-outlined" translate="no">
               {{ option.icon }}
             </span>

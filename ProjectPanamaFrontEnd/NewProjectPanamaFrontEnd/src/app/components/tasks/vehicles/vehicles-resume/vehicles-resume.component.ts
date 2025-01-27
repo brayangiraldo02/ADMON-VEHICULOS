@@ -37,6 +37,8 @@ export class VehiclesResumeComponent {
 
   createDate: string = '';
 
+  VehiclesDocumentation: boolean = false;
+
   constructor(
     private route: ActivatedRoute,
     private router: Router, 
@@ -388,38 +390,47 @@ export class VehiclesResumeComponent {
 
   goToVehicleOwnership() {
     this.selectButton('propiedad')
+    this.VehiclesDocumentation = false;
   }
 
   goToVehicleDocuments() {
     this.selectButton('documentos')
+    this.VehiclesDocumentation = false;
   }
 
   goToVehicleDrivers() {
     this.selectButton('conductores')
+    this.VehiclesDocumentation = false;
   }
 
   goToVehicleIncome() {
     this.selectButton('ingresos')
+    this.VehiclesDocumentation = false;
   }
 
   goToVehicleOrders() {
     this.selectButton('ordenes')
+    this.VehiclesDocumentation = false;
   }
 
   goToVehicleTools() {
     this.selectButton('herramientas')
+    this.VehiclesDocumentation = false;
   }
 
   goToVehiclePhotos() {
     this.selectButton('fotos')
+    this.VehiclesDocumentation = false;
   }
 
   goToVehicleDocumentation() {
     this.selectButton('documentacion')
+    this.VehiclesDocumentation = true;
   }
 
   goToVehiclePyG() {
     this.selectButton('pyg')
+    this.VehiclesDocumentation = false;
   }
 
   showModal() {

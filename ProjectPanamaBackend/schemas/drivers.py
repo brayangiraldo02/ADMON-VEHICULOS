@@ -26,6 +26,8 @@ class ConductorUpdate(BaseModel):
   tel_contacto: Optional[str] = None
   tel_contacto1: Optional[str] = None
   tel_contacto2: Optional[str] = None
+  recome_nom: Optional[str] = None
+  recome_ced: Optional[str] = None
   representa: Optional[str] = None
   cruce_ahorros: Optional[str] = None
   observaciones: Optional[str] = None
@@ -59,6 +61,8 @@ class ConductorCreate(BaseModel):
   par_contacto: Optional[str] = ''
   par_contacto1: Optional[str] = ''
   par_contacto2: Optional[str] = ''
+  recome_nom: Optional[str] = ''
+  recome_ced: Optional[str] = ''
   estado: Optional[str] = ''
   contrato_auto: Optional[str] = ''
   cruce_ahorros: Optional[str] = ''

@@ -3,6 +3,7 @@ import { Router, NavigationEnd } from '@angular/router';
 import { ChangeDetectorRef } from '@angular/core';
 import { ApiService } from 'src/app/services/api.service';
 import { JwtService } from 'src/app/services/jwt.service';
+import { OwnersGuard } from 'src/app/guards/owners.guard';
 
 @Component({
   selector: 'app-header',
@@ -13,12 +14,14 @@ export class HeaderComponent implements OnInit {
   permisos: any;
   isHome: boolean = true;
   imgUser: string = "../../../../assets/img/taxi.jpg";
+  ownerView: boolean = false;
 
   constructor(
     private apiService: ApiService,
     private jwtService: JwtService,
     private router: Router,
-    private cdr: ChangeDetectorRef // Importante para detectar cambios
+    private cdr: ChangeDetectorRef, // Importante para detectar cambios
+    private ownersGuard: OwnersGuard
   ) { }
 
   ngOnInit() {
@@ -74,6 +77,10 @@ export class HeaderComponent implements OnInit {
           obj[key] = false;
         }
       }
+    }
+
+    if (this.permisos.user_data.opcion16 === true && !this.jwtService.isAdmin()) {
+      this.ownerView = true;
     }
   }
 }

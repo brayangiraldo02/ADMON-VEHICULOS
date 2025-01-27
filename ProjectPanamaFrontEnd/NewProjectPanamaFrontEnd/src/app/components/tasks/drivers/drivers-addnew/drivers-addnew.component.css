@@ -70,6 +70,13 @@ button.selected {
   background: #bcd1ec;
 }
 
+.select:disabled {
+  background: #e0e0e0;
+  color: #888;
+  cursor: not-allowed;
+  border-color: #aaa;
+}
+
 .back {
   background: #ffe9e9;
 }
@@ -211,6 +218,10 @@ button.selected {
 /* .two-container .form-group {
   flex: 1;
 } */
+
+.semitotal {
+  width: 80%;
+}
 
 .total {
   width: 100%;

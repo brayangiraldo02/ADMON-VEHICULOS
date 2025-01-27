@@ -7,7 +7,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HeaderComponent } from './components/main/header/header.component';
-import { HomeComponent } from './components/main/home/home.component';
+import { UsersHomeComponent } from './components/main/home/users-home/users-home.component';
 import { LoginComponent } from './components/users/login/login.component';
 import { HttpClientModule } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -41,12 +41,17 @@ import { VehiclesTableComponent } from './components/tasks/vehicles/vehicles-tab
 import { VehiclesResumeComponent } from './components/tasks/vehicles/vehicles-resume/vehicles-resume.component';
 import { VehiclesDeleteComponent } from './components/tasks/vehicles/vehicles-delete/vehicles-delete.component';
 import { VehiclesAddnewComponent } from './components/tasks/vehicles/vehicles-addnew/vehicles-addnew.component';
+import { VehiclesDocumentationComponent } from './components/tasks/vehicles/vehicles-documentation/vehicles-documentation.component';
+import { DriversDocumentationComponent } from './components/tasks/drivers/drivers-documentation/drivers-documentation.component';
+import { OperacionesEntregaVehiculoConductorComponent } from './components/options/operaciones/operaciones-entrega-vehiculo-conductor/operaciones-entrega-vehiculo-conductor.component';
+import { OwnersHomeComponent } from './components/main/home/owners-home/owners-home.component';
+import { OwnersFeespaidComponent } from './components/owners/owners-feespaid/owners-feespaid.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     HeaderComponent,
-    HomeComponent,
+    UsersHomeComponent,
     LoginComponent,
     FooterComponent,
     StatevehiclefleetComponent,
@@ -78,6 +83,11 @@ import { VehiclesAddnewComponent } from './components/tasks/vehicles/vehicles-ad
     VehiclesResumeComponent,
     VehiclesDeleteComponent,
     VehiclesAddnewComponent,
+    VehiclesDocumentationComponent,
+    DriversDocumentationComponent,
+    OperacionesEntregaVehiculoConductorComponent,
+    OwnersHomeComponent,
+    OwnersFeespaidComponent,
   ],
   imports: [
     BrowserModule,

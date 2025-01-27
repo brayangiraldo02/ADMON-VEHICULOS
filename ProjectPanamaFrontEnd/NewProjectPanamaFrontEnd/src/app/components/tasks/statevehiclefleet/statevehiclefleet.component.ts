@@ -229,7 +229,7 @@ export class StatevehiclefleetComponent implements OnInit {
         localStorage.setItem('pdfEndpoint', endpoint);
         localStorage.setItem('pdfData', JSON.stringify(data));
         window.open(`/pdf`, '_blank')
-        this.router.navigate(['/home']);
+        this.router.navigate(['/users-home']);
       } else {
         console.error('URL no encontrada para la opción seleccionada.');
       }
@@ -264,6 +264,6 @@ export class StatevehiclefleetComponent implements OnInit {
 
     // Navegar al componente PdfViewerComponent
     window.open(`/pdf`, '_blank')
-    this.router.navigate(['/home']);
+    this.router.navigate(['/users-home']);
   }
 }

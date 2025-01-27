@@ -6,7 +6,7 @@ from models.vehiculos import Vehiculos
 from models.conductores import Conductores
 from models.estados import Estados
 from utils.reports import *
-from schemas.owners import PropietarioUpdate, PropietarioCreate, RepresentantePropietario
+from schemas.owners import *
 from models.centrales import Centrales
 from models.cajarecaudos import CajaRecaudos
 from models.cajarecaudoscontado  import CajasRecaudosContado
@@ -17,6 +17,8 @@ from middlewares.JWTBearer import JWTBearer
 from fastapi.encoders import jsonable_encoder
 from datetime import datetime
 import pytz
+import os
+
 owners_router = APIRouter()
 
 # PETICIÓN DE LISTA DE PROPIETARIOS A LA BASE DE DATOS 
@@ -515,3 +517,30 @@ async def verify_owner_delete(owner_id: int):
     db.close()
 
 #----------------------------------------------------------------------------------------------------------------
+
+@owners_router.post("/companies_owners", tags=["Owners"])
+async def get_companies_owners(owner: Owner):
+  db = session()
+  try:
+    user_admin = os.getenv('USER_ADMIN')
+    if owner.propietario:
+      
+      if owner.propietario == user_admin:
+        owners = db.query(Propietarios.CODIGO, Propietarios.NOMBRE).all()
+        owners_list = [{'id': owner.CODIGO, 'name': owner.NOMBRE} for owner in owners]
+
+      else:
+        companies = db.query(PermisosUsuario.EMPRESAS).filter(PermisosUsuario.CODIGO == owner.propietario).first()
+        companies_list = companies.EMPRESAS.strip('[]').split()
+        owners = db.query(Propietarios.CODIGO, Propietarios.NOMBRE).filter(Propietarios.CODIGO.in_(companies_list)).all()
+        owners_list = [{'id': owner.CODIGO, 'name': owner.NOMBRE} for owner in owners]
+
+      return JSONResponse(content=jsonable_encoder(owners_list), status_code=200)
+
+    return JSONResponse(content={"error": "Propietario no encontrado"}, status_code=404)
+  except Exception as e:
+    return JSONResponse(content={"error": str(e)}, status_code=500)
+  finally:
+    db.close()
+
+# ---------------------------------------------------------------------------------------------------------------

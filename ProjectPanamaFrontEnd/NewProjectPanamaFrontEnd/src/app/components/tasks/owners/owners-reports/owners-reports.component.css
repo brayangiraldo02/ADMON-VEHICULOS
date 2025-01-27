@@ -83,6 +83,14 @@
   background: #bcd1ec;
 }
 
+.option:disabled {
+  background: #e0e0e0;
+  color: #888;
+  cursor: not-allowed;
+  border-color: #aaa;
+}
+
+
 .select-owner {
   margin: 10px;
   box-sizing: border-box;

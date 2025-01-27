@@ -19,28 +19,28 @@
       <p class="select-text">Personales</p>
     </button>
 
-    <button class="select" type="button" (click)="goToDriverGeneral()" [ngClass]="{'selected': selectedButton === 'general'}">
+    <button class="select" type="button" (click)="goToDriverGeneral()" [ngClass]="{'selected': selectedButton === 'general'}" disabled>
       <span class="material-symbols-outlined" translate="no">
         import_contacts
       </span>
       <p class="select-text">Generales</p>
     </button>
 
-    <button class="select" type="button" (click)="goToDriverVehicles()" [ngClass]="{'selected': selectedButton === 'vehiculos'}">
+    <button class="select" type="button" (click)="goToDriverVehicles()" [ngClass]="{'selected': selectedButton === 'vehiculos'}" disabled>
       <span class="material-symbols-outlined" translate="no">
         traffic_jam
       </span>
       <p class="select-text">Vehículos</p>
     </button>
 
-    <button class="select" type="button" (click)="goToDriverIncome()" [ngClass]="{'selected': selectedButton === 'ingresos'}">
+    <button class="select" type="button" (click)="goToDriverIncome()" [ngClass]="{'selected': selectedButton === 'ingresos'}" disabled>
       <span class="material-symbols-outlined" translate="no">
         payments
       </span>
       <p class="select-text">Ingresos</p>
     </button>
 
-    <button class="select" type="button" (click)="goToDriverOrder()" [ngClass]="{'selected': selectedButton === 'ordenes'}">
+    <button class="select" type="button" (click)="goToDriverOrder()" [ngClass]="{'selected': selectedButton === 'ordenes'}" disabled>
       <span class="material-symbols-outlined">
         receipt_long
       </span>
@@ -58,9 +58,11 @@
 
   <hr *ngIf="!isLoading">
 
+  <app-drivers-documentation *ngIf="VehiclesDocumentation"></app-drivers-documentation>
+
   <!-- INPUTS PERSONALES -->
   <!-- -------------------------------------------------------------------------------------- -->
-  <div class="info-code-container" *ngIf="!isLoading">
+  <div class="info-code-container" *ngIf="!isLoading && (!VehiclesDocumentation)">
     <div class="div-group all-size">
       <div class="code-container">
         <div class="form-group">
@@ -87,9 +89,9 @@
 
   </div>
 
-  <hr *ngIf="!isLoading">
+  <hr *ngIf="!isLoading && (!VehiclesDocumentation)">
 
-  <div class="info-container" *ngIf="!isLoading">
+  <div class="info-container" *ngIf="!isLoading && (!VehiclesDocumentation)">
 
     <div class="div-group">
       <div class="group-inputs">
@@ -164,8 +166,9 @@
     
   </div>
 
-  <hr *ngIf="!isLoading">
-  <div class="info-container" *ngIf="!isLoading">
+  <hr *ngIf="!isLoading && (!VehiclesDocumentation)">
+
+  <div class="info-container" *ngIf="!isLoading && (!VehiclesDocumentation)">
 
     <div class="div-group">
 
@@ -231,12 +234,24 @@
         </div>
       </div>
 
-      </div>
     </div>
+  </div>
 
-  <hr *ngIf="!isLoading">
+  <div class="two-container" *ngIf="!isLoading && (!VehiclesDocumentation)">
+      <div class="form-group semitotal">
+        <label for="recome_nom">RECOMENDADO:</label>
+        <input class="total" type="text" id="recome_nom" name="recome_nom" [(ngModel)]="data.recome_nom" [disabled]="!isEditable"><br>
+      </div>
+  
+      <div class="form-group ">
+        <label for="recome_ced">Cédula:</label>
+        <input class="small" type="text" id="recome_ced" name="recome_ced" [(ngModel)]="data.recome_ced" [disabled]="!isEditable"><br>
+    </div>
+  </div>
 
-  <div class="info-container" *ngIf="!isLoading">
+  <hr *ngIf="!isLoading && (!VehiclesDocumentation)">
+
+  <div class="info-container" *ngIf="!isLoading && (!VehiclesDocumentation)">
 
     <div class="div-group">
 
@@ -285,9 +300,9 @@
     </div>
   </div>
 
-  <hr *ngIf="!isLoading">
+  <hr *ngIf="!isLoading && (!VehiclesDocumentation)">
 
-  <div class="info-container" *ngIf="!isLoading">
+  <div class="info-container" *ngIf="!isLoading && (!VehiclesDocumentation)">
 
     <div class="two-container">
       <div class="form-group">
@@ -308,9 +323,9 @@
 
   </div>
 
-  <hr *ngIf="!isLoading">
+  <hr *ngIf="!isLoading && (!VehiclesDocumentation)">
 
-  <div class="info-container" *ngIf="!isLoading">
+  <div class="info-container" *ngIf="!isLoading && (!VehiclesDocumentation)">
     <div class="div-group">
       <div class="form-group large-group">
         <label for="detalle">Descripción:</label>

@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ApiService } from 'src/app/services/api.service';
 import { ActivatedRoute, Router } from '@angular/router';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-vehicles-addnew',
@@ -39,6 +39,8 @@ export class VehiclesAddnewComponent {
 
   createDate: string = '';
 
+  isLoading = true;
+
   constructor(
     private fb: FormBuilder,
     private route: ActivatedRoute,
@@ -46,51 +48,51 @@ export class VehiclesAddnewComponent {
     private apiService: ApiService
   ) {
     this.vehicleForm = this.fb.group({
-      vehiculo_placa: [''],
-      vehiculo_numero: [''],
+      vehiculo_placa: ['', [Validators.required, Validators.maxLength(8)]],
+      vehiculo_numero: ['', Validators.maxLength(8)],
       vehiculo_marca: [''],
-      vehiculo_modelo: [''],
-      vehiculo_fec_modelo: [''],
-      vehiculo_cilindraje: [''],
-      vehiculo_nro_puertas: [''],
-      vehiculo_licencia_nro: [''],
+      vehiculo_modelo: ['', Validators.maxLength(25)],
+      vehiculo_fec_modelo: ['', [Validators.min(1900), Validators.max(2100)]],
+      vehiculo_cilindraje: ['', Validators.maxLength(4)],
+      vehiculo_nro_puertas: ['', Validators.pattern(/^\d$/)],
+      vehiculo_licencia_nro: ['', Validators.maxLength(20)],
       vehiculo_licencia_fec: [''],
-      vehiculo_color: [''],
-      vehiculo_servicio: [''],
+      vehiculo_color: ['', Validators.maxLength(20)],
+      vehiculo_servicio: ['', Validators.maxLength(30)],
       vehiculo_fec_matricula: [''],
-      vehiculo_clase: [''],
-      vehiculo_capacidad: [''],
+      vehiculo_clase: ['', Validators.maxLength(30)],
+      vehiculo_capacidad: ['', Validators.pattern(/^\d{1,8}$/)],
       vehiculo_fec_vencimiento_matricula: [''],
-      vehiculo_tipo: [''],
-      vehiculo_ne: [''],
+      vehiculo_tipo: ['', Validators.maxLength(30)],
+      vehiculo_ne: ['', Validators.maxLength(3)],
       vehiculo_fec_importacion: [''],
-      vehiculo_combustible: [''],
-      vehiculo_vin: [''],
-      vehiculo_motor: [''],
-      vehiculo_serie: [''],
-      vehiculo_chasis: [''],
-      vehiculo_motor_reg: [''],
-      vehiculo_serie_reg: [''],
-      vehiculo_chasis_reg: [''],
+      vehiculo_combustible: ['', Validators.maxLength(20)],
+      vehiculo_vin: ['', Validators.maxLength(20)],
+      vehiculo_motor: ['', Validators.maxLength(20)],
+      vehiculo_serie: ['', Validators.maxLength(20)],
+      vehiculo_chasis: ['', Validators.maxLength(20)],
+      vehiculo_motor_reg: ['', Validators.maxLength(3)],
+      vehiculo_serie_reg: ['', Validators.maxLength(3)],
+      vehiculo_chasis_reg: ['', Validators.maxLength(3)],
       vehiculo_propietario: [''],
       vehiculo_cta_gasto: [''],
       vehiculo_central: [''],
-      vehiculo_nro_cupo: [''],
-      vehiculo_permiso_nro: [''],
+      vehiculo_nro_cupo: ['', Validators.maxLength(12)],
+      vehiculo_permiso_nro: ['', Validators.maxLength(12)],
       vehiculo_fec_vencimiento_permiso: [''],
-      vehiculo_blindaje: [''],
-      vehiculo_potencia: [''],
-      vehiculo_dec_importacion: [''],
+      vehiculo_blindaje: ['', Validators.maxLength(15)],
+      vehiculo_potencia: ['', Validators.maxLength(6)],
+      vehiculo_dec_importacion: ['', Validators.maxLength(20)],
       vehiculo_restriccion_movilidad: [''],
-      vehiculo_limit_propiedad: [''],
-      vehiculo_organismo_transito: [''],
-      vehiculo_codigo_barras: [''],
-      vehiculo_lateral: [''],
-      vehiculo_kilometraje: [''],
+      vehiculo_limit_propiedad: ['', Validators.maxLength(80)],
+      vehiculo_organismo_transito: ['', Validators.maxLength(50)],
+      vehiculo_codigo_barras: ['', Validators.maxLength(18)],
+      vehiculo_lateral: ['', Validators.maxLength(8)],
+      vehiculo_kilometraje: ['', Validators.pattern(/^\d{1,6}(\.\d{1,2})?$/)],
       vehiculo_modalidad: [''],
       vehiculo_consulta_panapass: [''],
-      vehiculo_panapass: [''],
-      vehiculo_panapass_pwd: [''],
+      vehiculo_panapass: ['', Validators.maxLength(12)],
+      vehiculo_panapass_pwd: ['', Validators.maxLength(12)],
     });
   }
 
@@ -185,6 +187,12 @@ export class VehiclesAddnewComponent {
 
   saveData() {
 
+    if(this.vehicleForm.invalid) {
+      this.vehicleForm.markAllAsTouched();
+      window.alert('Por favor, rellene todos los campos obligatorios');
+      return;
+    }
+
     const formValues = this.vehicleForm.value;
 
     // console.log(modifiedData)
@@ -199,12 +207,14 @@ export class VehiclesAddnewComponent {
     formValues.vehiculo_consecutivo = Number(this.vehicles[this.vehicles.length - 1].vehiculo_consecutivo) + 1;
 
     console.log('Data to save:', formValues);
+
+    this.isLoading = false;
   
     this.apiService.postData(`vehicles`, formValues).subscribe(
       (response) => {
         window.alert('Vehículo creado correctamente');
         // console.log(response);
-        this.router.navigate(['/vehicles']);
+        this.router.navigate(['/vehicle/'+formValues.vehiculo_consecutivo]);
       },
       (error) => {
         console.log(error);

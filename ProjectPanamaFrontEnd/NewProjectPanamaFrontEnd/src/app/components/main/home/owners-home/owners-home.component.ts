@@ -4,15 +4,17 @@ import { ApiService } from 'src/app/services/api.service';
 import { Router } from '@angular/router';
 
 @Component({
-  selector: 'app-home',
-  templateUrl: './home.component.html',
-  styleUrls: ['./home.component.css']
+  selector: 'app-owners-home',
+  templateUrl: './owners-home.component.html',
+  styleUrls: ['./owners-home.component.css']
 })
-export class HomeComponent implements OnInit {
+export class OwnersHomeComponent {
   constructor(private jwtService: JwtService, private apiService: ApiService, private router: Router) { }
   @ViewChild('videoPlayer') videoPlayer!: ElementRef<HTMLVideoElement>;
 
   options: any[] = []
+
+  isAdmin: boolean = false;
 
   logoutIcon: string = '../../../../assets/icons/logout.svg';
   rightIcon: string = '../../../../assets/icons/rightArrow.svg';
@@ -35,6 +37,8 @@ export class HomeComponent implements OnInit {
   changeVideo: boolean = false;
   permisos: any;
 
+  ownersFeespaidVisible: boolean = false;
+
   ngOnInit() {
     this.changeImagesPeriodically();
     this.obtenerUsuario();
@@ -45,24 +49,17 @@ export class HomeComponent implements OnInit {
     this.permisos = this.jwtService.decodeToken();
     // console.log(this.permisos.user_data);
 
+    this.isAdmin = this.jwtService.isAdmin();
+
     this.convertirValoresBooleanos(this.permisos.user_data);
 
     this.options = [
-      { name: 'Caja', icon: '../../../../assets/icons/caja.svg', url: 'hoalalalal', enabled: this.permisos.user_data.opcion01 },
-      { name: 'Operaciones', icon: '../../../../assets/icons/operaciones.svg', url: '/operations', enabled: this.permisos.user_data.opcion02 },
-      { name: 'Cobros', icon: '../../../../assets/icons/cobros.svg', url: 'hoalalalal', enabled: this.permisos.user_data.opcion03 },
-      { name: 'Trámites', icon: '../../../../assets/icons/tramites.svg', url: '/procedures', enabled: this.permisos.user_data.opcion04 },
-      { name: 'Almacén', icon: '../../../../assets/icons/almacen.svg', url: '/warehouse', enabled: this.permisos.user_data.opcion05 },
-      { name: 'Sucursal', icon: '../../../../assets/icons/taller.svg', url: '/workshop', enabled: this.permisos.user_data.opcion06 },
-      { name: 'Chapistería', icon: '../../../../assets/icons/chapisteria.svg', url: '/sheet-metal-work', enabled: this.permisos.user_data.opcion07 },
-      { name: 'Llavero', icon: '../../../../assets/icons/llavero.svg', url: '/keychain', enabled: this.permisos.user_data.opcion08 },
-      { name: 'Reclamos', icon: '../../../../assets/icons/reclamos.svg', url: '/claims', enabled: this.permisos.user_data.opcion09 },
-      { name: 'Cartera', icon: '../../../../assets/icons/cartera.svg', url: '/wallet', enabled: this.permisos.user_data.opcion10 },
-      { name: 'Gerencia', icon: '../../../../assets/icons/gerencia.svg', url: '/management', enabled: this.permisos.user_data.opcion11 },
-      { name: 'Gastos', icon: '../../../../assets/icons/gastos.svg', url: '/expenses', enabled: this.permisos.user_data.opcion12 },
-      { name: 'CNT', icon: '../../../../assets/icons/cnt.svg', url: '/cnt', enabled: this.permisos.user_data.opcion13 },
-      { name: 'Contado', icon: '../../../../assets/icons/contado.svg', url: 'hoalalalal', enabled: this.permisos.user_data.opcion14 },
-      { name: 'Utilidades', icon: '../../../../assets/icons/utilidades1.svg', url: '/utilities', enabled: this.permisos.user_data.opcion15 }
+      { name: 'Estado de Flota Resumen', url: 'hoalalalal', enabled: this.permisos.user_data.opcion01, disabled: true, click: null },
+      { name: 'Estado de Flota Detalle', url: 'hoalalalal', enabled: this.permisos.user_data.opcion01, disabled: true, click: null },
+      { name: 'Relación Ingresos', url: 'hoalalalal', enabled: this.permisos.user_data.opcion02, disabled: true, click: null },
+      { name: 'Relación Piezas', url: 'hoalalalal', enabled: this.permisos.user_data.opcion03, disabled: true, click: null },
+      { name: 'Estado de P y G', url: 'hoalalalal', enabled: this.permisos.user_data.opcion04, disabled: true, click: null },
+      { name: 'Cuotas Pagas por Conductor', url: 'hoalalalal', enabled: this.permisos.user_data.opcion05, disabled: false, click: () => this.showModalOwnersFeespaid()}
     ];
   }
 
@@ -103,17 +100,16 @@ export class HomeComponent implements OnInit {
       }
     }
   }
+
+  showModalOwnersFeespaid() {
+    this.ownersFeespaidVisible = !this.ownersFeespaidVisible;
+    document.documentElement.style.overflow = 'hidden';
+    document.body.style.overflow = 'hidden';
+  }
+
+  hideModal() {
+    this.ownersFeespaidVisible = !this.ownersFeespaidVisible;
+    document.documentElement.style.overflow = '';
+    document.body.style.overflow = '';
+  }
 }
-
-// ------------------------------------------------------
-
-// import { Component } from '@angular/core';
-
-// @Component({
-//   selector: 'app-home',
-//   templateUrl: './home.component.html',
-//   styleUrls: ['./home.component.css']
-// })
-// export class HomeComponent {
-
-// }

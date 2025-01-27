@@ -3,7 +3,7 @@
   <h1>CHAPISTERÍA</h1>
   <div class="options-container">
     <ng-container *ngFor="let option of options">
-      <button class="option" type="button" [routerLink]="option.url">
+      <button class="option" type="button" [routerLink]="option.url" [disabled]="option.disabled">
         <span class="material-symbols-outlined" translate="no">
           {{ option.icon }}
         </span>
