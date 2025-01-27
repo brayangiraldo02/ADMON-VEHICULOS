@@ -1,0 +1,120 @@
+.modal {
+  overflow: auto;
+  display: block;
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.4);
+}
+
+.modal-content {
+  background-color: #fefefe;
+  margin: 10% auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 40%;
+  border-radius: 10px;
+  text-align: center;
+}
+
+.close {
+  margin-bottom: 0;
+  color: #aaa;
+  /* float: right; */
+  display: flex;
+  font-size: 28px;
+  font-weight: bold;
+  justify-content: flex-end;
+}
+
+.close:hover,
+.close:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.title-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 0;
+  font-size: 25px;
+  margin-bottom: 10px;
+}
+
+.loading-container {
+  display: flex;
+  width: 100%;
+  justify-content: center;
+}
+
+.subtitle-container {
+  font-size: 18px;
+}
+
+.select-owner {
+  margin: 10px;
+  box-sizing: border-box;
+  background: #ffffff;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  padding: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  flex-direction: column;
+}
+
+.full-width {
+  width: 100%; /* Asegura que el <select> ocupe todo el ancho del contenedor */
+  padding: 10px; /* Ajuste de padding para mejor apariencia */
+  box-sizing: border-box; /* Incluye el padding y el borde en el ancho total */
+  border: 1px solid #ccc; /* Borde ligero para mejor visibilidad */
+  border-radius: 10px; /* Bordes ligeramente redondeados */
+  background-color: #f9f9f9; /* Fondo claro */
+}
+
+@media (max-width: 1024px) {
+  .modal-content {
+    width: 70%;
+  }
+
+  .title-container {
+    font-size: 25px;
+  }
+
+  .subtitle-container {
+    font-size: 20px;
+  }
+
+}
+
+@media (max-width: 768px) {
+  .modal-content {
+    width: 80%;
+  }
+
+  .title-container {
+    font-size: 25px;
+    margin-bottom: 8px;
+  }
+
+}
+
+@media (max-width: 480px) {
+  .title-container {
+    font-size: 20px;
+  }
+
+  .subtitle-container {
+    font-size: 16px;
+  }
+
+  .select-owner {
+    font-size: 14px;
+  }
+}

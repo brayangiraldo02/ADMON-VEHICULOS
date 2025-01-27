@@ -34,6 +34,7 @@ import { OwnersHomeComponent } from './components/main/home/owners-home/owners-h
 import { OwnersGuard } from './guards/owners.guard';
 import { OwnersFeespaidComponent } from './components/owners/owners-feespaid/owners-feespaid.component';
 import { UsersGuard } from './guards/users.guard';
+import { OwnersStatusfleetdetailComponent } from './components/owners/owners-statusfleetdetail/owners-statusfleetdetail.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -64,7 +65,7 @@ const routes: Routes = [
   { path: 'cnt', component: OpcionesCntComponent, canActivate: [AuthGuard]},
   { path: 'utilities', component: OpcionesUtilidadesComponent, canActivate: [AuthGuard]},
   { path: 'pdf', component: PdfViewerComponent, canActivate: [UsersGuard]},
-  { path: 'prueba', component: OwnersFeespaidComponent}
+  { path: 'prueba', component: OwnersStatusfleetdetailComponent}
 ];
 
 @NgModule({

@@ -37,6 +37,8 @@ export class OwnersHomeComponent {
   changeVideo: boolean = false;
   permisos: any;
 
+  ownersStatusfleetsummaryVisible: boolean = false;
+  ownersStatusfleetdetailVisible: boolean = false;
   ownersFeespaidVisible: boolean = false;
 
   ngOnInit() {
@@ -54,8 +56,8 @@ export class OwnersHomeComponent {
     this.convertirValoresBooleanos(this.permisos.user_data);
 
     this.options = [
-      { name: 'Estado de Flota Resumen', url: 'hoalalalal', enabled: this.permisos.user_data.opcion01, disabled: true, click: null },
-      { name: 'Estado de Flota Detalle', url: 'hoalalalal', enabled: this.permisos.user_data.opcion01, disabled: true, click: null },
+      { name: 'Estado de Flota Resumen', url: 'hoalalalal', enabled: this.permisos.user_data.opcion01, disabled: false, click: () => this.showModalOwnersStatusfleetsummary() },
+      { name: 'Estado de Flota Detalle', url: 'hoalalalal', enabled: this.permisos.user_data.opcion01, disabled: false, click: () => this.showModalOwnersStatusfleetdetail() },
       { name: 'Relación Ingresos', url: 'hoalalalal', enabled: this.permisos.user_data.opcion02, disabled: true, click: null },
       { name: 'Relación Piezas', url: 'hoalalalal', enabled: this.permisos.user_data.opcion03, disabled: true, click: null },
       { name: 'Estado de P y G', url: 'hoalalalal', enabled: this.permisos.user_data.opcion04, disabled: true, click: null },
@@ -101,6 +103,18 @@ export class OwnersHomeComponent {
     }
   }
 
+  showModalOwnersStatusfleetsummary() {
+    this.ownersStatusfleetsummaryVisible = !this.ownersStatusfleetsummaryVisible;
+    document.documentElement.style.overflow = 'hidden';
+    document.body.style.overflow = 'hidden';
+  }
+
+  showModalOwnersStatusfleetdetail() {
+    this.ownersStatusfleetdetailVisible = !this.ownersStatusfleetdetailVisible;
+    document.documentElement.style.overflow = 'hidden';
+    document.body.style.overflow = 'hidden';
+  }
+
   showModalOwnersFeespaid() {
     this.ownersFeespaidVisible = !this.ownersFeespaidVisible;
     document.documentElement.style.overflow = 'hidden';
@@ -108,7 +122,18 @@ export class OwnersHomeComponent {
   }
 
   hideModal() {
-    this.ownersFeespaidVisible = !this.ownersFeespaidVisible;
+    if (this.ownersStatusfleetsummaryVisible) {
+      this.ownersStatusfleetsummaryVisible = !this.ownersStatusfleetsummaryVisible;
+    }
+
+    if (this.ownersStatusfleetdetailVisible) {
+      this.ownersStatusfleetdetailVisible = !this.ownersStatusfleetdetailVisible;
+    }
+
+    if (this.ownersFeespaidVisible) {
+      this.ownersFeespaidVisible = !this.ownersFeespaidVisible;
+    }
+
     document.documentElement.style.overflow = '';
     document.body.style.overflow = '';
   }
