@@ -54,7 +54,8 @@ export class OwnersHomeComponent {
     this.convertirValoresBooleanos(this.permisos.user_data);
 
     this.options = [
-      { name: 'Estado de Flota', url: 'hoalalalal', enabled: this.permisos.user_data.opcion01, disabled: true, click: null },
+      { name: 'Estado de Flota Resumen', url: 'hoalalalal', enabled: this.permisos.user_data.opcion01, disabled: true, click: null },
+      { name: 'Estado de Flota Detalle', url: 'hoalalalal', enabled: this.permisos.user_data.opcion01, disabled: true, click: null },
       { name: 'Relación Ingresos', url: 'hoalalalal', enabled: this.permisos.user_data.opcion02, disabled: true, click: null },
       { name: 'Relación Piezas', url: 'hoalalalal', enabled: this.permisos.user_data.opcion03, disabled: true, click: null },
       { name: 'Estado de P y G', url: 'hoalalalal', enabled: this.permisos.user_data.opcion04, disabled: true, click: null },
