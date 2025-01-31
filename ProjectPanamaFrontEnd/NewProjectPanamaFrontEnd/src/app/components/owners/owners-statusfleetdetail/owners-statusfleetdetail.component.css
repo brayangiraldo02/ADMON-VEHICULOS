@@ -56,6 +56,7 @@
 }
 
 .select-owner {
+  width: 80%;
   margin: 10px;
   box-sizing: border-box;
   background: #ffffff;
