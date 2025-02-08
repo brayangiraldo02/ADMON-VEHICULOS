@@ -231,3 +231,4 @@ def valor_compra_vehiculos(data):
     return vehiculos_por_propietario
 
 #------------------------------------------------------------
+

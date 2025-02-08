@@ -779,3 +779,5 @@ async def get_vehicle_codes():
         return JSONResponse(content={"error": str(e)})
     finally:
         db.close()
+
+#-------------------------------------------------------------------------------------------

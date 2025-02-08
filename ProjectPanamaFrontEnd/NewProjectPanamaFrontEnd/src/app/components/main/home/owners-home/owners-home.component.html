@@ -3,14 +3,14 @@
   <div class="container">
     <div class="carousel-container">
       <div class="carousel">
-        <div class="left-container"  *ngIf="!ownersFeespaidVisible && !ownersStatusfleetdetailVisible">
+        <div class="left-container"  *ngIf="!ownersFeespaidVisible && !ownersStatusfleetdetailVisible && !ownersPartsrelationshipVisible && !ownersStatusfleetsummaryVisible">
           <a class="alternate-media" (click)="changeVideoState()">
             <img [src]="this.rightIcon" class="media-icon">
           </a>
         </div>
         <img class="media-container" *ngIf="changeVideo" [src]="images[currentImageIndex]" [style.opacity]="showImage ? '1' : '0'">
         <video #videoPlayer *ngIf="!changeVideo" [src]="currentVideo" (ended)="onVideoEnded()" autoplay></video>
-        <div class="right-container"  *ngIf="!ownersFeespaidVisible && !ownersStatusfleetdetailVisible">
+        <div class="right-container"  *ngIf="!ownersFeespaidVisible && !ownersStatusfleetdetailVisible && !ownersPartsrelationshipVisible && !ownersStatusfleetsummaryVisible">
           <a class="alternate-media" (click)="changeVideoState()">
             <img [src]="this.rightIcon" class="media-icon">
           </a>
@@ -54,6 +54,11 @@
   *ngIf="ownersStatusfleetdetailVisible" 
   (close)="hideModal()"
 ></app-owners-statusfleetdetail>
+
+<app-owners-partsrelationship 
+  *ngIf="ownersPartsrelationshipVisible" 
+  (close)="hideModal()"
+></app-owners-partsrelationship>
 
 <app-owners-feespaid 
   *ngIf="ownersFeespaidVisible" 

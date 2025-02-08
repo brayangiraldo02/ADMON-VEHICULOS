@@ -18,6 +18,7 @@ from routes.brands import brands_router
 from routes.expense_account import expenseAccount_router
 from routes.modalities import modalities_router
 from routes.extras import extras_router
+from routes.reports.partsrelationship import partsrelationshipReports_router
 import os
 
 load_dotenv()
@@ -49,6 +50,7 @@ app.include_router(brands_router)
 app.include_router(expenseAccount_router)
 app.include_router(modalities_router)
 app.include_router(extras_router)
+app.include_router(partsrelationshipReports_router)
 
 app.mount("/assets", StaticFiles(directory="assets"), name="assets")
 

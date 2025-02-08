@@ -39,6 +39,7 @@ export class OwnersHomeComponent {
 
   ownersStatusfleetsummaryVisible: boolean = false;
   ownersStatusfleetdetailVisible: boolean = false;
+  ownersPartsrelationshipVisible: boolean = false;
   ownersFeespaidVisible: boolean = false;
 
   ngOnInit() {
@@ -58,8 +59,9 @@ export class OwnersHomeComponent {
     this.options = [
       { name: 'Estado de Flota Resumen', url: 'hoalalalal', enabled: this.permisos.user_data.opcion01, disabled: false, click: () => this.showModalOwnersStatusfleetsummary() },
       { name: 'Estado de Flota Detalle', url: 'hoalalalal', enabled: this.permisos.user_data.opcion01, disabled: false, click: () => this.showModalOwnersStatusfleetdetail() },
+      { name: 'Valores de Compra y Piquera', url: 'hoalalalal', enabled: this.permisos.user_data.opcion02, disabled: true, click: null },
       { name: 'Relación Ingresos', url: 'hoalalalal', enabled: this.permisos.user_data.opcion02, disabled: true, click: null },
-      { name: 'Relación Piezas', url: 'hoalalalal', enabled: this.permisos.user_data.opcion03, disabled: true, click: null },
+      { name: 'Relación Piezas', url: 'hoalalalal', enabled: this.permisos.user_data.opcion03, disabled: false, click: () => this.showModalOwnersPartsRelationship() },
       { name: 'Estado de P y G', url: 'hoalalalal', enabled: this.permisos.user_data.opcion04, disabled: true, click: null },
       { name: 'Cuotas Pagas por Conductor', url: 'hoalalalal', enabled: this.permisos.user_data.opcion05, disabled: false, click: () => this.showModalOwnersFeespaid()}
     ];
@@ -115,6 +117,12 @@ export class OwnersHomeComponent {
     document.body.style.overflow = 'hidden';
   }
 
+  showModalOwnersPartsRelationship() {
+    this.ownersPartsrelationshipVisible = !this.ownersPartsrelationshipVisible;
+    document.documentElement.style.overflow = 'hidden';
+    document.body.style.overflow = 'hidden';
+  }
+
   showModalOwnersFeespaid() {
     this.ownersFeespaidVisible = !this.ownersFeespaidVisible;
     document.documentElement.style.overflow = 'hidden';
@@ -128,6 +136,10 @@ export class OwnersHomeComponent {
 
     if (this.ownersStatusfleetdetailVisible) {
       this.ownersStatusfleetdetailVisible = !this.ownersStatusfleetdetailVisible;
+    }
+
+    if (this.ownersPartsrelationshipVisible) {
+      this.ownersPartsrelationshipVisible = !this.ownersPartsrelationshipVisible;
     }
 
     if (this.ownersFeespaidVisible) {
