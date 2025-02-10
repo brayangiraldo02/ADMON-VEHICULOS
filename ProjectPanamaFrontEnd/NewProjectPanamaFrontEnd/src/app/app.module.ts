@@ -49,6 +49,7 @@ import { OwnersFeespaidComponent } from './components/owners/owners-feespaid/own
 import { OwnersStatusfleetsummaryComponent } from './components/owners/owners-statusfleetsummary/owners-statusfleetsummary.component';
 import { OwnersStatusfleetdetailComponent } from './components/owners/owners-statusfleetdetail/owners-statusfleetdetail.component';
 import { OwnersPartsrelationshipComponent } from './components/owners/owners-partsrelationship/owners-partsrelationship.component';
+import { OwnersPurchasevalueandpiqueraComponent } from './components/owners/owners-purchasevalueandpiquera/owners-purchasevalueandpiquera.component';
 
 @NgModule({
   declarations: [
@@ -94,6 +95,7 @@ import { OwnersPartsrelationshipComponent } from './components/owners/owners-par
     OwnersStatusfleetsummaryComponent,
     OwnersStatusfleetdetailComponent,
     OwnersPartsrelationshipComponent,
+    OwnersPurchasevalueandpiqueraComponent,
   ],
   imports: [
     BrowserModule,

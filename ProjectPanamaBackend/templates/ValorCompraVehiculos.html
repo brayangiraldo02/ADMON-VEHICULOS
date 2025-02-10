@@ -113,6 +113,7 @@
             <th>Factura</th>
             <th>Fecha</th>
             <th>Valor</th>
+            <th>Piquera</th>
         </tr>
         {% for propietario in data_view.propietarios %}
         <tr>
@@ -135,6 +136,7 @@
             <td>{{ vehiculo.vehiculo_factura }}</td>
             <td>{{ vehiculo.vehiculo_fecha_compra }}</td>
             <td>{{ vehiculo.vehiculo_valor_compra }}</td>
+            <td>{{ vehiculo_nombre_piquera }}</td>
         </tr>
         {% endfor %}
         {% endfor %}

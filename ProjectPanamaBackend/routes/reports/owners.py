@@ -3,6 +3,7 @@ from fastapi.responses import JSONResponse
 from config.dbconnection import session
 from models.propietarios import Propietarios
 from models.vehiculos import Vehiculos
+from models.estados import Estados
 from schemas.reports import *
 from fastapi.encoders import jsonable_encoder
 from utils.reports import *
@@ -134,6 +135,12 @@ async def get_propietarios_detalles():
 async def get_vehiculos_detalles(infoReports: infoReports):
     db = session()
     try:
+        if infoReports.estados == []:
+            estados = db.query(Estados.CODIGO).all()
+            infoReports.estados = [estado.CODIGO for estado in estados]
+
+        print(infoReports)
+
         vehiculos_detalles = db.query(
             Vehiculos.PROPI_IDEN.label('propietario_codigo'),
             Vehiculos.EMPRESA.label('vehiculo_empresa'),
@@ -148,7 +155,8 @@ async def get_vehiculos_detalles(infoReports: infoReports):
             Vehiculos.NOMESTADO.label('vehiculo_estado'),
             Vehiculos.FAC_COMPRA.label('vehiculo_factura_compra'),
             Vehiculos.FEC_COMPRA.label('vehiculo_fecha_compra'),
-            Vehiculos.VLR_COMPRA.label('vehiculo_valor_compra')
+            Vehiculos.VLR_COMPRA.label('vehiculo_valor_compra'),
+            Vehiculos.NOMPIQUERA.label('vehiculo_nompiquera'),
         ).filter(
             Vehiculos.PROPI_IDEN.in_(infoReports.empresas),
             Vehiculos.ESTADO.in_(infoReports.estados)
@@ -171,6 +179,7 @@ async def get_vehiculos_detalles(infoReports: infoReports):
                 'vehiculo_factura_compra': result.vehiculo_factura_compra,
                 'vehiculo_fecha_compra': result.vehiculo_fecha_compra,
                 'vehiculo_valor_compra': result.vehiculo_valor_compra,
+                'vehiculo_nombre_piquera': result.vehiculo_nompiquera
             }
             vehiculos_detalles_list.append(vehiculo_detalle)
 
@@ -216,7 +225,8 @@ async def get_vehiculos_detalles(infoReports: infoReports):
                             "vehiculo_estado": vehiculo_info.get("vehiculo_estado", ""),
                             "vehiculo_valor_compra": vehiculo_info.get("vehiculo_valor_compra", ""),
                             "vehiculo_factura": vehiculo_info.get("vehiculo_factura", ""),
-                            "vehiculo_fecha_compra": vehiculo_info.get("vehiculo_fecha_compra", "")
+                            "vehiculo_fecha_compra": vehiculo_info.get("vehiculo_fecha_compra", ""),
+                            "vehiculo_nombre_piquera": vehiculo_info.get("vehiculo_nombre_piquera", "")
                         }
                         propietario_data["vehiculos"].append(vehiculo_data)
                 data_view["propietarios"].append(propietario_data)
