@@ -24,54 +24,11 @@ partsrelationshipReports_router = APIRouter()
 async def partsrelationship_report(data: PartsRelationshipReport):
   db = session()
   try:
-    print(data)
     user_admin = os.getenv('USER_ADMIN')
     if data.primeraFecha > data.ultimaFecha:
       return JSONResponse(content={"error": "La primera fecha no puede ser mayor a la última fecha"}, status_code=400)
 
-    if data.unidad != "":
-      conteo_reporte_piezas = db.query(
-        Movimien.CODIGO.label('codigo'),
-        Movimien.NOMBRE.label('nombre'),
-        Movimien.PRESENTA.label('presenta'),
-        Movimien.PEDIDA.label('pedida'),
-        Movimien.DCTO_VALOR.label('dcto_valor'),
-        Movimien.IVA_VALOR.label('iva_valor'),
-        Movimien.TOTAL.label('total'),
-        Movimien.FACTURA.label('factura'),
-        Movimien.TIPNOM.label('tipnom'),
-        Movimien.UNIDAD.label('unidad'),
-        Movimien.FECHA.label('fecha'),
-        Propietarios.NOMBRE.label('propietario'),
-        Movienca.ORIGEN.label('origen'),
-        Movimien.VALOR.label('valor'),
-      ) \
-      .join(Movienca, (Movimien.FACTURA == Movienca.FACTURA) & 
-                      (Movimien.TIPO == Movienca.TIPO)) \
-      .join(Propietarios, Propietarios.CODIGO == Movimien.PROPI_IDEN) \
-      .filter(
-        Movimien.FECHA >= data.primeraFecha,
-        Movimien.FECHA <= data.ultimaFecha,
-        Movimien.UNIDAD == data.unidad,
-        Movimien.TIPO == '022'
-      ) \
-      .group_by(
-        Movimien.FACTURA,
-        Movimien.FECHA,
-        Movimien.TIPNOM,
-        Movimien.UNIDAD,
-        Propietarios.NOMBRE,
-        Movienca.ORIGEN,
-        Movimien.CODIGO,
-        Movimien.NOMBRE,
-        Movimien.PRESENTA,
-        Movimien.PEDIDA,
-        Movimien.VALOR,
-        Movimien.DCTO_VALOR,
-        Movimien.IVA_VALOR,
-        Movimien.TOTAL
-      ).all()
-    elif data.unidad == "" or data.unidad == "TODOS":
+    if data.unidad == "" or data.unidad == "TODOS":
       if data.usuario != user_admin:
         empresa = db.query(Propietarios.CODIGO).filter(Propietarios.NOMBRE == data.empresa).all()
         if len(empresa) == 0:
@@ -160,6 +117,49 @@ async def partsrelationship_report(data: PartsRelationshipReport):
           Movimien.IVA_VALOR,
           Movimien.TOTAL
         ).all()
+
+    elif data.unidad != "":
+      conteo_reporte_piezas = db.query(
+        Movimien.CODIGO.label('codigo'),
+        Movimien.NOMBRE.label('nombre'),
+        Movimien.PRESENTA.label('presenta'),
+        Movimien.PEDIDA.label('pedida'),
+        Movimien.DCTO_VALOR.label('dcto_valor'),
+        Movimien.IVA_VALOR.label('iva_valor'),
+        Movimien.TOTAL.label('total'),
+        Movimien.FACTURA.label('factura'),
+        Movimien.TIPNOM.label('tipnom'),
+        Movimien.UNIDAD.label('unidad'),
+        Movimien.FECHA.label('fecha'),
+        Propietarios.NOMBRE.label('propietario'),
+        Movienca.ORIGEN.label('origen'),
+        Movimien.VALOR.label('valor'),
+      ) \
+      .join(Movienca, (Movimien.FACTURA == Movienca.FACTURA) & 
+                      (Movimien.TIPO == Movienca.TIPO)) \
+      .join(Propietarios, Propietarios.CODIGO == Movimien.PROPI_IDEN) \
+      .filter(
+        Movimien.FECHA >= data.primeraFecha,
+        Movimien.FECHA <= data.ultimaFecha,
+        Movimien.UNIDAD == data.unidad,
+        Movimien.TIPO == '022'
+      ) \
+      .group_by(
+        Movimien.FACTURA,
+        Movimien.FECHA,
+        Movimien.TIPNOM,
+        Movimien.UNIDAD,
+        Propietarios.NOMBRE,
+        Movienca.ORIGEN,
+        Movimien.CODIGO,
+        Movimien.NOMBRE,
+        Movimien.PRESENTA,
+        Movimien.PEDIDA,
+        Movimien.VALOR,
+        Movimien.DCTO_VALOR,
+        Movimien.IVA_VALOR,
+        Movimien.TOTAL
+      ).all()
 
     if len(conteo_reporte_piezas) == 0:
       return JSONResponse(content={"error": "No se encontraron registros"}, status_code=400)
