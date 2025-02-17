@@ -104,7 +104,7 @@ form {
   margin-bottom: 10px;
 }
 
-.form-group:last-child {
+.last-form-group {
   margin-bottom: 0;
 }
 
