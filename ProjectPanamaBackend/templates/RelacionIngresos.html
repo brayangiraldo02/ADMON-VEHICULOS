@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tabla de Pagos</title>
+  <style type="text/css">
+    #logo {
+      position: absolute;
+      top: 0;
+      right: 0;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      text-align: center;
+    }
+
+    th,
+    td {
+      padding: 10px;
+      text-align: center;
+    }
+
+    th, tr:last-child td {
+      border: 1px solid black;
+    }
+
+    th {
+      background-color: #ddd;
+      border-right: none;
+    }
+
+    /* td {
+      border-top: none;
+    } */
+
+    td.group {
+      border-right: none;
+      border-left: none;
+    }
+
+    td.right {
+      border-right: none;
+    }
+
+    .box-propietario {
+      text-align: left;
+      font-size: 17px;
+      margin-top: 10px;
+      /* Bordes redondeados */
+      padding: 5px;
+      /* Espaciado interno */
+    }
+  </style>
+</head>
+
+<body>
+
+  <div style="font-weight: bold; display: flex;">
+    Desde: {{ data['fechas']['primeraFecha'] }} Hasta: {{ data['fechas']['ultimaFecha'] }}
+  </div>
+
+  <table>
+    <tr>
+      <th rowspan="2">N° Recibo</th>
+      <th rowspan="2">Fecha</th>
+      <th rowspan="2">Unidad</th>
+      <th rowspan="2">Saldo Antes</th>
+      <th colspan="4" style="border-bottom: none;">Detalles del Pago</th>
+      <th colspan="4" style="border-bottom: none; border-right: none;">Forma de Pago</th>
+      <th rowspan="2" style="border-left: 1px solid black">Total Empresa</th>
+      <th rowspan="2" style="border-right: 1px solid black;">Nombre Empresa</th>
+    </tr>
+    <tr>
+      <th>Renta Día</th>
+      <th>Inscripción</th>
+      <th>Ahorro</th>
+      <th>Siniestro</th>
+      <th>Efectivo</th>
+      <th>Nequi</th>
+      <th>ARP</th>
+      <th>BanGeneral</th>
+    </tr>
+
+    {% for item in data.reporte %}
+    <tr>
+      <td class="right" style="border-left: 1px solid black">{{ item['recibo'] }}</td>
+      <td class="group">{{ item['fecha_recibo'] }}</td>
+      <td class="group">{{ item['unidad'] }}</td>
+      <td style="border-left: 1px solid black">
+        {{ "" if item['saldo_renta'] == 0.00 else item['saldo_renta'] }}
+      </td>
+      <td class="group" style="border-left: 1px solid black">
+        {{ "" if item['deuda_renta'] == 0.00 else item['deuda_renta'] }}
+      </td>
+      <td class="group">
+        {{ "" if item['fondo_inscripcion'] == 0.00 else item['fondo_inscripcion'] }}
+      </td>
+      <td class="group">
+        {{ "" if item['fondo_ahorro'] == 0.00 else item['fondo_ahorro'] }}
+      </td>
+      <td class="group">
+        {{ "" if item['deuda_siniestro'] == 0.00 else item['deuda_siniestro'] }}
+      </td>
+      <td class="right" style="border-left: 1px solid black">{{ "" if item['forma_pago'] != "1" else item['total']}}</td>
+      <td class="group">{{ "" if item['forma_pago'] != "2" else item['total']}}</td>
+      <td class="group">{{ "" if item['forma_pago'] != "3" else item['total']}}</td>
+      <td class="group">{{ "" if item['forma_pago'] != "4" else item['total']}}</td>
+      <td style="border-left: 1px solid black">
+        {{ "" if item['total'] == 0.00 else item['total'] }}
+      </td>
+      <td style="border-left: 1px solid black; border-right: 1px solid black; font-size: 12px;">
+        {{ item['empresa'] }}
+      </td>
+    </tr>
+    {% endfor %}
+
+    <tr>
+      <td style="border: none;"></td>
+    </tr>
+    <tr>
+      <!-- Dos columnas vacías para alinear el “TOTAL CONTROL” con Presentación -->
+      <td style="border: none;"></td>
+      <!-- <td style="border: none;"></td> -->
+
+      <!-- Columna 3: TOTAL CONTROL -->
+      <td class="box-propietario" colspan="3" style="
+        border-top: 2px solid #000;
+        border-left: 2px solid #000;
+        border-bottom: 2px solid #000;
+        border-top-left-radius: 10px; 
+        border-bottom-left-radius: 10px; 
+        text-align: right; 
+        font-weight: bold;">
+        157 - TOTAL CONTROL:
+      </td>
+
+      <!-- Columnas 4 a 8: valores alineados con Cantidad, Valor Parcial, etc. -->
+      <td class="box-propietario"
+        style="font-weight: bold; text-align: center; border-top: 2px solid #000; border-bottom: 2px solid #000;">
+        {{ data['totales']['deuda_renta'] }}
+      </td>
+      <td class="box-propietario"
+        style="font-weight: bold; text-align: center; border-top: 2px solid #000; border-bottom: 2px solid #000;">
+        {{ data['totales']['fondo_inscripcion'] }}
+      </td>
+      <td class="box-propietario"
+        style="font-weight: bold; text-align: center; border-top: 2px solid #000; border-bottom: 2px solid #000;">
+        {{ data['totales']['fondo_ahorro'] }}
+      </td>
+      <td class="box-propietario"
+        style="font-weight: bold; text-align: center; border-top: 2px solid #000; border-bottom: 2px solid #000;">
+        {{ data['totales']['deuda_siniestro'] }}
+      </td>
+      <td class="box-propietario"
+        style="font-weight: bold; text-align: center; border-top: 2px solid #000; border-bottom: 2px solid #000;">{{ data['totales']['efectivo'] }}
+      </td>
+      <td class="box-propietario"
+        style="font-weight: bold; text-align: center; border-top: 2px solid #000; border-bottom: 2px solid #000;">{{ data['totales']['nequi'] }}
+      </td>
+      <td class="box-propietario"
+        style="font-weight: bold; text-align: center; border-top: 2px solid #000; border-bottom: 2px solid #000;">{{ data['totales']['arp'] }}
+      </td>
+      <td class="box-propietario"
+        style="font-weight: bold; text-align: center; border-top: 2px solid #000; border-bottom: 2px solid #000;">{{ data['totales']['banco_general'] }}
+      </td>
+      <td class="box-propietario" style="
+        border-top: 2px solid #000;
+        border-right: 2px solid #000;
+        border-bottom: 2px solid #000;
+        border-top-right-radius: 10px;
+        border-bottom-right-radius: 10px;
+        text-align: center; 
+        font-weight: bold;">
+        {{ data['totales']['total'] }}
+      </td>
+    </tr>
+  </table>
+
+</body>
+
+</html>

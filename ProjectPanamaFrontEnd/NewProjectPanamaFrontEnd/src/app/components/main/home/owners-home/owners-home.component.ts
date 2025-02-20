@@ -40,6 +40,7 @@ export class OwnersHomeComponent {
   ownersStatusfleetsummaryVisible: boolean = false;
   ownersStatusfleetdetailVisible: boolean = false;
   ownersPurchasevalueandpiqueraVisible: boolean = false;
+  ownersRelationshiprevenuesVisible: boolean = false;
   ownersPartsrelationshipVisible: boolean = false;
   ownersFeespaidVisible: boolean = false;
 
@@ -61,7 +62,7 @@ export class OwnersHomeComponent {
       { name: 'Estado de Flota Resumen', url: 'hoalalalal', disabled: false, click: () => this.showModalOwnersStatusfleetsummary() },
       { name: 'Estado de Flota Detalle', url: 'hoalalalal', disabled: false, click: () => this.showModalOwnersStatusfleetdetail() },
       { name: 'Valores de Compra y Piquera', url: 'hoalalalal', disabled: false, click: () => this.showModalOwnersPurchasevalueandpiquera() },
-      { name: 'Relación Ingresos', url: 'hoalalalal', disabled: true, click: null },
+      { name: 'Relación Ingresos', url: 'hoalalalal', disabled: false, click: () => this.showModalOwnersRelationshipprevenues() },
       { name: 'Relación Piezas', url: 'hoalalalal', disabled: false, click: () => this.showModalOwnersPartsRelationship() },
       { name: 'Estado de P y G', url: 'hoalalalal', disabled: true, click: null },
       { name: 'Cuotas Pagas por Conductor', url: 'hoalalalal', disabled: false, click: () => this.showModalOwnersFeespaid()}
@@ -124,6 +125,12 @@ export class OwnersHomeComponent {
     document.body.style.overflow = 'hidden';
   }
 
+  showModalOwnersRelationshipprevenues() {
+    this.ownersRelationshiprevenuesVisible = !this.ownersRelationshiprevenuesVisible;
+    document.documentElement.style.overflow = 'hidden';
+    document.body.style.overflow = 'hidden';
+  }
+
   showModalOwnersPartsRelationship() {
     this.ownersPartsrelationshipVisible = !this.ownersPartsrelationshipVisible;
     document.documentElement.style.overflow = 'hidden';
@@ -147,6 +154,10 @@ export class OwnersHomeComponent {
 
     if (this.ownersPurchasevalueandpiqueraVisible) {
       this.ownersPurchasevalueandpiqueraVisible = !this.ownersPurchasevalueandpiqueraVisible
+    }
+
+    if (this.ownersRelationshiprevenuesVisible) {
+      this.ownersRelationshiprevenuesVisible = !this.ownersRelationshiprevenuesVisible;
     }
 
     if (this.ownersPartsrelationshipVisible) {

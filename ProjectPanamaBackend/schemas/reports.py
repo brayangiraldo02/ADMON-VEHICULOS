@@ -15,3 +15,10 @@ class PartsRelationshipReport(BaseModel):
   ultimaFecha: str
   unidad: str
   empresa: str
+
+class RelationshipRevenuesReport(BaseModel):
+  usuario: str
+  primeraFecha: str
+  ultimaFecha: str
+  unidad: str
+  empresa: str

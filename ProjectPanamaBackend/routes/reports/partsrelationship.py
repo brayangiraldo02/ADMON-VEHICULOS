@@ -24,10 +24,11 @@ partsrelationshipReports_router = APIRouter()
 async def partsrelationship_report(data: PartsRelationshipReport):
   db = session()
   try:
-    user_admin = os.getenv('USER_ADMIN')
     if data.primeraFecha > data.ultimaFecha:
       return JSONResponse(content={"error": "La primera fecha no puede ser mayor a la última fecha"}, status_code=400)
 
+    user_admin = os.getenv('USER_ADMIN')
+    
     if data.unidad == "" or data.unidad == "TODOS":
       if data.usuario != user_admin:
         empresa = db.query(Propietarios.CODIGO).filter(Propietarios.NOMBRE == data.empresa).all()
@@ -118,7 +119,7 @@ async def partsrelationship_report(data: PartsRelationshipReport):
           Movimien.TOTAL
         ).all()
 
-    elif data.unidad != "":
+    elif data.unidad != "" and data.unidad != "TODOS":
       conteo_reporte_piezas = db.query(
         Movimien.CODIGO.label('codigo'),
         Movimien.NOMBRE.label('nombre'),
@@ -241,7 +242,10 @@ async def partsrelationship_report(data: PartsRelationshipReport):
     # Formatea la fecha y la hora según lo requerido
     fecha = now_in_panama.strftime("%d/%m/%Y")
     hora_actual = now_in_panama.strftime("%I:%M:%S %p")
-    usuario = data.usuario
+    if data.usuario == user_admin:
+      usuario = "Administrador"
+    else:
+      usuario = data.usuario
     titulo = 'Detalle Órdenes de Trabajo'
 
     info_view = {
