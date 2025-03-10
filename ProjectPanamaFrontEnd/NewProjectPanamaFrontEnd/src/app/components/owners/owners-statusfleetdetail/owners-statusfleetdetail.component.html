@@ -5,15 +5,36 @@
     <h2 class="title-container">Informe de Estado de Vehículos Detallado.</h2>
 
     <div class="loading-container" *ngIf="!isLoading">
-      <div class="select-owner">
-        <select (change)="onCompanyChange($event)" class="full-width">
-          <option *ngFor="let owner of owners" [value]="owner.id">{{ owner.name }} - {{ owner.id }}</option>
-        </select>
-      </div>
+      <form [formGroup]="infoForm" (ngSubmit)="onSubmit()">
+        <div class="select-vehicle">
+          <div class="form-group full-width">
+            <label>Empresa:</label>
+            <select class="select-unit" formControlName="companie">
+              <option *ngFor="let owner of owners" [value]="owner.id">{{ owner.name }} - {{ owner.id }}</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="options-container">
+          <button class="option" type="button" type="submit" [disabled]="!infoForm.valid">
+            <span class="material-symbols-outlined" translate="no">
+              check
+            </span>
+            <p class="option-text">Generar Informe</p>
+          </button>
+
+          <button class="option back" type="button" (click)="closeModal()">
+            <span class="material-symbols-outlined" translate="no">
+              close
+            </span>
+            <p class="option-text">Cancelar</p>
+          </button>
+        </div>
+      </form>
     </div>
 
     <div class="loading-container" *ngIf="isLoading">
-      <h2 class="subtitle-container">Generando informe, por favor espere...</h2>
+      <h2 class="subtitle-container">Cargando valores, por favor espere...</h2>
     </div>
     
   </div>

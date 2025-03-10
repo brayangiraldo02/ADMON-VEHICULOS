@@ -1,4 +1,5 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ApiService } from 'src/app/services/api.service';
 import { JwtService } from 'src/app/services/jwt.service';
 
@@ -10,23 +11,28 @@ interface Owner {
 @Component({
   selector: 'app-owners-statusfleetdetail',
   templateUrl: './owners-statusfleetdetail.component.html',
-  styleUrls: ['./owners-statusfleetdetail.component.css']
+  styleUrls: ['./owners-statusfleetdetail.component.css'],
 })
 export class OwnersStatusfleetdetailComponent {
   @Output() close = new EventEmitter<void>();
 
-  isLoading: boolean = false;
-
-  selectedCompany: string = '';
+  isLoading: boolean = true;
 
   owners: Owner[] = [];
 
   user: any;
 
+  infoForm: FormGroup;
+
   constructor(
-    private apiService: ApiService,
-    private jwtService: JwtService
-  ) { }
+    private apiService: ApiService, 
+    private jwtService: JwtService,
+    private fb: FormBuilder
+  ) {
+    this.infoForm = this.fb.group({
+      companie: ['', Validators.required],
+    });
+  }
 
   ngOnInit(): void {
     this.listOwners();
@@ -36,16 +42,17 @@ export class OwnersStatusfleetdetailComponent {
   listOwners(): void {
     console.log(this.jwtService.obtainId());
     const owner = {
-      propietario: this.jwtService.obtainId()
-    }
+      propietario: this.jwtService.obtainId(),
+    };
 
     console.log(owner);
 
-    this.apiService.postData("companies_owners", owner).subscribe(
+    this.apiService.postData('companies_owners', owner).subscribe(
       (response) => {
         this.owners = response.filter((owner: any) => owner.id);
         this.owners.sort((a, b) => a.name.localeCompare(b.name));
         console.log(this.owners);
+        this.isLoading = false;
       },
       (error) => {
         console.log(error);
@@ -58,27 +65,26 @@ export class OwnersStatusfleetdetailComponent {
     this.user = this.user.user_data.nombre;
   }
 
-  onCompanyChange(event: Event): void {
-    const selectElement = event.target as HTMLSelectElement;
-    this.selectedCompany = selectElement.value;
-    console.log(this.selectedCompany)
-    this.openExternalLink()
+  resetValues(): void {
+    this.infoForm.reset();
   }
 
-  resetValues(): void {
-    this.selectedCompany = '';
+  onSubmit(): void {
+    if (this.infoForm.valid) {
+      this.openExternalLink();
+    }
   }
 
   openExternalLink(): void {
     let endpoint = 'informe-estados-detallado-empresa/';
-    endpoint += this.selectedCompany;
+    endpoint += this.infoForm.value.companie;
     if (endpoint) {
       const data = { user: this.user };
       console.log(data);
       localStorage.setItem('pdfEndpoint', endpoint);
       localStorage.setItem('pdfData', JSON.stringify(data));
-      window.open(`/pdf`, '_blank')
-      this.resetValues()
+      window.open(`/pdf`, '_blank');
+      this.resetValues();
       this.closeModal();
     } else {
       console.error('URL no encontrada para la opción seleccionada.');
