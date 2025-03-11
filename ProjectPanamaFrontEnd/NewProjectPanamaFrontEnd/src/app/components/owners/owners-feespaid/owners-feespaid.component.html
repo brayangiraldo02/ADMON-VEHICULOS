@@ -5,7 +5,7 @@
     <h2 class="title-container">Informe de Cuotas Pagas.</h2>
 
     <div class="loading-container" *ngIf="!isLoading">
-      <div class="display-container" *ngIf="!mostrarOpcionesEstados && !mostrarOpcionesEmpresas"> 
+      <!-- <div class="display-container" *ngIf="!mostrarOpcionesEstados && !mostrarOpcionesEmpresas"> 
 
         <div class="options-container">
           <button class="option" type="button" (click)="toggleOpcionesEmpresas()">
@@ -39,7 +39,7 @@
           </button>
         </div>
 
-      </div>
+      </div> -->
 
       <div class="display-container" *ngIf="mostrarOpcionesEstados">
         <div class="selects-container">
@@ -56,18 +56,25 @@
         </div>
 
         <div class="options-container">
-          <button class="option" type="button" (click)="onEstadoSeleccionar()">
+          <!-- <button class="option" type="button" (click)="onEstadoSeleccionar()">
             <span class="material-symbols-outlined" translate="no">
               check
             </span>
             <p class="option-text">Aceptar Estados</p>
+          </button> -->
+
+          <button class="option" type="button" (click)="generarInforme()">
+            <span class="material-symbols-outlined" translate="no">
+              description
+            </span>
+            <p class="option-text">Generar Informe</p>
           </button>
 
           <button class="option back" type="button" (click)="backOptions()">
             <span class="material-symbols-outlined" translate="no">
-              close
+              arrow_back
             </span>
-            <p class="option-text">Cancelar</p>
+            <p class="option-text">Regresar</p>
           </button>
         </div>
       </div>
@@ -94,7 +101,7 @@
             <p class="option-text">Aceptar Empresas</p>
           </button>
 
-          <button class="option back" type="button" (click)="backOptions()">
+          <button class="option back" type="button" (click)="closeModal()">
             <span class="material-symbols-outlined" translate="no">
               close
             </span>
@@ -105,7 +112,7 @@
     </div>
 
     <div class="loading-container" *ngIf="isLoading">
-      <h2 class="subtitle-container">Generando informe, por favor espere...</h2>
+      <h2 class="subtitle-container">Cargando valores, por favor espere...</h2>
     </div>
     
   </div>
