@@ -159,34 +159,34 @@ export class OwnersRelationshiprevenuesComponent {
       );
   }
   
-    onSubmit(): void {
-      if (this.infoForm.valid) {
-        console.log(this.infoForm.value);
-        // this.openExternalLink();
-      }
+  onSubmit(): void {
+    if (this.infoForm.valid) {
+      console.log(this.infoForm.value);
+      this.openExternalLink();
     }
-  
-    openExternalLink(): void {
-      let endpoint = 'partsrelationship';
-      if (endpoint) {
-        const data = {
-          'usuario': this.user,
-          'primeraFecha': this.infoForm.value.firstDate,
-          'ultimaFecha': this.infoForm.value.lastDate,
-          'unidad': this.infoForm.value.vehicle,
-          'empresa': this.infoForm.value.companie
-        };
-        console.log(data);
-        localStorage.setItem('pdfEndpoint', endpoint);
-        localStorage.setItem('pdfData', JSON.stringify(data));
-        window.open(`/pdf`, '_blank')
-        this.closeModal();
-      } else {
-        console.error('URL no encontrada para la opción seleccionada.');
-      }
+  }
+
+  openExternalLink(): void {
+    let endpoint = 'partsrelationship';
+    if (endpoint) {
+      const data = {
+        'usuario': this.user,
+        'primeraFecha': this.infoForm.value.firstDate,
+        'ultimaFecha': this.infoForm.value.lastDate,
+        'unidad': this.infoForm.value.vehicle,
+        'empresa': this.infoForm.value.companie
+      };
+      console.log(data);
+      localStorage.setItem('pdfEndpoint', endpoint);
+      localStorage.setItem('pdfData', JSON.stringify(data));
+      window.open(`/pdf`, '_blank')
+      this.closeModal();
+    } else {
+      console.error('URL no encontrada para la opción seleccionada.');
     }
-  
-    closeModal() {
-      this.close.emit();
-    }
+  }
+
+  closeModal() {
+    this.close.emit();
+  }
 }
