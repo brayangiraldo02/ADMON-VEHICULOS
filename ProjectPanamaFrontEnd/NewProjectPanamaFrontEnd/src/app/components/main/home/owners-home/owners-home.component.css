@@ -21,6 +21,7 @@
   align-items: center;
   overflow: hidden;
   position: relative; /* Añadir posición relativa al contenedor principal */
+  margin-top: 6px;
 }
 
 .carousel {

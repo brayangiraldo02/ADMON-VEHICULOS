@@ -42,6 +42,7 @@ export class OwnersHomeComponent {
   ownersPurchasevalueandpiqueraVisible: boolean = false;
   ownersRelationshiprevenuesVisible: boolean = false;
   ownersPartsrelationshipVisible: boolean = false;
+  ownersPandgstatusVisible: boolean = false;
   ownersFeespaidVisible: boolean = false;
 
   ngOnInit() {
@@ -64,7 +65,7 @@ export class OwnersHomeComponent {
       { name: 'Valores de Compra y Piquera', url: 'hoalalalal', disabled: false, click: () => this.showModalOwnersPurchasevalueandpiquera() },
       { name: 'Relación Ingresos', url: 'hoalalalal', disabled: false, click: () => this.showModalOwnersRelationshipprevenues() },
       { name: 'Relación Piezas', url: 'hoalalalal', disabled: false, click: () => this.showModalOwnersPartsRelationship() },
-      { name: 'Estado de P y G', url: 'hoalalalal', disabled: true, click: null },
+      { name: 'Estado de P y G', url: 'hoalalalal', disabled: false, click: () => this.showModalOwnersPandgstatus() },
       { name: 'Cuotas Pagas por Conductor', url: 'hoalalalal', disabled: false, click: () => this.showModalOwnersFeespaid()}
     ];
   }
@@ -137,6 +138,12 @@ export class OwnersHomeComponent {
     document.body.style.overflow = 'hidden';
   }
 
+  showModalOwnersPandgstatus() {
+    this.ownersPandgstatusVisible = !this.ownersPandgstatusVisible;
+    document.documentElement.style.overflow = 'hidden';
+    document.body.style.overflow = 'hidden';
+  }
+
   showModalOwnersFeespaid() {
     this.ownersFeespaidVisible = !this.ownersFeespaidVisible;
     document.documentElement.style.overflow = 'hidden';
@@ -162,6 +169,10 @@ export class OwnersHomeComponent {
 
     if (this.ownersPartsrelationshipVisible) {
       this.ownersPartsrelationshipVisible = !this.ownersPartsrelationshipVisible;
+    }
+
+    if (this.ownersPandgstatusVisible) {
+      this.ownersPandgstatusVisible = !this.ownersPandgstatusVisible;
     }
 
     if (this.ownersFeespaidVisible) {

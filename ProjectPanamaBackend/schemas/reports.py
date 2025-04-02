@@ -22,3 +22,10 @@ class RelationshipRevenuesReport(BaseModel):
   ultimaFecha: str
   unidad: str
   empresa: str
+
+class PandGStatusReport(BaseModel):
+  usuario: str
+  primeraFecha: str
+  ultimaFecha: str
+  unidad: str
+  empresa: str
