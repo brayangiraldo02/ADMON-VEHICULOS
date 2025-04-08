@@ -34,11 +34,12 @@ async def pandgstatus_report(data: PandGStatusReport):
     if data.unidad == "" or data.unidad == "TODOS":
 
       #* Si el usuario no es el administrador, se obtiene la información de las unidades de la empresa a la que pertenece
-      if data.usuario != user_admin:
+      # if data.usuario != user_admin:
         empresa = db.query(Propietarios.CODIGO).filter(Propietarios.NOMBRE == data.empresa).first()
         if len(empresa) == 0:
           return JSONResponse(status_code=400, content={"error": "No se encontró la empresa"})
-        empresa = empresa[0][0]
+
+        empresa = empresa[0]
 
         # Obtener vehículos con sus recaudos en una sola consulta
         vehiculos_con_recaudos = db.query(
@@ -65,7 +66,7 @@ async def pandgstatus_report(data: PandGStatusReport):
 
         # Obtener los números de unidades para usarlos en la siguiente consulta
         numeros_unidades = [v.NUMERO for v in vehiculos_con_recaudos]
-        
+
         # Obtener totales de movimientos por tipo y unidad en una sola consulta
         movimientos_por_tipo = db.query(
           Movimien.UNIDAD,
@@ -146,116 +147,116 @@ async def pandgstatus_report(data: PandGStatusReport):
               info_unidades.append(info_unidad_dict)
 
       #* Si el usuario es el administrador, se obtiene la información de todas las unidades
-      else:  
-        #* Obtengo la información de todas las unidades en una sola consulta
-        info_unidad = db.query(
-          Vehiculos.NUMERO,
-          Vehiculos.FEC_CREADO,
-          Vehiculos.MODELO,
-          Vehiculos.VLR_COMPRA,
-          Vehiculos.NOMESTADO
-        ).all()
+      # else:  
+      #   #* Obtengo la información de todas las unidades en una sola consulta
+      #   info_unidad = db.query(
+      #     Vehiculos.NUMERO,
+      #     Vehiculos.FEC_CREADO,
+      #     Vehiculos.MODELO,
+      #     Vehiculos.VLR_COMPRA,
+      #     Vehiculos.NOMESTADO
+      #   ).all()
         
-        # Obtener todos los números de unidades para usarlos en las siguientes consultas
-        numeros_unidades = [v.NUMERO for v in info_unidad]
+      #   # Obtener todos los números de unidades para usarlos en las siguientes consultas
+      #   numeros_unidades = [v.NUMERO for v in info_unidad]
         
-        #* Obtengo la información de recaudos para todas las unidades en una sola consulta
-        recaudos_por_unidad = db.query(
-          CajaRecaudos.NUMERO,
-          func.sum(CajaRecaudos.DEU_RENTA).label('total_recaudos')
-        ).filter(
-          CajaRecaudos.NUMERO.in_(numeros_unidades),
-          CajaRecaudos.FEC_RECIBO >= data.primeraFecha,
-          CajaRecaudos.FEC_RECIBO <= data.ultimaFecha
-        ).group_by(
-          CajaRecaudos.NUMERO
-        ).all()
+      #   #* Obtengo la información de recaudos para todas las unidades en una sola consulta
+      #   recaudos_por_unidad = db.query(
+      #     CajaRecaudos.NUMERO,
+      #     func.sum(CajaRecaudos.DEU_RENTA).label('total_recaudos')
+      #   ).filter(
+      #     CajaRecaudos.NUMERO.in_(numeros_unidades),
+      #     CajaRecaudos.FEC_RECIBO >= data.primeraFecha,
+      #     CajaRecaudos.FEC_RECIBO <= data.ultimaFecha
+      #   ).group_by(
+      #     CajaRecaudos.NUMERO
+      #   ).all()
         
-        # Crear un diccionario para acceder fácilmente a los recaudos por unidad
-        dict_recaudos = {recaudo.NUMERO: recaudo.total_recaudos for recaudo in recaudos_por_unidad}
+      #   # Crear un diccionario para acceder fácilmente a los recaudos por unidad
+      #   dict_recaudos = {recaudo.NUMERO: recaudo.total_recaudos for recaudo in recaudos_por_unidad}
         
-        #* Obtengo la información de movimientos para todas las unidades en una sola consulta
-        movimientos_por_tipo = db.query(
-          Movimien.UNIDAD,
-          Movimien.TIPO,
-          func.sum(Movimien.TOTAL).label('total_tipo')
-        ).filter(
-          Movimien.UNIDAD.in_(numeros_unidades),
-          Movimien.FECHA >= data.primeraFecha,
-          Movimien.FECHA <= data.ultimaFecha,
-          Movimien.TIPO.in_(['024', '027', '026', '022', '016'])
-        ).group_by(
-          Movimien.UNIDAD,
-          Movimien.TIPO
-        ).all()
+      #   #* Obtengo la información de movimientos para todas las unidades en una sola consulta
+      #   movimientos_por_tipo = db.query(
+      #     Movimien.UNIDAD,
+      #     Movimien.TIPO,
+      #     func.sum(Movimien.TOTAL).label('total_tipo')
+      #   ).filter(
+      #     Movimien.UNIDAD.in_(numeros_unidades),
+      #     Movimien.FECHA >= data.primeraFecha,
+      #     Movimien.FECHA <= data.ultimaFecha,
+      #     Movimien.TIPO.in_(['024', '027', '026', '022', '016'])
+      #   ).group_by(
+      #     Movimien.UNIDAD,
+      #     Movimien.TIPO
+      #   ).all()
         
-        # Organizar los totales por unidad y tipo
-        totales_movimientos = {}
-        for mov in movimientos_por_tipo:
-          if mov.UNIDAD not in totales_movimientos:
-            totales_movimientos[mov.UNIDAD] = {
-              '024': 0, '027': 0, '026': 0, '022': 0, '016': 0
-            }
-          totales_movimientos[mov.UNIDAD][mov.TIPO] = mov.total_tipo
+      #   # Organizar los totales por unidad y tipo
+      #   totales_movimientos = {}
+      #   for mov in movimientos_por_tipo:
+      #     if mov.UNIDAD not in totales_movimientos:
+      #       totales_movimientos[mov.UNIDAD] = {
+      #         '024': 0, '027': 0, '026': 0, '022': 0, '016': 0
+      #       }
+      #     totales_movimientos[mov.UNIDAD][mov.TIPO] = mov.total_tipo
         
-        #* Itero sobre cada unidad para construir el resultado final
-        info_unidades = []
-        for unidad in info_unidad:
-          # Obtener los recaudos para esta unidad (o 0 si no hay)
-          total_deu_renta = dict_recaudos.get(unidad.NUMERO, 0)
+      #   #* Itero sobre cada unidad para construir el resultado final
+      #   info_unidades = []
+      #   for unidad in info_unidad:
+      #     # Obtener los recaudos para esta unidad (o 0 si no hay)
+      #     total_deu_renta = dict_recaudos.get(unidad.NUMERO, 0)
           
-          # Obtener los totales de movimiento para esta unidad (o valores predeterminados)
-          movs = totales_movimientos.get(unidad.NUMERO, {'024': 0, '027': 0, '026': 0, '022': 0, '016': 0})
+      #     # Obtener los totales de movimiento para esta unidad (o valores predeterminados)
+      #     movs = totales_movimientos.get(unidad.NUMERO, {'024': 0, '027': 0, '026': 0, '022': 0, '016': 0})
           
-          total_024 = movs.get('024', 0)
-          total_027 = movs.get('027', 0)
-          total_026 = movs.get('026', 0)
-          total_022 = movs.get('022', 0)
-          total_016 = movs.get('016', 0)
-          total_almacen = total_022 - total_016
+      #     total_024 = movs.get('024', 0)
+      #     total_027 = movs.get('027', 0)
+      #     total_026 = movs.get('026', 0)
+      #     total_022 = movs.get('022', 0)
+      #     total_016 = movs.get('016', 0)
+      #     total_almacen = total_022 - total_016
           
-          # Calcular el balance de pérdidas y ganancias
-          estado_pyg = total_deu_renta - total_024 - total_027 - total_026 - total_almacen
+      #     # Calcular el balance de pérdidas y ganancias
+      #     estado_pyg = total_deu_renta - total_024 - total_027 - total_026 - total_almacen
           
-          # Verificar si la unidad tiene algún movimiento
-          tiene_movimientos = (
-            unidad.NUMERO != "" and  # Verificar que el número no esté vacío
-            (total_deu_renta != 0 or
-            total_024 != 0 or
-            total_027 != 0 or
-            total_026 != 0 or
-            total_almacen != 0 or
-            estado_pyg != 0)
-          )
+      #     # Verificar si la unidad tiene algún movimiento
+      #     tiene_movimientos = (
+      #       unidad.NUMERO != "" and  # Verificar que el número no esté vacío
+      #       (total_deu_renta != 0 or
+      #       total_024 != 0 or
+      #       total_027 != 0 or
+      #       total_026 != 0 or
+      #       total_almacen != 0 or
+      #       estado_pyg != 0)
+      #     )
           
-          # Solo agregar unidades con movimientos
-          if tiene_movimientos:
-              #* Creo un diccionario con la información de la unidad
-              info_unidad_dict = {
-                  "NUMERO": unidad.NUMERO,
-                  "FEC_CREADO": unidad.FEC_CREADO.isoformat() if hasattr(unidad.FEC_CREADO, 'isoformat') else unidad.FEC_CREADO,
-                  "MODELO": unidad.MODELO,
-                  "VLR_COMPRA": unidad.VLR_COMPRA,
-                  "NOMESTADO": unidad.NOMESTADO,
-                  "INGRESOS": {
-                      "INGRESOS": total_deu_renta,
-                      "SEGUROS": 0 # !PENDIENTE, REALIZAR LA RECOLECCIÓN DE LA INFORMACIÓN DE LA TABLA RECLAMOSCOLISIONES
-                  },
-                  "GASTOS": {
-                      "GASTO_CAJA": total_024,
-                      "GENERALES": total_027,
-                      "OTRO_GASTO": 0
-                  },
-                  "PIEZAS_MOBRA": {
-                      "CHAPISTERIA": total_026,
-                      "ALMACEN": total_almacen
-                  },
-                  "ESTADOPyG": estado_pyg, #* Utilidad si es valor positivo, pérdida si es valor negativo
-                  "AVANCE": 0
-              }
+      #     # Solo agregar unidades con movimientos
+      #     if tiene_movimientos:
+      #         #* Creo un diccionario con la información de la unidad
+      #         info_unidad_dict = {
+      #             "NUMERO": unidad.NUMERO,
+      #             "FEC_CREADO": unidad.FEC_CREADO.isoformat() if hasattr(unidad.FEC_CREADO, 'isoformat') else unidad.FEC_CREADO,
+      #             "MODELO": unidad.MODELO,
+      #             "VLR_COMPRA": unidad.VLR_COMPRA,
+      #             "NOMESTADO": unidad.NOMESTADO,
+      #             "INGRESOS": {
+      #                 "INGRESOS": total_deu_renta,
+      #                 "SEGUROS": 0 # !PENDIENTE, REALIZAR LA RECOLECCIÓN DE LA INFORMACIÓN DE LA TABLA RECLAMOSCOLISIONES
+      #             },
+      #             "GASTOS": {
+      #                 "GASTO_CAJA": total_024,
+      #                 "GENERALES": total_027,
+      #                 "OTRO_GASTO": 0
+      #             },
+      #             "PIEZAS_MOBRA": {
+      #                 "CHAPISTERIA": total_026,
+      #                 "ALMACEN": total_almacen
+      #             },
+      #             "ESTADOPyG": estado_pyg, #* Utilidad si es valor positivo, pérdida si es valor negativo
+      #             "AVANCE": 0
+      #         }
               
-              #* Agrego el diccionario a la lista de unidades
-              info_unidades.append(info_unidad_dict)
+      #         #* Agrego el diccionario a la lista de unidades
+      #         info_unidades.append(info_unidad_dict)
 
     elif data.unidad != "" and data.unidad != "TODOS":
       # Optimizado: Obtener información del vehículo en una sola consulta
