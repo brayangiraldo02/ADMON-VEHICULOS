@@ -167,7 +167,7 @@ export class OwnersRelationshiprevenuesComponent {
   }
 
   openExternalLink(): void {
-    let endpoint = 'partsrelationship';
+    let endpoint = 'relationshiprevenues';
     if (endpoint) {
       const data = {
         'usuario': this.user,
