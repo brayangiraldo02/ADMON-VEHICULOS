@@ -15,16 +15,17 @@
 }
 
 .login-container .logo {
-  width: 30%; /* Establece el ancho del contenedor del logo */
+  width: 15%; /* Establece el ancho del contenedor del logo */
   /* max-width: 100px; */
-  max-width: 30%;
-  height: auto; /* Permite que la altura se ajuste automáticamente */
+  max-width: 15%;
+  height: 15%; /* Permite que la altura se ajuste automáticamente */
   margin-right: 15px; /* Añade un margen entre el logo y el título */
 }
 
 .login-container .logo img {
   width: 100%; /* Ajusta el tamaño de la imagen al contenedor */
   height: auto; /* Permite que la altura se ajuste automáticamente */
+  border-radius: 50%;
 }
 
 form {
