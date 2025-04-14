@@ -34,7 +34,7 @@ export class OwnersHomeComponent {
   showImage: boolean = true;
   currentVideoIndex: number = 0;
   currentVideo: string = '';
-  changeVideo: boolean = false;
+  showImages: boolean = true;
   permisos: any;
 
   ownersStatusfleetsummaryVisible: boolean = false;
@@ -70,8 +70,8 @@ export class OwnersHomeComponent {
     ];
   }
 
-  changeVideoState() {
-    this.changeVideo = !this.changeVideo;
+  toggleMediaType() {
+    this.showImages = !this.showImages;
   }
 
   changeImagesPeriodically() {

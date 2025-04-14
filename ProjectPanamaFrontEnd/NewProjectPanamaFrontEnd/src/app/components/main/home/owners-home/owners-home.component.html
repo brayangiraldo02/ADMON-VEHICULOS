@@ -4,14 +4,14 @@
     <div class="carousel-container">
       <div class="carousel">
         <div class="left-container"  *ngIf="!ownersFeespaidVisible && !ownersStatusfleetdetailVisible && !ownersPurchasevalueandpiqueraVisible && !ownersRelationshiprevenuesVisible && !ownersPartsrelationshipVisible && !ownersPandgstatusVisible  && !ownersStatusfleetsummaryVisible">
-          <a class="alternate-media" (click)="changeVideoState()">
+          <a class="alternate-media" (click)="toggleMediaType()">
             <img [src]="this.rightIcon" class="media-icon">
           </a>
         </div>
-        <img class="media-container" *ngIf="changeVideo" [src]="images[currentImageIndex]" [style.opacity]="showImage ? '1' : '0'">
-        <video #videoPlayer *ngIf="!changeVideo" [src]="currentVideo" (ended)="onVideoEnded()" autoplay></video>
+        <img class="media-container" *ngIf="showImages" [src]="images[currentImageIndex]" [style.opacity]="showImage ? '1' : '0'">
+        <video #videoPlayer *ngIf="!showImages" [src]="currentVideo" (ended)="onVideoEnded()" autoplay></video>
         <div class="right-container"  *ngIf="!ownersFeespaidVisible && !ownersStatusfleetdetailVisible && !ownersPurchasevalueandpiqueraVisible && !ownersRelationshiprevenuesVisible && !ownersPartsrelationshipVisible && !ownersPandgstatusVisible && !ownersStatusfleetsummaryVisible">
-          <a class="alternate-media" (click)="changeVideoState()">
+          <a class="alternate-media" (click)="toggleMediaType()">
             <img [src]="this.rightIcon" class="media-icon">
           </a>
         </div>

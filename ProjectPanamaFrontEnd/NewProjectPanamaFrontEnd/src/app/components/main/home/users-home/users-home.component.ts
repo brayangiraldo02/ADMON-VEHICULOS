@@ -34,7 +34,7 @@ export class UsersHomeComponent implements OnInit {
   showImage: boolean = true;
   currentVideoIndex: number = 0;
   currentVideo: string = '';
-  changeVideo: boolean = false;
+  changeVideo: boolean = true;
   permisos: any;
 
   ngOnInit() {
