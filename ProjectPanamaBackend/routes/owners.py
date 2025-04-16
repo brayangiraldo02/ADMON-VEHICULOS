@@ -611,17 +611,19 @@ async def get_vehicles_owners(owner: Owner):
       
       # Agrupar vehículos por el nombre (empresa)
       for vehicle in vehicles:
-        company_name = vehicle.empresa
-        if company_name not in vehicles_by_company:
-          vehicles_by_company[company_name] = []
-        vehicles_by_company[company_name].append({
+        company_key = f"{vehicle.empresa} - {vehicle.PROPI_IDEN}"
+        if company_key not in vehicles_by_company:
+          vehicles_by_company[company_key] = []
+        vehicles_by_company[company_key].append({
           'placa': vehicle.PLACA,
           'numero': vehicle.NUMERO,
           'marca': vehicle.NOMMARCA,
           'consecutivo': vehicle.CONSECUTIV
         })
+
+        sorted_vehicles_by_company = dict(sorted(vehicles_by_company.items()))
       
-      return JSONResponse(content=jsonable_encoder(vehicles_by_company), status_code=200)
+      return JSONResponse(content=jsonable_encoder(sorted_vehicles_by_company), status_code=200)
     
     return JSONResponse(content={"error": "Propietario no encontrado"}, status_code=404)
   

@@ -170,12 +170,17 @@ export class OwnersPandgstatusComponent {
     openExternalLink(): void {
       let endpoint = 'pandgstatus';
       if (endpoint) {
+        const companyValue = this.infoForm.value.companie;
+        let companyName = companyValue; // Default to the full value
+        if (companyValue && companyValue.includes(' - ')) {
+          companyName = companyValue.split(' - ')[0].trim(); 
+        }
         const data = {
-          'usuario': 'HFVG1021',
+          'usuario': this.user,
           'primeraFecha': this.infoForm.value.firstDate,
           'ultimaFecha': this.infoForm.value.lastDate,
           'unidad': this.infoForm.value.vehicle,
-          'empresa': this.infoForm.value.companie
+          'empresa': companyName
         };
         console.log(data);
         localStorage.setItem('pdfEndpoint', endpoint);

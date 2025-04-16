@@ -76,7 +76,8 @@ async def pandgstatus_report(data: PandGStatusReport):
           Movimien.UNIDAD.in_(numeros_unidades),
           Movimien.FECHA >= data.primeraFecha,
           Movimien.FECHA <= data.ultimaFecha,
-          Movimien.TIPO.in_(['024', '027', '026', '022', '016'])
+          Movimien.TIPO.in_(['024', '027', '026', '022', '016']),
+          Movimien.FORMAPAGO.in_(['01', '02', '03', '04', '05'])
         ).group_by(
           Movimien.UNIDAD,
           Movimien.TIPO
@@ -123,7 +124,7 @@ async def pandgstatus_report(data: PandGStatusReport):
               # Crear el diccionario con la información procesada
               info_unidad_dict = {
                   "NUMERO": vehiculo.NUMERO,
-                  "FEC_CREADO": vehiculo.FEC_CREADO.isoformat() if hasattr(vehiculo.FEC_CREADO, 'isoformat') else vehiculo.FEC_CREADO,
+                  "FEC_CREADO": vehiculo.FEC_CREADO.strftime('%Y-%m-%d') if vehiculo.FEC_CREADO else None,
                   "MODELO": vehiculo.MODELO,
                   "VLR_COMPRA": vehiculo.VLR_COMPRA,
                   "NOMESTADO": vehiculo.NOMESTADO,
@@ -293,7 +294,8 @@ async def pandgstatus_report(data: PandGStatusReport):
         Movimien.UNIDAD == data.unidad,
         Movimien.FECHA >= data.primeraFecha,
         Movimien.FECHA <= data.ultimaFecha,
-        Movimien.TIPO.in_(['024', '027', '026', '022', '016'])
+        Movimien.TIPO.in_(['024', '027', '026', '022', '016']),
+        Movimien.FORMAPAGO.in_(['01', '02', '03', '04', '05'])
       ).group_by(
         Movimien.TIPO
       ).all()
@@ -317,7 +319,7 @@ async def pandgstatus_report(data: PandGStatusReport):
       # Crear diccionario con la información procesada
       info_unidad_dict = {
         "NUMERO": data.unidad,
-        "FEC_CREADO": info_unidad.FEC_CREADO.isoformat() if hasattr(info_unidad.FEC_CREADO, 'isoformat') else info_unidad.FEC_CREADO,
+        "FEC_CREADO": info_unidad.FEC_CREADO.strftime('%Y-%m-%d') if vehiculo.FEC_CREADO else None,
         "MODELO": info_unidad.MODELO,
         "VLR_COMPRA": info_unidad.VLR_COMPRA,
         "NOMESTADO": info_unidad.NOMESTADO,
@@ -407,52 +409,69 @@ async def pandgstatus_report(data: PandGStatusReport):
         # Crear un diccionario para mapear unidades a empresas
         unidad_a_empresa = {e.NUMERO: {"codigo": e.CODIGO, "nombre": e.NOMBRE} for e in empresas_info}
         
+        # Crear un diccionario para almacenar unidades temporalmente por empresa
+        unidades_por_empresa = {}
+        
         # Agrupar unidades por empresa
         for unidad in info_unidades:
             empresa_info = unidad_a_empresa.get(unidad["NUMERO"])
             if empresa_info:
                 nombre_empresa = empresa_info["nombre"]
                 
-                # Si la empresa no existe en el diccionario, crearla
-                if nombre_empresa not in empresas_dict:
-                    empresas_dict[nombre_empresa] = {
+                # Si la empresa no existe en el diccionario temporal, crearla
+                if nombre_empresa not in unidades_por_empresa:
+                    unidades_por_empresa[nombre_empresa] = {
                         "codigo": empresa_info["codigo"],
-                        "nombre": nombre_empresa,
-                        "unidades": [],
-                        "totales_empresa": {
-                            "cantidad_unidades": 0,
-                            "ingresos": 0,
-                            "seguros": 0,
-                            "gasto_caja": 0,
-                            "generales": 0,
-                            "otro_gasto": 0,
-                            "chapisteria": 0,
-                            "almacen": 0,
-                            "utilidad": 0,
-                            "perdida": 0,
-                            "avance": 0
-                        }
+                        "unidades": []
                     }
                 
-                # Añadir la unidad a su empresa
-                empresas_dict[nombre_empresa]["unidades"].append(unidad)
-                
-                # Actualizar totales de la empresa
-                empresas_dict[nombre_empresa]["totales_empresa"]["cantidad_unidades"] += 1
-                empresas_dict[nombre_empresa]["totales_empresa"]["ingresos"] += unidad["INGRESOS"]["INGRESOS"]
-                empresas_dict[nombre_empresa]["totales_empresa"]["seguros"] += unidad["INGRESOS"]["SEGUROS"]
-                empresas_dict[nombre_empresa]["totales_empresa"]["gasto_caja"] += unidad["GASTOS"]["GASTO_CAJA"]
-                empresas_dict[nombre_empresa]["totales_empresa"]["generales"] += unidad["GASTOS"]["GENERALES"]
-                empresas_dict[nombre_empresa]["totales_empresa"]["otro_gasto"] += unidad["GASTOS"]["OTRO_GASTO"]
-                empresas_dict[nombre_empresa]["totales_empresa"]["chapisteria"] += unidad["PIEZAS_MOBRA"]["CHAPISTERIA"]
-                empresas_dict[nombre_empresa]["totales_empresa"]["almacen"] += unidad["PIEZAS_MOBRA"]["ALMACEN"]
+                # Añadir la unidad al diccionario temporal
+                unidades_por_empresa[nombre_empresa]["unidades"].append(unidad)
+        
+        # Procesar cada empresa, ordenando sus unidades
+        for nombre_empresa, info in unidades_por_empresa.items():
+            # Ordenar las unidades por número alfabéticamente
+            unidades_ordenadas = sorted(info["unidades"], key=lambda u: u["NUMERO"])
+            
+            # Inicializar totales de la empresa
+            totales_empresa = {
+                "cantidad_unidades": len(unidades_ordenadas),
+                "ingresos": 0,
+                "seguros": 0,
+                "gasto_caja": 0,
+                "generales": 0,
+                "otro_gasto": 0,
+                "chapisteria": 0,
+                "almacen": 0,
+                "utilidad": 0,
+                "perdida": 0,
+                "avance": 0
+            }
+            
+            # Calcular totales de la empresa con las unidades ya ordenadas
+            for unidad in unidades_ordenadas:
+                totales_empresa["ingresos"] += unidad["INGRESOS"]["INGRESOS"]
+                totales_empresa["seguros"] += unidad["INGRESOS"]["SEGUROS"]
+                totales_empresa["gasto_caja"] += unidad["GASTOS"]["GASTO_CAJA"]
+                totales_empresa["generales"] += unidad["GASTOS"]["GENERALES"]
+                totales_empresa["otro_gasto"] += unidad["GASTOS"]["OTRO_GASTO"]
+                totales_empresa["chapisteria"] += unidad["PIEZAS_MOBRA"]["CHAPISTERIA"]
+                totales_empresa["almacen"] += unidad["PIEZAS_MOBRA"]["ALMACEN"]
                 
                 if unidad["ESTADOPyG"] > 0:
-                    empresas_dict[nombre_empresa]["totales_empresa"]["utilidad"] += unidad["ESTADOPyG"]
+                    totales_empresa["utilidad"] += unidad["ESTADOPyG"]
                 else:
-                    empresas_dict[nombre_empresa]["totales_empresa"]["perdida"] += -unidad["ESTADOPyG"]
+                    totales_empresa["perdida"] += -unidad["ESTADOPyG"]
+            
+            # Agregar la empresa con sus unidades ordenadas al diccionario final
+            empresas_dict[nombre_empresa] = {
+                "codigo": info["codigo"],
+                "nombre": nombre_empresa,
+                "unidades": unidades_ordenadas,
+                "totales_empresa": totales_empresa
+            }
 
-    # Calcular totales generales sumando los totales de cada empresa - SIEMPRE SE EJECUTA
+    # Calcular totales generales sumando los totales de cada empresa
     totales_generales = {
         "cantidad_unidades": 0,
         "ingresos": 0,

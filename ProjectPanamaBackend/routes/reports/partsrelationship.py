@@ -166,13 +166,13 @@ async def partsrelationship_report(data: PartsRelationshipReport):
       return JSONResponse(content={"error": "No se encontraron registros"}, status_code=400)
   
     # After query execution
-    data_view = {}
+    data_view_temp = {}
     for item in conteo_reporte_piezas:
       factura = item.factura
       
       # Initialize factura entry if doesn't exist
-      if factura not in data_view:
-        data_view[factura] = {
+      if factura not in data_view_temp:
+        data_view_temp[factura] = {
           'UNIDAD': item.unidad,
           'PROPIETARIOS': item.propietario,
           'ORIGEN': 'Arreglo Pago' if item.origen == 1 else 'Garantia' if item.origen == 2 else 'Contado' if item.origen == 3 else 'Preparación' if item.origen == 4 else 'Contrato Viejo' if item.origen == 5 else item.origen,
@@ -182,19 +182,27 @@ async def partsrelationship_report(data: PartsRelationshipReport):
         }
       
       # Add movement data
-      data_view[factura]['MOVIMIENTOS'].append({
+      data_view_temp[factura]['MOVIMIENTOS'].append({
         'CODIGO': item.codigo,
         'NOMBRE': item.nombre,
         'PRESENTA': item.presenta,
         'PEDIDA': item.pedida,
-        'VALOR': item.valor,
+        'VALOR': round(item.valor * item.pedida, 2),
         'DCTO_VALOR': item.dcto_valor,
         'IVA_VALOR': item.iva_valor,
         'TOTAL': item.total
       })
 
-    if len(data_view) == 0:
+    if len(data_view_temp) == 0:
       return JSONResponse(content={"error": "No se encontraron registros"}, status_code=400)
+    
+    # Ordenar facturas por número de unidad
+    facturas_ordenadas = sorted(data_view_temp.items(), key=lambda x: x[1]['UNIDAD'])
+    
+    # Reconstruir el diccionario ordenado
+    data_view = {}
+    for factura, datos in facturas_ordenadas:
+        data_view[factura] = datos
     
     # Calculate totals
     total_cantidad = 0

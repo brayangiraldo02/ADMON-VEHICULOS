@@ -203,7 +203,10 @@ async def get_vehiculos_detalles(infoReports: infoReports):
             "propietarios": []
         }
 
-        for propietario_codigo, info in data.items():
+        # Ordenar propietarios alfabéticamente por nombre
+        sorted_propietarios = sorted(data.items(), key=lambda x: x[1].get("vehiculo_empresa", ""))
+
+        for propietario_codigo, info in sorted_propietarios:
             if isinstance(info, dict):
                 propietario_data = {
                     "codigo_empresa": info.get("propietario_codigo", ""),
@@ -211,27 +214,36 @@ async def get_vehiculos_detalles(infoReports: infoReports):
                     "empty": info.get("empty", ""),
                     "vehiculos": []
                 }
+                
+                # Obtener todos los vehículos de este propietario
+                vehiculos_lista = []
                 for vehiculo_codigo, vehiculo_info in info.get("vehiculos", {}).items():
                     if isinstance(vehiculo_info, dict):
-                        vehiculo_data = {
-                            "vehiculo_unidad": vehiculo_info.get("vehiculo_unidad", ""),
-                            "vehiculo_placa": vehiculo_info.get("vehiculo_placa", ""),
-                            "vehiculo_marca": vehiculo_info.get("vehiculo_marca", ""),
-                            "vehiculo_linea": vehiculo_info.get("vehiculo_linea", ""),
-                            "vehiculo_modelo": vehiculo_info.get("vehiculo_modelo", ""),
-                            "vehiculo_cupo": vehiculo_info.get("vehiculo_cupo", ""),
-                            "vehiculo_motor": vehiculo_info.get("vehiculo_motor", ""),
-                            "vehiculo_chasis": vehiculo_info.get("vehiculo_chasis", ""),
-                            "vehiculo_estado": vehiculo_info.get("vehiculo_estado", ""),
-                            "vehiculo_valor_compra": vehiculo_info.get("vehiculo_valor_compra", ""),
-                            "vehiculo_factura": vehiculo_info.get("vehiculo_factura", ""),
-                            "vehiculo_fecha_compra": vehiculo_info.get("vehiculo_fecha_compra", ""),
-                            "vehiculo_nombre_piquera": vehiculo_info.get("vehiculo_nombre_piquera", "")
-                        }
-                        propietario_data["vehiculos"].append(vehiculo_data)
+                        vehiculos_lista.append(vehiculo_info)
+                
+                # Ordenar la lista de vehículos por número de unidad
+                vehiculos_lista.sort(key=lambda v: v.get("vehiculo_unidad", ""))
+                
+                # Agregar los vehículos ordenados al propietario
+                for vehiculo_info in vehiculos_lista:
+                    vehiculo_data = {
+                        "vehiculo_unidad": vehiculo_info.get("vehiculo_unidad", ""),
+                        "vehiculo_placa": vehiculo_info.get("vehiculo_placa", ""),
+                        "vehiculo_marca": vehiculo_info.get("vehiculo_marca", ""),
+                        "vehiculo_linea": vehiculo_info.get("vehiculo_linea", ""),
+                        "vehiculo_modelo": vehiculo_info.get("vehiculo_modelo", ""),
+                        "vehiculo_cupo": vehiculo_info.get("vehiculo_cupo", ""),
+                        "vehiculo_motor": vehiculo_info.get("vehiculo_motor", ""),
+                        "vehiculo_chasis": vehiculo_info.get("vehiculo_chasis", ""),
+                        "vehiculo_estado": vehiculo_info.get("vehiculo_estado", ""),
+                        "vehiculo_valor_compra": vehiculo_info.get("vehiculo_valor_compra", ""),
+                        "vehiculo_factura": vehiculo_info.get("vehiculo_factura_compra", ""),
+                        "vehiculo_fecha_compra": vehiculo_info.get("vehiculo_fecha_compra", ""),
+                        "vehiculo_nombre_piquera": vehiculo_info.get("vehiculo_nombre_piquera", "")
+                    }
+                    propietario_data["vehiculos"].append(vehiculo_data)
+                
                 data_view["propietarios"].append(propietario_data)
-
-        data_view["usuario"] = usuario
 
         headers = {
             "Content-Disposition": "inline; valor-compra-vehiculos.pdf"

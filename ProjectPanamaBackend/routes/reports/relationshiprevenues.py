@@ -144,6 +144,9 @@ async def relationshiprevenues_report(data: RelationshipRevenuesReport):
       if row["recibo"] and row["unidad"] and row["empresa"] and row["forma_pago"]
     ]
 
+    # Ordenar registros por número de unidad
+    registros_ordenados = sorted(registros_filtrados, key=lambda x: x["unidad"])
+
     # CALCULAR LOS TOTALES a partir de los registros filtrados
     total_deuda_renta = 0
     total_fondo_inscripcion = 0
@@ -155,7 +158,7 @@ async def relationshiprevenues_report(data: RelationshipRevenuesReport):
     total_bangeneral = 0
     total_total = 0
 
-    for item in registros_filtrados:
+    for item in registros_ordenados:
       total_deuda_renta += item["deuda_renta"]
       total_fondo_inscripcion += item["fondo_inscripcion"]
       total_fondo_ahorro += item["fondo_ahorro"]
@@ -187,7 +190,7 @@ async def relationshiprevenues_report(data: RelationshipRevenuesReport):
       usuario = data.usuario
 
     response = {
-      "reporte": registros_filtrados,
+      "reporte": registros_ordenados,
       "totales": {
         "deuda_renta": total_deuda_renta,
         "fondo_inscripcion": total_fondo_inscripcion,
