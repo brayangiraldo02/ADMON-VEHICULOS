@@ -1,7 +1,8 @@
-import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, inject, effect } from '@angular/core';
 import { JwtService } from 'src/app/services/jwt.service';
 import { ApiService } from 'src/app/services/api.service';
 import { Router } from '@angular/router';
+import { InfoCompanyStateService } from 'src/app/states/info-company-state.service';
 
 @Component({
   selector: 'app-users-home',
@@ -9,7 +10,6 @@ import { Router } from '@angular/router';
   styleUrls: ['./users-home.component.css']
 })
 export class UsersHomeComponent implements OnInit {
-  constructor(private jwtService: JwtService, private apiService: ApiService, private router: Router) { }
   @ViewChild('videoPlayer') videoPlayer!: ElementRef<HTMLVideoElement>;
 
   options: any[] = []
@@ -36,6 +36,19 @@ export class UsersHomeComponent implements OnInit {
   currentVideo: string = '';
   changeVideo: boolean = true;
   permisos: any;
+
+  infoCompanyVisible: boolean = false;
+
+  constructor(
+    private jwtService: JwtService, 
+    private apiService: ApiService, 
+    private router: Router,
+    private stateInfoCompany: InfoCompanyStateService
+  ) { 
+    effect(() => {
+      this.infoCompanyVisible = this.stateInfoCompany.displayInfoCompany();
+    });
+  }
 
   ngOnInit() {
     this.changeImagesPeriodically();

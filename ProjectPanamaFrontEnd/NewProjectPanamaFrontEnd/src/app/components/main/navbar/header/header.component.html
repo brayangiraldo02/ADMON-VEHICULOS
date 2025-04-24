@@ -1,6 +1,6 @@
 <header>
   <div class="info-company">
-    <div class="logo" routerLink="/users-home">
+    <div class="logo" (click)="showModal()">
       <img src="https://uploads-ssl.webflow.com/6291afaf5676f4664ddf0566/6291afaf5676f4542adf05db_logo.png" alt="Logo de AlfaSoft">
     </div>
     <!-- <h1>Total Taxi</h1> -->
@@ -54,3 +54,8 @@
     <img [src]="imgUser" alt="Foto de perfil">
   </div>
 </header>
+
+<app-info-company
+  *ngIf="infoCompanyVisible"
+  (close)="hideModal()"
+></app-info-company>
