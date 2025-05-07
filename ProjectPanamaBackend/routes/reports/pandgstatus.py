@@ -77,7 +77,7 @@ async def pandgstatus_report(data: PandGStatusReport):
           Movimien.FECHA >= data.primeraFecha,
           Movimien.FECHA <= data.ultimaFecha,
           Movimien.TIPO.in_(['024', '027', '026', '022', '016']),
-          Movimien.FORMAPAGO.in_(['01', '02', '03', '04', '05'])
+          # Movimien.FORMAPAGO.in_(['01', '02', '03', '04', '05'])
         ).group_by(
           Movimien.UNIDAD,
           Movimien.TIPO
@@ -295,7 +295,7 @@ async def pandgstatus_report(data: PandGStatusReport):
         Movimien.FECHA >= data.primeraFecha,
         Movimien.FECHA <= data.ultimaFecha,
         Movimien.TIPO.in_(['024', '027', '026', '022', '016']),
-        Movimien.FORMAPAGO.in_(['01', '02', '03', '04', '05'])
+        # Movimien.FORMAPAGO.in_(['01', '02', '03', '04', '05'])
       ).group_by(
         Movimien.TIPO
       ).all()
