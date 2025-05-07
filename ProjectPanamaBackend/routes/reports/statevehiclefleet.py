@@ -445,7 +445,7 @@ async def get_conteo_propietarios_vehiculos_estados_numeros(id: int, info: userI
         vehiculos_estados_propietarios_list.append(propietarios_vehiculos_estados)
     data = obtener_numeros_por_propietario(vehiculos_estados_propietarios_list)
     data = data.get("numeros_por_propietario")
-    data = data.get(str(id))  
+    data = data.get(f"{id:02d}") 
     # Datos de la fecha y hora actual
     # Define la zona horaria de Ciudad de Panamá
     panama_timezone = pytz.timezone('America/Panama')
