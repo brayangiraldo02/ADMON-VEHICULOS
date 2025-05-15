@@ -143,7 +143,7 @@ async def get_vehiculos_detalles(infoReports: infoReports):
 
         vehiculos_detalles = db.query(
             Vehiculos.PROPI_IDEN.label('propietario_codigo'),
-            Vehiculos.EMPRESA.label('vehiculo_empresa'),
+            Propietarios.NOMBRE.label('vehiculo_empresa'),
             Vehiculos.NUMERO.label('vehiculo_unidad'),
             Vehiculos.PLACA.label('vehiculo_placa'),
             Vehiculos.NOMMARCA.label('vehiculo_marca'),
@@ -160,6 +160,8 @@ async def get_vehiculos_detalles(infoReports: infoReports):
         ).filter(
             Vehiculos.PROPI_IDEN.in_(infoReports.empresas),
             Vehiculos.ESTADO.in_(infoReports.estados)
+        ).join(
+            Propietarios, Propietarios.CODIGO == Vehiculos.PROPI_IDEN
         ).all()
 
         vehiculos_detalles_list = []
@@ -244,6 +246,7 @@ async def get_vehiculos_detalles(infoReports: infoReports):
                     propietario_data["vehiculos"].append(vehiculo_data)
                 
                 data_view["propietarios"].append(propietario_data)
+                print(data_view)
 
         headers = {
             "Content-Disposition": "inline; valor-compra-vehiculos.pdf"
