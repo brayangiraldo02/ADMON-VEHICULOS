@@ -181,23 +181,24 @@ async def partsrelationship_report(data: PartsRelationshipReport):
           'MOVIMIENTOS': []
         }
       
-      # Add movement data
-      data_view_temp[factura]['MOVIMIENTOS'].append({
-        'CODIGO': item.codigo,
-        'NOMBRE': item.nombre,
-        'PRESENTA': item.presenta,
-        'PEDIDA': item.pedida,
-        'VALOR': round(item.valor * item.pedida, 2),
-        'DCTO_VALOR': item.dcto_valor,
-        'IVA_VALOR': item.iva_valor,
-        'TOTAL': item.total
-      })
+      if item.pedida != 0:
+        # Add movement data
+        data_view_temp[factura]['MOVIMIENTOS'].append({
+          'CODIGO': item.codigo,
+          'NOMBRE': item.nombre,
+          'PRESENTA': item.presenta,
+          'PEDIDA': item.pedida,
+          'VALOR': round(item.valor * item.pedida, 2),
+          'DCTO_VALOR': item.dcto_valor,
+          'IVA_VALOR': item.iva_valor,
+          'TOTAL': item.total
+        })
 
     if len(data_view_temp) == 0:
       return JSONResponse(content={"error": "No se encontraron registros"}, status_code=400)
     
     # Ordenar facturas por número de unidad
-    facturas_ordenadas = sorted(data_view_temp.items(), key=lambda x: x[1]['UNIDAD'])
+    facturas_ordenadas = sorted(data_view_temp.items(), key=lambda x: x[0])
     
     # Reconstruir el diccionario ordenado
     data_view = {}
