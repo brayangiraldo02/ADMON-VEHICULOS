@@ -72,13 +72,20 @@
                         <th></th>
                     </thead>
                     <tbody>
-                        <td style="text-align: center;"><p><p><img src="https://res.cloudinary.com/dhry2v8qz/image/upload/v1716101516/AlfaSoft/templates-backend/img/swgfbppvzzyigrmvwmia.png" height="26" width="26" style="margin-right: 30px;">Activo + Backup: &nbsp; <u>{{ cant_activo_backup }}</u></p></td>
                         {% if cant_activo > 0 %}
-                        <tr>
-                            <td>
-                                <p><img src="https://res.cloudinary.com/dhry2v8qz/image/upload/v1716101516/AlfaSoft/templates-backend/img/swgfbppvzzyigrmvwmia.png" height="26" width="26" style="margin-right: 30px;">Activo: &nbsp; {{cant_activo}}</p>
+                        <tr> 
+                            <td colspan="3">
+                                {% if cant_backup == 0 %}
+                                    <p><img src="https://res.cloudinary.com/dhry2v8qz/image/upload/v1716101516/AlfaSoft/templates-backend/img/swgfbppvzzyigrmvwmia.png" height="26" width="26" style="margin-right: 30px;">Activo: &nbsp; {{cant_activo}}</p>
+                                {% else %}
+                                    <table style="width: 100%; border-spacing: 0;"> 
+                                        <tr>
+                                            <td><p><img src="https://res.cloudinary.com/dhry2v8qz/image/upload/v1716101516/AlfaSoft/templates-backend/img/swgfbppvzzyigrmvwmia.png" height="26" width="26" style="margin-right: 30px;">Activo: &nbsp; {{cant_activo}}</p></td>
+                                            <td><p><img src="https://res.cloudinary.com/dhry2v8qz/image/upload/v1716101516/AlfaSoft/templates-backend/img/swgfbppvzzyigrmvwmia.png" height="26" width="26" style="margin-right: 30px;">Activo + Backup: &nbsp; <u>{{ cant_activo_backup }}</u></p></td>
+                                        </tr>
+                                    </table>
+                                {% endif %}
                             </td>
-                        </tr>
                         <tr>
                             <td>
                                 <table>
