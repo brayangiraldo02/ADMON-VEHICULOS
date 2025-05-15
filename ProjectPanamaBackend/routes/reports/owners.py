@@ -139,8 +139,6 @@ async def get_vehiculos_detalles(infoReports: infoReports):
             estados = db.query(Estados.CODIGO).all()
             infoReports.estados = [estado.CODIGO for estado in estados]
 
-        print(infoReports)
-
         vehiculos_detalles = db.query(
             Vehiculos.PROPI_IDEN.label('propietario_codigo'),
             Propietarios.NOMBRE.label('vehiculo_empresa'),
@@ -246,7 +244,6 @@ async def get_vehiculos_detalles(infoReports: infoReports):
                     propietario_data["vehiculos"].append(vehiculo_data)
                 
                 data_view["propietarios"].append(propietario_data)
-                print(data_view)
 
         headers = {
             "Content-Disposition": "inline; valor-compra-vehiculos.pdf"
