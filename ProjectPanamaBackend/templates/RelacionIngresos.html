@@ -70,20 +70,20 @@
       <th rowspan="2">Fecha</th>
       <th rowspan="2">Unidad</th>
       <th rowspan="2">Saldo Antes</th>
-      <th colspan="4" style="border-bottom: none;">Detalles del Pago</th>
-      <th colspan="4" style="border-bottom: none; border-right: none;">Forma de Pago</th>
+      <th colspan="3" style="border-bottom: none;">Detalles del Pago</th>
+      <th colspan="5" style="border-bottom: none; border-right: none;">Forma de Pago</th>
       <th rowspan="2" style="border-left: 1px solid black">Total Empresa</th>
       <th rowspan="2" style="border-right: 1px solid black;">Nombre Empresa</th>
     </tr>
     <tr>
       <th>Renta Día</th>
-      <th>Inscripción</th>
-      <th>Ahorro</th>
+      <th>Inscrip</th>
       <th>Siniestro</th>
       <th>Efectivo</th>
-      <th>Nequi</th>
+      <th>ACH</th>
       <th>ARP</th>
-      <th>BanGeneral</th>
+      <th>Nequi</th>
+      <th>Yappy</th>
     </tr>
 
     {% for item in data.reporte %}
@@ -101,15 +101,13 @@
         {{ "" if item['fondo_inscripcion'] == 0.00 else item['fondo_inscripcion'] }}
       </td>
       <td class="group">
-        {{ "" if item['fondo_ahorro'] == 0.00 else item['fondo_ahorro'] }}
-      </td>
-      <td class="group">
         {{ "" if item['deuda_siniestro'] == 0.00 else item['deuda_siniestro'] }}
       </td>
       <td class="right" style="border-left: 1px solid black">{{ "" if item['forma_pago'] != "1" else item['total']}}</td>
       <td class="group">{{ "" if item['forma_pago'] != "2" else item['total']}}</td>
       <td class="group">{{ "" if item['forma_pago'] != "3" else item['total']}}</td>
       <td class="group">{{ "" if item['forma_pago'] != "4" else item['total']}}</td>
+      <td class="group">{{ "" if item['forma_pago'] != "5" else item['total']}}</td>
       <td style="border-left: 1px solid black">
         {{ "" if item['total'] == 0.00 else item['total'] }}
       </td>
@@ -150,23 +148,22 @@
       </td>
       <td class="box-propietario"
         style="font-weight: bold; text-align: center; border-top: 2px solid #000; border-bottom: 2px solid #000;">
-        {{ data['totales']['fondo_ahorro'] }}
-      </td>
-      <td class="box-propietario"
-        style="font-weight: bold; text-align: center; border-top: 2px solid #000; border-bottom: 2px solid #000;">
         {{ data['totales']['deuda_siniestro'] }}
       </td>
       <td class="box-propietario"
         style="font-weight: bold; text-align: center; border-top: 2px solid #000; border-bottom: 2px solid #000;">{{ data['totales']['efectivo'] }}
       </td>
       <td class="box-propietario"
-        style="font-weight: bold; text-align: center; border-top: 2px solid #000; border-bottom: 2px solid #000;">{{ data['totales']['nequi'] }}
+        style="font-weight: bold; text-align: center; border-top: 2px solid #000; border-bottom: 2px solid #000;">{{ data['totales']['ach'] }}
       </td>
       <td class="box-propietario"
         style="font-weight: bold; text-align: center; border-top: 2px solid #000; border-bottom: 2px solid #000;">{{ data['totales']['arp'] }}
       </td>
       <td class="box-propietario"
-        style="font-weight: bold; text-align: center; border-top: 2px solid #000; border-bottom: 2px solid #000;">{{ data['totales']['banco_general'] }}
+        style="font-weight: bold; text-align: center; border-top: 2px solid #000; border-bottom: 2px solid #000;">{{ data['totales']['nequi'] }}
+      </td>
+      <td class="box-propietario"
+        style="font-weight: bold; text-align: center; border-top: 2px solid #000; border-bottom: 2px solid #000;">{{ data['totales']['yappy'] }}
       </td>
       <td class="box-propietario" style="
         border-top: 2px solid #000;

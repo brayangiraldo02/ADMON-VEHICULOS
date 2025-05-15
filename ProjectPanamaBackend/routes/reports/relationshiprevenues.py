@@ -101,6 +101,25 @@ async def relationshiprevenues_report(data: RelationshipRevenuesReport):
     
     aggregated_data = {}
     for item in conteo_reporte_ingresos:
+      # Condición 1: forma_pago debe ser un string entre "1" y "5"
+      forma_pago_valida = isinstance(item.forma_pago, str) and "1" <= item.forma_pago <= "5"
+      
+      # Condición 2: el item no debe tener todos los valores monetarios en 0
+      # Se asume que si un valor es None, no se considera 0 para esta validación,
+      # o que los valores ya son numéricos (e.g., 0.0 o Decimal('0')).
+      todos_valores_monetarios_cero = (
+          item.saldo_renta == 0 and
+          item.deuda_renta == 0 and
+          item.fondo_inscripcion == 0 and
+          item.fondo_ahorro == 0 and
+          item.deuda_siniestro == 0 and
+          item.total == 0 
+      )
+      
+      # Si la forma de pago no es válida o todos los valores monetarios son cero, saltar este item
+      if not forma_pago_valida or todos_valores_monetarios_cero:
+        continue
+
       key = item.recibo
       if key not in aggregated_data:
         aggregated_data[key] = {
@@ -153,9 +172,10 @@ async def relationshiprevenues_report(data: RelationshipRevenuesReport):
     total_fondo_ahorro = 0
     total_deuda_siniestro = 0
     total_efectivo = 0
+    total_ach = 0
+    total_arp = 0 
     total_nequi = 0
-    total_arp = 0
-    total_bangeneral = 0
+    total_yappy = 0
     total_total = 0
 
     for item in registros_ordenados:
@@ -168,11 +188,13 @@ async def relationshiprevenues_report(data: RelationshipRevenuesReport):
       if item["forma_pago"] == "1":
         total_efectivo += item["total"]
       elif item["forma_pago"] == "2":
-        total_nequi += item["total"]
+        total_ach += item["total"]
       elif item["forma_pago"] == "3":
         total_arp += item["total"]
       elif item["forma_pago"] == "4":
-        total_bangeneral += item["total"]
+        total_nequi += item["total"]
+      elif item["forma_pago"] == "5":
+        total_yappy += item["total"]
 
     # Get current date
     panama_timezone = pytz.timezone('America/Panama')
@@ -197,9 +219,10 @@ async def relationshiprevenues_report(data: RelationshipRevenuesReport):
         "fondo_ahorro": total_fondo_ahorro,
         "deuda_siniestro": total_deuda_siniestro,
         "efectivo": total_efectivo,
-        "nequi": total_nequi,
+        "ach": total_ach,
         "arp": total_arp,
-        "banco_general": total_bangeneral,
+        "nequi": total_nequi,
+        "yappy": total_yappy,
         "total": total_total
       },
       "fechas": {
@@ -217,7 +240,7 @@ async def relationshiprevenues_report(data: RelationshipRevenuesReport):
       "Content-Disposition": "inline; relacion-ingresos.pdf"
     }  
 
-    # return JSONResponse(content=jsonable_encoder(data_reporte))
+    # return JSONResponse(content=jsonable_encoder(data_reporte)) 
 
     #!Falta corregir un problema con la asignación de los valores de forma de pago
 
@@ -255,5 +278,3 @@ async def relationshiprevenues_report(data: RelationshipRevenuesReport):
     return JSONResponse(content={"error": str(e)}, status_code=400)
   finally:
     db.close()
-
-
