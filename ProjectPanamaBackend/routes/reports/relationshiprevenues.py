@@ -164,7 +164,7 @@ async def relationshiprevenues_report(data: RelationshipRevenuesReport):
     ]
 
     # Ordenar registros por número de unidad
-    registros_ordenados = sorted(registros_filtrados, key=lambda x: x["unidad"])
+    registros_ordenados = sorted(registros_filtrados, key=lambda x: x["recibo"])
 
     # CALCULAR LOS TOTALES a partir de los registros filtrados
     total_deuda_renta = 0
