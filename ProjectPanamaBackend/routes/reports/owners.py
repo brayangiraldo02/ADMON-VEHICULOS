@@ -252,13 +252,13 @@ async def get_vehiculos_detalles(infoReports: infoReports):
         template_loader = jinja2.FileSystemLoader(searchpath="./templates")
         template_env = jinja2.Environment(loader=template_loader)
         template_file = "ValorCompraVehiculos.html"
-        header_file = "header.html"
+        header_file = "header1.html"
         footer_file = "footer.html"
         template = template_env.get_template(template_file)
         header = template_env.get_template(header_file)
         footer = template_env.get_template(footer_file)
         output_text = template.render(data_view=data_view)
-        output_header = header.render(data_view=data_view)
+        output_header = header.render(data_view)
         output_footer = footer.render(data_view=data_view)
         
         html_path = f'./templates/renderValorCompraVehiculos.html'
