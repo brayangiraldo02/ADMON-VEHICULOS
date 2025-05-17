@@ -271,8 +271,6 @@ async def relationshiprevenues_report(data: RelationshipRevenuesReport):
 
     # return JSONResponse(content=jsonable_encoder(data_reporte)) 
 
-    #!Falta corregir un problema con la asignación de los valores de forma de pago
-
     template_loader = jinja2.FileSystemLoader(searchpath="./templates")
     template_env = jinja2.Environment(loader=template_loader)
     template_file = "RelacionIngresos.html"
