@@ -30,7 +30,7 @@ h1 {
 
 .info-company .logo img {
   width: 16vh; /* Ajusta el tamaño de la imagen al contenedor */
-  height: auto; /* Permite que la altura se ajuste automáticamente */
+  height: 8vh; /* Permite que la altura se ajuste automáticamente */
   cursor: pointer;
 }
 

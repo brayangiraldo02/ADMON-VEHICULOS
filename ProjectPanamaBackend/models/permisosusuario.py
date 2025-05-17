@@ -4,6 +4,7 @@ from config.dbconnection import Base
 class PermisosUsuario(Base):
   __tablename__ = 'PERMISOSUSUARIO'
 
+  EMPRESA = Column(CHAR(2))
   CODIGO = Column(CHAR(50), primary_key=True)
   NOMBRE = Column(CHAR(40))
   GRUPO = Column(CHAR(2))

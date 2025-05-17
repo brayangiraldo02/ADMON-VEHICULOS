@@ -1,4 +1,5 @@
-import { Component, EventEmitter, inject, OnDestroy, OnInit, Output } from '@angular/core';
+import { Component, effect, EventEmitter, inject, OnDestroy, OnInit, Output } from '@angular/core';
+import { InfoCompany } from 'src/app/interfaces/info-company.interface';
 import { InfoCompanyStateService } from 'src/app/states/info-company-state.service';
 
 @Component({
@@ -11,7 +12,21 @@ export class InfoCompanyComponent {
 
   isLoading: boolean = false;
 
-  constructor(private stateInfoCompany: InfoCompanyStateService) {}
+  infoCompany: InfoCompany = {
+    name: '',
+    nit: '',
+    direction: '',
+    city: '',
+    phone: '',
+    email: '',
+    logo: ''
+  }
+
+  constructor(private stateInfoCompany: InfoCompanyStateService) {
+    effect(() => {
+      this.infoCompany = this.stateInfoCompany.getInfoCompany();
+    });
+  }
 
   closeModal() {
     this.stateInfoCompany.hideInfoCompany();

@@ -3,6 +3,7 @@ import { JwtService } from 'src/app/services/jwt.service';
 import { ApiService } from 'src/app/services/api.service';
 import { Router } from '@angular/router';
 import { InfoCompanyStateService } from 'src/app/states/info-company-state.service';
+import { InfoCompany } from 'src/app/interfaces/info-company.interface';
 
 @Component({
   selector: 'app-owners-home',

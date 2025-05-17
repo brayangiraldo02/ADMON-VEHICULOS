@@ -93,4 +93,14 @@ export class JwtService {
     const token = this.getToken();
     return token ? jwtDecode(token) : null;
   }
+
+  getIdCompany(): string {
+    const token = this.getToken();
+    if (!token) return '';
+
+    const decoded: any = jwtDecode(token);
+
+    // Obtener el ID de la empresa
+    return decoded.user_data.empresa;
+  }
 }
