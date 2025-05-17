@@ -4,6 +4,7 @@ from fastapi.responses import JSONResponse
 from config.dbconnection import session
 from models.cajarecaudos import CajaRecaudos
 from models.propietarios import Propietarios
+from models.vehiculos import Vehiculos
 from schemas.reports import *
 from fastapi.encoders import jsonable_encoder
 from utils.reports import *
@@ -47,9 +48,14 @@ async def relationshiprevenues_report(data: RelationshipRevenuesReport):
           CajaRecaudos.DEU_SINIES.label('deuda_siniestro'),
           CajaRecaudos.FORMAPAGO.label('forma_pago'),
           CajaRecaudos.TOTAL.label('total'),
-          Propietarios.NOMBRE.label('empresa')
+          Propietarios.NOMBRE.label('empresa'),
+          Vehiculos.PAGA_ADMON.label('paga_admon'),
+          Vehiculos.GLOBAL_UND.label('global_und'),
+          Vehiculos.CUO_ADMON.label('cuota_admon'),
+          Vehiculos.CUO_DIARIA.label('cuota_diaria'),
         ) \
         .join(Propietarios, Propietarios.CODIGO == CajaRecaudos.PROPI_IDEN) \
+        .join(Vehiculos, Vehiculos.NUMERO == CajaRecaudos.NUMERO) \
         .filter(
           CajaRecaudos.FEC_RECIBO >= data.primeraFecha,
           CajaRecaudos.FEC_RECIBO <= data.ultimaFecha,
@@ -67,9 +73,14 @@ async def relationshiprevenues_report(data: RelationshipRevenuesReport):
           CajaRecaudos.DEU_SINIES.label('deuda_siniestro'),
           CajaRecaudos.FORMAPAGO.label('forma_pago'),
           CajaRecaudos.TOTAL.label('total'),
-          Propietarios.NOMBRE.label('empresa')
+          Propietarios.NOMBRE.label('empresa'),
+          Vehiculos.PAGA_ADMON.label('paga_admon'),
+          Vehiculos.GLOBAL_UND.label('global_und'),
+          Vehiculos.CUO_ADMON.label('cuota_admon'),
+          Vehiculos.CUO_DIARIA.label('cuota_diaria'),
         ) \
         .join(Propietarios, Propietarios.CODIGO == CajaRecaudos.PROPI_IDEN) \
+        .join(Vehiculos, Vehiculos.NUMERO == CajaRecaudos.NUMERO) \
         .filter(
           CajaRecaudos.FEC_RECIBO >= data.primeraFecha,
           CajaRecaudos.FEC_RECIBO <= data.ultimaFecha,
@@ -87,9 +98,14 @@ async def relationshiprevenues_report(data: RelationshipRevenuesReport):
           CajaRecaudos.DEU_SINIES.label('deuda_siniestro'),
           CajaRecaudos.FORMAPAGO.label('forma_pago'),
           CajaRecaudos.TOTAL.label('total'),
-          Propietarios.NOMBRE.label('empresa')
+          Propietarios.NOMBRE.label('empresa'),
+          Vehiculos.PAGA_ADMON.label('paga_admon'),
+          Vehiculos.GLOBAL_UND.label('global_und'),
+          Vehiculos.CUO_ADMON.label('cuota_admon'),
+          Vehiculos.CUO_DIARIA.label('cuota_diaria'),
         ) \
         .join(Propietarios, Propietarios.CODIGO == CajaRecaudos.PROPI_IDEN) \
+        .join(Vehiculos, Vehiculos.NUMERO == CajaRecaudos.NUMERO) \
         .filter(
           CajaRecaudos.FEC_RECIBO >= data.primeraFecha,
           CajaRecaudos.FEC_RECIBO <= data.ultimaFecha,
@@ -133,7 +149,8 @@ async def relationshiprevenues_report(data: RelationshipRevenuesReport):
           "fondo_inscripcion": item.fondo_inscripcion,
           "fondo_ahorro": item.fondo_ahorro,
           "deuda_siniestro": item.deuda_siniestro,
-          "total": item.total
+          "total": item.total,
+          "paga_admon": 0
         }
       else:
       # Verificar y asignar valores no vacíos si el registro existente tiene campos vacíos
@@ -153,6 +170,15 @@ async def relationshiprevenues_report(data: RelationshipRevenuesReport):
         aggregated_data[key]["fondo_inscripcion"] += item.fondo_inscripcion
         aggregated_data[key]["fondo_ahorro"] += item.fondo_ahorro
         aggregated_data[key]["deuda_siniestro"] += item.deuda_siniestro
+
+        admon_fee_component = 0
+      if item.paga_admon == "1" and item.global_und == "2":
+        # TODO: REVISAR REDONDEOS
+        print("deuda_renta", aggregated_data[key]["deuda_renta"], "cuota_admon", item.cuota_admon, "cuota_diaria", item.cuota_diaria)
+        admon_fee_component = round((aggregated_data[key]["deuda_renta"] * item.cuota_admon) / item.cuota_diaria, 2)
+        # admon_fee_component = int(raw * 100) / 100
+
+        aggregated_data[key]["paga_admon"] = admon_fee_component
 
     data_reporte = list(aggregated_data.values())
 
@@ -177,6 +203,7 @@ async def relationshiprevenues_report(data: RelationshipRevenuesReport):
     total_nequi = 0
     total_yappy = 0
     total_total = 0
+    total_admon = 0
 
     for item in registros_ordenados:
       total_deuda_renta += item["deuda_renta"]
@@ -184,6 +211,7 @@ async def relationshiprevenues_report(data: RelationshipRevenuesReport):
       total_fondo_ahorro += item["fondo_ahorro"]
       total_deuda_siniestro += item["deuda_siniestro"]
       total_total += item["total"]
+      total_admon += item["paga_admon"]
 
       if item["forma_pago"] == "1":
         total_efectivo += item["total"]
@@ -223,7 +251,8 @@ async def relationshiprevenues_report(data: RelationshipRevenuesReport):
         "arp": total_arp,
         "nequi": total_nequi,
         "yappy": total_yappy,
-        "total": total_total
+        "total": total_total,
+        "total_admon": total_admon
       },
       "fechas": {
         "primeraFecha": data.primeraFecha,

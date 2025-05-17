@@ -72,8 +72,9 @@
       <th rowspan="2">Saldo Antes</th>
       <th colspan="3" style="border-bottom: none;">Detalles del Pago</th>
       <th colspan="5" style="border-bottom: none; border-right: none;">Forma de Pago</th>
-      <th rowspan="2" style="border-left: 1px solid black">Total Empresa</th>
-      <th rowspan="2" style="border-right: 1px solid black;">Nombre Empresa</th>
+      <th rowspan="2">Total Empresa</th>
+      <th rowspan="2">Nombre Empresa</th>
+      <th rowspan="2" style="border-right: 1px solid black">Admon</th>
     </tr>
     <tr>
       <th>Renta Día</th>
@@ -113,6 +114,9 @@
       </td>
       <td style="border-left: 1px solid black; border-right: 1px solid black; font-size: 12px;">
         {{ item['empresa'] }}
+      </td>
+      <td style="border-right: 1px solid black;">
+        {{ item['paga_admon'] }}
       </td>
     </tr>
     {% endfor %}
@@ -165,6 +169,12 @@
       <td class="box-propietario"
         style="font-weight: bold; text-align: center; border-top: 2px solid #000; border-bottom: 2px solid #000;">{{ data['totales']['yappy'] }}
       </td>
+      <td class="box-propietario" style="font-weight: bold; text-align: center; border-top: 2px solid #000; border-bottom: 2px solid #000;">
+        {{ data['totales']['total'] }}
+      </td>
+      <td class="box-propietario" style="font-weight: bold; text-align: center; border-top: 2px solid #000; border-bottom: 2px solid #000;">
+        
+      </td>
       <td class="box-propietario" style="
         border-top: 2px solid #000;
         border-right: 2px solid #000;
@@ -173,7 +183,7 @@
         border-bottom-right-radius: 10px;
         text-align: center; 
         font-weight: bold;">
-        {{ data['totales']['total'] }}
+        {{ data['totales']['total_admon'] }}
       </td>
     </tr>
   </table>
