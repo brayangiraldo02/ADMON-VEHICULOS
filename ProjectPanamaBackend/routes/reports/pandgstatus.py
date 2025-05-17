@@ -48,7 +48,9 @@ async def pandgstatus_report(data: PandGStatusReport):
           Vehiculos.MODELO,
           Vehiculos.VLR_COMPRA,
           Vehiculos.NOMESTADO,
-          func.coalesce(func.sum(CajaRecaudos.DEU_RENTA), 0).label('total_recaudos')
+          func.coalesce(func.sum(CajaRecaudos.DEU_RENTA), 0).label('total_recaudos'),
+          func.coalesce(func.sum(CajaRecaudos.FON_INSCRI), 0).label('total_fondo_inscripcion'),
+          func.coalesce(func.sum(CajaRecaudos.DEU_SINIES), 0).label('total_deuda_siniestro'),
         ).outerjoin(
           CajaRecaudos,
           (CajaRecaudos.NUMERO == Vehiculos.NUMERO) & 
@@ -104,14 +106,16 @@ async def pandgstatus_report(data: PandGStatusReport):
           total_022 = movs.get('022', 0)
           total_016 = movs.get('016', 0)
           total_almacen = total_022 - total_016
+
+          recaudos = vehiculo.total_recaudos + vehiculo.total_fondo_inscripcion + vehiculo.total_deuda_siniestro
           
           # Calcular el balance de pérdidas y ganancias
-          estado_pyg = vehiculo.total_recaudos - total_024 - total_027 - total_026 - total_almacen
+          estado_pyg = recaudos - total_024 - total_027 - total_026 - total_almacen
           
           # Verificar si la unidad tiene algún movimiento
           tiene_movimientos = (
             vehiculo.NUMERO != "" and  # Verificar que el número no esté vacío
-            (vehiculo.total_recaudos != 0 or
+            (recaudos != 0 or
             total_024 != 0 or
             total_027 != 0 or
             total_026 != 0 or
@@ -129,7 +133,7 @@ async def pandgstatus_report(data: PandGStatusReport):
                   "VLR_COMPRA": vehiculo.VLR_COMPRA,
                   "NOMESTADO": vehiculo.NOMESTADO,
                   "INGRESOS": {
-                      "INGRESOS": vehiculo.total_recaudos,
+                      "INGRESOS": recaudos,
                       "SEGUROS": 0  # !PENDIENTE, REALIZAR LA RECOLECCIÓN DE LA INFORMACIÓN DE LA TABLA RECLAMOSCOLISIONES
                   },
                   "GASTOS": {
@@ -267,7 +271,9 @@ async def pandgstatus_report(data: PandGStatusReport):
         Vehiculos.MODELO,
         Vehiculos.VLR_COMPRA,
         Vehiculos.NOMESTADO,
-        func.coalesce(func.sum(CajaRecaudos.DEU_RENTA), 0).label('total_recaudos')
+        func.coalesce(func.sum(CajaRecaudos.DEU_RENTA), 0).label('total_recaudos'),
+        func.coalesce(func.sum(CajaRecaudos.FON_INSCRI), 0).label('total_fondo_inscripcion'),
+        func.coalesce(func.sum(CajaRecaudos.DEU_SINIES), 0).label('total_deuda_siniestro'),
       ).outerjoin(
         CajaRecaudos,
         (CajaRecaudos.NUMERO == Vehiculos.NUMERO) & 
@@ -313,8 +319,10 @@ async def pandgstatus_report(data: PandGStatusReport):
       total_016 = totales['016']
       total_almacen = total_022 - total_016
 
+      recaudos = vehiculo.total_recaudos + vehiculo.total_fondo_inscripcion + vehiculo.total_deuda_siniestro
+
       # Calcular estado de pérdidas y ganancias
-      estado_pyg = info_unidad.total_recaudos - total_024 - total_027 - total_026 - total_almacen
+      estado_pyg = recaudos - total_024 - total_027 - total_026 - total_almacen
 
       # Crear diccionario con la información procesada
       info_unidad_dict = {
@@ -324,7 +332,7 @@ async def pandgstatus_report(data: PandGStatusReport):
         "VLR_COMPRA": info_unidad.VLR_COMPRA,
         "NOMESTADO": info_unidad.NOMESTADO,
         "INGRESOS": {
-          "INGRESOS": info_unidad.total_recaudos,
+          "INGRESOS": recaudos,
           "SEGUROS": 0  # !PENDIENTE, REALIZAR LA RECOLECCIÓN DE LA INFORMACIÓN DE LA TABLA RECLAMOSCOLISIONES
         },
         "GASTOS": {
