@@ -1,6 +1,8 @@
 from fastapi import APIRouter, Response
 from fastapi.responses import JSONResponse
 from fastapi.encoders import jsonable_encoder
+from config.dbconnection import session
+from models.infoempresas import InfoEmpresas
 
 import os
 import json
@@ -14,23 +16,28 @@ company_router = APIRouter()
 
 @company_router.get('/info-company/{company_code}', tags=["Company"])
 async def get_info_company(company_code: str):
+  db = session()
   try:
-    if company_code == "10":
-      company_data = json_file_path_10
-    elif company_code == "58":
-      company_data = json_file_path_58
-    elif company_code == "A":
-      company_data = json_file_path_ADMIN
-    else:
-      return JSONResponse(
-        status_code=400, 
-        content={"message": "Invalid company code"}
-      )
-
-    with open(company_data, 'r', encoding='utf-8') as file:
-      data = json.load(file)
-      json_data = jsonable_encoder(data)
-      return JSONResponse(content=json_data)
+    company = db.query(InfoEmpresas.NOMBRE, InfoEmpresas.NIT, InfoEmpresas.DIRECCION, InfoEmpresas.CIUDAD, InfoEmpresas.TELEFONO, InfoEmpresas.CORREO, InfoEmpresas.LOGO) \
+      .filter(InfoEmpresas.ID == company_code) \
+      .first()
+    
+    if company:
+      company_data = {
+        "name": company.NOMBRE,
+        "nit": company.NIT,
+        "direction": company.DIRECCION,
+        "city": company.CIUDAD,
+        "phone": company.TELEFONO,
+        "email": company.CORREO,
+        "logo": company.LOGO
+      }
+      return JSONResponse(content=jsonable_encoder(company_data))
+    
+    return JSONResponse(
+      status_code=404,
+      content={"message": "Company not found"}
+    )
 
   except FileNotFoundError:
     return JSONResponse(
@@ -43,3 +50,6 @@ async def get_info_company(company_code: str):
         status_code=500,
         content={"message": f"An unexpected error occurred: {str(e)}"}
     )
+  
+  finally:
+    db.close()
