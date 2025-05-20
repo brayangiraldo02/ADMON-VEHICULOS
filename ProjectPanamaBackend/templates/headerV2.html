@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>footer</title> 
+    <style type="text/css">
+        .container {
+            position: relative;
+        }
+        #logo {
+            position: absolute;
+            top: 0;
+            right: 0;
+        }
+        .content {
+            margin-left: 200px; 
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            text-align: center;
+        }
+        tr:first-child th, tr:first-child td {
+            background-color: #ccc;
+            border: 1px solid #000000;
+            padding: 10px;
+            text-align: center;
+        }
+        td{
+            white-space: nowrap;
+            font-size: 13px;
+        }
+        tr {
+            padding: 15px;
+            line-height: 1.8;
+            margin-bottom: 20px;
+        }
+        .box-propietario {
+            text-align: left;
+            font-size: 17px;
+            margin-top: 10px;
+            border: 2px solid #000;
+            border-radius: 10px; /* Bordes redondeados */
+            padding: 10px; /* Espaciado interno */
+        }
+        dr {
+            position: absolute;
+            right: 0;
+            text-align: left;
+            top: -5px;
+        }
+        dt, dd {
+            display: inline;
+            margin: 0;
+        }
+        dt {
+            color: #a9a;
+        }
+        dt::before {
+            content: '';
+            display: block;
+        }
+        dt::after {
+            content: ':';
+        }
+        html, body {
+            scroll-behavior: smooth;
+        }
+        .title {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .centered-title {
+            font-size: 20px; /* Tamaño de fuente según tus preferencias */
+            text-align: center; /* Centra el título horizontalmente */
+            margin-top: 0px;
+            margin-bottom: 0px; 
+        }
+        .box {
+            margin-top: 20px;
+            border: 1px solid #ccc;
+            padding: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container" style="height: 2px;">
+        <div class="content">
+            <h4 style="margin-bottom: -20px;">{{ data_view['nombre_empresa'] }}</h4>
+            <h5 style="margin-bottom: 0px;">{{ data_view['nit_empresa'] }}</h5>
+        </div>
+    </div>
+        <img src={{ data_view['logo_empresa'] }} class="logo" height="75" width="190">
+
+    <dr>
+        <div class="box">
+            <dt>Fecha</dt>
+            <dd>{{ data_view['fecha'] }}</dd>
+            <br>
+            <dt>Hora</dt>
+            <dd>{{ data_view['hora'] }}</dd>
+        </div>        
+    </dr>
+    <hr>
+</body>
+</html>

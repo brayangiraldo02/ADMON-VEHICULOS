@@ -1,5 +1,6 @@
 from fastapi import APIRouter
 from fastapi.responses import JSONResponse
+from models.infoempresas import InfoEmpresas
 from config.dbconnection import session
 from models.movimien import Movimien
 from models.movienca import Movienca
@@ -37,6 +38,7 @@ async def partsrelationship_report(data: PartsRelationshipReport):
         empresa = empresa[0][0]
 
         conteo_reporte_piezas = db.query(
+          Propietarios.EMPRESA.label('codigo_empresa'),
           Movimien.CODIGO.label('codigo'),
           Movimien.NOMBRE.label('nombre'),
           Movimien.PRESENTA.label('presenta'),
@@ -79,6 +81,7 @@ async def partsrelationship_report(data: PartsRelationshipReport):
         ).all()
       else:
         conteo_reporte_piezas = db.query(
+          Propietarios.EMPRESA.label('codigo_empresa'),
           Movimien.CODIGO.label('codigo'),
           Movimien.NOMBRE.label('nombre'),
           Movimien.PRESENTA.label('presenta'),
@@ -121,6 +124,7 @@ async def partsrelationship_report(data: PartsRelationshipReport):
 
     elif data.unidad != "" and data.unidad != "TODOS":
       conteo_reporte_piezas = db.query(
+        Propietarios.EMPRESA.label('codigo_empresa'),
         Movimien.CODIGO.label('codigo'),
         Movimien.NOMBRE.label('nombre'),
         Movimien.PRESENTA.label('presenta'),
@@ -164,6 +168,8 @@ async def partsrelationship_report(data: PartsRelationshipReport):
 
     if len(conteo_reporte_piezas) == 0:
       return JSONResponse(content={"error": "No se encontraron registros"}, status_code=400)
+    
+    id_empresa = conteo_reporte_piezas[0].codigo_empresa
   
     # After query execution
     data_view_temp = {}
@@ -257,10 +263,19 @@ async def partsrelationship_report(data: PartsRelationshipReport):
       usuario = data.usuario
     titulo = 'Detalle Órdenes de Trabajo'
 
+    info_empresa = db.query(
+      InfoEmpresas.NOMBRE,
+      InfoEmpresas.NIT,
+      InfoEmpresas.LOGO
+    ).filter(InfoEmpresas.ID == id_empresa).first()
+
     info_view = {
       'usuario': usuario,
       'fecha': fecha,
       'hora': hora_actual,
+      "nombre_empresa": info_empresa.NOMBRE,
+      "nit_empresa": info_empresa.NIT,
+      "logo_empresa": info_empresa.LOGO,
       'data': data_view
     }
 
@@ -271,7 +286,7 @@ async def partsrelationship_report(data: PartsRelationshipReport):
     template_loader = jinja2.FileSystemLoader(searchpath="./templates")
     template_env = jinja2.Environment(loader=template_loader)
     template_file = "RelacionPiezas.html"
-    header_file = "header1.html"
+    header_file = "header2.html"
     footer_file = "footer1.html"
     template = template_env.get_template(template_file)
     header = template_env.get_template(header_file)

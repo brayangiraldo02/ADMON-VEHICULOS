@@ -1,6 +1,7 @@
 from fastapi import APIRouter
 from fastapi import APIRouter
 from fastapi.responses import JSONResponse
+from models.infoempresas import InfoEmpresas
 from config.dbconnection import session
 from models.cajarecaudos import CajaRecaudos
 from models.propietarios import Propietarios
@@ -38,6 +39,7 @@ async def relationshiprevenues_report(data: RelationshipRevenuesReport):
         empresa = empresa[0][0]
 
         conteo_reporte_ingresos = db.query(
+          Propietarios.EMPRESA.label('codigo_empresa'),
           CajaRecaudos.RECIBO.label('recibo'),
           CajaRecaudos.FEC_RECIBO.label('fecha_recibo'),
           CajaRecaudos.NUMERO.label('unidad'),
@@ -63,6 +65,7 @@ async def relationshiprevenues_report(data: RelationshipRevenuesReport):
         ).all()
       else:
         conteo_reporte_ingresos = db.query(
+          Propietarios.EMPRESA.label('codigo_empresa'),
           CajaRecaudos.RECIBO.label('recibo'),
           CajaRecaudos.FEC_RECIBO.label('fecha_recibo'),
           CajaRecaudos.NUMERO.label('unidad'),
@@ -88,6 +91,7 @@ async def relationshiprevenues_report(data: RelationshipRevenuesReport):
 
     elif data.unidad != "" and data.unidad != "TODOS":
       conteo_reporte_ingresos = db.query(
+          Propietarios.EMPRESA.label('codigo_empresa'),
           CajaRecaudos.RECIBO.label('recibo'),
           CajaRecaudos.FEC_RECIBO.label('fecha_recibo'),
           CajaRecaudos.NUMERO.label('unidad'),
@@ -115,6 +119,8 @@ async def relationshiprevenues_report(data: RelationshipRevenuesReport):
     if len(conteo_reporte_ingresos) == 0:
       return JSONResponse(content={"error": "No se encontraron registros"}, status_code=400)
     
+    id_empresa = conteo_reporte_ingresos[0].codigo_empresa
+
     aggregated_data = {}
     for item in conteo_reporte_ingresos:
       # Condición 1: forma_pago debe ser un string entre "1" y "5"
@@ -239,6 +245,12 @@ async def relationshiprevenues_report(data: RelationshipRevenuesReport):
     else:
       usuario = data.usuario
 
+    info_empresa = db.query(
+      InfoEmpresas.NOMBRE,
+      InfoEmpresas.NIT,
+      InfoEmpresas.LOGO
+    ).filter(InfoEmpresas.ID == id_empresa).first()
+
     response = {
       "reporte": registros_ordenados,
       "totales": {
@@ -261,6 +273,9 @@ async def relationshiprevenues_report(data: RelationshipRevenuesReport):
       "usuario": usuario,
       "fecha": fecha,
       "hora": hora_actual,
+      "nombre_empresa": info_empresa.NOMBRE,
+      "nit_empresa": info_empresa.NIT,
+      "logo_empresa": info_empresa.LOGO,
     }
 
     data_reporte = response
@@ -274,7 +289,7 @@ async def relationshiprevenues_report(data: RelationshipRevenuesReport):
     template_loader = jinja2.FileSystemLoader(searchpath="./templates")
     template_env = jinja2.Environment(loader=template_loader)
     template_file = "RelacionIngresos.html"
-    header_file = "header1.html"
+    header_file = "header2.html"
     footer_file = "footer1.html"
     template = template_env.get_template(template_file)
     header = template_env.get_template(header_file)

@@ -1,5 +1,6 @@
 from fastapi import APIRouter
 from fastapi.responses import JSONResponse
+from models.infoempresas import InfoEmpresas
 from config.dbconnection import session
 from models.estados import Estados
 from models.vehiculos import Vehiculos
@@ -88,6 +89,20 @@ async def get_vehiculos_detalles(infoReports: infoReports):
         # Crear un nuevo diccionario con los datos de las claves deseadas
         datos = {clave: data.get(clave, {}) for clave in claves_deseadas}
 
+        id_owner = claves_deseadas[0]
+
+        info_owner = db.query(
+            Propietarios.EMPRESA.label('codigo_empresa'),
+            Propietarios.NOMBRE.label('propietario_nombre'),
+        ).filter(Propietarios.CODIGO == id_owner).first()
+
+        info_empresa = db.query(
+            InfoEmpresas.NOMBRE,
+            InfoEmpresas.NIT,
+            InfoEmpresas.LOGO
+        ) \
+        .filter(InfoEmpresas.ID == info_owner.codigo_empresa).first()
+        
         # Datos de la fecha y hora actual
         # Define la zona horaria de Ciudad de Panamá
         panama_timezone = pytz.timezone('America/Panama')
@@ -102,7 +117,10 @@ async def get_vehiculos_detalles(infoReports: infoReports):
         # Inicializar el diccionario data_view con información común
         data_view = {
             "fecha": fecha,
-            "hora": hora_actual
+            "hora": hora_actual,
+            "nombre_empresa": info_empresa.NOMBRE,
+            "nit_empresa": info_empresa.NIT,
+            "logo_empresa": info_empresa.LOGO,
         }
 
         # Iterar sobre las empresas y vehículos
@@ -160,7 +178,7 @@ async def get_vehiculos_detalles(infoReports: infoReports):
         template_loader = jinja2.FileSystemLoader(searchpath="./templates")
         template_env = jinja2.Environment(loader=template_loader)
         template_file = "InformeCuotas.html"
-        header_file = "header.html"
+        header_file = "headerV2.html"
         footer_file = "footer.html"
         template = template_env.get_template(template_file)
         header = template_env.get_template(header_file)

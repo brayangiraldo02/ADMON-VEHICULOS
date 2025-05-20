@@ -1,5 +1,6 @@
 from fastapi import APIRouter
 from fastapi.responses import JSONResponse
+from models.infoempresas import InfoEmpresas
 from models.propietarios import Propietarios
 from config.dbconnection import session
 from sqlalchemy import func, case
@@ -370,6 +371,7 @@ async def pandgstatus_report(data: PandGStatusReport):
     if data.unidad != "" and data.unidad != "TODOS":
         # Caso de una unidad específica - obtener su empresa
         empresa_info = db.query(
+            Propietarios.EMPRESA.label('codigo_e'),
             Propietarios.CODIGO,
             Propietarios.NOMBRE
         ).join(
@@ -381,6 +383,8 @@ async def pandgstatus_report(data: PandGStatusReport):
         if empresa_info:
             codigo_empresa = empresa_info.CODIGO
             nombre_empresa = empresa_info.NOMBRE
+
+            id_empresa = empresa_info.codigo_e
             
             # Crear la estructura para esta empresa
             empresas_dict[nombre_empresa] = {
@@ -405,6 +409,7 @@ async def pandgstatus_report(data: PandGStatusReport):
         # Caso de múltiples unidades - obtener empresa para cada unidad
         # Obtener información de todas las empresas y sus vehículos
         empresas_info = db.query(
+            Propietarios.EMPRESA.label('codigo_empresa'),
             Vehiculos.NUMERO,
             Propietarios.CODIGO,
             Propietarios.NOMBRE
@@ -413,6 +418,8 @@ async def pandgstatus_report(data: PandGStatusReport):
         ).filter(
             Vehiculos.NUMERO.in_([u["NUMERO"] for u in info_unidades])
         ).all()
+
+        id_empresa = empresas_info[0].codigo_empresa
         
         # Crear un diccionario para mapear unidades a empresas
         unidad_a_empresa = {e.NUMERO: {"codigo": e.CODIGO, "nombre": e.NOMBRE} for e in empresas_info}
@@ -510,6 +517,12 @@ async def pandgstatus_report(data: PandGStatusReport):
             "avance": sum(e["totales_empresa"]["avance"] for e in empresas_dict.values())
         }
 
+    info_empresa = db.query(
+        InfoEmpresas.NOMBRE,
+        InfoEmpresas.NIT,
+        InfoEmpresas.LOGO
+    ).filter(InfoEmpresas.ID == id_empresa).first()
+
     # Construir la respuesta final
     response = {
         "empresas": empresas_dict,
@@ -521,6 +534,9 @@ async def pandgstatus_report(data: PandGStatusReport):
         "usuario": usuario,
         "fecha": fecha,
         "hora": hora_actual,
+        "nombre_empresa": info_empresa.NOMBRE,
+        "nit_empresa": info_empresa.NIT,
+        "logo_empresa": info_empresa.LOGO,
     }
 
     headers = {
@@ -534,7 +550,7 @@ async def pandgstatus_report(data: PandGStatusReport):
     template_loader = jinja2.FileSystemLoader(searchpath="./templates")
     template_env = jinja2.Environment(loader=template_loader)
     template_file = "EstadoPyG2.html"
-    header_file = "header1.html"
+    header_file = "header2.html"
     footer_file = "footer1.html"
     template = template_env.get_template(template_file)
     header = template_env.get_template(header_file)

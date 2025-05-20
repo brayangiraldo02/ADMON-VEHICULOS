@@ -1,5 +1,6 @@
 from fastapi import APIRouter
 from fastapi.responses import JSONResponse
+from models.infoempresas import InfoEmpresas
 from config.dbconnection import session
 from models.propietarios import Propietarios
 from models.vehiculos import Vehiculos
@@ -140,6 +141,7 @@ async def get_vehiculos_detalles(infoReports: infoReports):
             infoReports.estados = [estado.CODIGO for estado in estados]
 
         vehiculos_detalles = db.query(
+            Propietarios.EMPRESA.label('codigo_empresa'),
             Vehiculos.PROPI_IDEN.label('propietario_codigo'),
             Propietarios.NOMBRE.label('vehiculo_empresa'),
             Vehiculos.NUMERO.label('vehiculo_unidad'),
@@ -161,6 +163,8 @@ async def get_vehiculos_detalles(infoReports: infoReports):
         ).join(
             Propietarios, Propietarios.CODIGO == Vehiculos.PROPI_IDEN
         ).all()
+
+        id_empresa = vehiculos_detalles[0].codigo_empresa
 
         vehiculos_detalles_list = []
         for result in vehiculos_detalles:
@@ -185,6 +189,12 @@ async def get_vehiculos_detalles(infoReports: infoReports):
 
         data = valor_compra_vehiculos(vehiculos_detalles_list)
 
+        info_empresa = db.query(
+            InfoEmpresas.NOMBRE,
+            InfoEmpresas.NIT,
+            InfoEmpresas.LOGO
+        ).filter(InfoEmpresas.ID == id_empresa).first()
+
         # Datos de la fecha y hora actual
         # Define la zona horaria de Ciudad de Panamá
         panama_timezone = pytz.timezone('America/Panama')
@@ -200,6 +210,9 @@ async def get_vehiculos_detalles(infoReports: infoReports):
             "fecha": fecha,
             "hora": hora_actual,
             "usuario": usuario,
+            "nombre_empresa": info_empresa.NOMBRE,
+            "nit_empresa": info_empresa.NIT,
+            "logo_empresa": info_empresa.LOGO,
             "propietarios": []
         }
 
@@ -252,7 +265,7 @@ async def get_vehiculos_detalles(infoReports: infoReports):
         template_loader = jinja2.FileSystemLoader(searchpath="./templates")
         template_env = jinja2.Environment(loader=template_loader)
         template_file = "ValorCompraVehiculos.html"
-        header_file = "header1.html"
+        header_file = "header2.html"
         footer_file = "footer.html"
         template = template_env.get_template(template_file)
         header = template_env.get_template(header_file)

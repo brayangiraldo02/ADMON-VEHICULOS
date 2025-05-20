@@ -5,6 +5,7 @@ from models.estados import Estados
 from models.vehiculos import Vehiculos
 from models.propietarios import Propietarios
 from models.conductores import Conductores
+from models.infoempresas import InfoEmpresas
 from schemas.reports import *
 from fastapi.encoders import jsonable_encoder
 from utils.reports import *
@@ -130,8 +131,9 @@ async def get_conteo_propietarios_vehiculos_estados(id: str, info: userInfo):
     db = session()
     try:
         conteo_propietarios_vehiculos_estados = db.query(
+            Propietarios.EMPRESA.label('empresa_codigo'),
             Propietarios.CODIGO.label('propietario_codigo'), 
-            Propietarios.NOMBRE.label('propietario_nombre'), 
+            Propietarios.NOMBRE.label('propietario_nombre'),
             Estados.CODIGO.label('estado_codigo'),
             Estados.NOMBRE.label('estado_nombre'), 
             Vehiculos.NUMERO.label('vehiculo_numero')
@@ -140,6 +142,8 @@ async def get_conteo_propietarios_vehiculos_estados(id: str, info: userInfo):
         .join(Propietarios, Vehiculos.PROPI_IDEN == Propietarios.CODIGO) \
         .filter(Propietarios.CODIGO == id) \
         .all()
+
+        id_empresa = conteo_propietarios_vehiculos_estados[0].empresa_codigo
 
         vehiculos_estados_propietarios_list = [] 
         for resultado in conteo_propietarios_vehiculos_estados:
@@ -156,7 +160,15 @@ async def get_conteo_propietarios_vehiculos_estados(id: str, info: userInfo):
         data = data.get("conteo_por_empresa")
         data = data.get(str(id))  # Usa el id directamente
 
-        print(data)
+        # print(data)
+
+        info_empresa = db.query(
+            InfoEmpresas.NOMBRE, 
+            InfoEmpresas.NIT,
+            InfoEmpresas.LOGO
+        ) \
+        .filter(InfoEmpresas.ID == id_empresa) \
+        .first()
 
         # Datos de la fecha y hora actual
         # Define la zona horaria de Ciudad de Panamá
@@ -173,6 +185,9 @@ async def get_conteo_propietarios_vehiculos_estados(id: str, info: userInfo):
         data_view = {
             "fecha": fecha,
             "hora": hora_actual,
+            "nombre_empresa": info_empresa.NOMBRE,
+            "nit_empresa": info_empresa.NIT,
+            "logo_empresa": info_empresa.LOGO,
             "codigo_empresa": id
         }
         
@@ -219,7 +234,7 @@ async def get_conteo_propietarios_vehiculos_estados(id: str, info: userInfo):
         template_loader = jinja2.FileSystemLoader(searchpath="./templates")
         template_env = jinja2.Environment(loader=template_loader)
         template_file = "form1.html"
-        header_file = "header1.html"
+        header_file = "header2.html"
         footer_file = "footer1.html"
         template = template_env.get_template(template_file)
         header = template_env.get_template(header_file)
@@ -422,16 +437,19 @@ async def get_conteo_vehiculos_estados_numeros(info: userInfo):
 # -----------------------------------------------------------------------------------------
 
 @statevehiclefleetReports_router.post('/informe-estados-detallado-empresa/{id}', response_class=FileResponse)
-async def get_conteo_propietarios_vehiculos_estados_numeros(id: int, info: userInfo):
+async def get_conteo_propietarios_vehiculos_estados_numeros(id: str, info: userInfo):
   db = session()
   try:
     conteo_propietarios_vehiculos_estados = db.query(
+        Propietarios.EMPRESA.label('empresa_codigo'),
         Propietarios.CODIGO.label('propietario_codigo'),
         Propietarios.NOMBRE.label('propietario_nombre'),
         Estados.CODIGO.label('estado_codigo'),
         Estados.NOMBRE.label('estado_nombre'),
         Vehiculos.NUMERO.label('vehiculo_numero')
     ).join(Vehiculos, Estados.CODIGO == Vehiculos.ESTADO).join(Propietarios, Vehiculos.PROPI_IDEN == Propietarios.CODIGO).filter(Propietarios.CODIGO == id).all()
+
+    id_empresa = conteo_propietarios_vehiculos_estados[0].empresa_codigo
 
     vehiculos_estados_propietarios_list = []
     for resultado in conteo_propietarios_vehiculos_estados:
@@ -445,7 +463,14 @@ async def get_conteo_propietarios_vehiculos_estados_numeros(id: int, info: userI
         vehiculos_estados_propietarios_list.append(propietarios_vehiculos_estados)
     data = obtener_numeros_por_propietario(vehiculos_estados_propietarios_list)
     data = data.get("numeros_por_propietario")
-    data = data.get(f"{id:02d}") 
+    data = data.get(id.zfill(2))
+    
+    info_empresa = db.query(
+        InfoEmpresas.NOMBRE,
+        InfoEmpresas.NIT,
+        InfoEmpresas.LOGO
+    ).filter(InfoEmpresas.ID == id_empresa).first()
+
     # Datos de la fecha y hora actual
     # Define la zona horaria de Ciudad de Panamá
     panama_timezone = pytz.timezone('America/Panama')
@@ -459,6 +484,9 @@ async def get_conteo_propietarios_vehiculos_estados_numeros(id: int, info: userI
     data_view = {
         "fecha": fecha,
         "hora": hora_actual, 
+        "nombre_empresa": info_empresa.NOMBRE,
+        "nit_empresa": info_empresa.NIT,
+        "logo_empresa": info_empresa.LOGO,
         "codigo_empresa": id
     }
     data_view["empresa"] = data.get("nombre_empresa", 0)
@@ -561,7 +589,7 @@ async def get_conteo_propietarios_vehiculos_estados_numeros(id: int, info: userI
     template_loader = jinja2.FileSystemLoader(searchpath="./templates")
     template_env = jinja2.Environment(loader=template_loader)
     template_file = "form2.html"
-    header_file = "header1.html"
+    header_file = "header2.html"
     footer_file = "footer1.html"
     template = template_env.get_template(template_file)
     header = template_env.get_template(header_file)
