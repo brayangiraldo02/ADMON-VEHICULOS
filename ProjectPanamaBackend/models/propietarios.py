@@ -3,6 +3,7 @@ from config.dbconnection import Base
 
 class Propietarios(Base):
     __tablename__ = 'PROPIETARIOS'
+    EMPRESA = Column(CHAR(2))
     CODIGO = Column(CHAR(12), primary_key=True, nullable=False)
     ABREVIADO = Column(CHAR(20), default='')
     NOMBRE = Column(CHAR(50), default='')

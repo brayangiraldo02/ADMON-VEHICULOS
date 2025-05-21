@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ApiService } from 'src/app/services/api.service';
 import { JwtService } from 'src/app/services/jwt.service';
+import { InfoCompanyStateService } from 'src/app/states/info-company-state.service';
 
 @Component({
   selector: 'app-login',
@@ -22,11 +23,12 @@ export class LoginComponent implements OnInit {
     private fb: FormBuilder,
     private apiService: ApiService,
     private jwtService: JwtService,
-    private router: Router
+    private router: Router,
+    private stateInfoCompany: InfoCompanyStateService
   ) {
     this.loginForm = this.fb.group({
       user: ['', [Validators.required, Validators.minLength(6), Validators.maxLength(10)]],
-      password: ['', [Validators.required, Validators.minLength(4), Validators.maxLength(8)]]
+      password: ['', [Validators.required, Validators.minLength(4), Validators.maxLength(10)]]
     });
   }
 
@@ -39,6 +41,7 @@ export class LoginComponent implements OnInit {
       this.apiService.postData('login', userLogin).subscribe(
         (response) => {
           this.jwtService.setToken(response.token);
+          this.getInfoCompany();
           this.jwtService.isAdmin() ? this.router.navigate(['/users-home']) : (this.jwtService.verifyOwner() ? this.router.navigate(['/owners-home']) : this.router.navigate(['/users-home']));
         },
         (error) => {
@@ -68,5 +71,14 @@ export class LoginComponent implements OnInit {
       const input = document.getElementById(option) as HTMLInputElement;
       input.type = this.showUser ? 'text' : 'password';
     }
+  }
+
+  getInfoCompany(): void {
+    const idCompany = this.jwtService.getIdCompany();
+    this.apiService.getData('info-company/'+idCompany).subscribe(
+      (response) => {
+        this.stateInfoCompany.setInfoCompany(response);
+      }
+    );
   }
 }

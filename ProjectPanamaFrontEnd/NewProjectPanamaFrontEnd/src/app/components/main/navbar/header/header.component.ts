@@ -1,9 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, effect, inject, OnInit } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
 import { ChangeDetectorRef } from '@angular/core';
 import { ApiService } from 'src/app/services/api.service';
 import { JwtService } from 'src/app/services/jwt.service';
 import { OwnersGuard } from 'src/app/guards/owners.guard';
+import { InfoCompanyStateService } from 'src/app/states/info-company-state.service';
+import { InfoCompany } from 'src/app/interfaces/info-company.interface';
 
 @Component({
   selector: 'app-header',
@@ -15,14 +17,30 @@ export class HeaderComponent implements OnInit {
   isHome: boolean = true;
   imgUser: string = "../../../../assets/img/taxi.jpg";
   ownerView: boolean = false;
+  infoCompanyVisible: boolean = false;
+
+  infoCompany: InfoCompany = {
+    name: '',
+    nit: '',
+    direction: '',
+    city: '',
+    phone: '',
+    email: '',
+    logo: ''
+  }
 
   constructor(
     private apiService: ApiService,
     private jwtService: JwtService,
     private router: Router,
     private cdr: ChangeDetectorRef, // Importante para detectar cambios
-    private ownersGuard: OwnersGuard
-  ) { }
+    private ownersGuard: OwnersGuard,
+    private stateInfoCompany: InfoCompanyStateService
+  ) { 
+    effect(() => {
+      this.infoCompany = this.stateInfoCompany.getInfoCompany();
+    });
+  }
 
   ngOnInit() {
     this.obtenerUsuario();
@@ -82,5 +100,20 @@ export class HeaderComponent implements OnInit {
     if (this.permisos.user_data.opcion16 === true && !this.jwtService.isAdmin()) {
       this.ownerView = true;
     }
+  }
+
+  showModal() {
+    this.infoCompanyVisible = !this.infoCompanyVisible;
+    this.stateInfoCompany.showInfoCompany();
+
+    document.documentElement.style.overflow = 'hidden';
+    document.body.style.overflow = 'hidden';
+  }
+
+  hideModal() {
+    this.infoCompanyVisible = !this.infoCompanyVisible;
+
+    document.documentElement.style.overflow = '';
+    document.body.style.overflow = '';
   }
 }

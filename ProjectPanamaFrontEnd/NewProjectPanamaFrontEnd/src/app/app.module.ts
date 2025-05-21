@@ -6,7 +6,7 @@ import {MatButtonModule} from '@angular/material/button';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { HeaderComponent } from './components/main/header/header.component';
+import { HeaderComponent } from './components/main/navbar/header/header.component';
 import { UsersHomeComponent } from './components/main/home/users-home/users-home.component';
 import { LoginComponent } from './components/users/login/login.component';
 import { HttpClientModule } from '@angular/common/http';
@@ -46,6 +46,13 @@ import { DriversDocumentationComponent } from './components/tasks/drivers/driver
 import { OperacionesEntregaVehiculoConductorComponent } from './components/options/operaciones/operaciones-entrega-vehiculo-conductor/operaciones-entrega-vehiculo-conductor.component';
 import { OwnersHomeComponent } from './components/main/home/owners-home/owners-home.component';
 import { OwnersFeespaidComponent } from './components/owners/owners-feespaid/owners-feespaid.component';
+import { OwnersStatusfleetsummaryComponent } from './components/owners/owners-statusfleetsummary/owners-statusfleetsummary.component';
+import { OwnersStatusfleetdetailComponent } from './components/owners/owners-statusfleetdetail/owners-statusfleetdetail.component';
+import { OwnersPartsrelationshipComponent } from './components/owners/owners-partsrelationship/owners-partsrelationship.component';
+import { OwnersPurchasevalueandpiqueraComponent } from './components/owners/owners-purchasevalueandpiquera/owners-purchasevalueandpiquera.component';
+import { OwnersRelationshiprevenuesComponent } from './components/owners/owners-relationshiprevenues/owners-relationshiprevenues.component';
+import { OwnersPandgstatusComponent } from './components/owners/owners-pandgstatus/owners-pandgstatus.component';
+import { InfoCompanyComponent } from './components/main/navbar/info-company/info-company.component';
 
 @NgModule({
   declarations: [
@@ -88,6 +95,13 @@ import { OwnersFeespaidComponent } from './components/owners/owners-feespaid/own
     OperacionesEntregaVehiculoConductorComponent,
     OwnersHomeComponent,
     OwnersFeespaidComponent,
+    OwnersStatusfleetsummaryComponent,
+    OwnersStatusfleetdetailComponent,
+    OwnersPartsrelationshipComponent,
+    OwnersPurchasevalueandpiqueraComponent,
+    OwnersRelationshiprevenuesComponent,
+    OwnersPandgstatusComponent,
+    InfoCompanyComponent,
   ],
   imports: [
     BrowserModule,

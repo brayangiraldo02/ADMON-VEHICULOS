@@ -1,7 +1,7 @@
 <header>
   <div class="info-company">
-    <div class="logo" routerLink="/users-home">
-      <img src="https://uploads-ssl.webflow.com/6291afaf5676f4664ddf0566/6291afaf5676f4542adf05db_logo.png" alt="Logo de AlfaSoft">
+    <div class="logo" (click)="showModal()">
+      <img [src]="infoCompany.logo" alt="Logo de la empresa">
     </div>
     <!-- <h1>Total Taxi</h1> -->
   </div>  
@@ -30,7 +30,7 @@
       </span>
       <p>Vehículos</p>
     </button>
-    <button *ngIf="this.isHome && this.permisos.user_data.tarea0 && !this.ownerView" routerLink="/statevehiclefleet">
+    <button *ngIf="this.isHome && this.permisos.user_data.tarea04 && !this.ownerView" routerLink="/statevehiclefleet">
       <span class="material-symbols-outlined" translate="no">
         garage
       </span>
@@ -54,3 +54,8 @@
     <img [src]="imgUser" alt="Foto de perfil">
   </div>
 </header>
+
+<app-info-company
+  *ngIf="infoCompanyVisible"
+  (close)="hideModal()"
+></app-info-company>

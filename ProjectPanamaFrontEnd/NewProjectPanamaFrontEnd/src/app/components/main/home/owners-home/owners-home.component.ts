@@ -1,7 +1,9 @@
-import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, inject, effect } from '@angular/core';
 import { JwtService } from 'src/app/services/jwt.service';
 import { ApiService } from 'src/app/services/api.service';
 import { Router } from '@angular/router';
+import { InfoCompanyStateService } from 'src/app/states/info-company-state.service';
+import { InfoCompany } from 'src/app/interfaces/info-company.interface';
 
 @Component({
   selector: 'app-owners-home',
@@ -9,7 +11,6 @@ import { Router } from '@angular/router';
   styleUrls: ['./owners-home.component.css']
 })
 export class OwnersHomeComponent {
-  constructor(private jwtService: JwtService, private apiService: ApiService, private router: Router) { }
   @ViewChild('videoPlayer') videoPlayer!: ElementRef<HTMLVideoElement>;
 
   options: any[] = []
@@ -34,10 +35,28 @@ export class OwnersHomeComponent {
   showImage: boolean = true;
   currentVideoIndex: number = 0;
   currentVideo: string = '';
-  changeVideo: boolean = false;
+  showImages: boolean = true;
   permisos: any;
 
+  ownersStatusfleetsummaryVisible: boolean = false;
+  ownersStatusfleetdetailVisible: boolean = false;
+  ownersPurchasevalueandpiqueraVisible: boolean = false;
+  ownersRelationshiprevenuesVisible: boolean = false;
+  ownersPartsrelationshipVisible: boolean = false;
+  ownersPandgstatusVisible: boolean = false;
   ownersFeespaidVisible: boolean = false;
+  infoCompanyVisible: boolean = false;
+
+  constructor(
+    private jwtService: JwtService, 
+    private apiService: ApiService, 
+    private router: Router,
+    private stateInfoCompany: InfoCompanyStateService
+  ) {
+    effect(() => {
+      this.infoCompanyVisible = this.stateInfoCompany.displayInfoCompany();
+    });
+  }
 
   ngOnInit() {
     this.changeImagesPeriodically();
@@ -54,17 +73,18 @@ export class OwnersHomeComponent {
     this.convertirValoresBooleanos(this.permisos.user_data);
 
     this.options = [
-      { name: 'Estado de Flota Resumen', url: 'hoalalalal', enabled: this.permisos.user_data.opcion01, disabled: true, click: null },
-      { name: 'Estado de Flota Detalle', url: 'hoalalalal', enabled: this.permisos.user_data.opcion01, disabled: true, click: null },
-      { name: 'Relación Ingresos', url: 'hoalalalal', enabled: this.permisos.user_data.opcion02, disabled: true, click: null },
-      { name: 'Relación Piezas', url: 'hoalalalal', enabled: this.permisos.user_data.opcion03, disabled: true, click: null },
-      { name: 'Estado de P y G', url: 'hoalalalal', enabled: this.permisos.user_data.opcion04, disabled: true, click: null },
-      { name: 'Cuotas Pagas por Conductor', url: 'hoalalalal', enabled: this.permisos.user_data.opcion05, disabled: false, click: () => this.showModalOwnersFeespaid()}
+      { name: 'Estado de Flota Resumen', url: 'hoalalalal', disabled: false, click: () => this.showModalOwnersStatusfleetsummary() },
+      { name: 'Estado de Flota Detalle', url: 'hoalalalal', disabled: false, click: () => this.showModalOwnersStatusfleetdetail() },
+      { name: 'Valores de Compra y Piquera', url: 'hoalalalal', disabled: false, click: () => this.showModalOwnersPurchasevalueandpiquera() },
+      { name: 'Relación Ingresos', url: 'hoalalalal', disabled: false, click: () => this.showModalOwnersRelationshipprevenues() },
+      { name: 'Relación Piezas', url: 'hoalalalal', disabled: false, click: () => this.showModalOwnersPartsRelationship() },
+      { name: 'Estado de P y G', url: 'hoalalalal', disabled: false, click: () => this.showModalOwnersPandgstatus() },
+      { name: 'Cuotas Pagas por Conductor', url: 'hoalalalal', disabled: false, click: () => this.showModalOwnersFeespaid()}
     ];
   }
 
-  changeVideoState() {
-    this.changeVideo = !this.changeVideo;
+  toggleMediaType() {
+    this.showImages = !this.showImages;
   }
 
   changeImagesPeriodically() {
@@ -101,6 +121,42 @@ export class OwnersHomeComponent {
     }
   }
 
+  showModalOwnersStatusfleetsummary() {
+    this.ownersStatusfleetsummaryVisible = !this.ownersStatusfleetsummaryVisible;
+    document.documentElement.style.overflow = 'hidden';
+    document.body.style.overflow = 'hidden';
+  }
+
+  showModalOwnersStatusfleetdetail() {
+    this.ownersStatusfleetdetailVisible = !this.ownersStatusfleetdetailVisible;
+    document.documentElement.style.overflow = 'hidden';
+    document.body.style.overflow = 'hidden';
+  }
+
+  showModalOwnersPurchasevalueandpiquera() {
+    this.ownersPurchasevalueandpiqueraVisible = !this.ownersPurchasevalueandpiqueraVisible;
+    document.documentElement.style.overflow = 'hidden';
+    document.body.style.overflow = 'hidden';
+  }
+
+  showModalOwnersRelationshipprevenues() {
+    this.ownersRelationshiprevenuesVisible = !this.ownersRelationshiprevenuesVisible;
+    document.documentElement.style.overflow = 'hidden';
+    document.body.style.overflow = 'hidden';
+  }
+
+  showModalOwnersPartsRelationship() {
+    this.ownersPartsrelationshipVisible = !this.ownersPartsrelationshipVisible;
+    document.documentElement.style.overflow = 'hidden';
+    document.body.style.overflow = 'hidden';
+  }
+
+  showModalOwnersPandgstatus() {
+    this.ownersPandgstatusVisible = !this.ownersPandgstatusVisible;
+    document.documentElement.style.overflow = 'hidden';
+    document.body.style.overflow = 'hidden';
+  }
+
   showModalOwnersFeespaid() {
     this.ownersFeespaidVisible = !this.ownersFeespaidVisible;
     document.documentElement.style.overflow = 'hidden';
@@ -108,7 +164,34 @@ export class OwnersHomeComponent {
   }
 
   hideModal() {
-    this.ownersFeespaidVisible = !this.ownersFeespaidVisible;
+    if (this.ownersStatusfleetsummaryVisible) {
+      this.ownersStatusfleetsummaryVisible = !this.ownersStatusfleetsummaryVisible;
+    }
+
+    if (this.ownersStatusfleetdetailVisible) {
+      this.ownersStatusfleetdetailVisible = !this.ownersStatusfleetdetailVisible;
+    }
+
+    if (this.ownersPurchasevalueandpiqueraVisible) {
+      this.ownersPurchasevalueandpiqueraVisible = !this.ownersPurchasevalueandpiqueraVisible
+    }
+
+    if (this.ownersRelationshiprevenuesVisible) {
+      this.ownersRelationshiprevenuesVisible = !this.ownersRelationshiprevenuesVisible;
+    }
+
+    if (this.ownersPartsrelationshipVisible) {
+      this.ownersPartsrelationshipVisible = !this.ownersPartsrelationshipVisible;
+    }
+
+    if (this.ownersPandgstatusVisible) {
+      this.ownersPandgstatusVisible = !this.ownersPandgstatusVisible;
+    }
+
+    if (this.ownersFeespaidVisible) {
+      this.ownersFeespaidVisible = !this.ownersFeespaidVisible;
+    }
+
     document.documentElement.style.overflow = '';
     document.body.style.overflow = '';
   }

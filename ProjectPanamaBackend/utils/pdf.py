@@ -24,7 +24,7 @@ def html2pdf(titulo, html_path, pdf_path, header_path, footer_path):
         'header-html': header_path,
         'header-center': titulo,
         '--header-font-name': 'Times New Roman', 
-        '--header-font-size': '14',
+        '--header-font-size': '12',
         'footer-center': 'Pág [page] de [topage]',  
         'footer-html': footer_path,
         'footer-font-size': '9',

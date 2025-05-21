@@ -21,9 +21,9 @@ interface Owner {
 export class OwnersFeespaidComponent {
   @Output() close = new EventEmitter<void>();
 
-  isLoading: boolean = false;
+  isLoading: boolean = true;
 
-  mostrarOpcionesEmpresas: boolean = false;
+  mostrarOpcionesEmpresas: boolean = true;
   mostrarOpcionesEstados: boolean = false;
 
   states: State[] = [];
@@ -81,6 +81,7 @@ export class OwnersFeespaidComponent {
         this.owners = response.filter((owner: any) => owner.id);
         this.owners.sort((a, b) => a.name.localeCompare(b.name));
         console.log(this.owners);
+        this.isLoading = false;
       },
       (error) => {
         console.log(error);
@@ -103,6 +104,7 @@ export class OwnersFeespaidComponent {
     }
     if (this.mostrarOpcionesEstados) {
       this.mostrarOpcionesEstados = !this.mostrarOpcionesEstados;
+      this.mostrarOpcionesEmpresas = true;
       this.estadosSeleccionados = [];
     }
   }
@@ -131,6 +133,7 @@ export class OwnersFeespaidComponent {
   onEmpresaSeleccionar() {
     this.empresasSeleccionadas.sort((a, b) => parseInt(a) - parseInt(b));
     this.mostrarOpcionesEmpresas = false; // Cierra el cuadro después de la selección
+    this.mostrarOpcionesEstados = true; // Abre el cuadro de selección de estados
   }
 
   isEstadoSeleccionado(opcionId: string): boolean {

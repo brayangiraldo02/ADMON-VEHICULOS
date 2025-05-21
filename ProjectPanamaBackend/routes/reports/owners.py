@@ -1,8 +1,10 @@
 from fastapi import APIRouter
 from fastapi.responses import JSONResponse
+from models.infoempresas import InfoEmpresas
 from config.dbconnection import session
 from models.propietarios import Propietarios
 from models.vehiculos import Vehiculos
+from models.estados import Estados
 from schemas.reports import *
 from fastapi.encoders import jsonable_encoder
 from utils.reports import *
@@ -134,9 +136,14 @@ async def get_propietarios_detalles():
 async def get_vehiculos_detalles(infoReports: infoReports):
     db = session()
     try:
+        if infoReports.estados == []:
+            estados = db.query(Estados.CODIGO).all()
+            infoReports.estados = [estado.CODIGO for estado in estados]
+
         vehiculos_detalles = db.query(
+            Propietarios.EMPRESA.label('codigo_empresa'),
             Vehiculos.PROPI_IDEN.label('propietario_codigo'),
-            Vehiculos.EMPRESA.label('vehiculo_empresa'),
+            Propietarios.NOMBRE.label('vehiculo_empresa'),
             Vehiculos.NUMERO.label('vehiculo_unidad'),
             Vehiculos.PLACA.label('vehiculo_placa'),
             Vehiculos.NOMMARCA.label('vehiculo_marca'),
@@ -148,11 +155,16 @@ async def get_vehiculos_detalles(infoReports: infoReports):
             Vehiculos.NOMESTADO.label('vehiculo_estado'),
             Vehiculos.FAC_COMPRA.label('vehiculo_factura_compra'),
             Vehiculos.FEC_COMPRA.label('vehiculo_fecha_compra'),
-            Vehiculos.VLR_COMPRA.label('vehiculo_valor_compra')
+            Vehiculos.VLR_COMPRA.label('vehiculo_valor_compra'),
+            Vehiculos.NOMPIQUERA.label('vehiculo_nompiquera'),
         ).filter(
             Vehiculos.PROPI_IDEN.in_(infoReports.empresas),
             Vehiculos.ESTADO.in_(infoReports.estados)
+        ).join(
+            Propietarios, Propietarios.CODIGO == Vehiculos.PROPI_IDEN
         ).all()
+
+        id_empresa = vehiculos_detalles[0].codigo_empresa
 
         vehiculos_detalles_list = []
         for result in vehiculos_detalles:
@@ -171,10 +183,17 @@ async def get_vehiculos_detalles(infoReports: infoReports):
                 'vehiculo_factura_compra': result.vehiculo_factura_compra,
                 'vehiculo_fecha_compra': result.vehiculo_fecha_compra,
                 'vehiculo_valor_compra': result.vehiculo_valor_compra,
+                'vehiculo_nombre_piquera': result.vehiculo_nompiquera
             }
             vehiculos_detalles_list.append(vehiculo_detalle)
 
         data = valor_compra_vehiculos(vehiculos_detalles_list)
+
+        info_empresa = db.query(
+            InfoEmpresas.NOMBRE,
+            InfoEmpresas.NIT,
+            InfoEmpresas.LOGO
+        ).filter(InfoEmpresas.ID == id_empresa).first()
 
         # Datos de la fecha y hora actual
         # Define la zona horaria de Ciudad de Panamá
@@ -191,10 +210,16 @@ async def get_vehiculos_detalles(infoReports: infoReports):
             "fecha": fecha,
             "hora": hora_actual,
             "usuario": usuario,
+            "nombre_empresa": info_empresa.NOMBRE,
+            "nit_empresa": info_empresa.NIT,
+            "logo_empresa": info_empresa.LOGO,
             "propietarios": []
         }
 
-        for propietario_codigo, info in data.items():
+        # Ordenar propietarios alfabéticamente por nombre
+        sorted_propietarios = sorted(data.items(), key=lambda x: x[1].get("vehiculo_empresa", ""))
+
+        for propietario_codigo, info in sorted_propietarios:
             if isinstance(info, dict):
                 propietario_data = {
                     "codigo_empresa": info.get("propietario_codigo", ""),
@@ -202,26 +227,36 @@ async def get_vehiculos_detalles(infoReports: infoReports):
                     "empty": info.get("empty", ""),
                     "vehiculos": []
                 }
+                
+                # Obtener todos los vehículos de este propietario
+                vehiculos_lista = []
                 for vehiculo_codigo, vehiculo_info in info.get("vehiculos", {}).items():
                     if isinstance(vehiculo_info, dict):
-                        vehiculo_data = {
-                            "vehiculo_unidad": vehiculo_info.get("vehiculo_unidad", ""),
-                            "vehiculo_placa": vehiculo_info.get("vehiculo_placa", ""),
-                            "vehiculo_marca": vehiculo_info.get("vehiculo_marca", ""),
-                            "vehiculo_linea": vehiculo_info.get("vehiculo_linea", ""),
-                            "vehiculo_modelo": vehiculo_info.get("vehiculo_modelo", ""),
-                            "vehiculo_cupo": vehiculo_info.get("vehiculo_cupo", ""),
-                            "vehiculo_motor": vehiculo_info.get("vehiculo_motor", ""),
-                            "vehiculo_chasis": vehiculo_info.get("vehiculo_chasis", ""),
-                            "vehiculo_estado": vehiculo_info.get("vehiculo_estado", ""),
-                            "vehiculo_valor_compra": vehiculo_info.get("vehiculo_valor_compra", ""),
-                            "vehiculo_factura": vehiculo_info.get("vehiculo_factura", ""),
-                            "vehiculo_fecha_compra": vehiculo_info.get("vehiculo_fecha_compra", "")
-                        }
-                        propietario_data["vehiculos"].append(vehiculo_data)
+                        vehiculos_lista.append(vehiculo_info)
+                
+                # Ordenar la lista de vehículos por número de unidad
+                vehiculos_lista.sort(key=lambda v: v.get("vehiculo_unidad", ""))
+                
+                # Agregar los vehículos ordenados al propietario
+                for vehiculo_info in vehiculos_lista:
+                    vehiculo_data = {
+                        "vehiculo_unidad": vehiculo_info.get("vehiculo_unidad", ""),
+                        "vehiculo_placa": vehiculo_info.get("vehiculo_placa", ""),
+                        "vehiculo_marca": vehiculo_info.get("vehiculo_marca", ""),
+                        "vehiculo_linea": vehiculo_info.get("vehiculo_linea", ""),
+                        "vehiculo_modelo": vehiculo_info.get("vehiculo_modelo", ""),
+                        "vehiculo_cupo": vehiculo_info.get("vehiculo_cupo", ""),
+                        "vehiculo_motor": vehiculo_info.get("vehiculo_motor", ""),
+                        "vehiculo_chasis": vehiculo_info.get("vehiculo_chasis", ""),
+                        "vehiculo_estado": vehiculo_info.get("vehiculo_estado", ""),
+                        "vehiculo_valor_compra": vehiculo_info.get("vehiculo_valor_compra", ""),
+                        "vehiculo_factura": vehiculo_info.get("vehiculo_factura_compra", ""),
+                        "vehiculo_fecha_compra": vehiculo_info.get("vehiculo_fecha_compra", ""),
+                        "vehiculo_nombre_piquera": vehiculo_info.get("vehiculo_nombre_piquera", "")
+                    }
+                    propietario_data["vehiculos"].append(vehiculo_data)
+                
                 data_view["propietarios"].append(propietario_data)
-
-        data_view["usuario"] = usuario
 
         headers = {
             "Content-Disposition": "inline; valor-compra-vehiculos.pdf"
@@ -230,13 +265,13 @@ async def get_vehiculos_detalles(infoReports: infoReports):
         template_loader = jinja2.FileSystemLoader(searchpath="./templates")
         template_env = jinja2.Environment(loader=template_loader)
         template_file = "ValorCompraVehiculos.html"
-        header_file = "header.html"
+        header_file = "header2.html"
         footer_file = "footer.html"
         template = template_env.get_template(template_file)
         header = template_env.get_template(header_file)
         footer = template_env.get_template(footer_file)
         output_text = template.render(data_view=data_view)
-        output_header = header.render(data_view=data_view)
+        output_header = header.render(data_view)
         output_footer = footer.render(data_view=data_view)
         
         html_path = f'./templates/renderValorCompraVehiculos.html'
