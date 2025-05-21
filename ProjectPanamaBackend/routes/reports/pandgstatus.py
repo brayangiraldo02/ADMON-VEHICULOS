@@ -22,7 +22,7 @@ templateJinja = Jinja2Templates(directory="templates")
 
 pandgstatus_router = APIRouter()
 
-@pandgstatus_router.post("/pandgstatus", tags=["Reports"])
+@pandgstatus_router.post("/pandgstatus/", tags=["Reports"])
 async def pandgstatus_report(data: PandGStatusReport):
   db = session()
   try:

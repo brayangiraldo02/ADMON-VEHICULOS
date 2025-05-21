@@ -6,7 +6,7 @@ from fastapi.encoders import jsonable_encoder
 
 cities_router = APIRouter()
 
-@cities_router.get("/cities", tags=["Cities"])
+@cities_router.get("/cities/", tags=["Cities"])
 async def get_cities():
   db = session()
   try:

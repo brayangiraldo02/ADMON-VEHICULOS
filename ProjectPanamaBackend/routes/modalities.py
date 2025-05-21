@@ -6,7 +6,7 @@ from fastapi.encoders import jsonable_encoder
 
 modalities_router = APIRouter()
 
-@modalities_router.get("/modalities", tags=["Modalities"])
+@modalities_router.get("/modalities/", tags=["Modalities"])
 async def get_modalities():
   db = session()
   try:

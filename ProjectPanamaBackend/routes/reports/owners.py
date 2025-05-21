@@ -20,7 +20,7 @@ templateJinja = Jinja2Templates(directory="templates")
 
 ownersReports_router = APIRouter()
 
-@ownersReports_router.get('/directorio-propietarios')
+@ownersReports_router.get('/directorio-propietarios/')
 async def get_propietarios_detalles():
     db = session()
     try:
@@ -132,7 +132,7 @@ async def get_propietarios_detalles():
 
 #--------------------------------------------------------------------------------
 
-@ownersReports_router.post('/valor-compra-vehiculos', response_class=FileResponse)
+@ownersReports_router.post('/valor-compra-vehiculos/', response_class=FileResponse)
 async def get_vehiculos_detalles(infoReports: infoReports):
     db = session()
     try:

@@ -22,7 +22,7 @@ templateJinja = Jinja2Templates(directory="templates")
 
 relationshiprevenuesReports_router = APIRouter()
 
-@relationshiprevenuesReports_router.post("/relationshiprevenues", tags=["Reports"])
+@relationshiprevenuesReports_router.post("/relationshiprevenues/", tags=["Reports"])
 async def relationshiprevenues_report(data: RelationshipRevenuesReport):
   db = session()
   try:

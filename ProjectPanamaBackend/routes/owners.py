@@ -23,7 +23,7 @@ owners_router = APIRouter()
 
 # PETICIÓN DE LISTA DE PROPIETARIOS A LA BASE DE DATOS 
 # ---------------------------------------------------------------------------------------------------------------
-@owners_router.get("/owners", tags=["Owners"])
+@owners_router.get("/owners/", tags=["Owners"])
 async def get_owners():
   db = session()
   try:
@@ -36,7 +36,7 @@ async def get_owners():
     db.close()
 # ---------------------------------------------------------------------------------------------------------------
 
-@owners_router.get("/owners/all", tags=["Owners"])
+@owners_router.get("/owners/all/", tags=["Owners"])
 async def get_all_owners():
   db = session()
   try:
@@ -109,7 +109,7 @@ async def get_all_owners():
 
 # PETICIÓN DE UN PROPIETARIO ESPECÍFICO A LA BASE DE DATOS
 # ---------------------------------------------------------------------------------------------------------------
-@owners_router.get("/owner/{owner_id}", tags=["Owners"])
+@owners_router.get("/owner/{owner_id}/", tags=["Owners"])
 async def get_owner(owner_id: int):
   db = session()
   try:
@@ -176,7 +176,7 @@ async def get_owner(owner_id: int):
 
 #----------------------------------------------------------------------------------------------------------------
 
-@owners_router.put("/owner/{owner_id}", response_model=PropietarioUpdate, tags=["Owners"])
+@owners_router.put("/owner/{owner_id}/", response_model=PropietarioUpdate, tags=["Owners"])
 def update_propietario(owner_id: str, propietario: PropietarioUpdate):
     db = session()
     try:
@@ -235,7 +235,7 @@ def update_propietario(owner_id: str, propietario: PropietarioUpdate):
 
 #----------------------------------------------------------------------------------------------------------------
 
-@owners_router.post("/owners", response_model=PropietarioCreate, tags=["Owners"])
+@owners_router.post("/owners/", response_model=PropietarioCreate, tags=["Owners"])
 def create_propietario(propietario: PropietarioCreate):
   db = session()
   try:
@@ -298,7 +298,7 @@ def create_propietario(propietario: PropietarioCreate):
 
 #----------------------------------------------------------------------------------------------------------------
 
-@owners_router.get("/owner-vehicles/{owner_id}", tags=["Owners"])
+@owners_router.get("/owner-vehicles/{owner_id}/", tags=["Owners"])
 async def get_owners_vehicles(owner_id: int):
   db = session()
   try:
@@ -345,7 +345,7 @@ async def get_owners_vehicles(owner_id: int):
 
 #----------------------------------------------------------------------------------------------------------------
 
-@owners_router.get("/owner-representative/{owner_id}", tags=["Owners"])
+@owners_router.get("/owner-representative/{owner_id}/", tags=["Owners"])
 async def get_owner_rep(owner_id: int):
   db = session()
   try: 
@@ -388,7 +388,7 @@ async def get_owner_rep(owner_id: int):
 
 #----------------------------------------------------------------------------------------------------------------
 
-@owners_router.put("/owner-representative/{owner_id}", tags=["Owners"])
+@owners_router.put("/owner-representative/{owner_id}/", tags=["Owners"])
 async def update_owner_representative(owner_id: int, propietario: RepresentantePropietario):
   db = session()
   try:
@@ -427,7 +427,7 @@ async def get_owner_codes():
 
 #----------------------------------------------------------------------------------------------------------------
 
-@owners_router.delete("/owner/{owner_id}", tags=["Owners"])
+@owners_router.delete("/owner/{owner_id}/", tags=["Owners"])
 async def verify_owner_delete(owner_id: int):
   db = session()
   try:
@@ -476,7 +476,7 @@ async def verify_owner_delete(owner_id: int):
 
 #----------------------------------------------------------------------------------------------------------------
 
-@owners_router.get("/verify-owner-delete/{owner_id}", tags=["Owners"])
+@owners_router.get("/verify-owner-delete/{owner_id}/", tags=["Owners"])
 async def verify_owner_delete(owner_id: int):
   db = session()
   try:
@@ -518,7 +518,7 @@ async def verify_owner_delete(owner_id: int):
 
 #----------------------------------------------------------------------------------------------------------------
 
-@owners_router.post("/companies_owners", tags=["Owners"])
+@owners_router.post("/companies_owners/", tags=["Owners"])
 async def get_companies_owners(owner: Owner):
   db = session()
   try:
@@ -545,7 +545,7 @@ async def get_companies_owners(owner: Owner):
 
 # ---------------------------------------------------------------------------------------------------------------
 
-@owners_router.post("/vehicles_owners", tags=["Owners"])
+@owners_router.post("/vehicles_owners/", tags=["Owners"])
 async def get_vehicles_owners(owner: Owner):
   db = session()
   try:
@@ -574,7 +574,7 @@ async def get_vehicles_owners(owner: Owner):
 
 # ---------------------------------------------------------------------------------------------------------------
 
-@owners_router.post("/vehicles_per_owners", tags=["Owners"])
+@owners_router.post("/vehicles_per_owners/", tags=["Owners"])
 async def get_vehicles_owners(owner: Owner):
   db = session()
   try:

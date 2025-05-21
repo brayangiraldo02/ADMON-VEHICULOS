@@ -21,7 +21,7 @@ templateJinja = Jinja2Templates(directory="templates")
 
 partsrelationshipReports_router = APIRouter()
 
-@partsrelationshipReports_router.post("/partsrelationship", response_class=FileResponse, tags=["Reports"])
+@partsrelationshipReports_router.post("/partsrelationship/", response_class=FileResponse, tags=["Reports"])
 async def partsrelationship_report(data: PartsRelationshipReport):
   db = session()
   try:

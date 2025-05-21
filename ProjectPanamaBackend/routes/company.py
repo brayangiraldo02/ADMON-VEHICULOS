@@ -14,7 +14,7 @@ json_file_path_ADMIN = os.path.join(base_dir, 'temp', 'admin-company-info.json')
 
 company_router = APIRouter()
 
-@company_router.get('/info-company/{company_code}', tags=["Company"])
+@company_router.get('/info-company/{company_code}/', tags=["Company"])
 async def get_info_company(company_code: str):
   db = session()
   try:

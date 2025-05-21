@@ -14,7 +14,7 @@ users_router = APIRouter()
 
 # PRUEBA DE PETICIÓN A LA BASE DE DATOS
 # ---------------------------------------------------------------------------------------------------------------
-@users_router.get('/users', tags=["Users"])
+@users_router.get('/users/', tags=["Users"])
 async def get_users():
   db = session()
   try:
@@ -44,7 +44,7 @@ async def get_users2():
     db.close()
 # ---------------------------------------------------------------------------------------------------------------
 
-@users_router.post('/login', tags=["Users"])
+@users_router.post('/login/', tags=["Users"])
 async def login(data: userLogin, response: Response):
   db = session()
   user_admin = os.getenv('USER_ADMIN')
@@ -165,7 +165,7 @@ async def login(data: userLogin, response: Response):
   finally:
     db.close()
 
-@users_router.post('/logout', tags=["Users"])
+@users_router.post('/logout/', tags=["Users"])
 async def logout(response: Response):
   response.delete_cookie(key="access_token", httponly=True, secure=True, samesite='strict')
   return JSONResponse(content=jsonable_encoder({'message':'Sesión cerrada exitosamente'}), status_code=200)

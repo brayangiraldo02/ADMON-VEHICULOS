@@ -21,7 +21,7 @@ templateJinja = Jinja2Templates(directory="templates")
 
 statevehiclefleetReports_router = APIRouter()
 
-@statevehiclefleetReports_router.post('/estado-vehiculos-resumen', response_class=FileResponse)
+@statevehiclefleetReports_router.post('/estado-vehiculos-resumen/', response_class=FileResponse)
 async def get_conteo_vehiculos_estados(info: userInfo):
   db = session()
   try:
@@ -126,7 +126,7 @@ async def get_conteo_vehiculos_estados(info: userInfo):
 
 #-----------------------------------------------------------------------------------------
 
-@statevehiclefleetReports_router.post('/estado-vehiculos-resumen-empresa/{id}', response_class=FileResponse)
+@statevehiclefleetReports_router.post('/estado-vehiculos-resumen-empresa/{id}/', response_class=FileResponse)
 async def get_conteo_propietarios_vehiculos_estados(id: str, info: userInfo):
     db = session()
     try:
@@ -266,7 +266,7 @@ async def get_conteo_propietarios_vehiculos_estados(id: str, info: userInfo):
 #-----------------------------------------------------------------------------------------
 
 
-@statevehiclefleetReports_router.post('/informe-estados-detallado', response_class=FileResponse)
+@statevehiclefleetReports_router.post('/informe-estados-detallado/', response_class=FileResponse)
 async def get_conteo_vehiculos_estados_numeros(info: userInfo):
   db = session()
   try:
@@ -436,7 +436,7 @@ async def get_conteo_vehiculos_estados_numeros(info: userInfo):
 
 # -----------------------------------------------------------------------------------------
 
-@statevehiclefleetReports_router.post('/informe-estados-detallado-empresa/{id}', response_class=FileResponse)
+@statevehiclefleetReports_router.post('/informe-estados-detallado-empresa/{id}/', response_class=FileResponse)
 async def get_conteo_propietarios_vehiculos_estados_numeros(id: str, info: userInfo):
   db = session()
   try:
@@ -622,7 +622,7 @@ async def get_conteo_propietarios_vehiculos_estados_numeros(id: str, info: userI
 
 #-----------------------------------------------------------------------------------------
 
-@statevehiclefleetReports_router.post('/relacion-vehiculos-propietario', response_class=FileResponse)
+@statevehiclefleetReports_router.post('/relacion-vehiculos-propietario/', response_class=FileResponse)
 async def get_vehiculos_detalles(infoReports: infoReports):
     db = session()
     try:
