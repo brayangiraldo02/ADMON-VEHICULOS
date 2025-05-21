@@ -1,23 +1,100 @@
-/* pdf-viewer.component.css */
-.pdf-viewer-container {
-  height: 100vh;
-  width: 100vw;
-  margin: 0;
-  padding: 0;
-  overflow: hidden;
-}
-
-.pdf-viewer {
-  height: 100%;
-  width: 100%;
-  border: none; /* Remove the default iframe border */
-  overflow: hidden;
-}
-
 html, body {
-  height: 100%;
-  width: 100%;
   margin: 0;
   padding: 0;
-  overflow: hidden; /* Prevent scrollbars on the body */
+  width: 100%;
+  height: 100%;
+}
+
+.pdf-viewer-outer-container {
+  width: 100%;
+  height: 100vh;
+  background-color: #f0f0f0;
+  display: flex;
+  flex-direction: column;
+  /* align-items: center; /* El contenedor de páginas o iframe se encargará del centrado si es necesario */
+  box-sizing: border-box;
+}
+
+.status-message {
+  font-size: 1.2em;
+  color: #333;
+  text-align: center;
+  padding: 20px;
+  /* Si no hay iframe o canvas, este mensaje se centrará por el flex del outer-container */
+}
+
+.error-message {
+  color: red;
+}
+
+.pdf-iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+  flex-grow: 1;
+}
+
+.download-button-container {
+  width: 100%;
+  padding: 10px;
+  box-sizing: border-box;
+  text-align: center;
+  background-color: #e7eeff;
+  border-bottom: 1px solid #ced4da;
+  /* flex-shrink: 0; */
+}
+
+.download-button {
+  display: inline-flex; /* Usa flex para alinear ícono y texto */
+  align-items: center; /* Centra verticalmente el ícono y el texto */
+  justify-content: center; /* Centra el contenido horizontalmente si hay espacio extra */
+  padding: 8px 15px; /* Ajusta el padding para un botón más compacto */
+  font-size: 0.9em; /* Un poco más pequeño para un look compacto */
+  color: black;
+  background-color: #ffffff;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  cursor: pointer;
+  text-decoration: none;
+  gap: 8px; /* Espacio entre el ícono y el texto */
+}
+
+/* Corregido el typo: dowload-button -> download-button */
+.download-button span.material-symbols-outlined {
+  /* margin-right: auto; /* Eliminado para que gap funcione mejor y no lo empuje todo */
+  font-size: 1.2em; /* Tamaño del ícono relativo al font-size del botón */
+  line-height: 1; /* Ayuda a la alineación vertical del ícono */
+}
+
+.download-button .option-text { /* Más específico para el p dentro del botón */
+  /* flex-grow: 1; /* No es necesario si el botón se ajusta al contenido */
+  /* text-align: center; /* No es necesario si el botón usa justify-content: center */
+  margin: 0; /* Elimina márgenes por defecto del párrafo */
+  line-height: 1; /* Ayuda a la alineación vertical del texto */
+}
+
+.download-button:hover {
+  background: #bcd1ec;
+}
+
+/* Estilos para el contenedor de canvas en Móvil */
+.pdf-pages-container {
+  width: 100%;
+  /* height: 100%; /* No es necesario si usamos flex-grow */
+  overflow-y: auto; /* Permite scroll vertical para las páginas del canvas */
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Centra los canvas si son más estrechos */
+  padding-top: 10px; /* Espacio opcional arriba */
+  flex-grow: 1; /* Ocupa el espacio restante */
+  background-color: #f0f0f0; /* Mismo fondo que el outer-container */
+}
+
+.pdf-page-canvas {
+  max-width: 95%; /* Evita que el canvas exceda el contenedor, ajusta según necesidad */
+  height: auto; /* Mantiene la proporción */
+  display: block;
+  margin-bottom: 10px; /* Espacio entre páginas */
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.3); /* Sombra opcional */
+  background-color: white; /* Fondo blanco para el canvas */
 }
