@@ -186,6 +186,7 @@ export class VehiclesResumeComponent {
     }
   }
 
+  // TODO: Arreglar llamado al endpoint por nuevo
   getOwners() {
     this.apiService.getData('owners').subscribe(
       (response) => {
