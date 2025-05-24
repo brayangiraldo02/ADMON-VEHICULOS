@@ -8,7 +8,7 @@ states_router = APIRouter()
 
 # PETICIÓN DE LISTA DE PROPIETARIOS A LA BASE DE DATOS 
 # ---------------------------------------------------------------------------------------------------------------
-@states_router.get("/states", tags=["States"])
+@states_router.get("/states/", tags=["States"])
 async def get_owners():
   db = session()
   try:

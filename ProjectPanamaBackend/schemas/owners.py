@@ -84,3 +84,6 @@ class RepresentantePropietario(BaseModel):
 
 class Owner(BaseModel):
     propietario: str
+
+class OwnersList(BaseModel):
+    owners: list[str]

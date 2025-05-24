@@ -19,7 +19,7 @@ from utils.pdf import html2pdf
 
 operations_router = APIRouter()
 
-@operations_router.get("/operations/deliveryvehicledriver/vehicle/{vehicle_number}", tags=["Operations"])
+@operations_router.get("/operations/deliveryvehicledriver/vehicle/{vehicle_number}/", tags=["Operations"])
 async def get_vehicle_operations(vehicle_number: str):
   db = session()
   try:

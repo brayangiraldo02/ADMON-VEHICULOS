@@ -6,7 +6,7 @@ from fastapi.encoders import jsonable_encoder
 
 brands_router = APIRouter()
 
-@brands_router.get("/brands", tags=["Brands"])
+@brands_router.get("/brands/", tags=["Brands"])
 async def get_brands():
   db = session()
   try:

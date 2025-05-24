@@ -22,7 +22,7 @@ from utils.pdf import html2pdf
 
 vehicles_router = APIRouter()
 
-@vehicles_router.get("/vehicles", tags=["Vehicles"])
+@vehicles_router.get("/vehicles/", tags=["Vehicles"])
 async def get_vehicles():
   db = session()
   try:
@@ -43,7 +43,7 @@ async def get_vehicles():
 
 #-------------------------------------------------------------------------------------------
 
-@vehicles_router.get("/vehicles/all", tags=["Vehicles"])
+@vehicles_router.get("/vehicles/all/", tags=["Vehicles"])
 async def get_vehicles():
   db = session()
   try:
@@ -106,7 +106,7 @@ async def get_vehicles():
 
 #-------------------------------------------------------------------------------------------
 
-@vehicles_router.get('/directorio-vehiculos', tags=["Vehicles"]) 
+@vehicles_router.get('/directorio-vehiculos/', tags=["Vehicles"]) 
 async def get_vehiculos_detalles():
     db = session()
     try:
@@ -300,7 +300,7 @@ async def get_vehiculos_detalles():
 
 #-------------------------------------------------------------------------------------------
 
-@vehicles_router.get("/vehicle/{vehicle_id}", tags=["Vehicles"])
+@vehicles_router.get("/vehicle/{vehicle_id}/", tags=["Vehicles"])
 async def get_vehicle_details(vehicle_id: str):
   db = session()
   try:
@@ -525,7 +525,7 @@ async def get_vehicle_details(vehicle_id: str):
 
 #-------------------------------------------------------------------------------------------
 
-@vehicles_router.post("/vehicles", response_model=VehicleCreate, tags=["Vehicles"])
+@vehicles_router.post("/vehicles/", response_model=VehicleCreate, tags=["Vehicles"])
 def create_vehicle(vehicle: VehicleCreate):
     db = session()
     try:
@@ -619,7 +619,7 @@ def create_vehicle(vehicle: VehicleCreate):
 
 #-------------------------------------------------------------------------------------------
 
-@vehicles_router.put("/vehicle/{vehicle_id}", response_model = VehicleUpdate, tags=["Vehicles"])
+@vehicles_router.put("/vehicle/{vehicle_id}/", response_model = VehicleUpdate, tags=["Vehicles"])
 def update_vehicle(vehicle_id: str, vehicle: VehicleUpdate):
   db = session()
   try:
@@ -684,7 +684,7 @@ def update_vehicle(vehicle_id: str, vehicle: VehicleUpdate):
 
 #-------------------------------------------------------------------------------------------
 
-@vehicles_router.delete("/vehicle/{vehicle_id}", tags=["Vehicles"])
+@vehicles_router.delete("/vehicle/{vehicle_id}/", tags=["Vehicles"])
 async def verify_vehicle_delete(vehicle_id: str):
     db = session()
     try:
@@ -731,7 +731,7 @@ async def verify_vehicle_delete(vehicle_id: str):
 
 #-------------------------------------------------------------------------------------------
 
-@vehicles_router.get("/verify-vehicle-delete/{vehicle_id}", tags=["Vehicles"])
+@vehicles_router.get("/verify-vehicle-delete/{vehicle_id}/", tags=["Vehicles"])
 async def verify_vehicle_delete(vehicle_id: str):
   db = session()
   try: 
@@ -768,7 +768,7 @@ async def verify_vehicle_delete(vehicle_id: str):
 
 #-------------------------------------------------------------------------------------------
 
-@vehicles_router.get("/vehicle-codes", tags=["Vehicles"])
+@vehicles_router.get("/vehicle-codes/", tags=["Vehicles"])
 async def get_vehicle_codes():
     db = session()
     try:

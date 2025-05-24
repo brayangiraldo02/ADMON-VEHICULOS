@@ -6,7 +6,7 @@ from fastapi.encoders import jsonable_encoder
 
 expenseAccount_router = APIRouter()
 
-@expenseAccount_router.get("/expense-accounts", tags=["Expense Account"])
+@expenseAccount_router.get("/expense-accounts/", tags=["Expense Account"])
 async def get_expenseAccounts():
   db = session()
   try:

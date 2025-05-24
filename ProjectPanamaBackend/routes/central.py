@@ -6,7 +6,7 @@ from fastapi.encoders import jsonable_encoder
 
 central_router = APIRouter()
 
-@central_router.get("/central", tags=["Central"])
+@central_router.get("/central/", tags=["Central"])
 async def get_central():
   db = session()
   try:

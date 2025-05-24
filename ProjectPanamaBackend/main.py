@@ -22,6 +22,7 @@ from routes.reports.partsrelationship import partsrelationshipReports_router
 from routes.reports.relationshiprevenues import relationshiprevenuesReports_router
 from routes.reports.pandgstatus import pandgstatus_router
 from routes.company import company_router
+from routes.collection_account import collectionAccount_router
 import os
 
 load_dotenv()
@@ -57,6 +58,7 @@ app.include_router(partsrelationshipReports_router)
 app.include_router(relationshiprevenuesReports_router)
 app.include_router(pandgstatus_router)
 app.include_router(company_router)
+app.include_router(collectionAccount_router)
 
 app.mount("/assets", StaticFiles(directory="assets"), name="assets")
 

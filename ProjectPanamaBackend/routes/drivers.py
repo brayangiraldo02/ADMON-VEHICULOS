@@ -24,7 +24,7 @@ from utils.pdf import html2pdf
 
 drivers_router = APIRouter()
 
-@drivers_router.get("/drivers", tags=["Drivers"])
+@drivers_router.get("/drivers/", tags=["Drivers"])
 async def get_drivers():
   db = session()
   try:
@@ -45,7 +45,7 @@ async def get_drivers():
 
 #-----------------------------------------------------------------------------------------------
 
-@drivers_router.get("/drivers/all", tags=["Drivers"])
+@drivers_router.get("/drivers/all/", tags=["Drivers"])
 async def get_drivers():
   db = session()
   try:
@@ -76,7 +76,7 @@ async def get_drivers():
     db.close()
 
 #-------------------------------------------------------------------------------------------
-@drivers_router.get('/directorio-conductores', tags=["Drivers"])
+@drivers_router.get('/directorio-conductores/', tags=["Drivers"])
 async def get_conductores_detalles():
     db = session()
     try:
@@ -190,7 +190,7 @@ async def get_conductores_detalles():
 
 #-----------------------------------------------------------------------------------------------
 
-@drivers_router.get("/driver/{driver_id}", tags=["Drivers"])
+@drivers_router.get("/driver/{driver_id}/", tags=["Drivers"])
 async def get_driver_info(driver_id: int):
   db = session()
   try:
@@ -278,7 +278,7 @@ async def get_driver_info(driver_id: int):
 
 #-------------------------------------------------------------------------------------------
 
-@drivers_router.put("/driver/{driver_id}", tags=["Drivers"])
+@drivers_router.put("/driver/{driver_id}/", tags=["Drivers"])
 async def update_driver(driver_id: int, driver: ConductorUpdate):
   db = session()
   try:
@@ -329,7 +329,7 @@ async def update_driver(driver_id: int, driver: ConductorUpdate):
 
 #-------------------------------------------------------------------------------------------
 
-@drivers_router.delete("/driver/{driver_id}", tags=["Drivers"])
+@drivers_router.delete("/driver/{driver_id}/", tags=["Drivers"])
 async def verify_driver_delete(driver_id: int):
   db = session()
   try:
@@ -380,7 +380,7 @@ async def verify_driver_delete(driver_id: int):
 
 #-----------------------------------------------------------------------------------------------
 
-@drivers_router.get('/verify-driver-delete/{driver_id}', tags=["Drivers"])
+@drivers_router.get('/verify-driver-delete/{driver_id}/', tags=["Drivers"])
 async def verify_driver_delete(driver_id: int):
   db = session()
   try:
@@ -432,7 +432,7 @@ async def get_owner_codes():
 
 #-----------------------------------------------------------------------------------------------
 
-@drivers_router.post("/drivers", response_model=ConductorCreate, tags=["Drivers"])
+@drivers_router.post("/drivers/", response_model=ConductorCreate, tags=["Drivers"])
 async def create_driver(driver: ConductorCreate):
   db = session()
   try:

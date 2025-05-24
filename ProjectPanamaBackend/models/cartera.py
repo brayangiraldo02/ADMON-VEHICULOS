@@ -5,6 +5,7 @@ class Cartera(Base):
     __tablename__ = 'CARTERA'
 
     FACTURA = Column(CHAR(12), primary_key=True)
+    EMPRESA = Column(CHAR(2))
     TIPO = Column(CHAR(2))
     NOMTIPO = Column(CHAR(10))
     PLAZO = Column(DECIMAL(4, 0))

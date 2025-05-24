@@ -22,7 +22,7 @@ templateJinja = Jinja2Templates(directory="templates")
 feespaidReports_router = APIRouter()
 
 
-@feespaidReports_router.post('/informe-cuotas-pagas', response_class=FileResponse)
+@feespaidReports_router.post('/informe-cuotas-pagas/', response_class=FileResponse)
 async def get_vehiculos_detalles(infoReports: infoReports):
     db = session()
     try:

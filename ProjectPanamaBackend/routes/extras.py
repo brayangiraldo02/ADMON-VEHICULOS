@@ -6,7 +6,7 @@ import pytz
 
 extras_router = APIRouter()
 
-@extras_router.get("/extras/time", tags=["extras"])
+@extras_router.get("/extras/time/", tags=["extras"])
 async def get_time():
   time = datetime.now(pytz.timezone('America/Panama'))
   fecha = time.strftime("%Y-%m-%d")
