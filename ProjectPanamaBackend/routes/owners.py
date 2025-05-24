@@ -23,15 +23,17 @@ owners_router = APIRouter()
 
 # PETICIÓN DE LISTA DE PROPIETARIOS A LA BASE DE DATOS 
 # ---------------------------------------------------------------------------------------------------------------
-@owners_router.get("/owners/", tags=["Owners"])
-async def get_owners():
+@owners_router.get("/owners/{company_code}", tags=["Owners"])
+async def get_owners(company_code: str):
   db = session()
   try:
-    owners = db.query(Propietarios.CODIGO, Propietarios.NOMBRE).all()
-    owners_list = [{'id': owner.CODIGO, 'name': owner.NOMBRE} for owner in owners]
-    return JSONResponse(content=jsonable_encoder(owners_list))
+    owners = db.query(Propietarios.CODIGO, Propietarios.NOMBRE).filter(Propietarios.EMPRESA == company_code).all()
+    if owners:
+      owners_list = [{'id': owner.CODIGO, 'name': owner.NOMBRE} for owner in owners]
+      return JSONResponse(content=jsonable_encoder(owners_list))
+    return JSONResponse(content={"message": "Owner not found"}, status_code=404)
   except Exception as e:
-    return JSONResponse(content={"error": str(e)})
+    return JSONResponse(content={"message": str(e)})
   finally:
     db.close()
 # ---------------------------------------------------------------------------------------------------------------
