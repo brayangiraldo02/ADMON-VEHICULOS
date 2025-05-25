@@ -3,7 +3,7 @@
 html, body { height: 100%; }
 body { 
   margin: 0; 
-  font-family:  'Montserrat', sans-serif; 
+  /* font-family:  'Montserrat', sans-serif;  */
   /* background-color: #C0CBE1; */
   /* background-color: #e7eeff; */
   background-color: rgb(255, 255, 255);
@@ -11,4 +11,11 @@ body {
 
 * {
   font-family: 'Montserrat', sans-serif;
+}
+
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+.mat-body p, .mat-body-2 p, .mat-typography .mat-body p, .mat-typography .mat-body-2 p, .mat-typography p  {
+  margin: 0;
 }

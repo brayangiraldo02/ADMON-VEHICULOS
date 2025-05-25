@@ -1,40 +1,40 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { UsersHomeComponent } from './components/main/home/users-home/users-home.component';
-import { LoginComponent } from './components/users/login/login.component';
+import { UsersHomeComponent } from './modules/main/home/users-home/users-home.component';
+import { LoginComponent } from './modules/users/login/login.component';
 import { AuthGuard } from './guards/auth.guard';
 import { NoAuthGuard } from './guards/no-auth.guard';
-import { StatevehiclefleetComponent } from './components/tasks/statevehiclefleet/statevehiclefleet.component';
-import { PdfViewerComponent } from './components/others/pdf-viewer/pdf-viewer.component';
-import { FeespaidComponent } from './components/tasks/feespaid/feespaid.component';
-import { OpcionesGerenciaComponent } from './components/options/gerencia/opciones-gerencia/opciones-gerencia.component';
-import { OpcionesTramitesComponent } from './components/options/tramites/opciones-tramites/opciones-tramites.component';
-import { OpcionesChapisteriaComponent } from './components/options/chapisteria/opciones-chapisteria/opciones-chapisteria.component';
-import { OpcionesGastosComponent } from './components/options/gastos/opciones-gastos/opciones-gastos.component';
-import { OpcionesTallerComponent } from './components/options/taller/opciones-taller/opciones-taller.component';
-import { OpcionesOperacionesComponent } from './components/options/operaciones/opciones-operaciones/opciones-operaciones.component';
-import { OpcionesLlaveroComponent } from './components/options/llavero/opciones-llavero/opciones-llavero.component';
-import { OpcionesReclamosComponent } from './components/options/reclamos/opciones-reclamos/opciones-reclamos.component';
-import { OpcionesCntComponent } from './components/options/cnt/opciones-cnt/opciones-cnt.component';
-import { OpcionesUtilidadesComponent } from './components/options/utilidades/opciones-utilidades/opciones-utilidades.component';
-import { OpcionesCarteraComponent } from './components/options/cartera/opciones-cartera/opciones-cartera.component';
-import { OpcionesAlmacenComponent } from './components/options/almacen/opciones-almacen/opciones-almacen.component';
-import { OwnersTableComponent } from './components/tasks/owners/owners-table/owners-table.component';
-import { OwnersResumeComponent } from './components/tasks/owners/owners-resume/owners-resume.component';
-import { OwnersAddnewComponent } from './components/tasks/owners/owners-addnew/owners-addnew.component';
-import { DriversTableComponent } from './components/tasks/drivers/drivers-table/drivers-table.component';
-import { DriversResumeComponent } from './components/tasks/drivers/drivers-resume/drivers-resume.component';
-import { DriversAddnewComponent } from './components/tasks/drivers/drivers-addnew/drivers-addnew.component';
-import { VehiclesTableComponent } from './components/tasks/vehicles/vehicles-table/vehicles-table.component';
-import { VehiclesResumeComponent } from './components/tasks/vehicles/vehicles-resume/vehicles-resume.component';
-import { VehiclesAddnewComponent } from './components/tasks/vehicles/vehicles-addnew/vehicles-addnew.component';
-import { VehiclesDocumentationComponent } from './components/tasks/vehicles/vehicles-documentation/vehicles-documentation.component';
-import { DriversDocumentationComponent } from './components/tasks/drivers/drivers-documentation/drivers-documentation.component';
-import { OwnersHomeComponent } from './components/main/home/owners-home/owners-home.component';
+import { StatevehiclefleetComponent } from './modules/tasks/statevehiclefleet/statevehiclefleet.component';
+import { PdfViewerComponent } from './modules/others/pdf-viewer/pdf-viewer.component';
+import { FeespaidComponent } from './modules/tasks/feespaid/feespaid.component';
+import { OpcionesGerenciaComponent } from './modules/options/gerencia/opciones-gerencia/opciones-gerencia.component';
+import { OpcionesTramitesComponent } from './modules/options/tramites/opciones-tramites/opciones-tramites.component';
+import { OpcionesChapisteriaComponent } from './modules/options/chapisteria/opciones-chapisteria/opciones-chapisteria.component';
+import { OpcionesGastosComponent } from './modules/options/gastos/opciones-gastos/opciones-gastos.component';
+import { OpcionesTallerComponent } from './modules/options/taller/opciones-taller/opciones-taller.component';
+import { OpcionesOperacionesComponent } from './modules/options/operaciones/opciones-operaciones/opciones-operaciones.component';
+import { OpcionesLlaveroComponent } from './modules/options/llavero/opciones-llavero/opciones-llavero.component';
+import { OpcionesReclamosComponent } from './modules/options/reclamos/opciones-reclamos/opciones-reclamos.component';
+import { OpcionesCntComponent } from './modules/options/cnt/opciones-cnt/opciones-cnt.component';
+import { OpcionesUtilidadesComponent } from './modules/options/utilidades/opciones-utilidades/opciones-utilidades.component';
+import { OpcionesCarteraComponent } from './modules/options/cartera/opciones-cartera/opciones-cartera.component';
+import { OpcionesAlmacenComponent } from './modules/options/almacen/opciones-almacen/opciones-almacen.component';
+import { OwnersTableComponent } from './modules/tasks/owners/owners-table/owners-table.component';
+import { OwnersResumeComponent } from './modules/tasks/owners/owners-resume/owners-resume.component';
+import { OwnersAddnewComponent } from './modules/tasks/owners/owners-addnew/owners-addnew.component';
+import { DriversTableComponent } from './modules/tasks/drivers/drivers-table/drivers-table.component';
+import { DriversResumeComponent } from './modules/tasks/drivers/drivers-resume/drivers-resume.component';
+import { DriversAddnewComponent } from './modules/tasks/drivers/drivers-addnew/drivers-addnew.component';
+import { VehiclesTableComponent } from './modules/tasks/vehicles/vehicles-table/vehicles-table.component';
+import { VehiclesResumeComponent } from './modules/tasks/vehicles/vehicles-resume/vehicles-resume.component';
+import { VehiclesAddnewComponent } from './modules/tasks/vehicles/vehicles-addnew/vehicles-addnew.component';
+import { VehiclesDocumentationComponent } from './modules/tasks/vehicles/vehicles-documentation/vehicles-documentation.component';
+import { DriversDocumentationComponent } from './modules/tasks/drivers/drivers-documentation/drivers-documentation.component';
+import { OwnersHomeComponent } from './modules/main/home/owners-home/owners-home.component';
 import { OwnersGuard } from './guards/owners.guard';
-import { OwnersFeespaidComponent } from './components/owners/owners-feespaid/owners-feespaid.component';
+import { OwnersFeespaidComponent } from './modules/owners/owners-feespaid/owners-feespaid.component';
 import { UsersGuard } from './guards/users.guard';
-import { OwnersStatusfleetdetailComponent } from './components/owners/owners-statusfleetdetail/owners-statusfleetdetail.component';
+import { OwnersStatusfleetdetailComponent } from './modules/owners/owners-statusfleetdetail/owners-statusfleetdetail.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -64,6 +64,11 @@ const routes: Routes = [
   { path: 'expenses', component: OpcionesGastosComponent, canActivate: [AuthGuard]},
   { path: 'cnt', component: OpcionesCntComponent, canActivate: [AuthGuard]},
   { path: 'utilities', component: OpcionesUtilidadesComponent, canActivate: [AuthGuard]},
+  {
+    path: 'cobros',
+    loadChildren: () => import('./modules/options/cobros/cobros.module').then(m => m.CobrosModule),
+    canActivate: [AuthGuard]
+  },
   { path: 'pdf', component: PdfViewerComponent, canActivate: [UsersGuard]},
   { path: 'prueba', component: OwnersStatusfleetdetailComponent}
 ];
