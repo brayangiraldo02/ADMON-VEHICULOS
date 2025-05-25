@@ -1,6 +1,6 @@
-import { Component, effect, EventEmitter, inject, OnDestroy, OnInit, Output } from '@angular/core';
-import { InfoCompany } from 'src/app/interfaces/info-company.interface';
-import { InfoCompanyStateService } from 'src/app/states/info-company-state.service';
+import { Component, effect, EventEmitter, Output } from '@angular/core';
+import { InfoCompany } from '../../interfaces/info-company.interface';
+import { InfoCompanyStateService } from '../../services/info-company-state.service';
 
 @Component({
   selector: 'app-info-company',
@@ -9,7 +9,7 @@ import { InfoCompanyStateService } from 'src/app/states/info-company-state.servi
 })
 export class InfoCompanyComponent {
   @Output() close = new EventEmitter<void>();
-
+  
   isLoading: boolean = false;
 
   infoCompany: InfoCompany = {

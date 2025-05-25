@@ -1,21 +1,21 @@
-import { Component, effect, inject, OnInit } from '@angular/core';
-import { Router, NavigationEnd } from '@angular/router';
-import { ChangeDetectorRef } from '@angular/core';
+import { ChangeDetectorRef, Component, effect } from '@angular/core';
+import { InfoCompany } from '../../interfaces/info-company.interface';
+import { Router } from '@angular/router';
 import { ApiService } from 'src/app/services/api.service';
 import { JwtService } from 'src/app/services/jwt.service';
 import { OwnersGuard } from 'src/app/guards/owners.guard';
-import { InfoCompanyStateService } from 'src/app/states/info-company-state.service';
-import { InfoCompany } from 'src/app/interfaces/info-company.interface';
+import { InfoCompanyStateService } from '../../services/info-company-state.service';
+
 
 @Component({
   selector: 'app-header',
   templateUrl: './header.component.html',
-  styleUrls: ['./header.component.css']
+  styleUrls: ['./header.component.css'],
 })
-export class HeaderComponent implements OnInit {
+export class HeaderComponent {
   permisos: any;
   isHome: boolean = true;
-  imgUser: string = "../../../../assets/img/taxi.jpg";
+  imgUser: string = '../../../../assets/img/taxi.jpg';
   ownerView: boolean = false;
   infoCompanyVisible: boolean = false;
 
@@ -26,8 +26,8 @@ export class HeaderComponent implements OnInit {
     city: '',
     phone: '',
     email: '',
-    logo: ''
-  }
+    logo: '',
+  };
 
   constructor(
     private apiService: ApiService,
@@ -36,7 +36,7 @@ export class HeaderComponent implements OnInit {
     private cdr: ChangeDetectorRef, // Importante para detectar cambios
     private ownersGuard: OwnersGuard,
     private stateInfoCompany: InfoCompanyStateService
-  ) { 
+  ) {
     effect(() => {
       this.infoCompany = this.stateInfoCompany.getInfoCompany();
     });
@@ -60,7 +60,7 @@ export class HeaderComponent implements OnInit {
   //       console.log('NavigationEnd event detected');
   //       console.log(`URL changed: ${this.router.url}`);
   //       console.log(`isHome: ${this.isHome}`);
-  //       this.cdr.detectChanges(); 
+  //       this.cdr.detectChanges();
   //     }
   //   });
   // }
@@ -97,7 +97,10 @@ export class HeaderComponent implements OnInit {
       }
     }
 
-    if (this.permisos.user_data.opcion16 === true && !this.jwtService.isAdmin()) {
+    if (
+      this.permisos.user_data.opcion16 === true &&
+      !this.jwtService.isAdmin()
+    ) {
       this.ownerView = true;
     }
   }

@@ -2,8 +2,8 @@ import { Component, OnInit, ViewChild, ElementRef, inject, effect } from '@angul
 import { JwtService } from 'src/app/services/jwt.service';
 import { ApiService } from 'src/app/services/api.service';
 import { Router } from '@angular/router';
-import { InfoCompanyStateService } from 'src/app/states/info-company-state.service';
 import { InfoCompany } from 'src/app/interfaces/info-company.interface';
+import { GlobalStatesService } from 'src/app/states/global-states.service';
 
 @Component({
   selector: 'app-owners-home',
@@ -51,10 +51,10 @@ export class OwnersHomeComponent {
     private jwtService: JwtService, 
     private apiService: ApiService, 
     private router: Router,
-    private stateInfoCompany: InfoCompanyStateService
+    private globalStatesService: GlobalStatesService
   ) {
     effect(() => {
-      this.infoCompanyVisible = this.stateInfoCompany.displayInfoCompany();
+      this.infoCompanyVisible = this.globalStatesService.displayInfoCompany();
     });
   }
 

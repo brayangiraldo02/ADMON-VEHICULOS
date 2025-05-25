@@ -11,6 +11,7 @@ const INFOCOMPANY_DEFAULT: InfoCompany = {
   logo: ''
 };
 
+
 @Injectable({
   providedIn: 'root'
 })

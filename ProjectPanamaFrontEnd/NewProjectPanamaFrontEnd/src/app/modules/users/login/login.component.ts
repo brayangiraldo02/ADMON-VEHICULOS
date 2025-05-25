@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ApiService } from 'src/app/services/api.service';
 import { JwtService } from 'src/app/services/jwt.service';
-import { InfoCompanyStateService } from 'src/app/states/info-company-state.service';
+import { GlobalStatesService } from 'src/app/states/global-states.service';
 
 @Component({
   selector: 'app-login',
@@ -24,7 +24,7 @@ export class LoginComponent implements OnInit {
     private apiService: ApiService,
     private jwtService: JwtService,
     private router: Router,
-    private stateInfoCompany: InfoCompanyStateService
+    private globalStatesService: GlobalStatesService
   ) {
     this.loginForm = this.fb.group({
       user: ['', [Validators.required, Validators.minLength(6), Validators.maxLength(10)]],
@@ -77,7 +77,8 @@ export class LoginComponent implements OnInit {
     const idCompany = this.jwtService.getIdCompany();
     this.apiService.getData('info-company/'+idCompany).subscribe(
       (response) => {
-        this.stateInfoCompany.setInfoCompany(response);
+        console.log(response);
+        this.globalStatesService.setInfoCompany(response);
       }
     );
   }
