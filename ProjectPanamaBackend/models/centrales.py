@@ -4,6 +4,7 @@ from sqlalchemy import Column, String, Numeric, DateTime
 class Centrales(Base):
   __tablename__ = 'CENTRALES'
   CODIGO = Column(String(12), primary_key=True, nullable=False)
+  EMPRESA = Column(String(2), nullable=False)
   NOMBRE = Column(String(50))
   NIT = Column(Numeric(12, 0))
   CONTROL = Column(String(2))
