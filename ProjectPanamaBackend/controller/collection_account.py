@@ -13,7 +13,6 @@ from collections import defaultdict
 async def get_collection_accounts(companies_list: list):
   db = session()
   try:
-    print(f"Companies List: {companies_list[0]}")
     company_code = db.query(Propietarios.EMPRESA).filter(Propietarios.CODIGO == companies_list[0])
 
     collectionAccounts = db.query(
