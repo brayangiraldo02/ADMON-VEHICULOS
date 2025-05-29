@@ -141,6 +141,7 @@ async def get_conteo_propietarios_vehiculos_estados(id: str, info: userInfo):
         .join(Vehiculos, Estados.CODIGO == Vehiculos.ESTADO) \
         .join(Propietarios, Vehiculos.PROPI_IDEN == Propietarios.CODIGO) \
         .filter(Propietarios.CODIGO == id) \
+        .distinct() \
         .all()
 
         id_empresa = conteo_propietarios_vehiculos_estados[0].empresa_codigo
@@ -447,7 +448,7 @@ async def get_conteo_propietarios_vehiculos_estados_numeros(id: str, info: userI
         Estados.CODIGO.label('estado_codigo'),
         Estados.NOMBRE.label('estado_nombre'),
         Vehiculos.NUMERO.label('vehiculo_numero')
-    ).join(Vehiculos, Estados.CODIGO == Vehiculos.ESTADO).join(Propietarios, Vehiculos.PROPI_IDEN == Propietarios.CODIGO).filter(Propietarios.CODIGO == id).all()
+    ).join(Vehiculos, Estados.CODIGO == Vehiculos.ESTADO).join(Propietarios, Vehiculos.PROPI_IDEN == Propietarios.CODIGO).filter(Propietarios.CODIGO == id).distinct().all()
 
     id_empresa = conteo_propietarios_vehiculos_estados[0].empresa_codigo
 
