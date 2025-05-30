@@ -3,7 +3,9 @@ import { CommonModule } from '@angular/common';
 
 import { CobrosRoutingModule } from './cobros-routing.module';
 import { InfoTableComponent } from './components/info-table/info-table.component';
-import { AppModule } from 'src/app/app.module';
+import { MaterialModule } from '../../shared/material/material.module';
+import { SharedModule } from '../../shared/shared.module';
+import { ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -12,7 +14,9 @@ import { AppModule } from 'src/app/app.module';
   imports: [
     CommonModule,
     CobrosRoutingModule,
-    AppModule
+    MaterialModule,
+    SharedModule,
+    ReactiveFormsModule
   ]
 })
 export class CobrosModule { }

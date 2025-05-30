@@ -66,7 +66,7 @@ export class UsersHomeComponent implements OnInit {
     this.options = [
       { name: 'Caja', icon: '../../../../assets/icons/caja.svg', url: 'hoalalalal', enabled: this.permisos.user_data.opcion01, disabled: true },
       { name: 'Operaciones', icon: '../../../../assets/icons/operaciones.svg', url: '/operations', enabled: this.permisos.user_data.opcion02, disabled: false },
-      { name: 'Cobros', icon: '../../../../assets/icons/cobros.svg', url: 'hoalalalal', enabled: this.permisos.user_data.opcion03, disabled: true },
+      { name: 'Cobros', icon: '../../../../assets/icons/cobros.svg', url: '/cobros', enabled: this.permisos.user_data.opcion03, disabled: false },
       { name: 'Trámites', icon: '../../../../assets/icons/tramites.svg', url: '/procedures', enabled: this.permisos.user_data.opcion04, disabled: false },
       { name: 'Almacén', icon: '../../../../assets/icons/almacen.svg', url: '/warehouse', enabled: this.permisos.user_data.opcion05, disabled: false },
       { name: 'Sucursal', icon: '../../../../assets/icons/taller.svg', url: '/workshop', enabled: this.permisos.user_data.opcion06, disabled: false },
