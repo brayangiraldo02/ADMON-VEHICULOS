@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ApiService } from 'src/app/services/api.service';
 import { JwtService } from 'src/app/services/jwt.service';
@@ -9,11 +9,11 @@ interface Owner {
 }
 
 @Component({
-  selector: 'app-owners-statusfleetsummary',
-  templateUrl: './owners-statusfleetsummary.component.html',
-  styleUrls: ['./owners-statusfleetsummary.component.css'],
+  selector: 'app-owners-statusfleetdetail',
+  templateUrl: './owners-statusfleetdetail.component.html',
+  styleUrls: ['./owners-statusfleetdetail.component.css'],
 })
-export class OwnersStatusfleetsummaryComponent {
+export class OwnersStatusfleetdetailComponent implements OnInit {
   @Output() close = new EventEmitter<void>();
 
   isLoading: boolean = true;
@@ -25,7 +25,7 @@ export class OwnersStatusfleetsummaryComponent {
   infoForm: FormGroup;
 
   constructor(
-    private apiService: ApiService, 
+    private apiService: ApiService,
     private jwtService: JwtService,
     private fb: FormBuilder
   ) {
@@ -71,14 +71,13 @@ export class OwnersStatusfleetsummaryComponent {
 
   onSubmit(): void {
     if (this.infoForm.valid) {
-      console.log(this.infoForm.value);
       this.openExternalLink();
     }
   }
 
   openExternalLink(): void {
-    let endpoint = 'estado-vehiculos-resumen-empresa/';
-    endpoint += this.infoForm.value.companie
+    let endpoint = 'informe-estados-detallado-empresa/';
+    endpoint += this.infoForm.value.companie;
     if (endpoint) {
       const data = { user: this.user };
       console.log(data);

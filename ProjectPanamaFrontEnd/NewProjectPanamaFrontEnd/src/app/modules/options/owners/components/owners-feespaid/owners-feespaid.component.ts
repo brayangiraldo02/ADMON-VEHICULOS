@@ -1,7 +1,7 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Router } from '@angular/router';
 import { ApiService } from 'src/app/services/api.service';
 import { JwtService } from 'src/app/services/jwt.service';
-import { Router } from '@angular/router';
 
 interface State {
   id: string;
@@ -16,9 +16,9 @@ interface Owner {
 @Component({
   selector: 'app-owners-feespaid',
   templateUrl: './owners-feespaid.component.html',
-  styleUrls: ['./owners-feespaid.component.css']
+  styleUrls: ['./owners-feespaid.component.css'],
 })
-export class OwnersFeespaidComponent {
+export class OwnersFeespaidComponent  implements OnInit {
   @Output() close = new EventEmitter<void>();
 
   isLoading: boolean = true;
@@ -36,7 +36,7 @@ export class OwnersFeespaidComponent {
     private apiService: ApiService,
     private jwtService: JwtService,
     private router: Router
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     this.listStates();
@@ -44,20 +44,20 @@ export class OwnersFeespaidComponent {
   }
 
   listStates(): void {
-    this.apiService.getData("states").subscribe(
+    this.apiService.getData('states').subscribe(
       (response) => {
         this.states = response.filter((state: any) => state.id);
         this.states.sort((a, b) => {
           const aStartsWithSpecialChar = a.name.startsWith('»');
           const bStartsWithSpecialChar = b.name.startsWith('»');
-        
+
           if (aStartsWithSpecialChar && !bStartsWithSpecialChar) {
             return 1;
           }
           if (!aStartsWithSpecialChar && bStartsWithSpecialChar) {
             return -1;
           }
-        
+
           return a.name.localeCompare(b.name);
         });
         console.log(this.states);
@@ -71,12 +71,12 @@ export class OwnersFeespaidComponent {
   listOwners(): void {
     console.log(this.jwtService.obtainId());
     const owner = {
-      propietario: this.jwtService.obtainId()
-    }
+      propietario: this.jwtService.obtainId(),
+    };
 
     console.log(owner);
 
-    this.apiService.postData("companies_owners", owner).subscribe(
+    this.apiService.postData('companies_owners', owner).subscribe(
       (response) => {
         this.owners = response.filter((owner: any) => owner.id);
         this.owners.sort((a, b) => a.name.localeCompare(b.name));
@@ -119,12 +119,16 @@ export class OwnersFeespaidComponent {
         this.empresasSeleccionadas.push(opcionId);
       }
     } else {
-      this.empresasSeleccionadas = this.empresasSeleccionadas.filter(id => id !== opcionId);
+      this.empresasSeleccionadas = this.empresasSeleccionadas.filter(
+        (id) => id !== opcionId
+      );
     }
   }
 
   onCheckboxEmpresaContainerClick(opcionId: string, event: any) {
-    const checkbox = event.currentTarget.querySelector('input[type="checkbox"]');
+    const checkbox = event.currentTarget.querySelector(
+      'input[type="checkbox"]'
+    );
     checkbox.checked = !checkbox.checked;
     this.onCheckboxEmpresaChange(opcionId, { target: checkbox });
     event.stopPropagation(); // Evita que el evento de clic se propague
@@ -146,12 +150,16 @@ export class OwnersFeespaidComponent {
         this.estadosSeleccionados.push(opcionId);
       }
     } else {
-      this.estadosSeleccionados = this.estadosSeleccionados.filter(id => id !== opcionId);
+      this.estadosSeleccionados = this.estadosSeleccionados.filter(
+        (id) => id !== opcionId
+      );
     }
   }
 
   onCheckboxEstadoContainerClick(opcionId: string, event: any) {
-    const checkbox = event.currentTarget.querySelector('input[type="checkbox"]');
+    const checkbox = event.currentTarget.querySelector(
+      'input[type="checkbox"]'
+    );
     checkbox.checked = !checkbox.checked;
     this.onCheckboxEstadoChange(opcionId, { target: checkbox });
     event.stopPropagation(); // Evita que el evento de clic se propague
@@ -159,7 +167,7 @@ export class OwnersFeespaidComponent {
 
   onEstadoSeleccionar() {
     this.estadosSeleccionados.sort((a, b) => parseInt(a) - parseInt(b));
-    this.mostrarOpcionesEstados = false; 
+    this.mostrarOpcionesEstados = false;
   }
 
   obtenerUsuario() {
@@ -168,11 +176,11 @@ export class OwnersFeespaidComponent {
   }
 
   obtenerIdsEmpresas(): string[] {
-    return this.owners.map(owner => owner.id).filter(id => id);
+    return this.owners.map((owner) => owner.id).filter((id) => id);
   }
 
   obtenerIdsEstados(): string[] {
-    return this.states.map(state => state.id).filter(id => id);
+    return this.states.map((state) => state.id).filter((id) => id);
   }
 
   generarInforme() {
@@ -187,7 +195,7 @@ export class OwnersFeespaidComponent {
     let info = {
       usuario: user,
       empresas: this.empresasSeleccionadas,
-      estados: this.estadosSeleccionados
+      estados: this.estadosSeleccionados,
     };
 
     console.log(this.estadosSeleccionados);
@@ -197,7 +205,7 @@ export class OwnersFeespaidComponent {
     localStorage.setItem('pdfData', JSON.stringify(info));
 
     // Navegar al componente PdfViewerComponent
-    window.open(`/pdf`, '_blank')
+    window.open(`/pdf`, '_blank');
     this.closeModal();
   }
 

@@ -1,7 +1,7 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ApiService } from 'src/app/services/api.service';
 import { JwtService } from 'src/app/services/jwt.service';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 interface Vehicle {
   placa: string;
@@ -20,12 +20,11 @@ interface CompaniesOwners {
 }
 
 @Component({
-  selector: 'app-owners-pandgstatus',
-  templateUrl: './owners-pandgstatus.component.html',
-  styleUrls: ['./owners-pandgstatus.component.css']
+  selector: 'app-owners-relationshiprevenues',
+  templateUrl: './owners-relationshiprevenues.component.html',
+  styleUrls: ['./owners-relationshiprevenues.component.css']
 })
-export class OwnersPandgstatusComponent {
-
+export class OwnersRelationshiprevenuesComponent implements OnInit{
   @Output() close = new EventEmitter<void>();
       
       isLoading: boolean = false;
@@ -168,7 +167,7 @@ export class OwnersPandgstatusComponent {
     }
   
     openExternalLink(): void {
-      let endpoint = 'pandgstatus';
+      let endpoint = 'relationshiprevenues';
       if (endpoint) {
         const companyValue = this.infoForm.value.companie;
         let companyName = companyValue; // Default to the full value

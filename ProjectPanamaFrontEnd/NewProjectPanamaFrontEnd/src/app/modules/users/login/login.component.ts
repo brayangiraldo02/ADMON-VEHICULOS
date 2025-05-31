@@ -42,7 +42,7 @@ export class LoginComponent implements OnInit {
         (response) => {
           this.jwtService.setToken(response.token);
           this.getInfoCompany();
-          this.jwtService.isAdmin() ? this.router.navigate(['/users-home']) : (this.jwtService.verifyOwner() ? this.router.navigate(['/owners-home']) : this.router.navigate(['/users-home']));
+          this.jwtService.isAdmin() ? this.router.navigate(['/home/users']) : (this.jwtService.verifyOwner() ? this.router.navigate(['/home/owners']) : this.router.navigate(['/home/users']));
         },
         (error) => {
           if (error.status === 404) {

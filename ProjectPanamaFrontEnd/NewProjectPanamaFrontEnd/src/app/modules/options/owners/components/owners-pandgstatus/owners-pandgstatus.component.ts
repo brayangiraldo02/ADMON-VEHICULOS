@@ -1,7 +1,7 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ApiService } from 'src/app/services/api.service';
 import { JwtService } from 'src/app/services/jwt.service';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 interface Vehicle {
   placa: string;
@@ -20,13 +20,13 @@ interface CompaniesOwners {
 }
 
 @Component({
-  selector: 'app-owners-partsrelationship',
-  templateUrl: './owners-partsrelationship.component.html',
-  styleUrls: ['./owners-partsrelationship.component.css']
+  selector: 'app-owners-pandgstatus',
+  templateUrl: './owners-pandgstatus.component.html',
+  styleUrls: ['./owners-pandgstatus.component.css'],
 })
-export class OwnersPartsrelationshipComponent {
+export class OwnersPandgstatusComponent  implements OnInit {
   @Output() close = new EventEmitter<void>();
-  
+
   isLoading: boolean = false;
   isLoadingValues: boolean = true;
 
@@ -53,12 +53,12 @@ export class OwnersPartsrelationshipComponent {
       companie: ['', Validators.required],
       vehicle: [{ value: '', disabled: true }],
       firstDate: ['', Validators.required],
-      lastDate: ['', Validators.required]
+      lastDate: ['', Validators.required],
     });
   }
 
   ngOnInit(): void {
-    this.listVehiclesPerOwners()
+    this.listVehiclesPerOwners();
     this.listVehicles();
     this.getDate();
     this.getUser();
@@ -68,7 +68,7 @@ export class OwnersPartsrelationshipComponent {
     this.apiService.getData('extras/time').subscribe(
       (response) => {
         this.date = response;
-        this. isLoadingValues = false;
+        this.isLoadingValues = false;
         console.log(this.date);
       },
       (error) => {
@@ -91,12 +91,12 @@ export class OwnersPartsrelationshipComponent {
   listVehiclesPerOwners(): void {
     console.log(this.jwtService.obtainId());
     const vehicle = {
-      propietario: this.jwtService.obtainId()
-    }
+      propietario: this.jwtService.obtainId(),
+    };
 
     console.log(vehicle);
 
-    this.apiService.postData("vehicles_per_owners", vehicle).subscribe(
+    this.apiService.postData('vehicles_per_owners', vehicle).subscribe(
       (response) => {
         this.vehicles_per = response; // vehicles ahora es un objeto
         // Extraer las llaves (nombres de empresa)
@@ -112,21 +112,21 @@ export class OwnersPartsrelationshipComponent {
   listVehicles(): void {
     console.log(this.jwtService.obtainId());
     const vehicle = {
-      propietario: this.jwtService.obtainId()
-    }
+      propietario: this.jwtService.obtainId(),
+    };
 
     console.log(vehicle);
 
-    this.apiService.postData("vehicles_owners", vehicle).subscribe(
+    this.apiService.postData('vehicles_owners', vehicle).subscribe(
       (response) => {
         this.vehicles = response;
         // this.vehicles.sort((a, b) => a.numero.localeCompare(b.numero));
         if (!this.jwtService.isAdmin()) {
           const defaultVehicle = {
-            placa: "",
-            numero: "",
-            marca: "",
-            consecutivo: ""
+            placa: '',
+            numero: '',
+            marca: '',
+            consecutivo: '',
           };
           this.vehicles = [defaultVehicle, ...this.vehicles];
         }
@@ -146,45 +146,45 @@ export class OwnersPartsrelationshipComponent {
 
   getCompanies() {
     const owner = {
-      propietario: this.jwtService.obtainId()
-    }
+      propietario: this.jwtService.obtainId(),
+    };
     this.apiService.postData('companies_owners', owner).subscribe(
       (response: any[]) => {
-        this.companiesOwners = response.map(item => item.id);
+        this.companiesOwners = response.map((item) => item.id);
         console.log(this.companiesOwners); // Will show: ['50', '51', '57', '60', '63']
       },
       (error) => {
         console.error(error);
       }
     );
-}
+  }
 
   onSubmit(): void {
-    if (this.infoForm.valid) {
+    if (this.infoForm && this.infoForm.valid) {
       console.log(this.infoForm.value);
       this.openExternalLink();
     }
   }
 
   openExternalLink(): void {
-    let endpoint = 'partsrelationship';
+    let endpoint = 'pandgstatus';
     if (endpoint) {
       const companyValue = this.infoForm.value.companie;
       let companyName = companyValue; // Default to the full value
       if (companyValue && companyValue.includes(' - ')) {
-        companyName = companyValue.split(' - ')[0].trim(); 
+        companyName = companyValue.split(' - ')[0].trim();
       }
       const data = {
-        'usuario': this.user,
-        'primeraFecha': this.infoForm.value.firstDate,
-        'ultimaFecha': this.infoForm.value.lastDate,
-        'unidad': this.infoForm.value.vehicle,
-        'empresa': companyName
+        usuario: this.user,
+        primeraFecha: this.infoForm.value.firstDate,
+        ultimaFecha: this.infoForm.value.lastDate,
+        unidad: this.infoForm.value.vehicle,
+        empresa: companyName,
       };
       console.log(data);
       localStorage.setItem('pdfEndpoint', endpoint);
       localStorage.setItem('pdfData', JSON.stringify(data));
-      window.open(`/pdf`, '_blank')
+      window.open(`/pdf`, '_blank');
       this.closeModal();
     } else {
       console.error('URL no encontrada para la opción seleccionada.');
@@ -194,5 +194,4 @@ export class OwnersPartsrelationshipComponent {
   closeModal() {
     this.close.emit();
   }
-
 }

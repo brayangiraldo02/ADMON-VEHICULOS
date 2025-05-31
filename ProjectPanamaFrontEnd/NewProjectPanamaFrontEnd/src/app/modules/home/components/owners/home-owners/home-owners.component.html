@@ -26,7 +26,7 @@
           <p class="option-text">{{ option.name }}</p>
         </button>
       </ng-container>
-      <button class="option" type="button" [routerLink]="['/users-home']" *ngIf="this.isAdmin">
+      <button class="option" type="button" [routerLink]="['/home/users']" *ngIf="this.isAdmin">
         <span class="material-symbols-outlined" translate="no">
           home
         </span>
@@ -76,7 +76,8 @@
   (close)="hideModal()"
 ></app-owners-pandgstatus>
 
-<app-owners-feespaid 
+
+<app-owners-feespaid
   *ngIf="ownersFeespaidVisible" 
   (close)="hideModal()"
 ></app-owners-feespaid>

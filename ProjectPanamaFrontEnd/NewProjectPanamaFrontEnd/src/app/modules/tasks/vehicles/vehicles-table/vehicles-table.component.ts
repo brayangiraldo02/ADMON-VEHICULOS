@@ -84,7 +84,7 @@ export class VehiclesTableComponent {
     localStorage.setItem('pdfEndpoint', 'directorio-vehiculos');
     localStorage.setItem('pdfData', '0');
     window.open(`/pdf`, '_blank')
-    this.router.navigate(['/users-home']);
+    this.router.navigate(['/home/users']);
   }
 
 }
