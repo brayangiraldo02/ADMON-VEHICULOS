@@ -79,7 +79,7 @@ export class CobrosComponent implements OnInit {
 
     console.log(owner);
 
-    this.apiService.postData('companies_owners', owner).subscribe(
+    this.apiService.postData('companies_per_owners', owner).subscribe(
       (response) => {
         this.owners = response.filter((owner: any) => owner.id);
         this.owners.sort((a, b) => a.name.localeCompare(b.name));
