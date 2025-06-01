@@ -1,6 +1,9 @@
 import { Component, effect, ElementRef, ViewChild } from '@angular/core';
 import { JwtService } from 'src/app/services/jwt.service';
 import { GlobalStatesService } from 'src/app/states/global-states.service';
+import { MatDialog } from '@angular/material/dialog';
+import { CobrosComponent } from '../options/cobros/cobros.component';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-home-users',
@@ -40,8 +43,9 @@ export class HomeUsersComponent {
   constructor(
     private jwtService: JwtService,
     // private apiService: ApiService,
-    // private router: Router,
-    private globalStatesService: GlobalStatesService
+    private router: Router,
+    private globalStatesService: GlobalStatesService,
+    public dialog: MatDialog
   ) {
     effect(() => {
       this.infoCompanyVisible = this.globalStatesService.displayInfoCompany();
@@ -66,6 +70,7 @@ export class HomeUsersComponent {
         name: 'Caja',
         icon: '../../../../assets/icons/caja.svg',
         url: 'hoalalalal',
+        click: () => null,
         enabled: this.permisos.user_data.opcion01,
         disabled: true,
       },
@@ -73,13 +78,15 @@ export class HomeUsersComponent {
         name: 'Operaciones',
         icon: '../../../../assets/icons/operaciones.svg',
         url: '/operations',
+        click: () => null,
         enabled: this.permisos.user_data.opcion02,
         disabled: false,
       },
       {
         name: 'Cobros',
         icon: '../../../../assets/icons/cobros.svg',
-        url: '/cobros',
+        url: null,
+        click: () => this.openDialogCobros(),
         enabled: this.permisos.user_data.opcion03,
         disabled: false,
       },
@@ -87,6 +94,7 @@ export class HomeUsersComponent {
         name: 'Trámites',
         icon: '../../../../assets/icons/tramites.svg',
         url: '/procedures',
+        click: () => null,
         enabled: this.permisos.user_data.opcion04,
         disabled: false,
       },
@@ -94,6 +102,7 @@ export class HomeUsersComponent {
         name: 'Almacén',
         icon: '../../../../assets/icons/almacen.svg',
         url: '/warehouse',
+        click: () => null,
         enabled: this.permisos.user_data.opcion05,
         disabled: false,
       },
@@ -101,6 +110,7 @@ export class HomeUsersComponent {
         name: 'Sucursal',
         icon: '../../../../assets/icons/taller.svg',
         url: '/workshop',
+        click: () => null,
         enabled: this.permisos.user_data.opcion06,
         disabled: false,
       },
@@ -108,6 +118,7 @@ export class HomeUsersComponent {
         name: 'Chapistería',
         icon: '../../../../assets/icons/chapisteria.svg',
         url: '/sheet-metal-work',
+        click: () => null,
         enabled: this.permisos.user_data.opcion07,
         disabled: false,
       },
@@ -115,6 +126,7 @@ export class HomeUsersComponent {
         name: 'Llavero',
         icon: '../../../../assets/icons/llavero.svg',
         url: '/keychain',
+        click: () => null,
         enabled: this.permisos.user_data.opcion08,
         disabled: false,
       },
@@ -122,6 +134,7 @@ export class HomeUsersComponent {
         name: 'Reclamos',
         icon: '../../../../assets/icons/reclamos.svg',
         url: '/claims',
+        click: () => null,
         enabled: this.permisos.user_data.opcion09,
         disabled: false,
       },
@@ -129,6 +142,7 @@ export class HomeUsersComponent {
         name: 'Cartera',
         icon: '../../../../assets/icons/cartera.svg',
         url: '/wallet',
+        click: () => null,
         enabled: this.permisos.user_data.opcion10,
         disabled: false,
       },
@@ -136,6 +150,7 @@ export class HomeUsersComponent {
         name: 'Gerencia',
         icon: '../../../../assets/icons/gerencia.svg',
         url: '/management',
+        click: () => null,
         enabled: this.permisos.user_data.opcion11,
         disabled: false,
       },
@@ -143,6 +158,7 @@ export class HomeUsersComponent {
         name: 'Gastos',
         icon: '../../../../assets/icons/gastos.svg',
         url: '/expenses',
+        click: () => null,
         enabled: this.permisos.user_data.opcion12,
         disabled: false,
       },
@@ -150,6 +166,7 @@ export class HomeUsersComponent {
         name: 'CNT',
         icon: '../../../../assets/icons/cnt.svg',
         url: '/cnt',
+        click: () => null,
         enabled: this.permisos.user_data.opcion13,
         disabled: false,
       },
@@ -157,6 +174,7 @@ export class HomeUsersComponent {
         name: 'Contado',
         icon: '../../../../assets/icons/contado.svg',
         url: 'hoalalalal',
+        click: () => null,
         enabled: this.permisos.user_data.opcion14,
         disabled: true,
       },
@@ -164,6 +182,7 @@ export class HomeUsersComponent {
         name: 'Utilidades',
         icon: '../../../../assets/icons/utilidades1.svg',
         url: '/utilities',
+        click: () => null,
         enabled: this.permisos.user_data.opcion15,
         disabled: false,
       },
@@ -207,5 +226,19 @@ export class HomeUsersComponent {
         }
       }
     }
+  }
+
+  openDialogCobros() {
+    const dialogRef = this.dialog.open(CobrosComponent, {
+      minWidth: 'min(600px, 90vw)',
+      maxHeight: '100vh'
+      }
+    );
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if(result){
+         this.router.navigate(['/cobros'])
+      }
+    });
   }
 }

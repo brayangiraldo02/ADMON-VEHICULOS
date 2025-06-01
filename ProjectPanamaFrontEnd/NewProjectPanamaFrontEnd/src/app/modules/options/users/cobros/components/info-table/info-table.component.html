@@ -1,15 +1,25 @@
 <app-header></app-header>
 <div class="cobros-container">
   <div class="buttons-container">
-    <button mat-raised-button class="back uniform-width-button" routerLink="">
+    <button
+      mat-raised-button
+      class="back uniform-width-button"
+      routerLink="/home/users"
+    >
       <mat-icon>arrow_back</mat-icon>
       Regresar
     </button>
+
+    <!-- TODO: Unir botones de Informes y Exportar, que queden al lado derecho -->
     <button mat-raised-button class="uniform-width-button">
       <mat-icon>description</mat-icon>
       Informes
     </button>
-    <button mat-raised-button [matMenuTriggerFor]="menu" class="uniform-width-button">
+    <button
+      mat-raised-button
+      [matMenuTriggerFor]="menu"
+      class="uniform-width-button"
+    >
       <mat-icon>insert_drive_file</mat-icon>
       Exportar
     </button>
@@ -30,20 +40,20 @@
         />
       </mat-form-field>
 
+      <!-- TODO: Que por defecto sean todos. -->
       <mat-form-field class="debt-filter">
         <mat-label>Nivel de deuda</mat-label>
-        <mat-select [formControl]="debts" multiple>
+        <mat-select [formControl]="debts">
           <mat-select-trigger>
-            {{debts.value?.[0] || ''}}
-            <span
-              *ngIf="(debts.value?.length || 0) > 1"
-            >
-              (+{{ (debts.value?.length || 0) - 1 }}
-              {{ debts.value?.length === 2 ? "other" : "others" }})
-            </span>
+            {{ debts.value }}
           </mat-select-trigger>
-          <mat-option *ngFor="let debt of debtList" [value]="debt.text" [ngStyle]="{'background-color': debt.color}">
-            {{debt.text}}
+          <mat-option
+            *ngFor="let debt of debtList; let i = index"
+            [value]="debt.text"
+            [class]="'debt-option-' + i"
+            [ngStyle]="{ 'background-color': debt.color }"
+          >
+            {{ debt.text }}
           </mat-option>
         </mat-select>
       </mat-form-field>
@@ -51,7 +61,12 @@
 
     <div class="mat-elevation-z8">
       <div class="table-scroll-container">
-        <table mat-table [dataSource]="dataSource" matSort>
+        <table
+          mat-table
+          [dataSource]="dataSource"
+          matSort
+          [@listAnimation]="dataSource.data.length"
+        >
           <!-- Unidad Column -->
           <ng-container matColumnDef="Unidad">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>Unidad</th>
@@ -149,13 +164,20 @@
           </ng-container>
 
           <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-          <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+          <tr
+            mat-row
+            *matRowDef="let row; columns: displayedColumns"
+            [@fadeInOut]
+          ></tr>
 
           <!-- Row shown when there is no matching data. -->
           <tr class="mat-row" *matNoDataRow>
             <td class="mat-cell" colspan="16">
               <!-- Updated colspan to match number of columns -->
-              No hay información de cobros en las empresas seleccionadas
+              <mat-progress-bar
+                mode="indeterminate"
+                [@fadeInOut]
+              ></mat-progress-bar>
             </td>
           </tr>
         </table>

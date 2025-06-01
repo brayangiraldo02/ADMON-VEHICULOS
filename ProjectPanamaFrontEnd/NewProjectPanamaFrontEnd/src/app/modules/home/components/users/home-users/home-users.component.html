@@ -1,42 +1,77 @@
 <app-header></app-header>
 <!-- <body> -->
-  <div class="container">
-    <div class="carousel-container">
-      <div class="carousel">
-        <div class="left-container" *ngIf="!infoCompanyVisible">
-          <a class="alternate-media" (click)="changeVideoState()">
-            <img [src]="this.rightIcon" class="media-icon">
-          </a>
-        </div>
-        <img class="media-container" *ngIf="changeVideo" [src]="images[currentImageIndex]" [style.opacity]="showImage ? '1' : '0'">
-        <video #videoPlayer *ngIf="!changeVideo" [src]="currentVideo" (ended)="onVideoEnded()" autoplay></video>
-        <div class="right-container" *ngIf="!infoCompanyVisible">
-          <a class="alternate-media" (click)="changeVideoState()">
-            <img [src]="this.rightIcon" class="media-icon">
-          </a>
-        </div>
+<div class="container">
+  <div class="carousel-container">
+    <div class="carousel">
+      <div class="left-container" *ngIf="!infoCompanyVisible">
+        <a class="alternate-media" (click)="changeVideoState()">
+          <img [src]="this.rightIcon" class="media-icon" />
+        </a>
+      </div>
+      <img
+        class="media-container"
+        *ngIf="changeVideo"
+        [src]="images[currentImageIndex]"
+        [style.opacity]="showImage ? '1' : '0'"
+      />
+      <video
+        #videoPlayer
+        *ngIf="!changeVideo"
+        [src]="currentVideo"
+        (ended)="onVideoEnded()"
+        autoplay
+      ></video>
+      <div class="right-container" *ngIf="!infoCompanyVisible">
+        <a class="alternate-media" (click)="changeVideoState()">
+          <img [src]="this.rightIcon" class="media-icon" />
+        </a>
       </div>
     </div>
-    <div class="options-container">
-      <ul>
-        <!-- ng-container para aplicar ngIf sin afectar el layout -->
-        <ng-container *ngFor="let option of options">
-          <button class="options-if" *ngIf="option.enabled"  [routerLink]="option.url" [disabled]="option.disabled">
-            <a>
-              <img [src]="option.icon" class="option-icon">
-              <span class="option-text">{{ option.name }}</span>
-            </a>
-          </button>
-        </ng-container>
-        <button class="option" type="button" *ngIf="this.isAdmin" [routerLink]="['/home/owners']">
-          <span class="material-symbols-outlined" translate="no">
-            apartment
-          </span>
-          <p class="option-text">Inicio de Propietarios</p>
-        </button>
-      </ul>
-    </div>  
   </div>
+  <div class="options-container">
+    <ul>
+      <!-- ng-container para aplicar ngIf sin afectar el layout -->
+      <ng-container *ngFor="let option of options">
+        <!-- Para opciones con URL -->
+        <button
+          class="options-if"
+          *ngIf="option.enabled && option.url"
+          [routerLink]="option.url"
+          [disabled]="option.disabled"
+        >
+          <a>
+            <img [src]="option.icon" class="option-icon" />
+            <span class="option-text">{{ option.name }}</span>
+          </a>
+        </button>
+
+        <!-- Para opciones con función click -->
+        <button
+          class="options-if"
+          *ngIf="option.enabled && !option.url"
+          [disabled]="option.disabled"
+          (click)="option.click()"
+        >
+          <a>
+            <img [src]="option.icon" class="option-icon" />
+            <span class="option-text">{{ option.name }}</span>
+          </a>
+        </button>
+      </ng-container>
+      <button
+        class="option"
+        type="button"
+        *ngIf="this.isAdmin"
+        [routerLink]="['/home/owners']"
+      >
+        <span class="material-symbols-outlined" translate="no">
+          apartment
+        </span>
+        <p class="option-text">Inicio de Propietarios</p>
+      </button>
+    </ul>
+  </div>
+</div>
 <!-- </body> -->
 <app-footer></app-footer>
 

@@ -18,9 +18,9 @@
 }
 
 .mat-mdc-raised-button>.mat-icon {
-    font-size: 1.25rem;
-    height: 1.25rem;
-    width: 1.25rem;
+  font-size: 1.25rem;
+  height: 1.25rem;
+  width: 1.25rem;
 }
 
 .back {
@@ -47,6 +47,7 @@
 .table-scroll-container {
   overflow-x: auto; 
   position: relative; 
+  overflow-y: hidden;
 }
 
 table {
@@ -79,4 +80,31 @@ td:first-child {
 th:last-child,
 td:last-child {
   padding-right: 20px; /* Ajusta este valor según sea necesario */
+}
+
+.filters-container {
+  transition: all 0.3s ease;
+}
+
+.mat-elevation-z8 {
+  transition: all 0.3s ease;
+}
+
+::ng-deep .mat-mdc-option {
+  transition: all 0.2s ease !important;
+  margin: 2px !important;
+  transform-origin: center !important;
+}
+
+::ng-deep .mat-mdc-option:hover {
+  transform: scale(1.01) !important; 
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12) !important;
+  border-radius: 4px !important;
+  will-change: transform !important;
+}
+
+::ng-deep .mat-mdc-select-panel {
+  padding: 4px !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
 }
