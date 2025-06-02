@@ -25,6 +25,7 @@ import {
 import { GlobalStatesService } from 'src/app/states/global-states.service';
 import { Owners } from '../../interfaces/owners.interface';
 import { Router } from '@angular/router';
+import { DocumentsService } from 'src/app/services/documents.service';
 
 export interface VehicleInfoData {
   Unidad: string;
@@ -109,7 +110,7 @@ interface DebtOption {
   ],
 })
 export class InfoTableComponent implements AfterViewInit, OnDestroy {
-  debts = new FormControl<string[]>([]);
+  debts = new FormControl<string>('Todos');
 
   debtList: DebtOption[] = [
     {
@@ -139,6 +140,8 @@ export class InfoTableComponent implements AfterViewInit, OnDestroy {
     },
   ];
 
+  selectedDebtLevel: string = 'Todos'; 
+
   displayedColumns: string[] = [
     'Unidad',
     'Condu',
@@ -167,6 +170,7 @@ export class InfoTableComponent implements AfterViewInit, OnDestroy {
     private globalStates: GlobalStatesService,
     private renderer: Renderer2,
     private router: Router,
+    private documentsService: DocumentsService,
     @Inject(DOCUMENT) private document: Document
   ) {
     this.dataSource = new MatTableDataSource<VehicleInfoData>([]);
@@ -231,6 +235,12 @@ export class InfoTableComponent implements AfterViewInit, OnDestroy {
     this.renderer.appendChild(this.document.head, style);
   }
 
+  onDebtSelectionChange(event: any) {
+    this.selectedDebtLevel = event.value;
+    console.log('Selected debt level:', this.selectedDebtLevel);
+    // TODO: Agregar lógica para filtrar la tabla según el nivel de deuda seleccionado
+  }
+
   getTableData(selectedOwners: Owners) {
 
     this.apiService.postData('collection-accounts', selectedOwners).subscribe({
@@ -291,6 +301,27 @@ export class InfoTableComponent implements AfterViewInit, OnDestroy {
     if (this.dataSource.paginator) {
       this.dataSource.paginator.firstPage();
     }
+  }
+
+  downloadCollectionAccountsXLS() {
+    const selectedOwners = this.globalStates.getSelectedOwners();
+    if (selectedOwners.owners.length === 0) {
+      console.error('No owners selected for XLS download');
+      return;
+    }
+
+    this.documentsService.downloadDocument(
+      'collection-accounts/download', 
+      selectedOwners, 
+      'collection_accounts_report.xlsx'
+    ).subscribe({
+      next: () => {
+        console.log('Download started successfully');
+      },
+      error: (error) => {
+        console.error('Download failed:', error);
+      }
+    });
   }
 
   ngOnDestroy() {

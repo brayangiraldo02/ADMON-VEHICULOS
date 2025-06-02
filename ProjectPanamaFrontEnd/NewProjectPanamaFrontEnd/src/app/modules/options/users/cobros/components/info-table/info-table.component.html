@@ -10,23 +10,28 @@
       Regresar
     </button>
 
-    <!-- TODO: Unir botones de Informes y Exportar, que queden al lado derecho -->
-    <button mat-raised-button class="uniform-width-button">
-      <mat-icon>description</mat-icon>
-      Informes
-    </button>
-    <button
-      mat-raised-button
-      [matMenuTriggerFor]="menu"
-      class="uniform-width-button"
-    >
-      <mat-icon>insert_drive_file</mat-icon>
-      Exportar
-    </button>
-    <mat-menu #menu="matMenu">
-      <button mat-menu-item class="options-mat-menu">PDF para Imprimir</button>
-      <button mat-menu-item class="options-mat-menu">Excel</button>
-    </mat-menu>
+    <div class="unified-buttons-container">
+      <button mat-raised-button class="uniform-width-button">
+        <mat-icon>description</mat-icon>
+        Informes
+      </button>
+      <button
+        mat-raised-button
+        [matMenuTriggerFor]="menu"
+        class="uniform-width-button"
+      >
+        <mat-icon>insert_drive_file</mat-icon>
+        Exportar
+      </button>
+      <mat-menu #menu="matMenu">
+        <button mat-menu-item class="options-mat-menu">
+          PDF para Imprimir
+        </button>
+        <button mat-menu-item class="options-mat-menu" (click)="downloadCollectionAccountsXLS()">
+          Excel
+        </button>
+      </mat-menu>
+    </div>
   </div>
   <div class="table-container">
     <div class="filters-container">
@@ -40,10 +45,9 @@
         />
       </mat-form-field>
 
-      <!-- TODO: Que por defecto sean todos. -->
       <mat-form-field class="debt-filter">
         <mat-label>Nivel de deuda</mat-label>
-        <mat-select [formControl]="debts">
+        <mat-select [formControl]="debts" (selectionChange)="onDebtSelectionChange($event)">
           <mat-select-trigger>
             {{ debts.value }}
           </mat-select-trigger>
