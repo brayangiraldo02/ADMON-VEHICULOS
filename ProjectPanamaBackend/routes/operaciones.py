@@ -64,7 +64,7 @@ async def get_vehicle_operations(vehicle_number: str):
   finally:
     db.close()
 
-@operations_router.get("/operations/deliveryvehicledriver/driver/{driver_number}", tags=["Operations"])
+@operations_router.get("/operations/deliveryvehicledriver/driver/{driver_number}/", tags=["Operations"])
 async def get_driver_operations(driver_number: str):
   db = session()
   try:
@@ -99,7 +99,7 @@ async def get_driver_operations(driver_number: str):
   finally:
     db.close()
 
-@operations_router.post("/operations/deliveryvehicledriver", tags=["Operations"])
+@operations_router.post("/operations/deliveryvehicledriver/", tags=["Operations"])
 async def delivery_vehicle_driver(data: DeliveryVehicleDriver):
   db = session()
   try:
