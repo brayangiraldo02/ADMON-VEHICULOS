@@ -108,3 +108,7 @@ td:last-child {
   overflow-y: auto !important;
   overflow-x: hidden !important;
 }
+
+.padding-header{
+  padding-right: 10px;
+}

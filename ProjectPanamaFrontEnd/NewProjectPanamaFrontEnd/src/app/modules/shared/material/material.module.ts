@@ -11,6 +11,7 @@ import {MatMenuModule} from '@angular/material/menu';
 import {MatDialogModule} from '@angular/material/dialog';
 import {MatListModule} from '@angular/material/list';
 import {MatProgressBarModule} from '@angular/material/progress-bar';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 
 const materialModules = [
   MatFormFieldModule, 
@@ -25,6 +26,7 @@ const materialModules = [
   MatDialogModule,
   MatListModule,
   MatProgressBarModule,
+  MatSnackBarModule
 ]
 
 @NgModule({

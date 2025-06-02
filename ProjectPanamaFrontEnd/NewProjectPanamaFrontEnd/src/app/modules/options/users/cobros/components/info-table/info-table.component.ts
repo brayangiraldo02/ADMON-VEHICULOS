@@ -26,6 +26,7 @@ import { GlobalStatesService } from 'src/app/states/global-states.service';
 import { Owners } from '../../interfaces/owners.interface';
 import { Router } from '@angular/router';
 import { DocumentsService } from 'src/app/services/documents.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 export interface VehicleInfoData {
   Unidad: string;
@@ -171,6 +172,7 @@ export class InfoTableComponent implements AfterViewInit, OnDestroy {
     private renderer: Renderer2,
     private router: Router,
     private documentsService: DocumentsService,
+    private snackBar: MatSnackBar,
     @Inject(DOCUMENT) private document: Document
   ) {
     this.dataSource = new MatTableDataSource<VehicleInfoData>([]);
@@ -239,6 +241,9 @@ export class InfoTableComponent implements AfterViewInit, OnDestroy {
     this.selectedDebtLevel = event.value;
     console.log('Selected debt level:', this.selectedDebtLevel);
     // TODO: Agregar lógica para filtrar la tabla según el nivel de deuda seleccionado
+    this.nextFeatures();
+    this.selectedDebtLevel = 'Todos';
+    this.debts.setValue('Todos');
   }
 
   getTableData(selectedOwners: Owners) {
@@ -307,8 +312,11 @@ export class InfoTableComponent implements AfterViewInit, OnDestroy {
     const selectedOwners = this.globalStates.getSelectedOwners();
     if (selectedOwners.owners.length === 0) {
       console.error('No owners selected for XLS download');
+      this.openSnackbar('No hay propietarios seleccionados para descargar el reporte.');
       return;
     }
+
+    this.openSnackbar('En un momento se descargará el reporte de cuentas de cobro.');
 
     this.documentsService.downloadDocument(
       'collection-accounts/download', 
@@ -320,8 +328,21 @@ export class InfoTableComponent implements AfterViewInit, OnDestroy {
       },
       error: (error) => {
         console.error('Download failed:', error);
+        this.openSnackbar('Error al descargar el reporte de cuentas de cobro.');
       }
     });
+  }
+
+  nextFeatures() {
+    this.openSnackbar('Esta funcionalidad está en desarrollo.');
+  }
+
+  openSnackbar(message: string) {
+    this.snackBar.open(message, 'Cerrar', {
+      duration: 3000,
+      horizontalPosition: 'center',
+      verticalPosition: 'top',
+    })
   }
 
   ngOnDestroy() {

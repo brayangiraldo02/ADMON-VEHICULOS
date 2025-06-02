@@ -11,7 +11,7 @@
     </button>
 
     <div class="unified-buttons-container">
-      <button mat-raised-button class="uniform-width-button">
+      <button mat-raised-button class="uniform-width-button" (click)="nextFeatures()">
         <mat-icon>description</mat-icon>
         Informes
       </button>
@@ -24,7 +24,7 @@
         Exportar
       </button>
       <mat-menu #menu="matMenu">
-        <button mat-menu-item class="options-mat-menu">
+        <button mat-menu-item class="options-mat-menu" (click)="nextFeatures()">
           PDF para Imprimir
         </button>
         <button mat-menu-item class="options-mat-menu" (click)="downloadCollectionAccountsXLS()">
@@ -97,7 +97,7 @@
 
           <!-- Celular Column -->
           <ng-container matColumnDef="Celular">
-            <th mat-header-cell *matHeaderCellDef>Celular</th>
+            <th mat-header-cell *matHeaderCellDef class="padding-header">Celular</th>
             <td mat-cell *matCellDef="let row">{{ row.Celular }}</td>
           </ng-container>
 
@@ -139,7 +139,7 @@
 
           <!-- Mantenimien Column -->
           <ng-container matColumnDef="Mantenimien">
-            <th mat-header-cell *matHeaderCellDef>Mantenim.</th>
+            <th mat-header-cell *matHeaderCellDef class="padding-header">Mantenim.</th>
             <td mat-cell *matCellDef="let row">{{ row.Mantenimien }}</td>
           </ng-container>
 
@@ -157,13 +157,13 @@
 
           <!-- Central Column -->
           <ng-container matColumnDef="Central">
-            <th mat-header-cell *matHeaderCellDef>Central</th>
+            <th mat-header-cell *matHeaderCellDef class="padding-header">Central</th>
             <td mat-cell *matCellDef="let row">{{ row.Central }}</td>
           </ng-container>
 
           <!-- Estado Column -->
           <ng-container matColumnDef="Estado">
-            <th mat-header-cell *matHeaderCellDef>Estado</th>
+            <th mat-header-cell *matHeaderCellDef class="padding-header">Estado</th>
             <td mat-cell *matCellDef="let row">{{ row.Estado }}</td>
           </ng-container>
 
