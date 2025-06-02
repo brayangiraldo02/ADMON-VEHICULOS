@@ -12,6 +12,7 @@ from collections import defaultdict
 
 from io import BytesIO
 import pandas as pd
+from openpyxl.utils import get_column_letter
 
 async def get_collection_accounts(companies_list: list):
   db = session()
@@ -224,7 +225,12 @@ async def download_collection_accounts(companies_list: list):
     
     df = pd.DataFrame(collectionAccounts_list)
     output = BytesIO()
-    df.to_excel(output, index=False)
+    with pd.ExcelWriter(output, engine='openpyxl') as writer:
+      df.to_excel(writer, index=False, sheet_name='Cobros')
+      for i, col in enumerate(df.columns):
+        column_len = df[col].astype(str).map(len).max()
+        column_len = max(column_len, len(col)) + 3
+        writer.sheets['Cobros'].column_dimensions[get_column_letter(i + 1)].width = column_len
     output.seek(0)
 
     return StreamingResponse(output, media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", headers={"Content-Disposition": "attachment; filename=collection_accounts.xlsx"})
