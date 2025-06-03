@@ -4,6 +4,7 @@ from config.dbconnection import Base
 class CajaRecaudos(Base):
     __tablename__ = 'CAJARECAUDOS'
 
+    EMPRESA = Column(CHAR(2)) 
     RECIBO = Column(CHAR(8), primary_key=True)
     FEC_RECIBO = Column(Date)
     HOR_RECIBO = Column(CHAR(8))

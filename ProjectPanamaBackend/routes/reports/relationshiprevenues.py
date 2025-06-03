@@ -40,6 +40,7 @@ async def relationshiprevenues_report(data: RelationshipRevenuesReport):
 
         conteo_reporte_ingresos = db.query(
           Propietarios.EMPRESA.label('codigo_empresa'),
+          CajaRecaudos.EMPRESA.label('num_empresa'),
           CajaRecaudos.RECIBO.label('recibo'),
           CajaRecaudos.FEC_RECIBO.label('fecha_recibo'),
           CajaRecaudos.NUMERO.label('unidad'),
@@ -61,11 +62,14 @@ async def relationshiprevenues_report(data: RelationshipRevenuesReport):
         .filter(
           CajaRecaudos.FEC_RECIBO >= data.primeraFecha,
           CajaRecaudos.FEC_RECIBO <= data.ultimaFecha,
-          CajaRecaudos.PROPI_IDEN == empresa
+          CajaRecaudos.PROPI_IDEN == empresa,
+          CajaRecaudos.FORMAPAGO.in_(["1", "2", "3", "4", "5"]),
+          CajaRecaudos.EMPRESA == Propietarios.EMPRESA
         ).all()
       else:
         conteo_reporte_ingresos = db.query(
           Propietarios.EMPRESA.label('codigo_empresa'),
+          CajaRecaudos.EMPRESA.label('num_empresa'),
           CajaRecaudos.RECIBO.label('recibo'),
           CajaRecaudos.FEC_RECIBO.label('fecha_recibo'),
           CajaRecaudos.NUMERO.label('unidad'),
@@ -87,11 +91,14 @@ async def relationshiprevenues_report(data: RelationshipRevenuesReport):
         .filter(
           CajaRecaudos.FEC_RECIBO >= data.primeraFecha,
           CajaRecaudos.FEC_RECIBO <= data.ultimaFecha,
+          CajaRecaudos.FORMAPAGO.in_(["1", "2", "3", "4", "5"]),
+          CajaRecaudos.EMPRESA == Propietarios.EMPRESA
         ).all()
 
     elif data.unidad != "" and data.unidad != "TODOS":
       conteo_reporte_ingresos = db.query(
           Propietarios.EMPRESA.label('codigo_empresa'),
+          CajaRecaudos.EMPRESA.label('num_empresa'),
           CajaRecaudos.RECIBO.label('recibo'),
           CajaRecaudos.FEC_RECIBO.label('fecha_recibo'),
           CajaRecaudos.NUMERO.label('unidad'),
@@ -113,7 +120,9 @@ async def relationshiprevenues_report(data: RelationshipRevenuesReport):
         .filter(
           CajaRecaudos.FEC_RECIBO >= data.primeraFecha,
           CajaRecaudos.FEC_RECIBO <= data.ultimaFecha,
-          CajaRecaudos.NUMERO == data.unidad
+          CajaRecaudos.NUMERO == data.unidad,
+          CajaRecaudos.FORMAPAGO.in_(["1", "2", "3", "4", "5"]),
+          CajaRecaudos.EMPRESA == Propietarios.EMPRESA
         ).all()
       
     if len(conteo_reporte_ingresos) == 0:
@@ -180,7 +189,7 @@ async def relationshiprevenues_report(data: RelationshipRevenuesReport):
         admon_fee_component = 0
       if item.paga_admon == "1" and item.global_und == "2":
         # TODO: REVISAR REDONDEOS
-        print("deuda_renta", aggregated_data[key]["deuda_renta"], "cuota_admon", item.cuota_admon, "cuota_diaria", item.cuota_diaria)
+        # print("deuda_renta", aggregated_data[key]["deuda_renta"], "cuota_admon", item.cuota_admon, "cuota_diaria", item.cuota_diaria)
         admon_fee_component = round((aggregated_data[key]["deuda_renta"] * item.cuota_admon) / item.cuota_diaria, 2)
         # admon_fee_component = int(raw * 100) / 100
 
