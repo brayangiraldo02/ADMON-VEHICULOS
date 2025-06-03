@@ -7,17 +7,34 @@ from models.centrales import Centrales
 from models.estados import Estados
 from models.conductores import Conductores
 from models.cartera import Cartera
+from models.cajarecaudos import CajaRecaudos
+from models.movienca import Movienca
 from fastapi.encoders import jsonable_encoder
 from collections import defaultdict
 
 from io import BytesIO
 import pandas as pd
 from openpyxl.utils import get_column_letter
+from datetime import timedelta, date
 
 async def get_collection_accounts(companies_list: list):
   db = session()
   try:
     company_code = db.query(Propietarios.EMPRESA).filter(Propietarios.CODIGO == companies_list[0])
+
+    today = func.current_date()
+    receipt_date = db.query(CajaRecaudos.PLACA,
+                            func.max(CajaRecaudos.FEC_RECIBO).label('caja_recaudos_fec_recibo')
+                        ).group_by(CajaRecaudos.PLACA).subquery()
+
+    maintenance = db.query(Movienca.FECHA,
+                           Movienca.MANTENIMIE,
+                           Movienca.TIPO,
+                           Movienca.PLACA
+                          ).filter(
+                            Movienca.TIPO.in_(['011', '022']), 
+                            Movienca.MANTENIMIE == '1'
+                          ).group_by(Movienca.PLACA).subquery()
 
     collectionAccounts = db.query(
                           Propietarios.CODIGO.label('propietarios_codigo'), 
@@ -34,7 +51,9 @@ async def get_collection_accounts(companies_list: list):
                           Conductores.CEDULA.label('conductores_cedula'),  
                           Conductores.CELULAR.label('conductores_celular'), 
                           Conductores.FEC_INGRES.label('conductores_fecingres'), 
-                          Conductores.CUO_DIARIA.label('conductores_cuodiaria')
+                          Conductores.CUO_DIARIA.label('conductores_cuodiaria'),
+                          func.datediff(today, receipt_date.c.caja_recaudos_fec_recibo).op('-')(1).label('dias_sin_pago'),
+                          maintenance.c.FECHA.label('mantenimiento_fecha')
                         ).join(
                           Propietarios, Propietarios.CODIGO == Vehiculos.PROPI_IDEN
                         ).join(
@@ -43,6 +62,10 @@ async def get_collection_accounts(companies_list: list):
                           Centrales, Vehiculos.CENTRAL == Centrales.CODIGO
                         ).join(
                           Conductores, Vehiculos.CONDUCTOR == Conductores.CODIGO
+                        ).outerjoin(
+                          receipt_date, Vehiculos.PLACA == receipt_date.c.PLACA
+                        ).outerjoin(
+                          maintenance, Vehiculos.PLACA == maintenance.c.PLACA
                         ).filter(
                           Vehiculos.PROPI_IDEN.in_(companies_list), 
                           Vehiculos.ESTADO.in_(['01', '19']), 
@@ -101,11 +124,15 @@ async def get_collection_accounts(companies_list: list):
         'conductores_celular': collectionAccount.conductores_celular, 
         'conductores_fecingres': collectionAccount.conductores_fecingres, 
         'conductores_cuodiaria': collectionAccount.conductores_cuodiaria,
+        'dias_sin_pago': collectionAccount.dias_sin_pago,
+        'cuotas_pendientes': deu_renta // collectionAccount.conductores_cuodiaria if collectionAccount.conductores_cuodiaria else 0,
         'deu_renta': deu_renta,
         'fon_inscri': fon_inscri,
         'diferencia': fon_inscri - deu_renta,
         'deu_sinies': deu_sinies,
-        'deu_otras': deu_otras
+        'deu_otras': deu_otras,
+        'mantenimiento_fecha': collectionAccount.mantenimiento_fecha + timedelta(days=30) if collectionAccount.mantenimiento_fecha else None,
+        'mantenimiento_dias_restantes': (collectionAccount.mantenimiento_fecha + timedelta(days=30) - date.today()).days if collectionAccount.mantenimiento_fecha else None
       }
 
       if collectionAccount_prev and (collectionAccount_prev['conductor'] == collectionAccount_temp['conductor'] and collectionAccount_prev['vehiculo_numero'] == collectionAccount_temp['vehiculo_numero']):
@@ -128,6 +155,20 @@ async def download_collection_accounts(companies_list: list):
   try:
     company_code = db.query(Propietarios.EMPRESA).filter(Propietarios.CODIGO == companies_list[0])
 
+    today = func.current_date()
+    receipt_date = db.query(CajaRecaudos.PLACA,
+                            func.max(CajaRecaudos.FEC_RECIBO).label('caja_recaudos_fec_recibo')
+                        ).group_by(CajaRecaudos.PLACA).subquery()
+
+    maintenance = db.query(Movienca.FECHA,
+                           Movienca.MANTENIMIE,
+                           Movienca.TIPO,
+                           Movienca.PLACA
+                          ).filter(
+                            Movienca.TIPO.in_(['011', '022']), 
+                            Movienca.MANTENIMIE == '1'
+                          ).group_by(Movienca.PLACA).subquery()
+
     collectionAccounts = db.query(
                           Propietarios.CODIGO.label('propietarios_codigo'), 
                           Propietarios.NOMBRE.label('propietarios_nombre'), 
@@ -143,7 +184,9 @@ async def download_collection_accounts(companies_list: list):
                           Conductores.CEDULA.label('conductores_cedula'),  
                           Conductores.CELULAR.label('conductores_celular'), 
                           Conductores.FEC_INGRES.label('conductores_fecingres'), 
-                          Conductores.CUO_DIARIA.label('conductores_cuodiaria')
+                          Conductores.CUO_DIARIA.label('conductores_cuodiaria'),
+                          func.datediff(today, receipt_date.c.caja_recaudos_fec_recibo).op('-')(1).label('dias_sin_pago'),
+                          maintenance.c.FECHA.label('mantenimiento_fecha')
                         ).join(
                           Propietarios, Propietarios.CODIGO == Vehiculos.PROPI_IDEN
                         ).join(
@@ -152,6 +195,10 @@ async def download_collection_accounts(companies_list: list):
                           Centrales, Vehiculos.CENTRAL == Centrales.CODIGO
                         ).join(
                           Conductores, Vehiculos.CONDUCTOR == Conductores.CODIGO
+                        ).outerjoin(
+                          receipt_date, Vehiculos.PLACA == receipt_date.c.PLACA
+                        ).outerjoin(
+                          maintenance, Vehiculos.PLACA == maintenance.c.PLACA
                         ).filter(
                           Vehiculos.PROPI_IDEN.in_(companies_list), 
                           Vehiculos.ESTADO.in_(['01', '19']), 
@@ -210,11 +257,15 @@ async def download_collection_accounts(companies_list: list):
         'conductores_celular': collectionAccount.conductores_celular, 
         'conductores_fecingres': collectionAccount.conductores_fecingres, 
         'conductores_cuodiaria': collectionAccount.conductores_cuodiaria,
+        'dias_sin_pago': collectionAccount.dias_sin_pago,
+        'cuotas_pendientes': deu_renta // collectionAccount.conductores_cuodiaria if collectionAccount.conductores_cuodiaria else 0,
         'deu_renta': deu_renta,
         'fon_inscri': fon_inscri,
         'diferencia': fon_inscri - deu_renta,
         'deu_sinies': deu_sinies,
-        'deu_otras': deu_otras
+        'deu_otras': deu_otras,
+        'mantenimiento_fecha': collectionAccount.mantenimiento_fecha + timedelta(days=30) if collectionAccount.mantenimiento_fecha else None,
+        'mantenimiento_dias_restantes': (collectionAccount.mantenimiento_fecha + timedelta(days=30) - date.today()).days if collectionAccount.mantenimiento_fecha else None
       }
 
       if collectionAccount_prev and (collectionAccount_prev['conductor'] == collectionAccount_temp['conductor'] and collectionAccount_prev['vehiculo_numero'] == collectionAccount_temp['vehiculo_numero']):
