@@ -321,7 +321,7 @@ export class InfoTableComponent implements AfterViewInit, OnDestroy {
     this.documentsService.downloadDocument(
       'collection-accounts/download', 
       selectedOwners, 
-      'collection_accounts_report.xlsx'
+      'reporte_cuentas_cobro.xlsx'
     ).subscribe({
       next: () => {
         console.log('Download started successfully');
