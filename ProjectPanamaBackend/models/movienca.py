@@ -10,6 +10,7 @@ class Movienca(Base):
     CON_CLI = Column(DECIMAL(1, 0))
     REGISTRO = Column(CHAR(8))
     FECHA = Column(Date)
+    MANTENIMIE = Column(CHAR(1))
     FEC_ENTRAD = Column(Date)
     HOR_ENTRAD = Column(CHAR(5))
     FEC_SALIDA = Column(Date)
