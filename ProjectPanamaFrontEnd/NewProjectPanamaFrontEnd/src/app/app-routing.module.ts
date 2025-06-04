@@ -1,24 +1,23 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { UsersHomeComponent } from './modules/main/home/users-home/users-home.component';
 import { LoginComponent } from './modules/users/login/login.component';
 import { AuthGuard } from './guards/auth.guard';
 import { NoAuthGuard } from './guards/no-auth.guard';
 import { StatevehiclefleetComponent } from './modules/tasks/statevehiclefleet/statevehiclefleet.component';
 import { PdfViewerComponent } from './modules/others/pdf-viewer/pdf-viewer.component';
 import { FeespaidComponent } from './modules/tasks/feespaid/feespaid.component';
-import { OpcionesGerenciaComponent } from './modules/options/gerencia/opciones-gerencia/opciones-gerencia.component';
-import { OpcionesTramitesComponent } from './modules/options/tramites/opciones-tramites/opciones-tramites.component';
-import { OpcionesChapisteriaComponent } from './modules/options/chapisteria/opciones-chapisteria/opciones-chapisteria.component';
-import { OpcionesGastosComponent } from './modules/options/gastos/opciones-gastos/opciones-gastos.component';
-import { OpcionesTallerComponent } from './modules/options/taller/opciones-taller/opciones-taller.component';
-import { OpcionesOperacionesComponent } from './modules/options/operaciones/opciones-operaciones/opciones-operaciones.component';
-import { OpcionesLlaveroComponent } from './modules/options/llavero/opciones-llavero/opciones-llavero.component';
-import { OpcionesReclamosComponent } from './modules/options/reclamos/opciones-reclamos/opciones-reclamos.component';
-import { OpcionesCntComponent } from './modules/options/cnt/opciones-cnt/opciones-cnt.component';
-import { OpcionesUtilidadesComponent } from './modules/options/utilidades/opciones-utilidades/opciones-utilidades.component';
-import { OpcionesCarteraComponent } from './modules/options/cartera/opciones-cartera/opciones-cartera.component';
-import { OpcionesAlmacenComponent } from './modules/options/almacen/opciones-almacen/opciones-almacen.component';
+import { OpcionesGerenciaComponent } from './modules/options/users/gerencia/opciones-gerencia/opciones-gerencia.component';
+import { OpcionesTramitesComponent } from './modules/options/users/tramites/opciones-tramites/opciones-tramites.component';
+import { OpcionesChapisteriaComponent } from './modules/options/users/chapisteria/opciones-chapisteria/opciones-chapisteria.component';
+import { OpcionesGastosComponent } from './modules/options/users/gastos/opciones-gastos/opciones-gastos.component';
+import { OpcionesTallerComponent } from './modules/options/users/taller/opciones-taller/opciones-taller.component';
+import { OpcionesOperacionesComponent } from './modules/options/users/operaciones/opciones-operaciones/opciones-operaciones.component';
+import { OpcionesLlaveroComponent } from './modules/options/users/llavero/opciones-llavero/opciones-llavero.component';
+import { OpcionesReclamosComponent } from './modules/options/users/reclamos/opciones-reclamos/opciones-reclamos.component';
+import { OpcionesCntComponent } from './modules/options/users/cnt/opciones-cnt/opciones-cnt.component';
+import { OpcionesUtilidadesComponent } from './modules/options/users/utilidades/opciones-utilidades/opciones-utilidades.component';
+import { OpcionesCarteraComponent } from './modules/options/users/cartera/opciones-cartera/opciones-cartera.component';
+import { OpcionesAlmacenComponent } from './modules/options/users/almacen/opciones-almacen/opciones-almacen.component';
 import { OwnersTableComponent } from './modules/tasks/owners/owners-table/owners-table.component';
 import { OwnersResumeComponent } from './modules/tasks/owners/owners-resume/owners-resume.component';
 import { OwnersAddnewComponent } from './modules/tasks/owners/owners-addnew/owners-addnew.component';
@@ -30,17 +29,17 @@ import { VehiclesResumeComponent } from './modules/tasks/vehicles/vehicles-resum
 import { VehiclesAddnewComponent } from './modules/tasks/vehicles/vehicles-addnew/vehicles-addnew.component';
 import { VehiclesDocumentationComponent } from './modules/tasks/vehicles/vehicles-documentation/vehicles-documentation.component';
 import { DriversDocumentationComponent } from './modules/tasks/drivers/drivers-documentation/drivers-documentation.component';
-import { OwnersHomeComponent } from './modules/main/home/owners-home/owners-home.component';
 import { OwnersGuard } from './guards/owners.guard';
-import { OwnersFeespaidComponent } from './modules/owners/owners-feespaid/owners-feespaid.component';
 import { UsersGuard } from './guards/users.guard';
-import { OwnersStatusfleetdetailComponent } from './modules/owners/owners-statusfleetdetail/owners-statusfleetdetail.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
   { path: 'login', component: LoginComponent, canActivate: [NoAuthGuard]},
-  { path: 'users-home', component: UsersHomeComponent, canActivate: [AuthGuard]},
-  { path: 'owners-home', component: OwnersHomeComponent, canActivate: [OwnersGuard]},
+  {
+    path: 'home',
+    loadChildren: () => import('./modules/home/home.module').then(m => m.HomeModule),
+  },
+  // { path: 'owners-home', component: OwnersHomeComponent, canActivate: [OwnersGuard]},
   { path: 'statevehiclefleet', component: StatevehiclefleetComponent, canActivate: [AuthGuard]},
   { path: 'vehicles', component: VehiclesTableComponent, canActivate: [AuthGuard]},
   { path: 'vehicle/:code', component: VehiclesResumeComponent, canActivate: [AuthGuard]},
@@ -66,11 +65,10 @@ const routes: Routes = [
   { path: 'utilities', component: OpcionesUtilidadesComponent, canActivate: [AuthGuard]},
   {
     path: 'cobros',
-    loadChildren: () => import('./modules/options/cobros/cobros.module').then(m => m.CobrosModule),
+    loadChildren: () => import('./modules/options/users/cobros/cobros.module').then(m => m.CobrosModule),
     canActivate: [AuthGuard]
   },
   { path: 'pdf', component: PdfViewerComponent, canActivate: [UsersGuard]},
-  { path: 'prueba', component: OwnersStatusfleetdetailComponent}
 ];
 
 @NgModule({

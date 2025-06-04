@@ -1,0 +1,114 @@
+.cobros-container {
+  min-height: 92vh;
+  height: auto; 
+  padding: 2vh 20px 20px;
+}
+
+.buttons-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.mat-mdc-raised-button.mat-mdc-button-base {
+  height: 46px;
+  /* padding: 0px 30px; */
+  width: 200px;
+}
+
+.mat-mdc-raised-button>.mat-icon {
+  font-size: 1.25rem;
+  height: 1.25rem;
+  width: 1.25rem;
+}
+
+.back {
+  background-color: #fde1e1 !important;
+}
+
+.back:hover {
+  background-color: #ffcdcd !important; 
+}
+
+.options-mat-menu {
+  width: 200px;
+}
+
+.filters-container {
+  display: flex;
+  gap: 10px;
+}
+
+.debt-filter {
+  width: 20% !important;
+}
+
+.table-scroll-container {
+  overflow-x: auto; 
+  position: relative; 
+  overflow-y: hidden;
+}
+
+table {
+  width: 100%;
+}
+
+.mat-mdc-form-field {
+  font-size: 14px;
+  width: 100%;
+}
+
+th {
+  padding: 0;
+}
+
+th.mat-sort-header .mat-sort-header-container {
+  justify-content: center;
+}
+
+td {
+  padding: 0 8px;
+}
+
+th:first-child,
+td:first-child {
+  padding-left: 20px; /* Ajusta este valor según sea necesario */
+}
+
+/* Añade padding a la derecha para las celdas de la última columna */
+th:last-child,
+td:last-child {
+  padding-right: 20px; /* Ajusta este valor según sea necesario */
+}
+
+.filters-container {
+  transition: all 0.3s ease;
+}
+
+.mat-elevation-z8 {
+  transition: all 0.3s ease;
+}
+
+::ng-deep .mat-mdc-option {
+  transition: all 0.2s ease !important;
+  margin: 2px !important;
+  transform-origin: center !important;
+}
+
+::ng-deep .mat-mdc-option:hover {
+  transform: scale(1.01) !important; 
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12) !important;
+  border-radius: 4px !important;
+  will-change: transform !important;
+}
+
+::ng-deep .mat-mdc-select-panel {
+  padding: 4px !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+}
+
+.padding-header{
+  padding-right: 10px;
+}

@@ -547,6 +547,32 @@ async def get_companies_owners(owner: Owner):
 
 # ---------------------------------------------------------------------------------------------------------------
 
+@owners_router.post("/companies_per_owners/", tags=["Owners"])
+async def get_companies_per_owners(owner: Owner):
+  db = session()
+  try:
+    user_admin = os.getenv('USER_ADMIN')
+    if owner.propietario:
+      
+      if owner.propietario == user_admin:
+        owners = db.query(Propietarios.CODIGO, Propietarios.NOMBRE).all()
+        owners_list = [{'id': owner.CODIGO, 'name': owner.NOMBRE} for owner in owners]
+
+      else:
+        companies = db.query(PermisosUsuario.EMPRESA).filter(PermisosUsuario.CODIGO == owner.propietario).first()
+        owners = db.query(Propietarios.CODIGO, Propietarios.NOMBRE).filter(Propietarios.EMPRESA == companies[0]).all()
+        owners_list = [{'id': owner.CODIGO, 'name': owner.NOMBRE} for owner in owners]
+  
+      return JSONResponse(content=jsonable_encoder(owners_list), status_code=200)
+
+    return JSONResponse(content={"error": "Propietario no encontrado"}, status_code=404)
+  except Exception as e:
+    return JSONResponse(content={"error": str(e)}, status_code=500)
+  finally:
+    db.close()
+
+# ---------------------------------------------------------------------------------------------------------------
+
 @owners_router.post("/vehicles_owners/", tags=["Owners"])
 async def get_vehicles_owners(owner: Owner):
   db = session()

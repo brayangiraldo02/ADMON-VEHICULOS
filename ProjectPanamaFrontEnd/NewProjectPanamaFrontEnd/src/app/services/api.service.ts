@@ -48,6 +48,21 @@ export class ApiService {
   }
 
   /**
+   * Post data to a specified endpoint and get blob response (for any type of document downloads).
+   * @param {string} endpoint - The endpoint to post data to.
+   * @param {any} data - The data to post.
+   * @returns {Observable<Blob>} An Observable of the blob response.
+   */
+  postDocuments(endpoint: string, data: any): Observable<Blob> {
+    return this.http.post(`${this.baseURL}/${endpoint}/`, data, { 
+      responseType: 'blob', 
+      withCredentials: true 
+    }).pipe(
+      catchError(this.errorHandlerService.handleError)
+    );
+  }
+
+  /**
    * Post data to a specified endpoint.
    * @param {string} endpoint - The endpoint to post data to.
    * @param {any} data - The data to post.

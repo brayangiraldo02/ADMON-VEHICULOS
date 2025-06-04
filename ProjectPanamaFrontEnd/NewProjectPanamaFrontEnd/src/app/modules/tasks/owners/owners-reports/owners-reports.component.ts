@@ -114,7 +114,7 @@ export class OwnersReportsComponent implements OnInit {
       localStorage.setItem('pdfData', JSON.stringify(data));
       window.open(`/pdf`, '_blank')
       this.resetValues()
-      this.router.navigate(['/users-home']);
+      this.router.navigate(['/home/users']);
     } else {
       console.error('URL no encontrada para la opción seleccionada.');
     }
@@ -203,7 +203,7 @@ export class OwnersReportsComponent implements OnInit {
 
     // Navegar al componente PdfViewerComponent
     window.open(`/pdf`, '_blank')
-    this.router.navigate(['/users-home']);
+    this.router.navigate(['/home/users']);
   }
 
   backStates(): void {

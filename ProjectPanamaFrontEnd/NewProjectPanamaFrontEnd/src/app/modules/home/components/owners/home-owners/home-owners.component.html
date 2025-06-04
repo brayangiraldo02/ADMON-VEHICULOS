@@ -1,0 +1,86 @@
+<app-header></app-header>
+<!-- <body> -->
+  <div class="container">
+    <div class="carousel-container">
+      <div class="carousel">
+        <div class="left-container"  *ngIf="!ownersFeespaidVisible && !ownersStatusfleetdetailVisible && !ownersPurchasevalueandpiqueraVisible && !ownersRelationshiprevenuesVisible && !ownersPartsrelationshipVisible && !ownersPandgstatusVisible  && !ownersStatusfleetsummaryVisible && !infoCompanyVisible">
+          <a class="alternate-media" (click)="toggleMediaType()">
+            <img [src]="this.rightIcon" class="media-icon">
+          </a>
+        </div>
+        <img class="media-container" *ngIf="showImages" [src]="images[currentImageIndex]" [style.opacity]="showImage ? '1' : '0'">
+        <video #videoPlayer *ngIf="!showImages" [src]="currentVideo" (ended)="onVideoEnded()" autoplay></video>
+        <div class="right-container"  *ngIf="!ownersFeespaidVisible && !ownersStatusfleetdetailVisible && !ownersPurchasevalueandpiqueraVisible && !ownersRelationshiprevenuesVisible && !ownersPartsrelationshipVisible && !ownersPandgstatusVisible && !ownersStatusfleetsummaryVisible && !infoCompanyVisible">
+          <a class="alternate-media" (click)="toggleMediaType()">
+            <img [src]="this.rightIcon" class="media-icon">
+          </a>
+        </div>
+      </div>
+    </div>
+    <div class="options-container">
+      <ng-container *ngFor="let option of options">
+        <button class="option" type="button" [disabled]="option.disabled" (click)="option.click()">
+          <span class="material-symbols-outlined" translate="no">
+            description
+          </span>
+          <p class="option-text">{{ option.name }}</p>
+        </button>
+      </ng-container>
+      <button class="option" type="button" [routerLink]="['/home/users']" *ngIf="this.isAdmin">
+        <span class="material-symbols-outlined" translate="no">
+          home
+        </span>
+        <p class="option-text">Inicio</p>
+      </button>
+    </div>
+    <!-- <div class="options-container">
+      <ul>
+        <ng-container *ngFor="let option of options">
+          <button class="options-if" *ngIf="option.enabled"  [routerLink]="option.url" [disabled]="option.disabled">
+            <img [src]="option.icon" class="option-icon">
+            <span class="option-text">{{ option.name }}</span>
+          </button>
+        </ng-container>
+      </ul>
+    </div>   -->
+  </div>
+
+<app-owners-statusfleetsummary 
+  *ngIf="ownersStatusfleetsummaryVisible" 
+  (close)="hideModal()"
+></app-owners-statusfleetsummary>
+
+<app-owners-statusfleetdetail 
+  *ngIf="ownersStatusfleetdetailVisible" 
+  (close)="hideModal()"
+></app-owners-statusfleetdetail>
+
+<app-owners-purchasevalueandpiquera
+  *ngIf="ownersPurchasevalueandpiqueraVisible" 
+  (close)="hideModal()">
+</app-owners-purchasevalueandpiquera>
+
+<app-owners-relationshiprevenues
+  *ngIf="ownersRelationshiprevenuesVisible" 
+  (close)="hideModal()"
+>
+</app-owners-relationshiprevenues>
+
+<app-owners-partsrelationship 
+  *ngIf="ownersPartsrelationshipVisible" 
+  (close)="hideModal()"
+></app-owners-partsrelationship>
+
+<app-owners-pandgstatus
+  *ngIf="ownersPandgstatusVisible"
+  (close)="hideModal()"
+></app-owners-pandgstatus>
+
+
+<app-owners-feespaid
+  *ngIf="ownersFeespaidVisible" 
+  (close)="hideModal()"
+></app-owners-feespaid>
+
+<!-- </body> -->
+<app-footer></app-footer>

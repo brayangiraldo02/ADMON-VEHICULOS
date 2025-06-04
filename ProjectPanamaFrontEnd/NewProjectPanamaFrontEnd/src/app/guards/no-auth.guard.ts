@@ -12,7 +12,7 @@ export class NoAuthGuard implements CanActivate {
     if (!this.jwtService.tokenExistsAndValid()) {
       return true;  
     } else {
-      this.jwtService.verifyOwner() ? this.router.navigate(['/owners-home']) : this.router.navigate(['/users-home']);
+      this.jwtService.verifyOwner() ? this.router.navigate(['/home/owners']) : this.router.navigate(['/home/users']);
       return false;
     }
   }

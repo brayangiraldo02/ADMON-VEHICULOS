@@ -1,0 +1,197 @@
+<app-header></app-header>
+<div class="cobros-container">
+  <div class="buttons-container">
+    <button
+      mat-raised-button
+      class="back uniform-width-button"
+      routerLink="/home/users"
+    >
+      <mat-icon>arrow_back</mat-icon>
+      Regresar
+    </button>
+
+    <div class="unified-buttons-container">
+      <button mat-raised-button class="uniform-width-button" (click)="nextFeatures()">
+        <mat-icon>description</mat-icon>
+        Informes
+      </button>
+      <button
+        mat-raised-button
+        [matMenuTriggerFor]="menu"
+        class="uniform-width-button"
+      >
+        <mat-icon>insert_drive_file</mat-icon>
+        Exportar
+      </button>
+      <mat-menu #menu="matMenu">
+        <button mat-menu-item class="options-mat-menu" (click)="nextFeatures()">
+          PDF para Imprimir
+        </button>
+        <button mat-menu-item class="options-mat-menu" (click)="downloadCollectionAccountsXLS()">
+          Excel
+        </button>
+      </mat-menu>
+    </div>
+  </div>
+  <div class="table-container">
+    <div class="filters-container">
+      <mat-form-field>
+        <mat-label>Filtro</mat-label>
+        <input
+          matInput
+          (keyup)="applyFilter($event)"
+          placeholder="Filtrar por Cualquier Campo"
+          #input
+        />
+      </mat-form-field>
+
+      <mat-form-field class="debt-filter">
+        <mat-label>Nivel de deuda</mat-label>
+        <mat-select [formControl]="debts" (selectionChange)="onDebtSelectionChange($event)">
+          <mat-select-trigger>
+            {{ debts.value }}
+          </mat-select-trigger>
+          <mat-option
+            *ngFor="let debt of debtList; let i = index"
+            [value]="debt.text"
+            [class]="'debt-option-' + i"
+            [ngStyle]="{ 'background-color': debt.color }"
+          >
+            {{ debt.text }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+    <div class="mat-elevation-z8">
+      <div class="table-scroll-container">
+        <table
+          mat-table
+          [dataSource]="dataSource"
+          matSort
+          [@listAnimation]="dataSource.data.length"
+        >
+          <!-- Unidad Column -->
+          <ng-container matColumnDef="Unidad">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Unidad</th>
+            <td mat-cell *matCellDef="let row">{{ row.Unidad }}</td>
+          </ng-container>
+
+          <!-- Condu Column -->
+          <ng-container matColumnDef="Condu">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Condu</th>
+            <td mat-cell *matCellDef="let row">{{ row.Condu }}</td>
+          </ng-container>
+
+          <!-- Nombre Column -->
+          <ng-container matColumnDef="Nombre">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Nombre</th>
+            <td mat-cell *matCellDef="let row">{{ row.Nombre }}</td>
+          </ng-container>
+
+          <!-- Vlr.Cta Column -->
+          <ng-container matColumnDef="Vlr.Cta">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Vlr.Cta</th>
+            <td mat-cell *matCellDef="let row">{{ row["Vlr.Cta"] }}</td>
+          </ng-container>
+
+          <!-- Celular Column -->
+          <ng-container matColumnDef="Celular">
+            <th mat-header-cell *matHeaderCellDef class="padding-header">Celular</th>
+            <td mat-cell *matCellDef="let row">{{ row.Celular }}</td>
+          </ng-container>
+
+          <!-- Ingreso Column -->
+          <ng-container matColumnDef="Ingreso">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Ingreso</th>
+            <td mat-cell *matCellDef="let row">{{ row.Ingreso }}</td>
+          </ng-container>
+
+          <!-- Sin Pagar Column -->
+          <ng-container matColumnDef="Sin Pagar">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Sin Pagar</th>
+            <td mat-cell *matCellDef="let row">{{ row["Sin Pagar"] }}</td>
+          </ng-container>
+
+          <!-- Sdo.Renta Column -->
+          <ng-container matColumnDef="Sdo.Renta">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Sdo.Renta</th>
+            <td mat-cell *matCellDef="let row">{{ row["Sdo.Renta"] }}</td>
+          </ng-container>
+
+          <!-- Deposito Column -->
+          <ng-container matColumnDef="Deposito">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Deposito</th>
+            <td mat-cell *matCellDef="let row">{{ row.Deposito }}</td>
+          </ng-container>
+
+          <!-- PanaPass Column -->
+          <ng-container matColumnDef="PanaPass">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>PanaPass</th>
+            <td mat-cell *matCellDef="let row">{{ row.PanaPass }}</td>
+          </ng-container>
+
+          <!-- Siniestro Column -->
+          <ng-container matColumnDef="Siniestro">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Siniestro</th>
+            <td mat-cell *matCellDef="let row">{{ row.Siniestro }}</td>
+          </ng-container>
+
+          <!-- Mantenimien Column -->
+          <ng-container matColumnDef="Mantenimien">
+            <th mat-header-cell *matHeaderCellDef class="padding-header">Mantenim.</th>
+            <td mat-cell *matCellDef="let row">{{ row.Mantenimien }}</td>
+          </ng-container>
+
+          <!-- Otra Deu Column -->
+          <ng-container matColumnDef="Otra Deu">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Otra Deu</th>
+            <td mat-cell *matCellDef="let row">{{ row["Otra Deu"] }}</td>
+          </ng-container>
+
+          <!-- Empresa Column -->
+          <ng-container matColumnDef="Empresa">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Empresa</th>
+            <td mat-cell *matCellDef="let row">{{ row.Empresa }}</td>
+          </ng-container>
+
+          <!-- Central Column -->
+          <ng-container matColumnDef="Central">
+            <th mat-header-cell *matHeaderCellDef class="padding-header">Central</th>
+            <td mat-cell *matCellDef="let row">{{ row.Central }}</td>
+          </ng-container>
+
+          <!-- Estado Column -->
+          <ng-container matColumnDef="Estado">
+            <th mat-header-cell *matHeaderCellDef class="padding-header">Estado</th>
+            <td mat-cell *matCellDef="let row">{{ row.Estado }}</td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr
+            mat-row
+            *matRowDef="let row; columns: displayedColumns"
+            [@fadeInOut]
+          ></tr>
+
+          <!-- Row shown when there is no matching data. -->
+          <tr class="mat-row" *matNoDataRow>
+            <td class="mat-cell" colspan="16">
+              <!-- Updated colspan to match number of columns -->
+              <mat-progress-bar
+                mode="indeterminate"
+                [@fadeInOut]
+              ></mat-progress-bar>
+            </td>
+          </tr>
+        </table>
+      </div>
+
+      <mat-paginator
+        [pageSizeOptions]="[8, 16, 32, 100]"
+        aria-label="Selecciona la cantidad de registros por página"
+      ></mat-paginator>
+    </div>
+  </div>
+</div>
+<app-footer></app-footer>

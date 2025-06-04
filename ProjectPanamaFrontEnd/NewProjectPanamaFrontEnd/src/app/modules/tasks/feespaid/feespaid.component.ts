@@ -234,7 +234,7 @@ export class FeespaidComponent implements OnInit {
 
     // Navegar al componente PdfViewerComponent
     window.open(`/pdf`, '_blank')
-    this.router.navigate(['/users-home']);
+    this.router.navigate(['/home/users']);
   }
 
 }

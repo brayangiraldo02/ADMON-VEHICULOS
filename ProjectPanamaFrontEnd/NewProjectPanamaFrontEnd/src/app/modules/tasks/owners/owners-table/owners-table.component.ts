@@ -68,7 +68,7 @@ export class OwnersTableComponent implements OnInit {
     localStorage.setItem('pdfEndpoint', 'directorio-propietarios');
     localStorage.setItem('pdfData', '0');
     window.open(`/pdf`, '_blank')
-    this.router.navigate(['/users-home']);
+    this.router.navigate(['/home/users']);
   }
 
   showModal() {

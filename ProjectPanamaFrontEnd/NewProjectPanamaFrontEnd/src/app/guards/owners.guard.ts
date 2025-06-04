@@ -12,7 +12,7 @@ export class OwnersGuard implements CanActivate {
     if (this.jwtService.tokenExistsAndValidForOwner()) {
       return true;
     } else {
-      this.jwtService.verifyOwner() ? this.router.navigate(['/login']) : this.router.navigate(['/users-home']);
+      this.jwtService.verifyOwner() ? this.router.navigate(['/login']) : this.router.navigate(['/home/users']);
       return false;
     }
   }
