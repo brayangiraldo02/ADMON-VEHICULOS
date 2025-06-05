@@ -35,16 +35,18 @@ export interface VehicleInfoData {
   'Vlr.Cta': string;
   Celular: string;
   Ingreso: string;
-  'Sin Pagar': string;
   'Sdo.Renta': string;
   Deposito: string;
   PanaPass: string;
   Siniestro: string;
-  Mantenimien: string;
   'Otra Deu': string;
   Empresa: string;
   Central: string;
   Estado: string;
+  DiasSinPago?: number;
+  CuotasPendientes?: number;
+  MantenimientoFecha?: string | null;
+  MantenimientoDiasRestantes?: number | null;
 }
 
 interface apiResponse {
@@ -62,12 +64,17 @@ interface apiResponse {
   nombre?: string;
   centrales_nombre?: string;
   estado?: string;
+  dias_sin_pago?: number;
+  cuotas_pendientes?: number;
+  mantenimiento_fecha?: string | null;
+  mantenimiento_dias_restantes?: number | null;
 }
 
 interface DebtOption {
   text: string;
   color: string;
   hoverColor: string;
+  id?: number;
 }
 
 @Component({
@@ -111,37 +118,44 @@ interface DebtOption {
   ],
 })
 export class InfoTableComponent implements AfterViewInit, OnDestroy {
-  debts = new FormControl<string>('Todos');
+  private originalData: VehicleInfoData[] = [];
+
+  debts = new FormControl<number>(0);
 
   debtList: DebtOption[] = [
     {
-      text: 'Más de 3 Días',
+      text: 'Más de 3 Cuotas',
       color: '#FFCDD2',
       hoverColor: '#FFAAAA',
+      id: 3,
     },
     {
-      text: 'Menor o Igual a 2 Días',
+      text: 'Menor o Igual a 2 Cuotas',
       color: '#FFE0B2',
       hoverColor: '#FFCC80',
+      id: 2,
     },
     {
-      text: 'Menor o Igual a 1 Día',
+      text: 'Menor o Igual a 1 Cuota',
       color: '#FFF9C4',
       hoverColor: '#FFF176',
+      id: 1,
     },
     {
       text: 'Sin Deuda',
       color: '#C8E6C9',
       hoverColor: '#A5D6A7',
+      id: 4,
     },
     {
       text: 'Todos',
       color: '#ADD8E6',
       hoverColor: '#90CAF9',
+      id: 0
     },
   ];
 
-  selectedDebtLevel: string = 'Todos'; 
+  selectedDebtLevel: number = 0;
 
   displayedColumns: string[] = [
     'Unidad',
@@ -203,6 +217,11 @@ export class InfoTableComponent implements AfterViewInit, OnDestroy {
     }
   }
 
+  getSelectedDebtText(): string {
+    const selectedDebt = this.debtList.find(debt => debt.id === this.debts.value);
+    return selectedDebt ? selectedDebt.text : 'Todos';
+  }
+
   generateHoverStyles() {
     // Eliminar estilos previos si existen
     const existingStyle = this.document.getElementById('debt-hover-styles');
@@ -240,14 +259,46 @@ export class InfoTableComponent implements AfterViewInit, OnDestroy {
   onDebtSelectionChange(event: any) {
     this.selectedDebtLevel = event.value;
     console.log('Selected debt level:', this.selectedDebtLevel);
-    // TODO: Agregar lógica para filtrar la tabla según el nivel de deuda seleccionado
-    this.nextFeatures();
-    this.selectedDebtLevel = 'Todos';
-    this.debts.setValue('Todos');
+    this.filterByDebtLevel(this.selectedDebtLevel);
+  }
+  
+  filterByDebtLevel(debtLevelId: number) {
+    // Usar originalData en lugar de dataSource.data
+    let filteredData: VehicleInfoData[];
+  
+    switch (debtLevelId) {
+      case 1: // Menor o Igual a 1 Cuota
+        filteredData = this.originalData.filter(row => (row.CuotasPendientes || 0) <= 1);
+        break;
+      
+      case 2: // Menor o Igual a 2 Cuotas
+        filteredData = this.originalData.filter(row => (row.CuotasPendientes || 0) <= 2);
+        break;
+      
+      case 3: // Más de 3 Cuotas
+        filteredData = this.originalData.filter(row => (row.CuotasPendientes || 0) > 3);
+        break;
+      
+      case 4: // Sin Deuda
+        filteredData = this.originalData.filter(row => (row.CuotasPendientes || 0) === 0);
+        break;
+      
+      case 0: // Todos
+      default:
+        filteredData = this.originalData;
+        break;
+    }
+  
+    // Aplicar los datos filtrados
+    this.dataSource.data = filteredData;
+    
+    // Resetear el paginador a la primera página
+    if (this.dataSource.paginator) {
+      this.dataSource.paginator.firstPage();
+    }
   }
 
   getTableData(selectedOwners: Owners) {
-
     this.apiService.postData('collection-accounts', selectedOwners).subscribe({
       next: (response) => {
         console.log('Data fetched successfully:', response);
@@ -281,11 +332,19 @@ export class InfoTableComponent implements AfterViewInit, OnDestroy {
               Empresa: item.nombre || '',
               Central: item.centrales_nombre || '',
               Estado: item.estado || '',
+              DiasSinPago: item.dias_sin_pago || 0,
+              CuotasPendientes: item.cuotas_pendientes || 0,
+              MantenimientoFecha: item.mantenimiento_fecha,
+              MantenimientoDiasRestantes:
+                item.mantenimiento_dias_restantes,
             };
           }
         );
 
+        // Guardar datos originales y aplicar al dataSource
+        this.originalData = [...mappedData];
         this.dataSource.data = mappedData;
+        
         if (this.paginator) {
           this.dataSource.paginator = this.paginator;
         }
@@ -297,6 +356,20 @@ export class InfoTableComponent implements AfterViewInit, OnDestroy {
         console.error('Error fetching data:', error);
       },
     });
+  }
+
+  getMaintenanceColor(diasRestantes: number | null): string {
+    if (diasRestantes === null || diasRestantes === undefined) {
+      return 'transparent'; // Sin color si no hay datos
+    }
+    
+    if (diasRestantes <= 0) {
+      return '#FFCDD2'; // Fecha actual o más (vencido)
+    } else if (diasRestantes <= 5) {
+      return '#FFE0B2'; // 5 días o menos
+    } else {
+      return '#C8E6C9'; // Más de 5 días
+    }
   }
 
   applyFilter(event: Event) {
