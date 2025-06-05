@@ -81,41 +81,41 @@ interface DebtOption {
   selector: 'app-info-table',
   templateUrl: './info-table.component.html',
   styleUrls: ['./info-table.component.css'],
-  animations: [
-    trigger('fadeInOut', [
-      transition(':enter', [
-        style({ opacity: 0, transform: 'translateY(-10px)' }),
-        animate(
-          '300ms ease-in',
-          style({ opacity: 1, transform: 'translateY(0)' })
-        ),
-      ]),
-      transition(':leave', [
-        animate(
-          '200ms ease-out',
-          style({ opacity: 0, transform: 'translateY(-10px)' })
-        ),
-      ]),
-    ]),
-    // Animación para los elementos de la lista/tabla
-    trigger('listAnimation', [
-      transition('* => *', [
-        query(
-          ':enter',
-          [
-            style({ opacity: 0, transform: 'translateY(20px)' }),
-            stagger(50, [
-              animate(
-                '300ms ease-out',
-                style({ opacity: 1, transform: 'translateY(0)' })
-              ),
-            ]),
-          ],
-          { optional: true }
-        ),
-      ]),
-    ]),
-  ],
+  // animations: [
+  //   trigger('fadeInOut', [
+  //     transition(':enter', [
+  //       style({ opacity: 0, transform: 'translateY(-10px)' }),
+  //       animate(
+  //         '300ms ease-in',
+  //         style({ opacity: 1, transform: 'translateY(0)' })
+  //       ),
+  //     ]),
+  //     transition(':leave', [
+  //       animate(
+  //         '200ms ease-out',
+  //         style({ opacity: 0, transform: 'translateY(-10px)' })
+  //       ),
+  //     ]),
+  //   ]),
+  //   // Animación para los elementos de la lista/tabla
+  //   trigger('listAnimation', [
+  //     transition('* => *', [
+  //       query(
+  //         ':enter',
+  //         [
+  //           style({ opacity: 0, transform: 'translateY(20px)' }),
+  //           stagger(50, [
+  //             animate(
+  //               '300ms ease-out',
+  //               style({ opacity: 1, transform: 'translateY(0)' })
+  //             ),
+  //           ]),
+  //         ],
+  //         { optional: true }
+  //       ),
+  //     ]),
+  //   ]),
+  // ],
 })
 export class InfoTableComponent implements AfterViewInit, OnDestroy {
   private originalData: VehicleInfoData[] = [];

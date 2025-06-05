@@ -47,7 +47,6 @@
 .table-scroll-container {
   overflow-x: auto; 
   position: relative; 
-  overflow-y: hidden;
 }
 
 table {

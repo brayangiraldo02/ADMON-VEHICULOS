@@ -69,7 +69,6 @@
           mat-table
           [dataSource]="dataSource"
           matSort
-          [@listAnimation]="dataSource.data.length"
         >
           <!-- Unidad Column -->
           <ng-container matColumnDef="Unidad">
@@ -171,7 +170,6 @@
           <tr
             mat-row
             *matRowDef="let row; columns: displayedColumns"
-            [@fadeInOut]
           ></tr>
 
           <!-- Row shown when there is no matching data. -->
@@ -180,7 +178,6 @@
               <!-- Updated colspan to match number of columns -->
               <mat-progress-bar
                 mode="indeterminate"
-                [@fadeInOut]
               ></mat-progress-bar>
             </td>
           </tr>
