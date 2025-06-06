@@ -540,7 +540,7 @@ async def pandgstatus_report(data: PandGStatusReport):
     }
 
     headers = {
-      "Content-Disposition": "inline; estado-perdidas-ganancias.pdf"
+      "Content-Disposition": "attachment; estado-perdidas-ganancias.pdf"
     }  
 
     # return JSONResponse(status_code=200, content=jsonable_encoder(response))

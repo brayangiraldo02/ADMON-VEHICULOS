@@ -172,7 +172,7 @@ async def get_vehiculos_detalles(infoReports: infoReports):
         data_view["usuario"] = usuario
 
         headers = {
-            "Content-Disposition": "inline; informe-cuotas-pagas.pdf"
+            "Content-Disposition": "attachment; informe-cuotas-pagas.pdf"
         }  
 
         template_loader = jinja2.FileSystemLoader(searchpath="./templates")

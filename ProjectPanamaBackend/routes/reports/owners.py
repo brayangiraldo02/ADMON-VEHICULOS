@@ -92,7 +92,7 @@ async def get_propietarios_detalles():
         data_view["usuario"] = usuario
 
         headers = {
-            "Content-Disposition": "inline; directorio-propietarios.pdf"
+            "Content-Disposition": "attachment; directorio-propietarios.pdf"
         }  
 
         template_loader = jinja2.FileSystemLoader(searchpath="./templates")
@@ -259,7 +259,7 @@ async def get_vehiculos_detalles(infoReports: infoReports):
                 data_view["propietarios"].append(propietario_data)
 
         headers = {
-            "Content-Disposition": "inline; valor-compra-vehiculos.pdf"
+            "Content-Disposition": "attachment; valor-compra-vehiculos.pdf"
         }
 
         template_loader = jinja2.FileSystemLoader(searchpath="./templates")
