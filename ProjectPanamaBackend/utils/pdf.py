@@ -1,7 +1,7 @@
 import pdfkit
 import os
 
-def html2pdf(titulo, html_path, pdf_path, header_path, footer_path):
+def html2pdf(titulo, html_path, pdf_path, header_path, footer_path, orientation='Portrait'):
     """
     Convertir HTML a PDF utilizando pdfkit, que es un envoltorio de wkhtmltopdf.
     """
@@ -28,6 +28,7 @@ def html2pdf(titulo, html_path, pdf_path, header_path, footer_path):
         'footer-center': 'Pág [page] de [topage]',  
         'footer-html': footer_path,
         'footer-font-size': '9',
+        'orientation': orientation,        
     }
 
     with open(html_path) as f: 
