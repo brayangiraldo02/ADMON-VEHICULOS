@@ -1,0 +1,57 @@
+.toolbar-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  overflow: hidden;
+}
+
+.scroll-wrapper {
+  flex: 1;
+  overflow: hidden;
+  position: relative;
+  height: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.scrolling-text {
+  position: absolute;
+  white-space: nowrap;
+  left: 0; /* Añadido para un punto de referencia claro para transform */
+  animation: scroll-text-transform 25s linear infinite; /* Ajusta la duración base si es necesario */
+}
+
+/* Nuevos keyframes para un desplazamiento robusto */
+@keyframes scroll-text-transform {
+  0% {
+    transform: translateX(100vw); /* Comienza completamente a la derecha de la ventana gráfica */
+  }
+  100% {
+    transform: translateX(-100%); /* Se mueve a la izquierda por su propio ancho completo */
+  }
+}
+
+@media (max-width: 1024px) {
+  .scrolling-text {
+    animation: scroll-text-transform 20s linear infinite;
+  }
+}
+
+@media (max-width: 768px) {
+  .scrolling-text {
+    animation: scroll-text-transform 20s linear infinite;
+  }
+  .toolbar-container mat-icon {
+    font-size: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .scrolling-text {
+    animation: scroll-text-transform 20s linear infinite;
+    font-size: 0.9em;
+  }
+  .scroll-wrapper {
+    justify-content: center;
+  }
+}

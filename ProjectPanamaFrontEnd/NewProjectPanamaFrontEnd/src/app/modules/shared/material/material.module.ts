@@ -12,6 +12,7 @@ import {MatDialogModule} from '@angular/material/dialog';
 import {MatListModule} from '@angular/material/list';
 import {MatProgressBarModule} from '@angular/material/progress-bar';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
+import {MatToolbarModule} from '@angular/material/toolbar';
 
 const materialModules = [
   MatFormFieldModule, 
@@ -26,7 +27,8 @@ const materialModules = [
   MatDialogModule,
   MatListModule,
   MatProgressBarModule,
-  MatSnackBarModule
+  MatSnackBarModule,
+  MatToolbarModule
 ]
 
 @NgModule({
