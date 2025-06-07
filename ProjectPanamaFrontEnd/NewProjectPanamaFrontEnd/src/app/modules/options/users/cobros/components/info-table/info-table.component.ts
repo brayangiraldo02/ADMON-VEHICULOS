@@ -406,6 +406,31 @@ export class InfoTableComponent implements AfterViewInit, OnDestroy {
     });
   }
 
+  downloadCollectionAccountsPDF() {
+    const selectedOwners = this.globalStates.getSelectedOwners();
+    if (selectedOwners.owners.length === 0) {
+      console.error('No owners selected for PDF download');
+      this.openSnackbar('No hay propietarios seleccionados para descargar el reporte.');
+      return;
+    }
+
+    this.openSnackbar('En un momento se descargará el reporte de cuentas de cobro.');
+
+    this.documentsService.downloadDocument(
+      'collection-accounts/download-pdf', 
+      selectedOwners, 
+      'reporte_cuentas_cobro.pdf'
+    ).subscribe({
+      next: () => {
+        console.log('Download started successfully');
+      },
+      error: (error) => {
+        console.error('Download failed:', error);
+        this.openSnackbar('Error al descargar el reporte de cuentas de cobro.');
+      }
+    });
+  }
+
   nextFeatures() {
     this.openSnackbar('Esta funcionalidad está en desarrollo.');
   }
