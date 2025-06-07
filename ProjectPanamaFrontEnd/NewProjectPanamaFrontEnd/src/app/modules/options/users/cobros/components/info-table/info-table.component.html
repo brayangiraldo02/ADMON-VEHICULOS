@@ -11,26 +11,18 @@
     </button>
 
     <div class="unified-buttons-container">
-      <button mat-raised-button class="uniform-width-button" (click)="nextFeatures()">
+      <button mat-raised-button class="uniform-width-button" (click)="downloadCollectionAccountsPDF()">
         <mat-icon>description</mat-icon>
-        Informes
+        PDF
       </button>
       <button
         mat-raised-button
-        [matMenuTriggerFor]="menu"
         class="uniform-width-button"
+        (click)="downloadCollectionAccountsXLS()"
       >
         <mat-icon>insert_drive_file</mat-icon>
-        Exportar
+        Excel
       </button>
-      <mat-menu #menu="matMenu">
-        <button mat-menu-item class="options-mat-menu" (click)="downloadCollectionAccountsPDF()">
-          PDF para Imprimir
-        </button>
-        <button mat-menu-item class="options-mat-menu" (click)="downloadCollectionAccountsXLS()">
-          Excel
-        </button>
-      </mat-menu>
     </div>
   </div>
   <div class="table-container">

@@ -31,10 +31,6 @@
   background-color: #ffcdcd !important; 
 }
 
-.options-mat-menu {
-  width: 200px;
-}
-
 .filters-container {
   display: flex;
   gap: 10px;
