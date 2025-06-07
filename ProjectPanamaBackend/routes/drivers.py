@@ -146,7 +146,7 @@ async def get_conductores_detalles():
         data_view["usuario"] = usuario
 
         headers = {
-            "Content-Disposition": "inline; detalles-conductores.pdf"
+            "Content-Disposition": "attachment; detalles-conductores.pdf"
         }  
 
         template_loader = jinja2.FileSystemLoader(searchpath="./templates")

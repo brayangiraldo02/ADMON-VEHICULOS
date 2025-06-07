@@ -85,7 +85,7 @@ async def get_conteo_vehiculos_estados(info: userInfo):
     data_view["promedio_parados"] = round((100 - data_view["promedio_activos"]), 2)
 
     headers = {
-        "Content-Disposition": "inline; estado-vehiculos-resumen.pdf"
+        "Content-Disposition": "attachment; estado-vehiculos-resumen.pdf"
     }  
 
     data_view["usuario"] = usuario
@@ -229,7 +229,7 @@ async def get_conteo_propietarios_vehiculos_estados(id: str, info: userInfo):
         data_view["usuario"] = usuario
 
         headers = {
-            "Content-Disposition": "inline; estado-vehiculos-resumen-empresa.pdf"
+            "Content-Disposition": "attachment; estado-vehiculos-resumen-empresa.pdf"
         }  
 
         template_loader = jinja2.FileSystemLoader(searchpath="./templates")
@@ -389,7 +389,7 @@ async def get_conteo_vehiculos_estados_numeros(info: userInfo):
     data_view["promedio_parados"] = round((100 - data_view["promedio_activos"]), 2)
 
     headers = {
-        "Content-Disposition": "inline; estado-vehiculos-numeros.pdf"
+        "Content-Disposition": "attachment; estado-vehiculos-numeros.pdf"
     }  
 
     titulo = 'Informe Por Estados Detallado'
@@ -398,7 +398,7 @@ async def get_conteo_vehiculos_estados_numeros(info: userInfo):
     data_view["usuario"] = usuario
 
     headers = {
-        "Content-Disposition": "inline; informe-estados-detallado.pdf"
+        "Content-Disposition": "attachment; informe-estados-detallado.pdf"
     }  
 
     template_loader = jinja2.FileSystemLoader(searchpath="./templates")
@@ -584,7 +584,7 @@ async def get_conteo_propietarios_vehiculos_estados_numeros(id: str, info: userI
     data_view["usuario"] = usuario
 
     headers = {
-        "Content-Disposition": "inline; informe-estados-detallado-empresa.pdf"
+        "Content-Disposition": "attachment; informe-estados-detallado-empresa.pdf"
     }  
 
     template_loader = jinja2.FileSystemLoader(searchpath="./templates")
@@ -745,7 +745,7 @@ async def get_vehiculos_detalles(infoReports: infoReports):
         data_view["usuario"] = usuario
 
         headers = {
-            "Content-Disposition": "inline; relacion-vehiculos-propietario.pdf"
+            "Content-Disposition": "attachment; relacion-vehiculos-propietario.pdf"
         }  
 
         template_loader = jinja2.FileSystemLoader(searchpath="./templates")

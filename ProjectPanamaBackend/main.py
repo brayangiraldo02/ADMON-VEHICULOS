@@ -28,6 +28,8 @@ import os
 load_dotenv()
 
 app = FastAPI()
+#* Quitar el comentario de la siguiente línea para deshabilitar la documentación de FastAPI
+#app = FastAPI(docs_url=None, redoc_url=None, openapi_url=None)
 
 app.add_middleware(
     CORSMiddleware,

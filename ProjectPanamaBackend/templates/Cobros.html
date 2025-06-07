@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cobros</title>
+  <style type="text/css">
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+    }
+    .container {
+      position: relative;
+    }
+    #logo {
+      position: absolute;
+      top: 0;
+      right: 0;
+    }
+    .content {
+      margin-left: 200px; 
+    }
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      text-align: center;
+    }
+    tr:first-child th, tr:first-child td {
+      background-color: #ffffff;
+      border: 1px solid #000000;
+      padding: 10px;
+      text-align: center;
+    }
+    td, th {
+      white-space: nowrap;
+      font-size: 12px;
+      padding: 5px;
+    }
+    tr {
+      line-height: 1.5;
+    }
+    .box-propietario {
+      text-align: left;
+      font-size: 18px;
+      margin-top: 10px;
+      border: 1px solid #000;
+      border-radius: 5px;
+      padding: 5px;
+    }
+    .box-propietario2 {
+      text-align: left;
+      font-size: 16px;
+      margin-top: 10px;
+      font-weight: bold;
+      padding: 5px;
+    }
+    dt, dd {
+      display: inline;
+      margin: 0;
+    }
+    dt {
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <table>
+    <tr>
+      <th>Unidad</th>
+      <th>Condu</th>
+      <th>Nombre</th>
+      <th>Vlr.Cta</th>
+      <th>Celular</th>
+      <th>Ingreso</th>
+      <th>Sin Pagar</th>
+      <th>Sdo.Renta</th>
+      <th>Deposito</th>
+      <th>PanaPass</th>
+      <th>Siniestro</th>
+      <th>Mantenimien</th>
+      <th>Otra Deu</th>
+      <th>Empresa</th>
+      <th>Central</th>
+      <th>Estado</th>
+    </tr>
+    {% for conductor in data_view.collectionAccounts_list %}
+      <tr>
+        <td>{{ conductor.unidad }}</td>
+        <td>{{ conductor.conductor }}</td>
+        <td>{{ conductor.nombre }}</td>
+        <td>{{ conductor.cuota }}</td>
+        <td>{{ conductor.celular }}</td>
+        <td>{{ conductor.ingreso }}</td>
+        <td>{{ conductor.dias_sin_pago }}/{{conductor.cuotas_pendientes }}</td>
+        <td>{{ conductor.deu_renta }}</td>
+        <td>{{ conductor.fon_inscri }}</td>
+        <td></td>
+        <td>{{ conductor.deu_sinies }}</td>
+        <td>{{ conductor.mantenimiento_fecha }}</td>
+        <td>{{ conductor.deu_otras }}</td>
+        <td>{{ conductor.empresa }}</td>
+        <td>{{ conductor.central }}</td>
+        <td>{{ conductor.estado }}</td>
+      </tr>
+    {% endfor %}
+  </table>
+</body>
+</html>
