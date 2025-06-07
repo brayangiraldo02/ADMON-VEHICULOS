@@ -393,7 +393,7 @@ async def collection_accounts_pdf(companies_list: list):
       collectionAccount_temp = {
         'unidad': collectionAccount.vehiculos_numero, 
         'conductor': collectionAccount.vehiculos_conductor, 
-        'nombre': collectionAccount.conductores_nombre, 
+        'nombre': collectionAccount.conductores_nombre.title(), 
         'cuota': collectionAccount.conductores_cuodiaria,
         'celular': collectionAccount.conductores_celular, 
         'ingreso': collectionAccount.conductores_fecingres, 
@@ -402,11 +402,11 @@ async def collection_accounts_pdf(companies_list: list):
         'deu_renta': deu_renta,
         'fon_inscri': fon_inscri,
         'deu_sinies': deu_sinies,
-        'mantenimiento_fecha': collectionAccount.mantenimiento_fecha + timedelta(days=30) if collectionAccount.mantenimiento_fecha else None,
+        'mantenimiento_fecha': collectionAccount.mantenimiento_fecha + timedelta(days=30) if collectionAccount.mantenimiento_fecha else "" ,
         'deu_otras': deu_otras,
-        'empresa': collectionAccount.propietarios_nombre, 
-        'central': collectionAccount.centrales_nombre, 
-        'estado': collectionAccount.estados_nombre, 
+        'empresa': collectionAccount.propietarios_nombre.title(), 
+        'central': collectionAccount.centrales_nombre.title(), 
+        'estado': collectionAccount.estados_nombre.title(), 
       }
 
       if collectionAccount_prev and (collectionAccount_prev['conductor'] == collectionAccount_temp['conductor'] and collectionAccount_prev['unidad'] == collectionAccount_temp['unidad']):

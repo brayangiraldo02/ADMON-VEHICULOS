@@ -24,7 +24,7 @@
       width: 100%;
       text-align: center;
     }
-    tr:first-child th, tr:first-child td {
+    thead tr th {
       background-color: #ffffff;
       border: 1px solid #000000;
       padding: 10px;
@@ -64,44 +64,48 @@
 </head>
 <body>
   <table>
-    <tr>
-      <th>Unidad</th>
-      <th>Condu</th>
-      <th>Nombre</th>
-      <th>Vlr.Cta</th>
-      <th>Celular</th>
-      <th>Ingreso</th>
-      <th>Sin Pagar</th>
-      <th>Sdo.Renta</th>
-      <th>Deposito</th>
-      <th>PanaPass</th>
-      <th>Siniestro</th>
-      <th>Mantenimien</th>
-      <th>Otra Deu</th>
-      <th>Empresa</th>
-      <th>Central</th>
-      <th>Estado</th>
-    </tr>
-    {% for conductor in data_view.collectionAccounts_list %}
+    <thead>
       <tr>
-        <td>{{ conductor.unidad }}</td>
-        <td>{{ conductor.conductor }}</td>
-        <td>{{ conductor.nombre }}</td>
-        <td>{{ conductor.cuota }}</td>
-        <td>{{ conductor.celular }}</td>
-        <td>{{ conductor.ingreso }}</td>
-        <td>{{ conductor.dias_sin_pago }}/{{conductor.cuotas_pendientes }}</td>
-        <td>{{ conductor.deu_renta }}</td>
-        <td>{{ conductor.fon_inscri }}</td>
-        <td></td>
-        <td>{{ conductor.deu_sinies }}</td>
-        <td>{{ conductor.mantenimiento_fecha }}</td>
-        <td>{{ conductor.deu_otras }}</td>
-        <td>{{ conductor.empresa }}</td>
-        <td>{{ conductor.central }}</td>
-        <td>{{ conductor.estado }}</td>
+        <th>Unidad</th>
+        <th>Condu</th>
+        <th>Nombre</th>
+        <th>Vlr.Cta</th>
+        <th>Celular</th>
+        <th>Ingreso</th>
+        <th>Sin Pagar</th>
+        <th>Sdo.Renta</th>
+        <th>Deposito</th>
+        <th>PanaPass</th>
+        <th>Siniestro</th>
+        <th>Mantenimien</th>
+        <th>Otra Deu</th>
+        <th>Empresa</th>
+        <th>Central</th>
+        <th>Estado</th>
       </tr>
-    {% endfor %}
+    </thead>
+    <tbody>
+      {% for conductor in data_view.collectionAccounts_list %}
+        <tr>
+          <td>{{ conductor.unidad }}</td>
+          <td>{{ conductor.conductor }}</td>
+          <td>{{ conductor.nombre }}</td>
+          <td>{{ conductor.cuota }}</td>
+          <td>{{ conductor.celular }}</td>
+          <td>{{ conductor.ingreso }}</td>
+          <td>{{ conductor.dias_sin_pago }}/{{conductor.cuotas_pendientes }}</td>
+          <td>{{ conductor.deu_renta }}</td>
+          <td>{{ conductor.fon_inscri }}</td>
+          <td></td>
+          <td>{{ conductor.deu_sinies }}</td>
+          <td>{{ conductor.mantenimiento_fecha }}</td>
+          <td>{{ conductor.deu_otras }}</td>
+          <td>{{ conductor.empresa }}</td>
+          <td>{{ conductor.central }}</td>
+          <td>{{ conductor.estado }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
   </table>
 </body>
 </html>
