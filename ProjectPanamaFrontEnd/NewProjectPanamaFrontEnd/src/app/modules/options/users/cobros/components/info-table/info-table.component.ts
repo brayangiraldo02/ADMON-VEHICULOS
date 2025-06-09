@@ -119,6 +119,7 @@ interface DebtOption {
 })
 export class InfoTableComponent implements AfterViewInit, OnDestroy {
   private originalData: VehicleInfoData[] = [];
+  dataIsZero: boolean = false;
 
   debts = new FormControl<number>(0);
 
@@ -197,6 +198,7 @@ export class InfoTableComponent implements AfterViewInit, OnDestroy {
       if (selectedOwners.owners.length > 0) {
         console.log('Selected owners in info table components: ', selectedOwners);
         this.getTableData(selectedOwners);
+
         // TODO: Limpiar info guardada en los estados globales una vez se deja de utilizar
         // this.globalStates.clearSelectedOwners();
       }
@@ -351,9 +353,19 @@ export class InfoTableComponent implements AfterViewInit, OnDestroy {
         if (this.sort) {
           this.dataSource.sort = this.sort;
         }
+
+        if (this.originalData.length === 0) {
+          this.dataIsZero = true;
+          this.openSnackbar('No hay datos disponibles para mostrar.');
+        } else {
+          this.dataIsZero = false;
+          this.openSnackbar('Datos cargados correctamente.');
+        }
       },
       error: (error) => {
         console.error('Error fetching data:', error);
+        this.dataIsZero = true;
+        this.openSnackbar('Error al cargar los datos. Por favor, inténtelo de nuevo más tarde.');
       },
     });
   }

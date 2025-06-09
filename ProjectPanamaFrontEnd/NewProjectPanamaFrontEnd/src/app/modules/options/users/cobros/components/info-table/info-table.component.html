@@ -170,7 +170,9 @@
               <!-- Updated colspan to match number of columns -->
               <mat-progress-bar
                 mode="indeterminate"
+                *ngIf="!dataIsZero"
               ></mat-progress-bar>
+              <span *ngIf="dataIsZero">No se encontraron resultados</span>
             </td>
           </tr>
         </table>
