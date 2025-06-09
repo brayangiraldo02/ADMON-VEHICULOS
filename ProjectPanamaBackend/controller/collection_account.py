@@ -11,6 +11,7 @@ from models.cajarecaudos import CajaRecaudos
 from models.movienca import Movienca
 from fastapi.encoders import jsonable_encoder
 from collections import defaultdict
+import os
 
 from io import BytesIO
 import pandas as pd
@@ -296,10 +297,10 @@ async def download_collection_accounts(companies_list: list):
 
 #-----------------------------------------------------------------------------------------------
 
-async def collection_accounts_pdf(companies_list: list):
+async def collection_accounts_pdf(companies_list):
   db = session()
   try:
-    company_code = db.query(Propietarios.EMPRESA).filter(Propietarios.CODIGO == companies_list[0])
+    company_code = db.query(Propietarios.EMPRESA).filter(Propietarios.CODIGO == companies_list.owners[0])
 
     today = func.current_date()
     receipt_date = db.query(CajaRecaudos.PLACA,
@@ -346,7 +347,7 @@ async def collection_accounts_pdf(companies_list: list):
                         ).outerjoin(
                           maintenance, Vehiculos.PLACA == maintenance.c.PLACA
                         ).filter(
-                          Vehiculos.PROPI_IDEN.in_(companies_list), 
+                          Vehiculos.PROPI_IDEN.in_(companies_list.owners), 
                           Vehiculos.ESTADO.in_(['01', '19']), 
                           Vehiculos.CONDUCTOR != '',
                           Centrales.EMPRESA == company_code.scalar_subquery()
@@ -414,7 +415,7 @@ async def collection_accounts_pdf(companies_list: list):
       else:
         collectionAccount_prev = collectionAccount_temp
         collectionAccounts_list.append(collectionAccount_temp)
-
+    
     # Datos de la fecha y hora actual
     # Define la zona horaria de Ciudad de Panamá
     panama_timezone = pytz.timezone('America/Panama')
@@ -424,7 +425,13 @@ async def collection_accounts_pdf(companies_list: list):
     fecha = now_in_panama.strftime("%d/%m/%Y")
     hora_actual = now_in_panama.strftime("%I:%M:%S %p")
     print(f"Fecha: {fecha}, Hora: {hora_actual}")
-    usuario = ""
+
+    user_admin = os.getenv("USER_ADMIN")
+    if companies_list.usuario == user_admin:
+      usuario = "Administrador"
+    else:
+      usuario = companies_list.usuario
+
     titulo = 'Cobros'
 
     data_view = {
