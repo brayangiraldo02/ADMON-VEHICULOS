@@ -118,6 +118,8 @@ interface DebtOption {
   // ],
 })
 export class InfoTableComponent implements AfterViewInit, OnDestroy {
+  isIOS: boolean = /iPhone|iPad|iPod/.test(navigator.userAgent) && !('MSStream' in window);
+  
   private originalData: VehicleInfoData[] = [];
   dataIsZero: boolean = false;
 
@@ -419,6 +421,7 @@ export class InfoTableComponent implements AfterViewInit, OnDestroy {
   }
 
   downloadCollectionAccountsPDF() {
+    this.openSnackbar(this.isIOS ? 'iOS true' : 'iOS false');
     const selectedOwners = this.globalStates.getSelectedOwners();
     if (selectedOwners.owners.length === 0) {
       console.error('No owners selected for PDF download');
@@ -428,9 +431,23 @@ export class InfoTableComponent implements AfterViewInit, OnDestroy {
 
     this.openSnackbar('En un momento se descargará el reporte de cuentas de cobro.');
 
+    // -- LÓGICA ESPECIAL PARA iOS --
+    if (this.isIOS) {
+      this.openSnackbar('Descargando reporte de cuentas de cobro en PDF iOS...');
+      // almacenamos endpoint y data para el PdfViewerComponent
+      localStorage.setItem('pdfEndpoint', 'collection-accounts/download-pdf');
+      localStorage.setItem('pdfData', JSON.stringify(selectedOwners));
+      // navegamos a la ruta donde tienes <app-pdf-viewer>
+      window.open(`/pdf`, '_blank');
+      return; 
+    }
+
+    this.openSnackbar('Seguí por el otro flujo de descarga de PDF.');
+
+    // -- COMPORTAMIENTO POR DEFECTO para Android y demás --
     this.documentsService.downloadDocument(
-      'collection-accounts/download-pdf', 
-      selectedOwners, 
+      'collection-accounts/download-pdf',
+      selectedOwners,
       'reporte_cuentas_cobro.pdf'
     ).subscribe({
       next: () => {
