@@ -4,11 +4,10 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class DocumentsService {
-
-  constructor(private apiService: ApiService) { }
+  constructor(private apiService: ApiService) {}
 
   /**
    * Download any type of document (PDF, Excel, etc.) from a POST endpoint
@@ -17,30 +16,49 @@ export class DocumentsService {
    * @param {string} filename - Optional filename for the download (will be auto-detected if not provided)
    * @returns {Observable<void>} An Observable that completes when download starts
    */
-  downloadDocument(endpoint: string, data: any, filename?: string): Observable<void> {
+  downloadDocument(
+    endpoint: string,
+    data: any,
+    filename?: string
+  ): Observable<void> {
     return this.apiService.postDocuments(endpoint, data).pipe(
       map((blob: Blob) => {
-        // Create blob URL
+        const isIOS =
+          /iPad|iPhone|iPod/.test(navigator.userAgent) &&
+          !('MSStream' in window);
+
+        if (isIOS) {
+          const reader = new FileReader();
+          reader.onloadend = () => {
+            const base64data = reader.result as string;
+            const link = document.createElement('a');
+            link.href = base64data;
+            link.download =
+              filename ||
+              `document_${new Date().getTime()}${this.getFileExtensionFromBlob(
+                blob
+              )}`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+          };
+          reader.readAsDataURL(blob);
+          return;
+        }
+
         const url = window.URL.createObjectURL(blob);
-        
-        // Create temporary link element
         const link = document.createElement('a');
         link.href = url;
-        
-        // Set filename
+
         if (filename) {
           link.download = filename;
         } else {
-          // Try to extract filename from blob type or use default
           const fileExtension = this.getFileExtensionFromBlob(blob);
           link.download = `document_${new Date().getTime()}${fileExtension}`;
         }
-        
-        // Trigger download
+
         document.body.appendChild(link);
         link.click();
-        
-        // Cleanup
         document.body.removeChild(link);
         window.URL.revokeObjectURL(url);
       })
@@ -54,7 +72,7 @@ export class DocumentsService {
    */
   private getFileExtensionFromBlob(blob: Blob): string {
     const mimeType = blob.type;
-    
+
     switch (mimeType) {
       case 'application/pdf':
         return '.pdf';

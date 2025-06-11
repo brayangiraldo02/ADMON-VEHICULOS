@@ -1,26 +1,24 @@
-from fastapi import APIRouter, HTTPException, Depends
 from fastapi.responses import JSONResponse
 from config.dbconnection import session
-from sqlalchemy.orm import aliased
 from models.conductores import Conductores
 from models.vehiculos import Vehiculos
 from models.marcas import Marcas
 from models.propietarios import Propietarios
 from models.estados import Estados
 from schemas.operations import *
-from middlewares.JWTBearer import JWTBearer
 from fastapi.encoders import jsonable_encoder
 from utils.reports import *
+
+#! Verificar si las importaciones son necesarias
+from sqlalchemy.orm import aliased
+from middlewares.JWTBearer import JWTBearer
 from datetime import datetime
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import FileResponse
 import jinja2
 from utils.pdf import html2pdf
 
-operations_router = APIRouter()
-
-@operations_router.get("/operations/deliveryvehicledriver/vehicle/{vehicle_number}/", tags=["Operations"])
-async def get_vehicle_operations(vehicle_number: str):
+async def get_vehicle_operation(vehicle_number: str):
   db = session()
   try:
     vehicle_operations = db.query(
@@ -64,8 +62,9 @@ async def get_vehicle_operations(vehicle_number: str):
   finally:
     db.close()
 
-@operations_router.get("/operations/deliveryvehicledriver/driver/{driver_number}/", tags=["Operations"])
-async def get_driver_operations(driver_number: str):
+#-----------------------------------------------------------------------------------------------
+
+async def get_driver_operation(driver_number: str):
   db = session()
   try:
     driver_operations = db.query(
@@ -99,7 +98,8 @@ async def get_driver_operations(driver_number: str):
   finally:
     db.close()
 
-@operations_router.post("/operations/deliveryvehicledriver/", tags=["Operations"])
+#-----------------------------------------------------------------------------------------------
+
 async def delivery_vehicle_driver(data: DeliveryVehicleDriver):
   db = session()
   try:

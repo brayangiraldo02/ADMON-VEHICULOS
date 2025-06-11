@@ -13,7 +13,7 @@ from routes.drivers import drivers_router
 from routes.vehicles import vehicles_router
 from routes.cities import cities_router
 from routes.central import central_router
-from routes.operaciones import operations_router
+from routes.operations import operations_router
 from routes.brands import brands_router
 from routes.expense_account import expenseAccount_router
 from routes.modalities import modalities_router
@@ -28,6 +28,8 @@ import os
 load_dotenv()
 
 app = FastAPI()
+#* Quitar el comentario de la siguiente línea para deshabilitar la documentación de FastAPI
+#app = FastAPI(docs_url=None, redoc_url=None, openapi_url=None)
 
 app.add_middleware(
     CORSMiddleware,

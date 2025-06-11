@@ -39,6 +39,8 @@ import { VehiclesDocumentationComponent } from './modules/tasks/vehicles/vehicle
 import { DriversDocumentationComponent } from './modules/tasks/drivers/drivers-documentation/drivers-documentation.component';
 import { OperacionesEntregaVehiculoConductorComponent } from './modules/options/users/operaciones/operaciones-entrega-vehiculo-conductor/operaciones-entrega-vehiculo-conductor.component';
 import { SharedModule } from './modules/shared/shared.module';
+import { DevPreviewComponent } from './modules/others/dev-preview/dev-preview.component';
+import { MaterialModule } from './modules/shared/material/material.module';
 
 @NgModule({
   declarations: [
@@ -76,6 +78,7 @@ import { SharedModule } from './modules/shared/shared.module';
     VehiclesDocumentationComponent,
     DriversDocumentationComponent,
     OperacionesEntregaVehiculoConductorComponent,
+    DevPreviewComponent,
   ],
   imports: [
     BrowserModule,
@@ -84,7 +87,8 @@ import { SharedModule } from './modules/shared/shared.module';
     HttpClientModule,
     FormsModule,
     ReactiveFormsModule,
-    SharedModule
+    SharedModule,
+    MaterialModule
   ],
   providers: [],
   bootstrap: [AppComponent]

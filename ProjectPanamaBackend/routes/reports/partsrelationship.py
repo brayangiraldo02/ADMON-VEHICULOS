@@ -280,7 +280,7 @@ async def partsrelationship_report(data: PartsRelationshipReport):
     }
 
     headers = {
-      "Content-Disposition": "inline; relacion-piezas.pdf"
+      "Content-Disposition": "attachment; relacion-piezas.pdf"
     }  
 
     template_loader = jinja2.FileSystemLoader(searchpath="./templates")

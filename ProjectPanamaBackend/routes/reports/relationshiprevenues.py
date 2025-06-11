@@ -290,7 +290,7 @@ async def relationshiprevenues_report(data: RelationshipRevenuesReport):
     data_reporte = response
 
     headers = {
-      "Content-Disposition": "inline; relacion-ingresos.pdf"
+      "Content-Disposition": "attachment; relacion-ingresos.pdf"
     }  
 
     # return JSONResponse(content=jsonable_encoder(data_reporte)) 
