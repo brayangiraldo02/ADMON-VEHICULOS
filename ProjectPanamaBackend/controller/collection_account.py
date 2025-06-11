@@ -11,6 +11,7 @@ from models.cajarecaudos import CajaRecaudos
 from models.movienca import Movienca
 from fastapi.encoders import jsonable_encoder
 from collections import defaultdict
+import os
 
 from io import BytesIO
 import pandas as pd
@@ -53,7 +54,7 @@ async def get_collection_accounts(companies_list: list):
                           Conductores.CODIGO.label('conductores_codigo'),
                           Conductores.NOMBRE.label('conductores_nombre'), 
                           Conductores.CEDULA.label('conductores_cedula'),  
-                          Conductores.CELULAR.label('conductores_celular'), 
+                          Conductores.TELEFONO.label('conductores_telefono'), 
                           Conductores.FEC_INGRES.label('conductores_fecingres'), 
                           Conductores.CUO_DIARIA.label('conductores_cuodiaria'),
                           func.datediff(today, receipt_date.c.caja_recaudos_fec_recibo).op('-')(1).label('dias_sin_pago'),
@@ -125,8 +126,8 @@ async def get_collection_accounts(companies_list: list):
         'centrales_nombre': collectionAccount.centrales_nombre, 
         'conductores_nombre': collectionAccount.conductores_nombre, 
         'conductores_cedula': collectionAccount.conductores_cedula, 
-        'conductores_celular': collectionAccount.conductores_celular, 
-        'conductores_fecingres': collectionAccount.conductores_fecingres, 
+        'conductores_celular': collectionAccount.conductores_telefono, 
+        'conductores_fecingres': collectionAccount.conductores_fecingres.strftime('%d-%m-%Y') if collectionAccount.conductores_fecingres else None, 
         'conductores_cuodiaria': collectionAccount.conductores_cuodiaria,
         'dias_sin_pago': collectionAccount.dias_sin_pago,
         'cuotas_pendientes': deu_renta // collectionAccount.conductores_cuodiaria if collectionAccount.conductores_cuodiaria else 0,
@@ -135,7 +136,7 @@ async def get_collection_accounts(companies_list: list):
         'diferencia': fon_inscri - deu_renta,
         'deu_sinies': deu_sinies,
         'deu_otras': deu_otras,
-        'mantenimiento_fecha': collectionAccount.mantenimiento_fecha + timedelta(days=30) if collectionAccount.mantenimiento_fecha else None,
+        'mantenimiento_fecha': (collectionAccount.mantenimiento_fecha + timedelta(days=30)).strftime('%d-%m-%Y') if collectionAccount.mantenimiento_fecha else None,
         'mantenimiento_dias_restantes': (collectionAccount.mantenimiento_fecha + timedelta(days=30) - date.today()).days if collectionAccount.mantenimiento_fecha else None
       }
 
@@ -186,7 +187,7 @@ async def download_collection_accounts(companies_list: list):
                           Conductores.CODIGO.label('conductores_codigo'),
                           Conductores.NOMBRE.label('conductores_nombre'), 
                           Conductores.CEDULA.label('conductores_cedula'),  
-                          Conductores.CELULAR.label('conductores_celular'), 
+                          Conductores.TELEFONO.label('conductores_telefono'), 
                           Conductores.FEC_INGRES.label('conductores_fecingres'), 
                           Conductores.CUO_DIARIA.label('conductores_cuodiaria'),
                           func.datediff(today, receipt_date.c.caja_recaudos_fec_recibo).op('-')(1).label('dias_sin_pago'),
@@ -258,8 +259,8 @@ async def download_collection_accounts(companies_list: list):
         'centrales_nombre': collectionAccount.centrales_nombre, 
         'conductores_nombre': collectionAccount.conductores_nombre, 
         'conductores_cedula': collectionAccount.conductores_cedula, 
-        'conductores_celular': collectionAccount.conductores_celular, 
-        'conductores_fecingres': collectionAccount.conductores_fecingres, 
+        'conductores_celular': collectionAccount.conductores_telefono, 
+        'conductores_fecingres': collectionAccount.conductores_fecingres.strftime('%d-%m-%Y') if collectionAccount.conductores_fecingres else None, 
         'conductores_cuodiaria': collectionAccount.conductores_cuodiaria,
         'dias_sin_pago': collectionAccount.dias_sin_pago,
         'cuotas_pendientes': deu_renta // collectionAccount.conductores_cuodiaria if collectionAccount.conductores_cuodiaria else 0,
@@ -268,7 +269,7 @@ async def download_collection_accounts(companies_list: list):
         'diferencia': fon_inscri - deu_renta,
         'deu_sinies': deu_sinies,
         'deu_otras': deu_otras,
-        'mantenimiento_fecha': collectionAccount.mantenimiento_fecha + timedelta(days=30) if collectionAccount.mantenimiento_fecha else None,
+        'mantenimiento_fecha': (collectionAccount.mantenimiento_fecha + timedelta(days=30)).strftime('%d-%m-%Y') if collectionAccount.mantenimiento_fecha else None,
         'mantenimiento_dias_restantes': (collectionAccount.mantenimiento_fecha + timedelta(days=30) - date.today()).days if collectionAccount.mantenimiento_fecha else None
       }
 
@@ -296,10 +297,10 @@ async def download_collection_accounts(companies_list: list):
 
 #-----------------------------------------------------------------------------------------------
 
-async def collection_accounts_pdf(companies_list: list):
+async def collection_accounts_pdf(companies_list):
   db = session()
   try:
-    company_code = db.query(Propietarios.EMPRESA).filter(Propietarios.CODIGO == companies_list[0])
+    company_code = db.query(Propietarios.EMPRESA).filter(Propietarios.CODIGO == companies_list.owners[0])
 
     today = func.current_date()
     receipt_date = db.query(CajaRecaudos.PLACA,
@@ -328,7 +329,7 @@ async def collection_accounts_pdf(companies_list: list):
                           Conductores.CODIGO.label('conductores_codigo'),
                           Conductores.NOMBRE.label('conductores_nombre'), 
                           Conductores.CEDULA.label('conductores_cedula'),  
-                          Conductores.CELULAR.label('conductores_celular'), 
+                          Conductores.TELEFONO.label('conductores_telefono'), 
                           Conductores.FEC_INGRES.label('conductores_fecingres'), 
                           Conductores.CUO_DIARIA.label('conductores_cuodiaria'),
                           func.datediff(today, receipt_date.c.caja_recaudos_fec_recibo).op('-')(1).label('dias_sin_pago'),
@@ -346,7 +347,7 @@ async def collection_accounts_pdf(companies_list: list):
                         ).outerjoin(
                           maintenance, Vehiculos.PLACA == maintenance.c.PLACA
                         ).filter(
-                          Vehiculos.PROPI_IDEN.in_(companies_list), 
+                          Vehiculos.PROPI_IDEN.in_(companies_list.owners), 
                           Vehiculos.ESTADO.in_(['01', '19']), 
                           Vehiculos.CONDUCTOR != '',
                           Centrales.EMPRESA == company_code.scalar_subquery()
@@ -393,20 +394,20 @@ async def collection_accounts_pdf(companies_list: list):
       collectionAccount_temp = {
         'unidad': collectionAccount.vehiculos_numero, 
         'conductor': collectionAccount.vehiculos_conductor, 
-        'nombre': collectionAccount.conductores_nombre, 
+        'nombre': collectionAccount.conductores_nombre.title(), 
         'cuota': collectionAccount.conductores_cuodiaria,
-        'celular': collectionAccount.conductores_celular, 
-        'ingreso': collectionAccount.conductores_fecingres, 
+        'celular': collectionAccount.conductores_telefono, 
+        'ingreso': collectionAccount.conductores_fecingres.strftime('%d-%m-%Y') if collectionAccount.conductores_fecingres else None, 
         'dias_sin_pago': collectionAccount.dias_sin_pago,
         'cuotas_pendientes': deu_renta // collectionAccount.conductores_cuodiaria if collectionAccount.conductores_cuodiaria else 0,
         'deu_renta': deu_renta,
         'fon_inscri': fon_inscri,
         'deu_sinies': deu_sinies,
-        'mantenimiento_fecha': collectionAccount.mantenimiento_fecha + timedelta(days=30) if collectionAccount.mantenimiento_fecha else None,
+        'mantenimiento_fecha': (collectionAccount.mantenimiento_fecha + timedelta(days=30)).strftime('%d-%m-%Y') if collectionAccount.mantenimiento_fecha else "" ,
         'deu_otras': deu_otras,
-        'empresa': collectionAccount.propietarios_nombre, 
-        'central': collectionAccount.centrales_nombre, 
-        'estado': collectionAccount.estados_nombre, 
+        'empresa': collectionAccount.propietarios_nombre.title(), 
+        'central': collectionAccount.centrales_nombre.title(), 
+        'estado': collectionAccount.estados_nombre.title(), 
       }
 
       if collectionAccount_prev and (collectionAccount_prev['conductor'] == collectionAccount_temp['conductor'] and collectionAccount_prev['unidad'] == collectionAccount_temp['unidad']):
@@ -414,7 +415,7 @@ async def collection_accounts_pdf(companies_list: list):
       else:
         collectionAccount_prev = collectionAccount_temp
         collectionAccounts_list.append(collectionAccount_temp)
-
+    
     # Datos de la fecha y hora actual
     # Define la zona horaria de Ciudad de Panamá
     panama_timezone = pytz.timezone('America/Panama')
@@ -424,7 +425,13 @@ async def collection_accounts_pdf(companies_list: list):
     fecha = now_in_panama.strftime("%d/%m/%Y")
     hora_actual = now_in_panama.strftime("%I:%M:%S %p")
     print(f"Fecha: {fecha}, Hora: {hora_actual}")
-    usuario = ""
+
+    user_admin = os.getenv("USER_ADMIN")
+    if companies_list.usuario == user_admin:
+      usuario = "Administrador"
+    else:
+      usuario = companies_list.usuario
+
     titulo = 'Cobros'
 
     data_view = {
