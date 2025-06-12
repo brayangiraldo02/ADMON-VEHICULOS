@@ -21,6 +21,7 @@ import pytz
 from fastapi.templating import Jinja2Templates
 import jinja2
 from utils.pdf import html2pdf
+from utils.panapass import get_txt_file, search_value_in_txt
 
 async def get_collection_accounts(companies_list: list):
   db = session()
@@ -58,7 +59,8 @@ async def get_collection_accounts(companies_list: list):
                           Conductores.FEC_INGRES.label('conductores_fecingres'), 
                           Conductores.CUO_DIARIA.label('conductores_cuodiaria'),
                           func.datediff(today, receipt_date.c.caja_recaudos_fec_recibo).op('-')(1).label('dias_sin_pago'),
-                          maintenance.c.FECHA.label('mantenimiento_fecha')
+                          maintenance.c.FECHA.label('mantenimiento_fecha'),
+                          company_code.scalar_subquery().label('empresa')
                         ).join(
                           Propietarios, Propietarios.CODIGO == Vehiculos.PROPI_IDEN
                         ).join(
@@ -115,7 +117,11 @@ async def get_collection_accounts(companies_list: list):
 
       if deu_renta == 0:
         continue
-      
+
+      # Obtener el archivo de texto para la empresa
+      txt_file_path = get_txt_file(collectionAccount.empresa)
+      panapass_value = search_value_in_txt('Unidad', collectionAccount.vehiculos_numero, 'Saldo Cuenta PanaPass', txt_file_path)
+
       collectionAccount_temp = {
         'codigo': collectionAccount.propietarios_codigo, 
         'nombre': collectionAccount.propietarios_nombre, 
@@ -136,6 +142,7 @@ async def get_collection_accounts(companies_list: list):
         'diferencia': fon_inscri - deu_renta,
         'deu_sinies': deu_sinies,
         'deu_otras': deu_otras,
+        'panapass': panapass_value if panapass_value else '0',
         'mantenimiento_fecha': (collectionAccount.mantenimiento_fecha + timedelta(days=30)).strftime('%d-%m-%Y') if collectionAccount.mantenimiento_fecha else None,
         'mantenimiento_dias_restantes': (collectionAccount.mantenimiento_fecha + timedelta(days=30) - date.today()).days if collectionAccount.mantenimiento_fecha else None
       }
