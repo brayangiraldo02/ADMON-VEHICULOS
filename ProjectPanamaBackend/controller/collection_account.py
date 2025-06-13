@@ -21,6 +21,7 @@ import pytz
 from fastapi.templating import Jinja2Templates
 import jinja2
 from utils.pdf import html2pdf
+from utils.panapass import get_txt_file, search_value_in_txt
 
 async def get_collection_accounts(companies_list: list):
   db = session()
@@ -58,7 +59,8 @@ async def get_collection_accounts(companies_list: list):
                           Conductores.FEC_INGRES.label('conductores_fecingres'), 
                           Conductores.CUO_DIARIA.label('conductores_cuodiaria'),
                           func.datediff(today, receipt_date.c.caja_recaudos_fec_recibo).op('-')(1).label('dias_sin_pago'),
-                          maintenance.c.FECHA.label('mantenimiento_fecha')
+                          maintenance.c.FECHA.label('mantenimiento_fecha'),
+                          company_code.scalar_subquery().label('empresa')
                         ).join(
                           Propietarios, Propietarios.CODIGO == Vehiculos.PROPI_IDEN
                         ).join(
@@ -115,7 +117,11 @@ async def get_collection_accounts(companies_list: list):
 
       if deu_renta == 0:
         continue
-      
+
+      # Obtener el archivo de texto para la empresa
+      txt_file_path = get_txt_file(collectionAccount.empresa)
+      panapass_value = search_value_in_txt('Unidad', collectionAccount.vehiculos_numero, 'Saldo Cuenta PanaPass', txt_file_path)
+
       collectionAccount_temp = {
         'codigo': collectionAccount.propietarios_codigo, 
         'nombre': collectionAccount.propietarios_nombre, 
@@ -127,7 +133,7 @@ async def get_collection_accounts(companies_list: list):
         'conductores_nombre': collectionAccount.conductores_nombre, 
         'conductores_cedula': collectionAccount.conductores_cedula, 
         'conductores_celular': collectionAccount.conductores_telefono, 
-        'conductores_fecingres': collectionAccount.conductores_fecingres.strftime('%d-%m-%Y') if collectionAccount.conductores_fecingres else None, 
+        'conductores_fecingres': collectionAccount.conductores_fecingres.strftime('%d-%m-%Y') if collectionAccount.conductores_fecingres != '0000-00-00' else '', 
         'conductores_cuodiaria': collectionAccount.conductores_cuodiaria,
         'dias_sin_pago': collectionAccount.dias_sin_pago,
         'cuotas_pendientes': deu_renta // collectionAccount.conductores_cuodiaria if collectionAccount.conductores_cuodiaria else 0,
@@ -136,6 +142,7 @@ async def get_collection_accounts(companies_list: list):
         'diferencia': fon_inscri - deu_renta,
         'deu_sinies': deu_sinies,
         'deu_otras': deu_otras,
+        'panapass': panapass_value if panapass_value else '0',
         'mantenimiento_fecha': (collectionAccount.mantenimiento_fecha + timedelta(days=30)).strftime('%d-%m-%Y') if collectionAccount.mantenimiento_fecha else None,
         'mantenimiento_dias_restantes': (collectionAccount.mantenimiento_fecha + timedelta(days=30) - date.today()).days if collectionAccount.mantenimiento_fecha else None
       }
@@ -191,7 +198,8 @@ async def download_collection_accounts(companies_list: list):
                           Conductores.FEC_INGRES.label('conductores_fecingres'), 
                           Conductores.CUO_DIARIA.label('conductores_cuodiaria'),
                           func.datediff(today, receipt_date.c.caja_recaudos_fec_recibo).op('-')(1).label('dias_sin_pago'),
-                          maintenance.c.FECHA.label('mantenimiento_fecha')
+                          maintenance.c.FECHA.label('mantenimiento_fecha'),
+                          company_code.scalar_subquery().label('empresa')
                         ).join(
                           Propietarios, Propietarios.CODIGO == Vehiculos.PROPI_IDEN
                         ).join(
@@ -249,6 +257,10 @@ async def download_collection_accounts(companies_list: list):
       if deu_renta == 0:
         continue
       
+      # Obtener el archivo de texto para la empresa
+      txt_file_path = get_txt_file(collectionAccount.empresa)
+      panapass_value = search_value_in_txt('Unidad', collectionAccount.vehiculos_numero, 'Saldo Cuenta PanaPass', txt_file_path)
+
       collectionAccount_temp = {
         'codigo': collectionAccount.propietarios_codigo, 
         'nombre': collectionAccount.propietarios_nombre, 
@@ -260,7 +272,7 @@ async def download_collection_accounts(companies_list: list):
         'conductores_nombre': collectionAccount.conductores_nombre, 
         'conductores_cedula': collectionAccount.conductores_cedula, 
         'conductores_celular': collectionAccount.conductores_telefono, 
-        'conductores_fecingres': collectionAccount.conductores_fecingres.strftime('%d-%m-%Y') if collectionAccount.conductores_fecingres else None, 
+        'conductores_fecingres': collectionAccount.conductores_fecingres.strftime('%d-%m-%Y') if collectionAccount.conductores_fecingres != '0000-00-00' else '', 
         'conductores_cuodiaria': collectionAccount.conductores_cuodiaria,
         'dias_sin_pago': collectionAccount.dias_sin_pago,
         'cuotas_pendientes': deu_renta // collectionAccount.conductores_cuodiaria if collectionAccount.conductores_cuodiaria else 0,
@@ -269,6 +281,7 @@ async def download_collection_accounts(companies_list: list):
         'diferencia': fon_inscri - deu_renta,
         'deu_sinies': deu_sinies,
         'deu_otras': deu_otras,
+        'panapass': panapass_value if panapass_value else '0',
         'mantenimiento_fecha': (collectionAccount.mantenimiento_fecha + timedelta(days=30)).strftime('%d-%m-%Y') if collectionAccount.mantenimiento_fecha else None,
         'mantenimiento_dias_restantes': (collectionAccount.mantenimiento_fecha + timedelta(days=30) - date.today()).days if collectionAccount.mantenimiento_fecha else None
       }
@@ -333,7 +346,8 @@ async def collection_accounts_pdf(companies_list):
                           Conductores.FEC_INGRES.label('conductores_fecingres'), 
                           Conductores.CUO_DIARIA.label('conductores_cuodiaria'),
                           func.datediff(today, receipt_date.c.caja_recaudos_fec_recibo).op('-')(1).label('dias_sin_pago'),
-                          maintenance.c.FECHA.label('mantenimiento_fecha')
+                          maintenance.c.FECHA.label('mantenimiento_fecha'),
+                          company_code.scalar_subquery().label('empresa')
                         ).join(
                           Propietarios, Propietarios.CODIGO == Vehiculos.PROPI_IDEN
                         ).join(
@@ -390,6 +404,10 @@ async def collection_accounts_pdf(companies_list):
 
       if deu_renta == 0:
         continue
+
+      # Obtener el archivo de texto para la empresa
+      txt_file_path = get_txt_file(collectionAccount.empresa)
+      panapass_value = search_value_in_txt('Unidad', collectionAccount.vehiculos_numero, 'Saldo Cuenta PanaPass', txt_file_path)
       
       collectionAccount_temp = {
         'unidad': collectionAccount.vehiculos_numero, 
@@ -397,13 +415,14 @@ async def collection_accounts_pdf(companies_list):
         'nombre': collectionAccount.conductores_nombre.title(), 
         'cuota': collectionAccount.conductores_cuodiaria,
         'celular': collectionAccount.conductores_telefono, 
-        'ingreso': collectionAccount.conductores_fecingres.strftime('%d-%m-%Y') if collectionAccount.conductores_fecingres else None, 
+        'ingreso': collectionAccount.conductores_fecingres.strftime('%d-%m-%Y') if collectionAccount.conductores_fecingres != '0000-00-00' else '', 
         'dias_sin_pago': collectionAccount.dias_sin_pago,
         'cuotas_pendientes': deu_renta // collectionAccount.conductores_cuodiaria if collectionAccount.conductores_cuodiaria else 0,
         'deu_renta': deu_renta,
         'fon_inscri': fon_inscri,
+        'panapass': panapass_value if panapass_value else '0',
         'deu_sinies': deu_sinies,
-        'mantenimiento_fecha': (collectionAccount.mantenimiento_fecha + timedelta(days=30)).strftime('%d-%m-%Y') if collectionAccount.mantenimiento_fecha else "" ,
+        'mantenimiento_fecha': (collectionAccount.mantenimiento_fecha + timedelta(days=30)).strftime('%d-%m-%Y') if collectionAccount.mantenimiento_fecha != '0000-00-00' else '',
         'deu_otras': deu_otras,
         'empresa': collectionAccount.propietarios_nombre.title(), 
         'central': collectionAccount.centrales_nombre.title(), 
@@ -424,7 +443,6 @@ async def collection_accounts_pdf(companies_list):
     # Formatea la fecha y la hora según lo requerido
     fecha = now_in_panama.strftime("%d/%m/%Y")
     hora_actual = now_in_panama.strftime("%I:%M:%S %p")
-    print(f"Fecha: {fecha}, Hora: {hora_actual}")
 
     user_admin = os.getenv("USER_ADMIN")
     if companies_list.usuario == user_admin:
