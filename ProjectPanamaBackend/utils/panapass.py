@@ -43,7 +43,7 @@ def search_value_in_txt(search_column, search_value, return_column, path):
   """
   Searches for a specific value in a text file and returns the corresponding value from another column.
   """
-  with open(path, newline='') as f:
+  with open(path, newline='', encoding='latin-1') as f:
     reader = csv.DictReader(f)
     for row in reader:
       if row[search_column] == search_value:

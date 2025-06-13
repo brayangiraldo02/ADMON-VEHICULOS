@@ -37,7 +37,7 @@ export interface VehicleInfoData {
   Ingreso: string;
   'Sdo.Renta': string;
   Deposito: string;
-  PanaPass: string;
+  PanaPass: string | null;
   Siniestro: string;
   'Otra Deu': string;
   Empresa: string;
@@ -45,6 +45,7 @@ export interface VehicleInfoData {
   Estado: string;
   DiasSinPago?: number;
   CuotasPendientes?: number;
+  Panapass?: string | null;
   MantenimientoFecha?: string | null;
   MantenimientoDiasRestantes?: number | null;
 }
@@ -66,6 +67,7 @@ interface apiResponse {
   estado?: string;
   dias_sin_pago?: number;
   cuotas_pendientes?: number;
+  panapass?: string | null;
   mantenimiento_fecha?: string | null;
   mantenimiento_dias_restantes?: number | null;
 }
@@ -325,7 +327,6 @@ export class InfoTableComponent implements AfterViewInit, OnDestroy {
                 item.fon_inscri !== undefined
                   ? item.fon_inscri.toString()
                   : '0',
-              PanaPass: '',
               Siniestro:
                 item.deu_sinies !== undefined
                   ? item.deu_sinies.toString()
@@ -338,6 +339,7 @@ export class InfoTableComponent implements AfterViewInit, OnDestroy {
               Estado: item.estado || '',
               DiasSinPago: item.dias_sin_pago || 0,
               CuotasPendientes: item.cuotas_pendientes || 0,
+              PanaPass: item.panapass || '',
               MantenimientoFecha: item.mantenimiento_fecha,
               MantenimientoDiasRestantes:
                 item.mantenimiento_dias_restantes,
@@ -441,8 +443,6 @@ export class InfoTableComponent implements AfterViewInit, OnDestroy {
       window.open(`/pdf`, '_blank');
       return; 
     }
-
-    this.openSnackbar('Seguí por el otro flujo de descarga de PDF.');
 
     // -- COMPORTAMIENTO POR DEFECTO para Android y demás --
     this.documentsService.downloadDocument(
