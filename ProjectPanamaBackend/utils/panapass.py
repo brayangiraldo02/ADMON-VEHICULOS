@@ -17,7 +17,6 @@ def get_txt_file(company: str):
   now_in_panama = datetime.now(panama_timezone)
   # Formatea la fecha según lo requerido
   fecha = now_in_panama.strftime("%Y_%m_%d")
-  #fecha = '2025_06_11'
   
   if company == '58':
     try:
