@@ -61,6 +61,7 @@ async def get_conteo_vehiculos_estados(info: userInfo):
     data_view["cant_mecanica_parado"] = data.get("MECANICA PARADOS", 0)
     data_view["cant_otros"] = data.get("OTROS", 0)
     data_view["cant_vehiculos_pendientes_arraijan"] = data.get("VEHICULOS PENDIENTES ARRAIJAN", 0)
+    data_view["cant_carro_preparacion"] = data.get("CARRO EN PREPARACION", 0)
     # Otros Estados
     data_view["cant_traspasados"] = data.get("» CARROS TRASPASADOS", 0)
     data_view["cant_fin_contrato"] = data.get("» CULMINACION DE CONTRATO", 0)
@@ -74,7 +75,7 @@ async def get_conteo_vehiculos_estados(info: userInfo):
     data_view["cant_para_venta"] = data.get("» Vehiculos Para la Venta", 0)
     # Totales
 
-    data_view["total_activos"] = data.get("ACTIVOS", 0) + data.get("BACUPK", 0) + data.get("CHAPISTERIA PARADO", 0) + data.get("CHAPISTERIA TRABAJANDO", 0) + data.get("CUSTODIA", 0) + data.get("DETENIDO", 0) + data.get("ESPERANDO OPERADOR", 0) + data.get("MECANICA MANTENIMIENTO", 0) + data.get("MECANICA PARADOS", 0) + data.get("OTROS", 0) + data.get("VEHICULOS PENDIENTES ARRAIJAN", 0)
+    data_view["total_activos"] = data.get("ACTIVOS", 0) + data.get("BACUPK", 0) + data.get("CHAPISTERIA PARADO", 0) + data.get("CHAPISTERIA TRABAJANDO", 0) + data.get("CUSTODIA", 0) + data.get("DETENIDO", 0) + data.get("ESPERANDO OPERADOR", 0) + data.get("MECANICA MANTENIMIENTO", 0) + data.get("MECANICA PARADOS", 0) + data.get("OTROS", 0) + data.get("VEHICULOS PENDIENTES ARRAIJAN", 0) + data.get("CARRO EN PREPARACION", 0)
 
     data_view["total_parados"] = data.get("» CARROS TRASPASADOS", 0) + data.get("» CULMINACION DE CONTRATO", 0) + data.get("» EN TRAMITE", 0) + data.get("» Fuera de Circulacion", 0) + data.get("» INACTIVOS", 0) + data.get("» PERDIDA TOTAL", 0) + data.get("» RETIRADO DE LA EMPRESA", 0) + data.get("» SIN CLASIFICAR", 0) + data.get("» VENDIDO", 0) + data.get("» Vehiculos Para la Venta", 0)
 
@@ -205,6 +206,7 @@ async def get_conteo_propietarios_vehiculos_estados(id: str, info: userInfo):
         data_view["cant_mecanica_parado"] = data.get("MECANICA PARADOS", 0)
         data_view["cant_otros"] = data.get("OTROS", 0)
         data_view["cant_vehiculos_pendientes_arraijan"] = data.get("VEHICULOS PENDIENTES ARRAIJAN", 0)
+        data_view["cant_carro_preparacion"] = data.get("CARRO EN PREPARACION", 0)
         data_view["cant_traspasados"] = data.get("» CARROS TRASPASADOS", 0)
         data_view["cant_fin_contrato"] = data.get("» CULMINACION DE CONTRATO", 0)
         data_view["cant_en_tramite"] = data.get("» EN TRAMITE", 0)
@@ -215,7 +217,7 @@ async def get_conteo_propietarios_vehiculos_estados(id: str, info: userInfo):
         data_view["cant_sin_calificar"] = data.get("» SIN CLASIFICAR", 0)
         data_view["cant_vendidos"] = data.get("» VENDIDO", 0)
         data_view["cant_para_venta"] = data.get("» Vehiculos Para la Venta", 0)
-        data_view["total_activos"] = data.get("ACTIVOS", 0) + data.get("BACUPK", 0) + data.get("CHAPISTERIA PARADO", 0) + data.get("CHAPISTERIA TRABAJANDO", 0) + data.get("CUSTODIA", 0) + data.get("DETENIDO", 0) + data.get("ESPERANDO OPERADOR", 0) + data.get("MECANICA MANTENIMIENTO", 0) + data.get("MECANICA PARADOS", 0) + data.get("OTROS", 0) + data.get("VEHICULOS PENDIENTES ARRAIJAN", 0)
+        data_view["total_activos"] = data.get("ACTIVOS", 0) + data.get("BACUPK", 0) + data.get("CHAPISTERIA PARADO", 0) + data.get("CHAPISTERIA TRABAJANDO", 0) + data.get("CUSTODIA", 0) + data.get("DETENIDO", 0) + data.get("ESPERANDO OPERADOR", 0) + data.get("MECANICA MANTENIMIENTO", 0) + data.get("MECANICA PARADOS", 0) + data.get("OTROS", 0) + data.get("VEHICULOS PENDIENTES ARRAIJAN", 0) + data.get("CARRO EN PREPARACION", 0)
         data_view["total_parados"] = data.get("» CARROS TRASPASADOS", 0) + data.get("» CULMINACION DE CONTRATO", 0) + data.get("» EN TRAMITE", 0) + data.get("» Fuera de Circulacion", 0) + data.get("» INACTIVOS", 0) + data.get("» PERDIDA TOTAL", 0) + data.get("» RETIRADO DE LA EMPRESA", 0) + data.get("» SIN CLASIFICAR", 0) + data.get("» VENDIDO", 0) + data.get("» Vehiculos Para la Venta", 0)
         data_view["total_vehiculos"] = data_view["total_activos"] + data_view["total_parados"]
         if data_view["total_activos"] == 0:
@@ -315,6 +317,7 @@ async def get_conteo_vehiculos_estados_numeros(info: userInfo):
     mecanica_parado_ordenados = sorted(data.get("MECANICA PARADOS", []))
     otros_ordenados = sorted(data.get("OTROS", []))
     vehiculos_pendientes_arraijan_ordenados = sorted(data.get("VEHICULOS PENDIENTES ARRAIJAN", []))
+    vehiculos_preparacion_ordenados = sorted(data.get("CARRO EN PREPARACION", []))
     
     # Otros Estados
     traspasados_ordenados = sorted(data.get("» CARROS TRASPASADOS", []))
@@ -352,6 +355,8 @@ async def get_conteo_vehiculos_estados_numeros(info: userInfo):
     data_view["otros"] = otros_ordenados
     data_view["cant_vehiculos_pendientes_arraijan"] = len(vehiculos_pendientes_arraijan_ordenados)
     data_view["vehiculos_pendientes_arraijan"] = vehiculos_pendientes_arraijan_ordenados
+    data_view["cant_carro_preparacion"] = len(vehiculos_preparacion_ordenados)
+    data_view["carro_preparacion"] = vehiculos_preparacion_ordenados
     
     # Otros Estados
     data_view["cant_traspasados"] = len(traspasados_ordenados)
@@ -376,7 +381,7 @@ async def get_conteo_vehiculos_estados_numeros(info: userInfo):
     data_view["para_venta"] = para_venta_ordenados
     
     # Totales
-    data_view["total_activos"] = len(activos_ordenados) + len(backup_ordenados) + len(chap_parado_ordenados) + len(chap_trabajando_ordenados) + len(custodia_ordenados) + len(detenido_ordenados) + len(esp_operador_ordenados) + len(mecanica_mantenimiento_ordenados) + len(mecanica_parado_ordenados) + len(otros_ordenados) + len(vehiculos_pendientes_arraijan_ordenados)
+    data_view["total_activos"] = len(activos_ordenados) + len(backup_ordenados) + len(chap_parado_ordenados) + len(chap_trabajando_ordenados) + len(custodia_ordenados) + len(detenido_ordenados) + len(esp_operador_ordenados) + len(mecanica_mantenimiento_ordenados) + len(mecanica_parado_ordenados) + len(otros_ordenados) + len(vehiculos_pendientes_arraijan_ordenados) + len(vehiculos_preparacion_ordenados)
 
     data_view["total_parados"] = len(traspasados_ordenados) + len(fin_contrato_ordenados) + len(en_tramite_ordenados) + len(fuera_circulacion_ordenados) + len(inactivos_ordenados) + len(perdida_total_ordenados) + len(retirado_empresa_ordenados) + len(sin_calificar_ordenados) + len(vendidos_ordenados) + len(para_venta_ordenados)
 
@@ -505,6 +510,7 @@ async def get_conteo_propietarios_vehiculos_estados_numeros(id: str, info: userI
     mecanica_parado_ordenados = sorted(data.get("MECANICA PARADOS", []))
     otros_ordenados = sorted(data.get("OTROS", []))
     vehiculos_pendientes_arraijan_ordenados = sorted(data.get("VEHICULOS PENDIENTES ARRAIJAN", []))
+    vehiculos_preparacion_ordenados = sorted(data.get("CARRO EN PREPARACION", []))
     
     # Otros Estados
     traspasados_ordenados = sorted(data.get("» CARROS TRASPASADOS", []))
@@ -542,6 +548,8 @@ async def get_conteo_propietarios_vehiculos_estados_numeros(id: str, info: userI
     data_view["otros"] = otros_ordenados
     data_view["cant_vehiculos_pendientes_arraijan"] = len(vehiculos_pendientes_arraijan_ordenados)
     data_view["vehiculos_pendientes_arraijan"] = vehiculos_pendientes_arraijan_ordenados
+    data_view["cant_carro_preparacion"] = len(vehiculos_preparacion_ordenados)
+    data_view["carro_preparacion"] = vehiculos_preparacion_ordenados
     
     # Otros Estados
     data_view["cant_traspasados"] = len(traspasados_ordenados)
@@ -566,7 +574,7 @@ async def get_conteo_propietarios_vehiculos_estados_numeros(id: str, info: userI
     data_view["para_venta"] = para_venta_ordenados
     
     # Totales
-    data_view["total_activos"] = len(activos_ordenados) + len(backup_ordenados) + len(chap_parado_ordenados) + len(chap_trabajando_ordenados) + len(custodia_ordenados) + len(detenido_ordenados) + len(esp_operador_ordenados) + len(mecanica_mantenimiento_ordenados) + len(mecanica_parado_ordenados) + len(otros_ordenados) + len(vehiculos_pendientes_arraijan_ordenados)
+    data_view["total_activos"] = len(activos_ordenados) + len(backup_ordenados) + len(chap_parado_ordenados) + len(chap_trabajando_ordenados) + len(custodia_ordenados) + len(detenido_ordenados) + len(esp_operador_ordenados) + len(mecanica_mantenimiento_ordenados) + len(mecanica_parado_ordenados) + len(otros_ordenados) + len(vehiculos_pendientes_arraijan_ordenados) + len(vehiculos_preparacion_ordenados)
 
     data_view["total_parados"] = len(traspasados_ordenados) + len(fin_contrato_ordenados) + len(en_tramite_ordenados) + len(fuera_circulacion_ordenados) + len(inactivos_ordenados) + len(perdida_total_ordenados) + len(retirado_empresa_ordenados) + len(sin_calificar_ordenados) + len(vendidos_ordenados) + len(para_venta_ordenados)
 
