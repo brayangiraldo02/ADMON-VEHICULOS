@@ -31,14 +31,15 @@ import { VehiclesDocumentationComponent } from './modules/tasks/vehicles/vehicle
 import { DriversDocumentationComponent } from './modules/tasks/drivers/drivers-documentation/drivers-documentation.component';
 import { OwnersGuard } from './guards/owners.guard';
 import { UsersGuard } from './guards/users.guard';
+import { LayoutComponent } from './modules/navigation/components/layout/layout.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
   { path: 'login', component: LoginComponent, canActivate: [NoAuthGuard]},
-  {
-    path: 'home',
-    loadChildren: () => import('./modules/home/home.module').then(m => m.HomeModule),
-  },
+  // {
+  //   path: 'home',
+  //   loadChildren: () => import('./modules/home/home.module').then(m => m.HomeModule),
+  // },
   // { path: 'owners-home', component: OwnersHomeComponent, canActivate: [OwnersGuard]},
   { path: 'statevehiclefleet', component: StatevehiclefleetComponent, canActivate: [AuthGuard]},
   { path: 'vehicles', component: VehiclesTableComponent, canActivate: [AuthGuard]},
@@ -69,6 +70,9 @@ const routes: Routes = [
     canActivate: [AuthGuard]
   },
   { path: 'pdf', component: PdfViewerComponent, canActivate: [UsersGuard]},
+  { path: 'prueba',
+    loadChildren: () => import('./modules/navigation/navigation.module').then(m => m.NavigationModule),
+  }
 ];
 
 @NgModule({
@@ -76,3 +80,39 @@ const routes: Routes = [
   exports: [RouterModule]
 })
 export class AppRoutingModule { }
+
+// import { NgModule } from '@angular/core';
+// import { RouterModule, Routes } from '@angular/router';
+// import { LoginComponent } from './modules/users/login/login.component';
+// import { NoAuthGuard } from './guards/no-auth.guard';
+// import { PdfViewerComponent } from './modules/others/pdf-viewer/pdf-viewer.component';
+// import { UsersGuard } from './guards/users.guard';
+// // No es necesario importar LayoutComponent aquí
+// // No es necesario importar los componentes de tareas/opciones aquí
+
+// const routes: Routes = [
+//   {
+//     path: 'login',
+//     component: LoginComponent,
+//     canActivate: [NoAuthGuard]
+//   },
+//   {
+//     path: 'pdf', // Ruta para el visor de PDF, sin el layout principal
+//     component: PdfViewerComponent,
+//     canActivate: [UsersGuard]
+//   },
+//   {
+//     path: '', // Ruta por defecto, carga el NavigationModule que contiene el LayoutComponent y las rutas principales
+//     loadChildren: () => import('./modules/navigation/navigation.module').then(m => m.NavigationModule),
+//     // Considera agregar canActivate: [AuthGuard] aquí si TODAS las rutas dentro de NavigationModule lo requieren
+//     // o manejarlo dentro de navigation-routing.module.ts como haremos.
+//   },
+//   // Considera una ruta comodín para manejar rutas no encontradas, por ejemplo, redirigir a login o a una página 404
+//   // { path: '**', redirectTo: 'login' } // O una página específica de "No encontrado"
+// ];
+
+// @NgModule({
+//   imports: [RouterModule.forRoot(routes)],
+//   exports: [RouterModule]
+// })
+// export class AppRoutingModule { }

@@ -1,0 +1,68 @@
+.sidenav-header {
+  padding: 20px;
+  background-color: #e7eeff;
+}
+
+.user-avatar-img {
+  width: 40px; /* Ajusta según el tamaño del mat-icon original o el deseado */
+  height: 40px; /* Ajusta según el tamaño del mat-icon original o el deseado */
+  border-radius: 50%; /* Esto hace que la imagen sea circular */
+  object-fit: cover; /* Asegura que la imagen cubra el espacio sin distorsionarse */
+  margin-right: 16px; /* Mantiene un espaciado similar al del mat-icon */
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.user-avatar {
+  font-size: 40px;
+  width: 40px;
+  height: 40px;
+  color: #666;
+}
+
+/* .user-details {
+  flex: 1;
+} */
+
+.user-name {
+  font-weight: 500;
+  font-size: 18px;
+  /* margin-bottom: 4px; */
+}
+
+.user-email {
+  font-size: 14px;
+  color: #666;
+}
+
+.sidenav-menu {
+  padding-top: 8px;
+}
+
+.active-link {
+  background-color: rgba(63, 81, 181, 0.1) !important;
+  color: #3f51b5 !important;
+}
+
+.active-link mat-icon {
+  color: #3f51b5 !important;
+}
+
+mat-list-item {
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  margin-bottom: 4px;
+}
+
+mat-list-item:hover {
+  background-color: rgba(0, 0, 0, 0.04);
+}
+
+mat-icon[matListItemIcon] {
+  color: rgba(0,0,0,0.54);
+  margin-right: 16px;
+}

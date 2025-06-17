@@ -1,0 +1,16 @@
+<mat-toolbar>
+  <button mat-icon-button (click)="onMenuClick()" aria-label="Abrir menú" *ngIf="!ownerView">
+    <mat-icon>menu</mat-icon>
+  </button>
+  <span>Brayan Giraldo</span>
+  <span class="example-spacer"></span>
+  <button mat-icon-button routerLink="/home/users" aria-label="Inicio" *ngIf="!ownerView">
+    <mat-icon>home</mat-icon>
+  </button>
+  <button mat-icon-button arias-label="Información de la empresa" *ngIf="ownerView">
+    <mat-icon>info</mat-icon>
+  </button>
+  <button mat-icon-button aria-label="Cerrar sesión" (click)="logout()">
+    <mat-icon>logout</mat-icon>
+  </button>
+</mat-toolbar>

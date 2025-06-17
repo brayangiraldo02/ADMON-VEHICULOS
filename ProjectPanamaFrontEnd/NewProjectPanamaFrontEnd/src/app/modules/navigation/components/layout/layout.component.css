@@ -1,0 +1,26 @@
+.layout-container {
+  width: 100%;
+  height: 100vh;
+}
+
+.layout-content {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.layout-sidenav {
+  width: 280px;
+}
+
+.main-content {
+  flex: 1;
+  padding: 20px;
+  overflow: auto;
+  background-color: #fafafa;
+}
+
+/* Ajustar el toolbar para que no tenga conflictos */
+::ng-deep .mat-toolbar {
+  z-index: 1000;
+}
