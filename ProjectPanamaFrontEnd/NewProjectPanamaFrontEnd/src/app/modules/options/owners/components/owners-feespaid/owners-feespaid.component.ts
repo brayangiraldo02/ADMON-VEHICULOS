@@ -43,8 +43,14 @@ export class OwnersFeespaidComponent  implements OnInit {
     this.listOwners();
   }
 
+  getCompany(): string {
+    const user = this.jwtService.decodeToken();
+    return user.user_data.empresa;
+  }
+
   listStates(): void {
-    this.apiService.getData('states').subscribe(
+    const company = this.getCompany();
+    this.apiService.getData('states/'+company).subscribe(
       (response) => {
         this.states = response.filter((state: any) => state.id);
         this.states.sort((a, b) => {

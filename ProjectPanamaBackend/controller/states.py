@@ -3,10 +3,10 @@ from config.dbconnection import session
 from models.estados import Estados
 from fastapi.encoders import jsonable_encoder
 
-async def get_owner():
+async def get_owner(id: str):
   db = session()
   try:
-    states = db.query(Estados.CODIGO, Estados.NOMBRE).all()
+    states = db.query(Estados.CODIGO, Estados.NOMBRE).filter(Estados.EMPRESA == id).all()
     states_list = [{'id': state.CODIGO, 'name': state.NOMBRE} for state in states]
     return JSONResponse(content=jsonable_encoder(states_list))
   except Exception as e:

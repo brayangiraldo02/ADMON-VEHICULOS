@@ -75,6 +75,11 @@ export class StatevehiclefleetComponent implements OnInit {
     this.user = this.user.user_data.nombre;
   }
 
+  getCompany() {
+    let user = this.jwtService.decodeToken();
+    return user.user_data.empresa;
+  }
+
   listOwners(): void {
     this.apiService.getData("owners").subscribe(
       (response) => {
@@ -88,7 +93,8 @@ export class StatevehiclefleetComponent implements OnInit {
   }
 
   listStates(): void {
-    this.apiService.getData("states").subscribe(
+    const company = this.getCompany();
+    this.apiService.getData("states/"+company).subscribe(
       (response) => {
         this.states = response.filter((state: any) => state.id);
         this.states.sort((a, b) => {

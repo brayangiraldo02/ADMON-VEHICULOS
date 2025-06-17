@@ -39,6 +39,12 @@ export class FeespaidComponent implements OnInit {
     return user.user_data.nombre;
   }
 
+  getCompany() {
+    let user = this.jwtService.decodeToken();
+    console.log("soy yo: ", user);
+    return user.user_data.empresa;
+  }
+
   listOwners(): void {
     this.apiService.getData("owners").subscribe(
       (response) => {
@@ -52,7 +58,8 @@ export class FeespaidComponent implements OnInit {
   }
 
   listStates(): void {
-    this.apiService.getData("states").subscribe(
+    let company = this.getCompany();
+    this.apiService.getData("states/"+company).subscribe(
       (response) => {
         this.states = response.filter((state: any) => state.id);
         this.states.sort((a, b) => {
