@@ -1,6 +1,7 @@
 import pdfkit
 import os
 from io import BytesIO
+import subprocess
 
 def html2pdf(titulo, html_path, pdf_path, header_path, footer_path, orientation='Portrait'):
     """
@@ -39,3 +40,11 @@ def html2pdf(titulo, html_path, pdf_path, header_path, footer_path, orientation=
     elif isinstance(pdf_path, (str, os.PathLike)):
         with open(html_path) as f: 
             pdfkit.from_file(f, pdf_path, options=options)
+
+def docx2pdf(docx_path):
+    """
+    Convertir un archivo DOCX a PDF utilizando libreoffice
+    """
+    subprocess.run([
+        'C:\Program Files\LibreOffice\program\soffice.exe', '--headless', '--convert-to', 'pdf', '--outdir', os.path.dirname(docx_path), docx_path
+      ], check=True)
