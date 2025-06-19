@@ -3,7 +3,7 @@ from sqlalchemy import Column, String, Numeric, DateTime, CHAR, DECIMAL, Date, B
 
 class Conductores(Base):
   __tablename__ = "CONDUCTORES"
-
+  EMPRESA = Column(CHAR(4), nullable=False)
   CODIGO = Column(CHAR(12), primary_key=True)
   NOMBRE = Column(CHAR(50), default='')
   CEDULA = Column(CHAR(12), default='')

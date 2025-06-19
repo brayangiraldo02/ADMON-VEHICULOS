@@ -24,11 +24,11 @@ from utils.pdf import html2pdf
 
 drivers_router = APIRouter()
 
-@drivers_router.get("/drivers/", tags=["Drivers"])
-async def get_drivers():
+@drivers_router.get("/drivers/{company_code}", tags=["Drivers"])
+async def get_drivers(company_code: str):
   db = session()
   try:
-    drivers = db.query(Conductores.CODIGO, Conductores.NOMBRE).all()
+    drivers = db.query(Conductores.CODIGO, Conductores.NOMBRE).filter(Conductores.EMPRESA == company_code).all()
 
     drivers_list = [
       {
@@ -39,7 +39,7 @@ async def get_drivers():
     ]
     return JSONResponse(content=jsonable_encoder(drivers_list))
   except Exception as e:
-    return JSONResponse(content={"error": str(e)})
+    return JSONResponse(content={"message": str(e)})
   finally:
     db.close()
 
