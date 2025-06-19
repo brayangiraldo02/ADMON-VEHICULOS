@@ -146,6 +146,62 @@ async def delivery_vehicle_driver(data: DeliveryVehicleDriver):
 
 #-----------------------------------------------------------------------------------------------
 
+async def vehicle_delivery_info(vehicle_number: str):
+  db = session()
+  try:
+    vehicle_info = db.query(
+      Vehiculos.NOMMARCA, Vehiculos.PLACA, Vehiculos.NRO_CUPO,
+      Vehiculos.NROENTREGA, Vehiculos.CUO_DIARIA, Vehiculos.VLR_DEPOSI,
+      Vehiculos.ESTADO, Estados.NOMBRE.label('NOMBRE_ESTADO'), Vehiculos.FEC_ESTADO,
+      Vehiculos.CON_CUPO, Vehiculos.CONDUCTOR, Conductores.NOMBRE.label('NOMBRE_CONDUCTOR'),
+      Conductores.CEDULA, Conductores.TELEFONO, Conductores.CELULAR, Conductores.DIRECCION,
+      Propietarios.NOMBRE.label('PROPIETARIO_NOMBRE'), Centrales.NOMBRE.label('CENTRAL_NOMBRE')
+    ).join(
+      Estados, Vehiculos.ESTADO == Estados.CODIGO
+    ).join(
+      Propietarios, Vehiculos.PROPI_IDEN == Propietarios.CODIGO
+    ).join(
+      Centrales, Vehiculos.CENTRAL == Centrales.CODIGO
+    ).join(
+      Conductores, Vehiculos.CONDUCTOR == Conductores.CODIGO
+    ).filter(
+      Vehiculos.NUMERO == vehicle_number,
+      Vehiculos.EMPRESA == Centrales.EMPRESA
+    ).first()
+
+    if not vehicle_info:
+      return JSONResponse(content={"message": "Vehicle not found"}, status_code=404)
+
+    delivery_info = {
+      'numero': vehicle_number,
+      'marca': vehicle_info.NOMMARCA,
+      'placa': vehicle_info.PLACA,
+      'cupo': vehicle_info.NRO_CUPO,
+      'central': vehicle_info.CENTRAL_NOMBRE,
+      'propietario_nombre': vehicle_info.PROPIETARIO_NOMBRE,
+      'nro_entrega': vehicle_info.NROENTREGA,
+      'cuota_diaria': vehicle_info.CUO_DIARIA,
+      'valor_deposito': vehicle_info.VLR_DEPOSI,
+      'estado': vehicle_info.ESTADO + ' - ' + vehicle_info.NOMBRE_ESTADO,
+      'con_cupo': 'Con Cupo' if vehicle_info.CON_CUPO == '1' else '',
+      'conductor_codigo': vehicle_info.CONDUCTOR,
+      'conductor_nombre': vehicle_info.NOMBRE_CONDUCTOR,
+      'conductor_cedula': vehicle_info.CEDULA,
+      'conductor_celular': vehicle_info.TELEFONO,
+      'conductor_direccion': vehicle_info.DIRECCION,
+      'fecha_contrato': vehicle_info.FEC_ESTADO.strftime('%d/%m/%Y') if vehicle_info.FEC_ESTADO else None
+    }
+
+    return JSONResponse(content=jsonable_encoder(delivery_info), status_code=200)
+  
+  except Exception as e:
+    return JSONResponse(content={"message": str(e)}, status_code=500)
+  
+  finally:
+    db.close()
+
+#-----------------------------------------------------------------------------------------------
+
 base_dir = os.path.dirname(os.path.dirname(__file__))
 docx_template_path = os.path.join(base_dir, 'documents', 'ContratoOriginal.docx')
 
@@ -183,7 +239,7 @@ async def generate_contract(vehicle_number: str):
     elif vehicle.NUEVOUSADO == '2':
       wTipAut = 'Usado'
     else:
-      '**********'
+      wTipAut = '**********'
 
     if vehicle.CON_CUPO == '1':
       Mensaje1 = 'El plan de financiamiento implícito en este contrato otorga el beneficio al ARRENDATARIO que en su favor se haga la '
