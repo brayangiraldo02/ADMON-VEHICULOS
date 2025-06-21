@@ -13,10 +13,12 @@ from utils.reports import *
 from utils.docx import *
 from utils.pdf import *
 from fastapi import BackgroundTasks
-from docx import Document
 import tempfile
 import os
 from docxtpl import DocxTemplate
+import pytz
+from num2words import num2words
+import locale
 
 #! Verificar si las importaciones son necesarias
 from sqlalchemy.orm import aliased
@@ -205,6 +207,8 @@ async def vehicle_delivery_info(vehicle_number: str):
 base_dir = os.path.dirname(os.path.dirname(__file__))
 docx_template_path = os.path.join(base_dir, 'documents', 'ContratoOriginal.docx')
 
+locale.setlocale(locale.LC_TIME, "es_ES")
+
 async def generate_contract(vehicle_number: str):
   db = session()
   try:
@@ -227,12 +231,19 @@ async def generate_contract(vehicle_number: str):
     civil_status = db.query(EstadoCivil).filter(EstadoCivil.CODIGO == driver.ESTA_CIVIL).first()
     if not civil_status:
       return JSONResponse(content={"message": "Civil status not found"}, status_code=404)
+    
+    zMsg = num2words(float(vehicle.NROENTREGA), lang='es')
 
     xMsg = "{:,.2f}".format(vehicle.CTA_RENTA + vehicle.CTA_SINIES)
     xMsg1 = "{:,.2f}".format(vehicle.CTA_RENTA)
     xMsg2 = "{:,.2f}".format(vehicle.CTA_SINIES)
 
+    wMsg = num2words(float(vehicle.CTA_RENTA + vehicle.CTA_SINIES), lang='es')
+    wMsg1 = num2words(float(vehicle.CTA_RENTA), lang='es')
+    wMsg2 = num2words(float(vehicle.CTA_SINIES), lang='es')
+
     vDepGar = vehicle.VLR_DEPOSI
+    wDepGar = num2words(int(vDepGar), lang='es')
     
     if vehicle.NUEVOUSADO == '1':
       wTipAut = 'Nuevo'
@@ -249,16 +260,25 @@ async def generate_contract(vehicle_number: str):
       Mensaje5 = 'naturaleza del contrato solo en casos de cumplimiento total y efectivo del mismo.'
     else:
       Mensaje1, Mensaje2, Mensaje3, Mensaje4, Mensaje5 = '', '', '', '', ''
+
+    panama_timezone = pytz.timezone('America/Panama')
+    now_in_panama = datetime.now(panama_timezone)
+    year = now_in_panama.strftime("%Y")
+    month = now_in_panama.strftime("%m")
+    day = now_in_panama.strftime("%d")
+    n_year = num2words(int(year), lang='es')
+    n_month = now_in_panama.strftime("%B")
+    n_day = num2words(int(day), lang='es')
     
     data = {
       'Representa': owner.REPRESENTA,
       'Rep_sexo': owner.REP_SEXO,
       'Rep_estado': owner.REP_ESTADO,
-      'Rep_tipdoc': owner.REP_TIPDOC, #? Is not in the docx
+      'Rep_tipdoc': owner.REP_TIPDOC,
       'Rep_numero': owner.REP_NUMERO,
       'Empresa': owner.RAZONSOCIA,
       'Ficha': owner.FICHA,
-      'Documento': owner.DOCUMENTO, #? Is not in the docx
+      'Documento': owner.DOCUMENTO,
       #'Rep_admon': owner.REP_ADMON, #! Is not in the database
       'LimNorte': central.LIMI_NORTE,
       'LimSur': central.LIMI_SUR,
@@ -274,8 +294,8 @@ async def generate_contract(vehicle_number: str):
       'Telefono': driver.TELEFONO + ' ' + driver.CELULAR,
       'NomRecomen': driver.RECOME_NOM,
       'CedRecom': driver.RECOME_CED,
-      #'laCuota': zMsg, #* Is not in the txt
-      'Cuotas': str(vehicle.NROENTREGA), #! No funciona
+      'laCuota': zMsg,
+      'Cuotas': str(vehicle.NROENTREGA),
       'Puertas': vehicle.PUERTAS,
       'Capacidad': vehicle.CAPACIDAD,
       'Marca': vehicle.NOMMARCA,
@@ -284,30 +304,30 @@ async def generate_contract(vehicle_number: str):
       'Chasis': vehicle.CHASISNRO,
       'Motor': vehicle.MOTORNRO,
       'PanaPass': vehicle.PANAPASSNU,
-      # 'laSuma': wMsg, #* Is not in the txt
-      # 'laSuma1': wMsg1, #* Is not in the txt
-      # 'laSuma2': wMsg2, #* Is not in the txt
+      'laSuma': wMsg,
+      'laSuma1': wMsg1,
+      'laSuma2': wMsg2,
       'elValor': xMsg,
       'elValor1': xMsg1,
       'elValor2': xMsg2,
       'Unidad': vehicle.NUMERO,
       'Placa': vehicle.PLACA,
-      'NroCupo': vehicle.NRO_CUPO, #! No funciona
-      'ConCupo': 'Con Cupo' if vehicle.CON_CUPO == '1' else 'Sin certificado de operación', #! No funciona
-      # 'wDepGar': wDepGar, #* Is not in the txt
-      'vDepGar': vDepGar, #! No funciona
-      'wTipAut': wTipAut, #! No funciona
-      'Mensaje1': Mensaje1, #! No funciona
-      'Mensaje2': Mensaje2, #! No funciona
-      'Mensaje3': Mensaje3, #! No funciona
-      'Mensaje4': Mensaje4, #! No funciona
-      'Mensaje5': Mensaje5, #! No funciona
-      # 'fAno': str(), #? What is wfec
-      # 'fMes': str(), #? What is wfec
-      # 'fDia': str(), #? What is wfec
-      # 'nAno': wMsg1, #* Is not in the txt
-      # 'nMes': wMsg2, #* Is not in the txt
-      # 'nDia': wMsg3, #* Is not in the txt
+      'NroCupo': vehicle.NRO_CUPO,
+      'ConCupo': 'Con Cupo' if vehicle.CON_CUPO == '1' else 'Sin certificado de operación',
+      'wDepGar': wDepGar,
+      'vDepGar': vDepGar,
+      'wTipAut': wTipAut,
+      'Mensaje1': Mensaje1,
+      'Mensaje2': Mensaje2,
+      'Mensaje3': Mensaje3,
+      'Mensaje4': Mensaje4,
+      'Mensaje5': Mensaje5,
+      'fAno': year,
+      'fMes': month,
+      'fDia': day,
+      'nAno': n_year,
+      'nMes': n_month,
+      'nDia': n_day,
     }
     
     current_docx_path = docx_template_path
