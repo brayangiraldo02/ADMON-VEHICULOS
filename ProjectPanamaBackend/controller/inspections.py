@@ -12,38 +12,41 @@ async def owners_data(company_code: str):
     if not owners:
       return JSONResponse(content={"message": "Owner not found"}, status_code=404)
 
-    result = {}
+    result = []
 
     for owner in owners:
       owner_data = {
+        "codigo_propietario": owner.CODIGO,
         "nombre_propietario": owner.NOMBRE,
-        "conductores": {},
-        "vehiculos": {}
+        "conductores": [],
+        "vehiculos": []
       }
 
       # Obtener vehículos de ese propietario
       vehicles = db.query(Vehiculos).filter(Vehiculos.PROPI_IDEN == owner.CODIGO, Vehiculos.PLACA != "", Vehiculos.NUMERO != "").all()
 
       for vehicle in vehicles:
-        owner_data["vehiculos"][vehicle.PLACA] = {
+        owner_data["vehiculos"].append({
+          "placa_vehiculo": vehicle.PLACA,
           "numero_unidad": vehicle.NUMERO,
           "codigo_conductor": vehicle.CONDUCTOR,
           "marca": vehicle.NOMMARCA,
           "linea": vehicle.LINEA
-        }
+        })
 
         # Obtener conductor relacionado al vehículo
         drivers = db.query(Conductores).filter(Conductores.CODIGO == vehicle.CONDUCTOR, Conductores.CODIGO != "").all()
 
         for driver in drivers:
           if driver and driver.CODIGO not in owner_data["conductores"]:
-            owner_data["conductores"][driver.CODIGO] = {
+            owner_data["conductores"].append({
+              "codigo_conductor": driver.CODIGO,
               "numero_unidad": driver.UND_NRO,
               "nombre_conductor": driver.NOMBRE,
               "cedula": driver.CEDULA
-            }
+            })
 
-      result[owner.CODIGO] = owner_data
+      result.append(owner_data)
 
     return JSONResponse(content=jsonable_encoder(result), status_code=200)
 
@@ -61,15 +64,16 @@ async def vehicles_data(company_code: str):
     if not vehicles:
       return JSONResponse(content={"message": "Vehicles not found"}, status_code=404)
 
-    result = {}
+    result = []
 
     for vehicle in vehicles:
-      result[vehicle.PLACA] = {
+      result.append({
+        "placa_vehiculo": vehicle.PLACA,
         "numero_unidad": vehicle.NUMERO,
         "codigo_conductor": vehicle.CONDUCTOR,
         "marca": vehicle.NOMMARCA,
         "linea": vehicle.LINEA
-      }
+      })
 
     return JSONResponse(content=jsonable_encoder(result), status_code=200)
 
@@ -87,14 +91,15 @@ async def drivers_data(company_code: str):
     if not drivers:
       return JSONResponse(content={"message": "Drivers not found"}, status_code=404)
 
-    result = {}
+    result = []
 
     for driver in drivers:
-      result[driver.CODIGO] = {
+      result.append({
+        "codigo_conductor": driver.CODIGO,
         "numero_unidad": driver.UND_NRO,
         "nombre_conductor": driver.NOMBRE,
         "cedula": driver.CEDULA
-      }
+      })
 
     return JSONResponse(content=jsonable_encoder(result), status_code=200)
 
