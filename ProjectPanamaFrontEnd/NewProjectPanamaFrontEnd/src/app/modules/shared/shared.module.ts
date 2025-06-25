@@ -20,7 +20,6 @@ import { MaterialModule } from './material/material.module';
   ],
   exports: [
     HeaderComponent,
-    MaterialModule
   ]
 })
 export class SharedModule { }

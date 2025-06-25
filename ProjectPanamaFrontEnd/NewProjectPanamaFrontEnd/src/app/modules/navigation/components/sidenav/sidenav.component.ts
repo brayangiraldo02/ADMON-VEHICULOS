@@ -84,12 +84,12 @@ export class SidenavComponent implements OnInit {
         conditions: this.permisos.tarea05
       },
       // TODO: Implementar las siguientes opciones cuando se tengan las rutas y permisos
-      // {
-      //   icon: 'card_travel',
-      //   label: 'Inspecciones',
-      //   route: '/feespaid',
-      //   conditions: this.permisos.tarea05
-      // },
+      {
+        icon: 'card_travel',
+        label: 'Inspecciones',
+        route: '/inspections',
+        conditions: true
+      },
       // {
       //   icon: 'insert_drive_file',
       //   label: 'Documentos',

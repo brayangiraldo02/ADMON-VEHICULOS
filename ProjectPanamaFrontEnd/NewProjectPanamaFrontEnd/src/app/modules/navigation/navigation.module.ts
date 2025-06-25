@@ -21,7 +21,7 @@ import { FooterComponent } from './components/footer/footer.component';
   imports: [
     CommonModule,
     NavigationRoutingModule,
-    SharedModule
+    MaterialModule
   ],
   exports: [
     LayoutComponent

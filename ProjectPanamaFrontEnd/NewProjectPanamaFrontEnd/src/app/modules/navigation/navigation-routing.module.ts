@@ -57,6 +57,7 @@ import { DriversAddnewComponent } from '../tasks/drivers/drivers-addnew/drivers-
 import { VehiclesTableComponent } from '../tasks/vehicles/vehicles-table/vehicles-table.component';
 import { VehiclesResumeComponent } from '../tasks/vehicles/vehicles-resume/vehicles-resume.component';
 import { VehiclesAddnewComponent } from '../tasks/vehicles/vehicles-addnew/vehicles-addnew.component';
+import { InspectionsComponent } from '../tasks/inspections/inspections.component';
 // VehiclesDocumentationComponent y DriversDocumentationComponent no estaban en tu app-routing, si las necesitas, impórtalas.
 
 const routes: Routes = [
@@ -97,6 +98,10 @@ const routes: Routes = [
         path: 'cobros',
         loadChildren: () => import('../options/users/cobros/cobros.module').then(m => m.CobrosModule),
       },
+      {
+        path: 'inspections',
+        component: InspectionsComponent
+      }
       // Las rutas 'pdf' y 'login' NO se definen aquí.
       // La ruta 'prueba' ya no es necesaria como tal, ya que su funcionalidad (cargar NavigationModule)
       // ahora la tiene el path: '' en app-routing.module.ts.

@@ -15,6 +15,9 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import {MatToolbarModule} from '@angular/material/toolbar';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatDividerModule } from '@angular/material/divider';
+import {MatAutocompleteModule} from '@angular/material/autocomplete';
+import {MatDatepickerModule} from '@angular/material/datepicker';
+import {MatNativeDateModule} from '@angular/material/core';
 
 const materialModules = [
   MatFormFieldModule, 
@@ -32,7 +35,10 @@ const materialModules = [
   MatSnackBarModule,
   MatToolbarModule,
   MatSidenavModule,
-  MatDividerModule
+  MatDividerModule,
+  MatAutocompleteModule,
+  MatNativeDateModule,
+  MatDatepickerModule,
 ]
 
 @NgModule({
