@@ -232,6 +232,120 @@ async def generate_contract(vehicle_number: str):
     if not civil_status:
       return JSONResponse(content={"message": "Civil status not found"}, status_code=404)
     
+    wReg = 0
+    # Verificar datos del vehiculo
+    if float(vehicle.NROENTREGA) == 0:
+      wReg = 1
+      message = 'VEHICULO no Tiene Nº de Cuotas'
+    elif Vehiculos.VLR_DEPOSI == 0:
+      wReg = 1
+      message = 'VEHICULO no Tiene Valor del Deposito'
+    elif vehicle.NUEVOUSADO == '0':
+      wReg = 1
+      message = 'VEHICULO sin Seleccion de Nuevo o Usado'
+    elif not vehicle.PUERTAS:
+      wReg = 1
+      message = 'VEHICULO no Tiene Nº de Puertas'
+    elif not vehicle.CAPACIDAD:
+      wReg = 1
+      message = 'VEHICULO no Tiene Capacidad de Pasajeros'
+    elif not vehicle.NOMMARCA:
+      wReg = 1
+      message = 'VEHICULO no Tiene Nombre de Marca'
+    elif not vehicle.LINEA:
+      wReg = 1
+      message = 'VEHICULO no Tiene Nombre de Linea'
+    elif not vehicle.MODELO:
+      wReg = 1
+      message = 'VEHICULO no Tiene Año'
+    elif not vehicle.CHASISNRO:
+      wReg = 1
+      message = 'VEHICULO no Tiene Nº de Chasis'
+    elif not vehicle.MOTORNRO:
+      wReg = 1
+      message = 'VEHICULO no Tiene Nº de Motor'
+    elif (vehicle.CTA_RENTA + vehicle.CTA_SINIES) == 0:
+      wReg = 1
+      message = 'VEHICULO no Tiene Valor de la Cuota'
+    elif not vehicle.NUMERO:
+      wReg = 1
+      message = 'VEHICULO no Tiene Nº de Unidad'
+    elif not vehicle.PLACA:
+      wReg = 1
+      message = 'VEHICULO no Tiene Nº de Placa'
+    elif vehicle.CON_CUPO == '0':
+      wReg = 1
+      message = 'VEHICULO no Tiene marca Con Cupo o Sin Cupo'
+    # Verificar datos del propietario
+    elif not owner.REPRESENTA:
+      wReg = 1
+      message = 'PROPIETARIO no Tiene Representante'
+    elif not owner.REP_SEXO:
+      wReg = 1
+      message = 'No definio Sexo del REPRESENTANTE'
+    elif not owner.REP_ESTADO:
+      wReg = 1
+      message = 'No definio Estado Civil del REPRESENTANTE'
+    elif not owner.REP_TIPDOC:
+      wReg = 1
+      message = 'No definio Tipo de Documento del REPRESENTANTE'
+    elif not owner.REP_NUMERO:
+      wReg = 1
+      message = 'No definio Numero de Documento del REPRESENTANTE'
+    elif not owner.RAZONSOCIA:
+      wReg = 1
+      message = 'EMPRESA no Tiene Razon Social'
+    elif not owner.FICHA:
+      wReg = 1
+      message = 'EMPRESA no Tiene Ficha Inscripcion'
+    elif not owner.DOCUMENTO:
+      wReg = 1
+      message = 'EMPRESA no Tiene Documento de Inscripcion'
+    elif not owner.REP_ADMON:
+      wReg = 1
+      message = 'Empresa no Tiene Empresa Administradora'
+    # Verificar datos de la central
+    elif not central.LIMI_NORTE:
+      wReg = 1
+      message = 'CENTRAL no Tiene Limite por el Norte'
+    elif not central.LIMI_SUR:
+      wReg = 1
+      message = 'CENTRAL no Tiene Limite por el Sur'
+    elif not central.LIMI_ESTE:
+      wReg = 1
+      message = 'CENTRAL no Tiene Limite por el Este'
+    elif not central.LIMI_OESTE:
+      wReg = 1
+      message = 'CENTRAL no Tiene Limite por el Oeste'
+    # Verificar datos del conductor
+    elif driver.SEXO == '0':
+      wReg = 1
+      message = 'No definio Sexo del CONDUCTOR'
+    elif not driver.ESTA_CIVIL:
+      wReg = 1
+      message = 'No definio Estado Civil del CONDUCTOR'
+    elif not driver.NOMBRE:
+      wReg = 1
+      message = 'CONDUCTOR no Tiene Nombre'
+    elif not driver.NIT:
+      wReg = 1
+      message = 'CONDUCTOR no Tiene No. de Cedula'
+    elif not driver.DIRECCION:
+      wReg = 1
+      message = 'CONDUCTOR no Tiene Direccion'
+    elif not driver.TELEFONO and not driver.CELULAR:
+      wReg = 1
+      message = 'CONDUCTOR no Tiene Telefono o Celular'
+    elif not driver.RECOME_NOM:
+      wReg = 1
+      message = 'CONDUCTOR no Tiene RECOMENDADO'
+    elif not driver.RECOME_CED:
+      wReg = 1
+      message = 'RECOMENDADO no Tiene No. de Cedula'
+
+    if wReg == 1:
+      return JSONResponse(content={"message": message}, status_code=400)
+    
     zMsg = num2words(float(vehicle.NROENTREGA), lang='es')
 
     xMsg = "{:,.2f}".format(vehicle.CTA_RENTA + vehicle.CTA_SINIES)
@@ -279,7 +393,7 @@ async def generate_contract(vehicle_number: str):
       'Empresa': owner.RAZONSOCIA,
       'Ficha': owner.FICHA,
       'Documento': owner.DOCUMENTO,
-      #'Rep_admon': owner.REP_ADMON, #! Is not in the database
+      'Rep_admon': owner.REP_ADMON,
       'LimNorte': central.LIMI_NORTE,
       'LimSur': central.LIMI_SUR,
       'LimEste': central.LIMI_ESTE,
