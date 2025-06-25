@@ -8,7 +8,7 @@ from fastapi.encoders import jsonable_encoder
 async def owners_data(company_code: str):
   db = session()
   try:
-    owners = db.query(Propietarios).filter(Propietarios.EMPRESA == company_code).all()
+    owners = db.query(Propietarios).filter(Propietarios.EMPRESA == company_code, Propietarios.CODIGO != "").all()
     if not owners:
       return JSONResponse(content={"message": "Owner not found"}, status_code=404)
 
@@ -22,7 +22,7 @@ async def owners_data(company_code: str):
       }
 
       # Obtener vehículos de ese propietario
-      vehicles = db.query(Vehiculos).filter(Vehiculos.PROPI_IDEN == owner.CODIGO).all()
+      vehicles = db.query(Vehiculos).filter(Vehiculos.PROPI_IDEN == owner.CODIGO, Vehiculos.PLACA != "", Vehiculos.NUMERO != "").all()
 
       for vehicle in vehicles:
         owner_data["vehiculos"][vehicle.PLACA] = {
@@ -33,7 +33,7 @@ async def owners_data(company_code: str):
         }
 
         # Obtener conductor relacionado al vehículo
-        drivers = db.query(Conductores).filter(Conductores.CODIGO == vehicle.CONDUCTOR).all()
+        drivers = db.query(Conductores).filter(Conductores.CODIGO == vehicle.CONDUCTOR, Conductores.CODIGO != "").all()
 
         for driver in drivers:
           if driver and driver.CODIGO not in owner_data["conductores"]:
@@ -44,6 +44,57 @@ async def owners_data(company_code: str):
             }
 
       result[owner.CODIGO] = owner_data
+
+    return JSONResponse(content=jsonable_encoder(result), status_code=200)
+
+  except Exception as e:
+    return JSONResponse(content={"message": str(e)}, status_code=500)
+  finally:
+    db.close()
+
+#-----------------------------------------------------------------------------------------------
+
+async def vehicles_data(company_code: str):
+  db = session()
+  try:
+    vehicles = db.query(Vehiculos).filter(Vehiculos.EMPRESA == company_code, Vehiculos.PLACA != "", Vehiculos.NUMERO != "").all()
+    if not vehicles:
+      return JSONResponse(content={"message": "Vehicles not found"}, status_code=404)
+
+    result = {}
+
+    for vehicle in vehicles:
+      result[vehicle.PLACA] = {
+        "numero_unidad": vehicle.NUMERO,
+        "codigo_conductor": vehicle.CONDUCTOR,
+        "marca": vehicle.NOMMARCA,
+        "linea": vehicle.LINEA
+      }
+
+    return JSONResponse(content=jsonable_encoder(result), status_code=200)
+
+  except Exception as e:
+    return JSONResponse(content={"message": str(e)}, status_code=500)
+  finally:
+    db.close()
+
+#-----------------------------------------------------------------------------------------------
+
+async def drivers_data(company_code: str):
+  db = session()
+  try:
+    drivers = db.query(Conductores).filter(Conductores.EMPRESA == company_code, Conductores.CODIGO != "").all()
+    if not drivers:
+      return JSONResponse(content={"message": "Drivers not found"}, status_code=404)
+
+    result = {}
+
+    for driver in drivers:
+      result[driver.CODIGO] = {
+        "numero_unidad": driver.UND_NRO,
+        "nombre_conductor": driver.NOMBRE,
+        "cedula": driver.CEDULA
+      }
 
     return JSONResponse(content=jsonable_encoder(result), status_code=200)
 
