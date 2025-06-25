@@ -207,7 +207,7 @@ async def vehicle_delivery_info(vehicle_number: str):
 base_dir = os.path.dirname(os.path.dirname(__file__))
 docx_template_path = os.path.join(base_dir, 'documents', 'ContratoOriginal.docx')
 
-locale.setlocale(locale.LC_TIME, "es_ES")
+locale.setlocale(locale.LC_TIME, "es_ES.utf8")
 
 async def generate_contract(vehicle_number: str):
   db = session()
