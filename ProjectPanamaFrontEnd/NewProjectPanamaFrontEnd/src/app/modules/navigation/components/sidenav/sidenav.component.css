@@ -4,17 +4,18 @@
 }
 
 .user-avatar-img {
-  width: 40px; /* Ajusta según el tamaño del mat-icon original o el deseado */
-  height: 40px; /* Ajusta según el tamaño del mat-icon original o el deseado */
+  min-width: 40px; /* Ajusta según el tamaño del mat-icon original o el deseado */
+  min-height: 40px; /* Ajusta según el tamaño del mat-icon original o el deseado */
+  max-width: 40px;
+  max-height: 40px; /* Asegura que la imagen no exceda el tamaño del mat-icon */
   border-radius: 50%; /* Esto hace que la imagen sea circular */
   object-fit: cover; /* Asegura que la imagen cubra el espacio sin distorsionarse */
-  margin-right: 16px; /* Mantiene un espaciado similar al del mat-icon */
 }
 
 .user-info {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 20px;
 }
 
 .user-avatar {
@@ -30,7 +31,7 @@
 
 .user-name {
   font-weight: 500;
-  font-size: 18px;
+  font-size: 15px;
   /* margin-bottom: 4px; */
 }
 

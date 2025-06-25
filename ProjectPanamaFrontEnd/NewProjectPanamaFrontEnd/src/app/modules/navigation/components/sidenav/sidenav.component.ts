@@ -18,6 +18,7 @@ export class SidenavComponent implements OnInit {
   imgUser: string = '../../../../../assets/img/taxi.jpg';
   ownerView: boolean = false;
   menuItems: any[] = [];
+  infoCompanyName: string = '';
 
   constructor(
     private apiService: ApiService,
@@ -34,6 +35,7 @@ export class SidenavComponent implements OnInit {
     this.permisos = this.jwtService.getUserData();
     // this.imgUser = this.permisos.foto; // Cuando se tengan las rutas de las imágenes
     this.convertirValoresBooleanos(this.permisos);
+    this.getInfoCompany();
     // this.subscribirEventosDeRuta();
     // console.log(this.permisos);
   }
@@ -98,6 +100,18 @@ export class SidenavComponent implements OnInit {
       // }
     ];
   }
+
+  getInfoCompany(): void {
+    const userData = this.jwtService.getUserData();
+    const idCompany = userData ? userData.empresa : null;
+    this.apiService.getData('info-company/'+idCompany).subscribe(
+      (response) => {
+        console.log('getInfoCompany: ', response);
+        this.infoCompanyName = response.name;
+      }
+    );
+  }
+
 
   convertirValoresBooleanos(obj: any) {
     for (const key in obj) {

@@ -2,8 +2,8 @@
   <div class="user-info">
     <img [src]="imgUser" alt="User Avatar" class="user-avatar-img">
     <div class="user-details">
-      <div class="user-name">AlfaSoft</div>
-      <div class="user-email">admin@example.com</div>
+      <div class="user-name">{{this.infoCompanyName}}</div>
+      <div class="user-email">{{this.permisos.nombre}}</div>
     </div>
   </div>
 </div>
@@ -26,6 +26,10 @@
 <mat-divider></mat-divider>
 
 <mat-nav-list>
+  <mat-list-item routerLink="/home/users" routerLinkActive="active-link" (click)="onItemClick()">
+    <mat-icon matListItemIcon>home</mat-icon>
+    <span matListItemTitle>Inicio</span>
+  </mat-list-item>
   <mat-list-item (click)="onItemClick()">
     <mat-icon matListItemIcon>info</mat-icon>
     <span matListItemTitle>Infomación de la Empresa</span>

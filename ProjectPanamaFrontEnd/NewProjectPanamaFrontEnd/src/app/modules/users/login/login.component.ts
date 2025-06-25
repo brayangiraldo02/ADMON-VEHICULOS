@@ -42,10 +42,8 @@ export class LoginComponent implements OnInit {
       // Volvemos a una suscripción directa, ya que no hay que encadenar operaciones
       this.apiService.postData('login', userLogin).subscribe(
         (response: any) => {
-          console.log("Login exitoso:", response);
           // 1. Guardamos el token
           this.jwtService.setToken(response.token);
-          console.log("Token guardado:", response.token);
 
           // 2. Navegamos inmediatamente de forma segura
           if (this.jwtService.isOwner()) {

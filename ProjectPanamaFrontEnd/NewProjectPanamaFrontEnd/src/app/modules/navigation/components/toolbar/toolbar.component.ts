@@ -34,7 +34,7 @@ export class ToolbarComponent implements OnInit {
     this.permissions = this.jwtService.getUserData(); // getUserData() ahora es la fuente de verdad.
     // this.imgUser = this.permissions.foto; // Cuando se tengan las rutas de las imágenes
     this.convertBooleanValues(this.permissions);
-    this.getInfoCompany();
+    // this.getInfoCompany();
     // this.subscribirEventosDeRuta();
     // console.log(this.permissions);
   }
