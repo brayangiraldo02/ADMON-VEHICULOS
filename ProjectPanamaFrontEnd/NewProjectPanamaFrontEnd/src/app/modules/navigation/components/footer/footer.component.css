@@ -1,0 +1,91 @@
+.site-footer {
+  background-color: #EAF2F8; /* Tono azul pastel */
+  color: #34495E; /* Color de texto oscuro para buen contraste */
+  padding: 2rem 1.5rem;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  user-select: none;
+}
+
+.footer-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  /* flex-wrap: wrap; */
+  margin: 0;
+  gap: 1.5rem;
+}
+
+/* No se usa flex: 1 para permitir que space-between funcione correctamente */
+.footer-brand,
+.footer-copyright,
+.footer-contact {
+  min-width: 200px;
+}
+
+.footer-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  /* Se alinea a la izquierda por defecto */
+}
+
+.footer-copyright {
+  text-align: center;
+}
+
+.footer-contact {
+  text-align: right;
+}
+
+.brand-logo {
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+}
+
+.brand-name {
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.footer-copyright p {
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+.footer-contact p {
+  margin: 0.25rem 0;
+  font-size: 0.9rem;
+}
+
+.contact-link {
+  color: #2980B9;
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 1rem;
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+.contact-link:hover {
+  text-decoration: underline;
+}
+
+/* Media Query para Responsividad */
+@media (max-width: 768px) {
+  .footer-content {
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  .footer-brand,
+  .footer-copyright,
+  .footer-contact {
+    text-align: center;
+    width: 100%;
+  }
+
+  .footer-brand {
+    justify-content: center; /* Centra el logo y nombre en móvil */
+  }
+}

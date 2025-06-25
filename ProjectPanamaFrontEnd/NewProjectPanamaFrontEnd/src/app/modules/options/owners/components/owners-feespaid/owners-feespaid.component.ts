@@ -69,9 +69,10 @@ export class OwnersFeespaidComponent  implements OnInit {
   }
 
   listOwners(): void {
-    console.log(this.jwtService.obtainId());
+    const userData = this.jwtService.getUserData();
+    console.log(userData);
     const owner = {
-      propietario: this.jwtService.obtainId(),
+      propietario: userData ? userData.id : null,
     };
 
     console.log(owner);
@@ -171,8 +172,8 @@ export class OwnersFeespaidComponent  implements OnInit {
   }
 
   obtenerUsuario() {
-    let user = this.jwtService.decodeToken();
-    return user.user_data.nombre;
+    let user = this.jwtService.getUserData();
+    return user ? user.nombre : ''; // Si 'user' existe, devuelve 'user.nombre', si no, devuelve un string vacío.
   }
 
   obtenerIdsEmpresas(): string[] {

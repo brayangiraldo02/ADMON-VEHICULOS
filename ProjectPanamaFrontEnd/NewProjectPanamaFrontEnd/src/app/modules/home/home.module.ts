@@ -7,6 +7,7 @@ import { SharedModule } from '../shared/shared.module';
 import { OwnersModule } from '../options/owners/owners.module';
 import { CobrosComponent } from './components/users/options/cobros/cobros.component';
 import { MaterialModule } from '../shared/material/material.module';
+import { NavigationModule } from '../navigation/navigation.module'; // Assuming you have a NavigationModule for the layout and navigation components
 
 @NgModule({
   declarations: [
@@ -20,7 +21,8 @@ import { MaterialModule } from '../shared/material/material.module';
     HomeRoutingModule,
     SharedModule,
     OwnersModule,
-    MaterialModule
+    MaterialModule,
+    NavigationModule
   ]
 })
 export class HomeModule { }

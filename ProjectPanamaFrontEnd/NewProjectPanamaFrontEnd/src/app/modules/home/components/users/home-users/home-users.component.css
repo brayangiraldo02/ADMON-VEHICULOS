@@ -206,6 +206,12 @@ ul {
   color: #333; /* Color del texto */
 }
 
+@media (max-width: 580px) {
+  .carousel-container {
+    display: none;
+  }
+}
+
 
 /*------------------------------------------------------*/
 

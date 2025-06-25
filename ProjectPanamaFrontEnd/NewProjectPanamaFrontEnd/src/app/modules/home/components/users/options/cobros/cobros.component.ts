@@ -72,9 +72,10 @@ export class CobrosComponent implements OnInit {
   }
 
   listOwners(): void {
-    console.log(this.jwtService.obtainId());
+    const userData = this.jwtService.getUserData();
+    console.log(userData);
     const owner = {
-      propietario: this.jwtService.obtainId(),
+      propietario: userData ? userData.id : null,
     };
 
     console.log(owner);
