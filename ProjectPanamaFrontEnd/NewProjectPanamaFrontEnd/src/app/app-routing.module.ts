@@ -99,7 +99,7 @@ const routes: Routes = [
   {
     path: 'pdf', // Ruta para el visor de PDF, sin el layout principal
     component: PdfViewerComponent,
-    canActivate: [UsersGuard]
+    // TODO: Hacer en el componente que redirija a login si no hay usuario autenticado o al home
   },
   {
     path: '', // Ruta por defecto, carga el NavigationModule que contiene el LayoutComponent y las rutas principales
