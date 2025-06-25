@@ -42,8 +42,8 @@ export class DriversTableComponent implements OnInit{
   }
 
   getUser() {
-    this.user = this.jwtService.decodeToken();
-    this.user = this.user.user_data.nombre;
+    this.user = this.jwtService.getUserData();
+    this.user = this.user.nombre;
   }
 
   filterData() {

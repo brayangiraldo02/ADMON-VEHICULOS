@@ -62,12 +62,12 @@ export class HomeOwnersComponent {
   }
 
   obtenerUsuario() {
-    this.permisos = this.jwtService.decodeToken();
-    // console.log(this.permisos.user_data);
+    this.permisos = this.jwtService.getUserData();
+    // console.log(this.permisos);
 
     this.isAdmin = this.jwtService.isAdmin();
 
-    this.convertirValoresBooleanos(this.permisos.user_data);
+    this.convertirValoresBooleanos(this.permisos);
 
     this.options = [
       {

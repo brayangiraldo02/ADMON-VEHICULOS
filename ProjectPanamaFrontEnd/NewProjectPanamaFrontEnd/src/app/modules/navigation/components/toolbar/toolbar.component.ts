@@ -11,24 +11,35 @@ import { Router } from '@angular/router';
 export class ToolbarComponent implements OnInit {
   @Output() menuClick = new EventEmitter<void>();
 
-  permisos: any;
+  permissions: any;
   ownerView: boolean = false;
 
   constructor(private jwtService: JwtService, private apiService: ApiService, private router: Router) {}
 
   ngOnInit() {
-    this.obtenerUsuario();
+    this.getUser();
   }
 
-  obtenerUsuario() {
-    this.permisos = this.jwtService.decodeToken();
-    // this.imgUser = this.permisos.user_data.foto; // Cuando se tengan las rutas de las imágenes
-    this.convertirValoresBooleanos(this.permisos.user_data);
+  getInfoCompany(): void {
+    const userData = this.jwtService.getUserData();
+    const idCompany = userData ? userData.empresa : null;
+    this.apiService.getData('info-company/'+idCompany).subscribe(
+      (response) => {
+        console.log('getInfoCompany: ', response);
+      }
+    );
+  }
+
+  getUser() {
+    this.permissions = this.jwtService.getUserData(); // getUserData() ahora es la fuente de verdad.
+    // this.imgUser = this.permissions.foto; // Cuando se tengan las rutas de las imágenes
+    this.convertBooleanValues(this.permissions);
+    this.getInfoCompany();
     // this.subscribirEventosDeRuta();
-    // console.log(this.permisos.user_data);
+    // console.log(this.permissions);
   }
 
-  convertirValoresBooleanos(obj: any) {
+  convertBooleanValues(obj: any) {
     for (const key in obj) {
       if (Object.prototype.hasOwnProperty.call(obj, key)) {
         const value = obj[key];
@@ -41,7 +52,7 @@ export class ToolbarComponent implements OnInit {
     }
 
     if (
-      this.permisos.user_data.opcion16 === true &&
+      this.permissions.opcion16 === true &&
       !this.jwtService.isAdmin()
     ) {
       this.ownerView = true;
@@ -53,7 +64,7 @@ export class ToolbarComponent implements OnInit {
   }
 
   logout(): void {
-    this.jwtService.removeToken();
+    this.jwtService.logout(); 
     this.apiService.postData('logout', {}).subscribe(
       (response) => {
         this.router.navigate(['/login']);

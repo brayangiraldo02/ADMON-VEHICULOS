@@ -89,9 +89,10 @@ export class OwnersPandgstatusComponent  implements OnInit {
   }
 
   listVehiclesPerOwners(): void {
-    console.log(this.jwtService.obtainId());
+    const userData = this.jwtService.getUserData();
+    console.log(userData);
     const vehicle = {
-      propietario: this.jwtService.obtainId(),
+      propietario: userData ? userData.id : null,
     };
 
     console.log(vehicle);
@@ -110,9 +111,10 @@ export class OwnersPandgstatusComponent  implements OnInit {
   }
 
   listVehicles(): void {
-    console.log(this.jwtService.obtainId());
+    const userData = this.jwtService.getUserData();
+    console.log(userData);
     const vehicle = {
-      propietario: this.jwtService.obtainId(),
+      propietario: userData ? userData.id : null,
     };
 
     console.log(vehicle);
@@ -139,14 +141,16 @@ export class OwnersPandgstatusComponent  implements OnInit {
   }
 
   getUser() {
-    this.user = this.jwtService.decodeToken();
-    this.user = this.user.user_data.nombre;
+    this.user = this.jwtService.getUserData();
+    this.user = this.user.nombre;
     this.getCompanies();
   }
 
   getCompanies() {
+    const userData = this.jwtService.getUserData();
+    console.log(userData);
     const owner = {
-      propietario: this.jwtService.obtainId(),
+      propietario: userData ? userData.id : null,
     };
     this.apiService.postData('companies_owners', owner).subscribe(
       (response: any[]) => {

@@ -66,15 +66,15 @@ export class HeaderComponent {
   // }
 
   obtenerUsuario() {
-    this.permisos = this.jwtService.decodeToken();
-    // this.imgUser = this.permisos.user_data.foto; // Cuando se tengan las rutas de las imágenes
-    this.convertirValoresBooleanos(this.permisos.user_data);
+    this.permisos = this.jwtService.getUserData();
+    // this.imgUser = this.permisos.foto; // Cuando se tengan las rutas de las imágenes
+    this.convertirValoresBooleanos(this.permisos);
     // this.subscribirEventosDeRuta();
-    // console.log(this.permisos.user_data);
+    // console.log(this.permisos);
   }
 
   logout(): void {
-    this.jwtService.removeToken();
+    this.jwtService.logout(); 
     this.apiService.postData('logout', {}).subscribe(
       (response) => {
         this.router.navigate(['/login']);
@@ -98,7 +98,7 @@ export class HeaderComponent {
     }
 
     if (
-      this.permisos.user_data.opcion16 === true &&
+      this.permisos.opcion16 === true &&
       !this.jwtService.isAdmin()
     ) {
       this.ownerView = true;
