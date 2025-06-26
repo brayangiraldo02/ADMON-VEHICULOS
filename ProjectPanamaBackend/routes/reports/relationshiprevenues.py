@@ -273,7 +273,8 @@ async def relationshiprevenues_report(data: RelationshipRevenuesReport):
         "nequi": total_nequi,
         "yappy": total_yappy,
         "total": total_total,
-        "total_admon": total_admon
+        "total_admon": total_admon,
+        "total_resta_admon": total_total - total_admon
       },
       "fechas": {
         "primeraFecha": data.primeraFecha,
