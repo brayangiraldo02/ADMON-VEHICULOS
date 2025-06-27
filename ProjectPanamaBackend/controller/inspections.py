@@ -3,6 +3,7 @@ from config.dbconnection import session
 from models.propietarios import Propietarios
 from models.conductores import Conductores
 from models.vehiculos import Vehiculos
+from models.inspecciones import Inspecciones
 from fastapi.encoders import jsonable_encoder
 
 async def owners_data(company_code: str):
@@ -103,6 +104,50 @@ async def drivers_data(company_code: str):
 
     return JSONResponse(content=jsonable_encoder(result), status_code=200)
 
+  except Exception as e:
+    return JSONResponse(content={"message": str(e)}, status_code=500)
+  finally:
+    db.close()
+
+#-----------------------------------------------------------------------------------------------
+
+async def inspections_info(data):
+  db = session()
+  try:
+    filters = [
+        Inspecciones.FECHA >= data.primeraFecha,
+        Inspecciones.FECHA <= data.ultimaFecha
+    ]
+
+    # Filtrar inspecciones por propietario, conductor y vehículo
+    if data.propietario != '0':
+        filters.append(Inspecciones.PROPI_IDEN == data.propietario)
+    
+    if data.vehiculo != '0':
+        filters.append(Inspecciones.UNIDAD == data.vehiculo)
+    
+    if data.conductor != '0':
+        filters.append(Inspecciones.CONDUCTOR == data.conductor)
+
+    inspections = db.query(Inspecciones).filter(*filters).all()
+
+    inspections_data = []
+
+    for inspection in inspections:
+      inspections_data.append({
+        "id": inspection.ID,
+        "fecha_hora": inspection.FECHA.strftime('%d-%m-%Y') + ' ' + inspection.HORA.strftime('%H:%M') if inspection.FECHA and inspection.HORA else None,
+        "tipo_inspeccion": inspection.TIPO_INSPEC,
+        "descripcion": inspection.DESCRIPCION,
+        "unidad": inspection.UNIDAD,
+        "placa": inspection.PLACA,
+        "nombre_usuario": inspection.USUARIO,
+        "acciones": ""
+      })
+
+    if not inspections_data:
+      return JSONResponse(content={"message": "No inspections found"}, status_code=404)
+    return JSONResponse(content=jsonable_encoder(inspections_data), status_code=200)
   except Exception as e:
     return JSONResponse(content={"message": str(e)}, status_code=500)
   finally:

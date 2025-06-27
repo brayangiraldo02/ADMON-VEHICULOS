@@ -1,5 +1,7 @@
 from fastapi import APIRouter
-from controller.inspections import owners_data, vehicles_data, drivers_data
+from schemas.inspections import InspectionInfo
+from controller.inspections import owners_data, vehicles_data, drivers_data, inspections_info
+
 inspections_router = APIRouter()
 
 @inspections_router.get("/owners_data/{company_code}", tags=["Inspections"])
@@ -13,3 +15,7 @@ async def get_vehicles_data(company_code: str):
 @inspections_router.get("/drivers_data/{company_code}", tags=["Inspections"])
 async def get_drivers_data(company_code: str):
   return await drivers_data(company_code)
+
+@inspections_router.post("/inspections_info", tags=["Inspections"])
+async def post_inspections_info(data: InspectionInfo):
+  return await inspections_info(data)
