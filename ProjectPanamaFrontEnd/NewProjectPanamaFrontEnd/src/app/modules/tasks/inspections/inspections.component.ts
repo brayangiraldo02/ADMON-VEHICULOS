@@ -1,6 +1,29 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { map, Observable, startWith } from 'rxjs';
+import { ApiService } from 'src/app/services/api.service';
+
+export interface owners {
+  codigo_propietario: string;
+  nombre_propietario: string;
+  conductores: drivers[];
+  vehiculos: vehicles[];
+}
+
+export interface drivers {
+  codigo_conductor: string;
+  numero_unidad: string;
+  nombre_conductor: string;
+  cedula: string;
+}
+
+export interface vehicles {
+  placa_vehiculo: string;
+  numero_unidad: string;
+  codigo_conductor: string;
+  marca: string;
+  linea: string;
+}
 
 @Component({
   selector: 'app-inspections',
@@ -9,14 +32,19 @@ import { map, Observable, startWith } from 'rxjs';
 })
 export class InspectionsComponent implements OnInit {
   inspectionForm!: FormGroup;
-  opcionesPropietarios: string[] = ['One', 'Two', 'Three'];
-  opcionesConductor: string[] = ['One', 'Two', 'Three'];
-  opcionesVehiculo: string[] = ['One', 'Two', 'Three'];
-  opcionesFiltradas1!: Observable<string[]>;
-  opcionesFiltradas2!: Observable<string[]>;
-  opcionesFiltradas3!: Observable<string[]>;
+  owners: owners[] = [];
+  drivers: drivers[] = [];
+  vehicles: vehicles[] = [];
+  optionsOwners!: Observable<owners[]>;
+  optionsDrivers!: Observable<drivers[]>;
+  optionsVehicles!: Observable<vehicles[]>;
 
-  constructor(private fb: FormBuilder) {}
+  isLoading = true;
+
+  constructor(
+    private fb: FormBuilder,
+    private apiService: ApiService
+  ) {}
 
   ngOnInit() {
     this.inspectionForm = this.fb.group({
@@ -27,25 +55,78 @@ export class InspectionsComponent implements OnInit {
       fechaFinal: ['']
     });
 
-    this.opcionesFiltradas1 = this.inspectionForm.get('propietario')!.valueChanges.pipe(
-      startWith(''),
-      map(value => this._filter(value || '', this.opcionesPropietarios)),
-    );
+    this.getDataAutoCompletes();
+  }
 
-    this.opcionesFiltradas2 = this.inspectionForm.get('conductor')!.valueChanges.pipe(
-      startWith(''),
-      map(value => this._filter(value || '', this.opcionesConductor)),
-    );
+  getDataAutoCompletes(){
+    this.getDataOwners();
+    this.getDataDrivers();
+    this.getDataVehicles();
+  }
 
-    this.opcionesFiltradas2 = this.inspectionForm.get('vehiculo')!.valueChanges.pipe(
-      startWith(''),
-      map(value => this._filter(value || '', this.opcionesVehiculo)),
+  getDataOwners(){
+    this.apiService.getData('owners_data/58').subscribe(
+      (data: owners[]) => {
+        this.owners = data;
+        this.optionsOwners = this.inspectionForm.get('propietario')!.valueChanges.pipe(
+          startWith(''),
+          map(value => this._filterOwners(value || '')),
+        );
+        this.isLoading = false; 
+      }
     );
   }
 
-  private _filter(value: string, options: string[]): string[] {
-    const filterValue = value.toLowerCase();
+  getDataDrivers(){
+    this.apiService.getData('drivers_data/58').subscribe(
+      (data: drivers[]) => {
+        this.drivers = data;
+        this.optionsDrivers = this.inspectionForm.get('conductor')!.valueChanges.pipe(
+          startWith(''),
+          map(value => this._filterDrivers(value || '')),
+        );
+      }
+    );
+  }
 
-    return options.filter(option => option.toLowerCase().includes(filterValue));
+  getDataVehicles(){
+    this.apiService.getData('vehicles_data/58').subscribe(
+      (data: vehicles[]) => {
+        this.vehicles = data;
+        this.optionsVehicles = this.inspectionForm.get('vehiculo')!.valueChanges.pipe(
+          startWith(''),
+          map(value => this._filterVehicles(value || '')),
+        );
+      }
+    );
+  }
+
+  private _filterOwners(value: string): owners[] {
+    const filterValue = value.toLowerCase();
+    return this.owners.filter(option => option.nombre_propietario.toLowerCase().includes(filterValue));
+  }
+
+  private _filterDrivers(value: string): drivers[] {
+    const filterValue = value.toLowerCase();
+    // Aquí asumimos que cuando se selecciona un propietario, this.opcionesConductor se llena.
+    return this.drivers.filter(option => option.nombre_conductor.toLowerCase().includes(filterValue));
+  }
+
+  private _filterVehicles(value: string): vehicles[] {
+    const filterValue = value.toLowerCase();
+    // Aquí asumimos que cuando se selecciona un propietario, this.opcionesVehiculo se llena.
+    return this.vehicles.filter(option => option.placa_vehiculo.toLowerCase().includes(filterValue));
+  }
+
+  displayOwnerName(owner: owners): string {
+    return owner ? `${owner.nombre_propietario} - ${owner.codigo_propietario}` : '';
+  }
+
+  displayDriverName(driver: drivers): string {
+    return driver ? `${driver.nombre_conductor} - ${driver.cedula}` : '';
+  }
+
+  displayVehiclePlate(vehicle: vehicles): string {
+    return vehicle ? `${vehicle.placa_vehiculo} - ${vehicle.marca} ${vehicle.linea}` : '';
   }
 }

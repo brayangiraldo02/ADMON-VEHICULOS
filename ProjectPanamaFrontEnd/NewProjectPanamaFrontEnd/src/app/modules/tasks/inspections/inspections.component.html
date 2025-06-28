@@ -3,7 +3,7 @@
     <h1 class="title">Inspecciones</h1>
   </div>
 
-  <form [formGroup]="inspectionForm">
+  <form [formGroup]="inspectionForm" *ngIf="!isLoading">
     <div class="inputs-container">
       <mat-form-field class="field-input">
         <mat-label>Propietarios</mat-label>
@@ -14,12 +14,12 @@
           formControlName="propietario"
           [matAutocomplete]="auto1"
         />
-        <mat-autocomplete #auto1="matAutocomplete">
+        <mat-autocomplete #auto1="matAutocomplete" [displayWith]="displayOwnerName">
           <mat-option
-            *ngFor="let option of opcionesFiltradas1 | async"
+            *ngFor="let option of optionsOwners | async"
             [value]="option"
           >
-            {{ option }}
+            {{ option.nombre_propietario }} - {{ option.codigo_propietario }}
           </mat-option>
         </mat-autocomplete>
       </mat-form-field>
@@ -33,12 +33,12 @@
           formControlName="conductor"
           [matAutocomplete]="auto2"
         />
-        <mat-autocomplete #auto2="matAutocomplete">
+        <mat-autocomplete #auto2="matAutocomplete" [displayWith]="displayDriverName">
           <mat-option
-            *ngFor="let option of opcionesFiltradas2 | async"
+            *ngFor="let option of optionsDrivers | async"
             [value]="option"
           >
-            {{ option }}
+            {{ option.nombre_conductor }} - {{ option.cedula }}
           </mat-option>
         </mat-autocomplete>
       </mat-form-field>
@@ -52,12 +52,12 @@
           formControlName="vehiculo"
           [matAutocomplete]="auto3"
         />
-        <mat-autocomplete #auto3="matAutocomplete">
+        <mat-autocomplete #auto3="matAutocomplete" [displayWith]="displayVehiclePlate">
           <mat-option
-            *ngFor="let option of opcionesFiltradas3 | async"
+            *ngFor="let option of optionsVehicles | async"
             [value]="option"
           >
-            {{ option }}
+            {{ option.numero_unidad }} - {{ option.marca }} {{ option.linea }}
           </mat-option>
         </mat-autocomplete>
       </mat-form-field>
@@ -103,4 +103,6 @@
       </div>
     </div>
   </form>
+
+  <mat-progress-bar mode="indeterminate" *ngIf="isLoading"></mat-progress-bar>
 </div>
