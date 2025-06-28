@@ -1,7 +1,7 @@
 export type InfoCompany = {
   name: string;
-  nit: string;
-  direction: string;
+  ruc: string;
+  address: string;
   city: string;
   phone: string;
   email: string;

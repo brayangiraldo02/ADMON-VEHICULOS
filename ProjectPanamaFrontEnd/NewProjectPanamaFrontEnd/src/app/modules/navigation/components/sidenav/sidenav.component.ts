@@ -3,6 +3,9 @@ import { Router } from '@angular/router';
 import { ApiService } from 'src/app/services/api.service';
 import { JwtService } from 'src/app/services/jwt.service';
 import { OwnersGuard } from 'src/app/guards/owners.guard';
+import { MatDialog } from '@angular/material/dialog';
+import { InfoCompanyComponent } from '../info-company/info-company.component';
+import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 
 @Component({
   selector: 'app-sidenav',
@@ -24,7 +27,9 @@ export class SidenavComponent implements OnInit {
     private apiService: ApiService,
     private jwtService: JwtService,
     private router: Router,
-    private ownersGuard: OwnersGuard
+    private ownersGuard: OwnersGuard,
+    private dialog: MatDialog,
+    private breakpointObserver: BreakpointObserver
   ) {}
 
   ngOnInit() {
@@ -137,6 +142,19 @@ export class SidenavComponent implements OnInit {
 
   onBackdropClick(): void {
     this.backdropClick.emit();
+  }
+
+  openDialogInfoCompany(): void {
+    const isSmallScreen = this.breakpointObserver.isMatched(Breakpoints.XSmall);
+    const dialogWidth = isSmallScreen ? '90vw' : '60%';
+
+    console.log(isSmallScreen ? 'Pantalla pequeña' : 'Pantalla grande');
+
+    const dialogRef = this.dialog.open(InfoCompanyComponent,
+      {
+        width: dialogWidth,
+      }
+    );
   }
 
   onItemClick(): void {

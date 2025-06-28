@@ -21,9 +21,7 @@
     <div class="options-container">
       <ng-container *ngFor="let option of options">
         <button class="option" type="button" [disabled]="option.disabled" (click)="option.click()">
-          <span class="material-symbols-outlined" translate="no">
-            description
-          </span>
+          <img class="option-icon" src="assets/icons/file-pdf.svg" alt="Icono de documento">
           <p class="option-text">{{ option.name }}</p>
         </button>
       </ng-container>

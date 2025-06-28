@@ -210,6 +210,11 @@ ul {
   .carousel-container {
     display: none;
   }
+
+  .container {
+    padding: 2vh 5vh;
+    height: 100%
+  }
 }
 
 

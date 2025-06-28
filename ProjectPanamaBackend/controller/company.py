@@ -13,8 +13,8 @@ async def get_info_companies(company_code: str):
     if company:
       company_data = {
         "name": company.NOMBRE,
-        "nit": company.NIT,
-        "direction": company.DIRECCION,
+        "ruc": company.NIT,
+        "address": company.DIRECCION,
         "city": company.CIUDAD,
         "phone": company.TELEFONO,
         "email": company.CORREO,
