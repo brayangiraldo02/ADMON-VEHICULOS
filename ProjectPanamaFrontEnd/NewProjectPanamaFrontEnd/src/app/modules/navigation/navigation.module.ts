@@ -9,6 +9,7 @@ import { DevPreviewComponent } from './components/dev-preview/dev-preview.compon
 import { ToolbarComponent } from './components/toolbar/toolbar.component';
 import { SidenavComponent } from './components/sidenav/sidenav.component';
 import { FooterComponent } from './components/footer/footer.component';
+import { InfoCompanyComponent } from './components/info-company/info-company.component';
 
 @NgModule({
   declarations: [
@@ -17,6 +18,7 @@ import { FooterComponent } from './components/footer/footer.component';
     ToolbarComponent,
     SidenavComponent,
     FooterComponent,
+    InfoCompanyComponent,
   ],
   imports: [
     CommonModule,

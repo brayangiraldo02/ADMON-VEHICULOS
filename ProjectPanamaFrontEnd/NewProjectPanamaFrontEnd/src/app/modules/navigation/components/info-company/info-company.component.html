@@ -1,0 +1,35 @@
+<h2 mat-dialog-title>Información de la Empresa</h2>
+<mat-dialog-content>
+  <table class="info-table" *ngIf="infoCompany">
+    <tbody>
+      <tr>
+        <td class="info-header">Nombre</td>
+        <td class="info-data">{{ infoCompany.name }}</td>
+      </tr>
+      <tr>
+        <td class="info-header">RUC</td>
+        <td class="info-data">{{ infoCompany.ruc }}</td>
+      </tr>
+      <tr>
+        <td class="info-header">Dirección</td>
+        <td class="info-data">{{ infoCompany.address }}</td>
+      </tr>
+      <tr>
+        <td class="info-header">Ciudad</td>
+        <td class="info-data">{{ infoCompany.city }}</td>
+      </tr>
+      <tr>
+        <td class="info-header">Teléfono</td>
+        <td class="info-data">{{ infoCompany.phone }}</td>
+      </tr>
+      <tr>
+        <td class="info-header">Email</td>
+        <td class="info-data">{{ infoCompany.email }}</td>
+      </tr>
+    </tbody>
+  </table>
+  <mat-progress-bar mode="indeterminate" *ngIf="!infoCompany"></mat-progress-bar>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close cdkFocus>Cerrar</button>
+</mat-dialog-actions>
