@@ -41,6 +41,7 @@ import { OperacionesEntregaVehiculoConductorComponent } from './modules/options/
 import { SharedModule } from './modules/shared/shared.module';
 import { DevPreviewComponent } from './modules/others/dev-preview/dev-preview.component';
 import { MaterialModule } from './modules/shared/material/material.module';
+import { InspectionsComponent } from './modules/tasks/inspections/inspections.component';
 
 @NgModule({
   declarations: [
@@ -79,6 +80,7 @@ import { MaterialModule } from './modules/shared/material/material.module';
     DriversDocumentationComponent,
     OperacionesEntregaVehiculoConductorComponent,
     DevPreviewComponent,
+    InspectionsComponent,
   ],
   imports: [
     BrowserModule,

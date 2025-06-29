@@ -1,6 +1,7 @@
+// src/app/guards/auth.guard.ts
 import { Injectable } from '@angular/core';
-import { CanActivate, Router, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
-import { JwtService } from 'src/app/services/jwt.service';  // Asegúrate de actualizar esta importación según la ruta real del archivo
+import { CanActivate, Router, UrlTree } from '@angular/router';
+import { JwtService } from 'src/app/services/jwt.service';
 
 @Injectable({
   providedIn: 'root'
@@ -8,12 +9,13 @@ import { JwtService } from 'src/app/services/jwt.service';  // Asegúrate de act
 export class AuthGuard implements CanActivate {
   constructor(private jwtService: JwtService, private router: Router) {}
 
-  canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
-    if (this.jwtService.tokenExistsAndValidForUsers()) {
-      return true;
-    } else {
-      this.jwtService.verifyOwner() ? this.router.navigate(['/home/owners']) : this.router.navigate(['/login']);
-      return false;
+  canActivate(): boolean | UrlTree {
+    if (this.jwtService.isAuthenticated()) {
+      return true; // Usuario autenticado (cualquier rol), puede pasar al layout principal.
     }
+
+    // Si no está autenticado, lo limpiamos por si hay un token inválido y lo mandamos a login.
+    this.jwtService.logout();
+    return this.router.createUrlTree(['/login']);
   }
 }

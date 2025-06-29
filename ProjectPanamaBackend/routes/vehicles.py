@@ -22,11 +22,11 @@ from utils.pdf import html2pdf
 
 vehicles_router = APIRouter()
 
-@vehicles_router.get("/vehicles/", tags=["Vehicles"])
-async def get_vehicles():
+@vehicles_router.get("/vehicles/{company_code}", tags=["Vehicles"])
+async def get_vehicles(company_code: str):
   db = session()
   try:
-    vehicles = db.query(Vehiculos.NUMERO, Vehiculos.PLACA).all()
+    vehicles = db.query(Vehiculos.NUMERO, Vehiculos.PLACA).filter(Vehiculos.EMPRESA == company_code).all()
 
     vehicles_list = [
       {
@@ -37,7 +37,7 @@ async def get_vehicles():
     ]
     return JSONResponse(content=jsonable_encoder(vehicles_list))
   except Exception as e:
-    return JSONResponse(content={"error": str(e)})
+    return JSONResponse(content={"message": str(e)})
   finally:
     db.close()
 

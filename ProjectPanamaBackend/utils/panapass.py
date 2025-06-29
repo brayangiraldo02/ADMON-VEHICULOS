@@ -1,6 +1,7 @@
 import pytz
 from datetime import datetime
 import csv
+import os
 
 path_58 = '/home/admin/dropbox-alfasoft/Informe_Panapass'
 path_10 = '/home/admin/dropbox-alfasoft/Informe_Panapass (1)'
@@ -19,23 +20,18 @@ def get_txt_file(company: str):
   fecha = now_in_panama.strftime("%Y_%m_%d")
   
   if company == '58':
-    try:
-      path = path_58 + f'/Informe_PanaPass_{fecha}_pm.txt'
-      with open(path, 'r') as file:
-        return path
-    except FileNotFoundError:
-      path = path_58 + f'/Informe_PanaPass_{fecha}_am.txt'
-      with open(path, 'r') as file:
-        return path
+    base_path = path_58
   elif company == '10':
-    try:
-      path = path_10 + f'/Informe_PanaPass_{fecha}_pm.txt'
-      with open(path, 'r') as file:
-        return path
-    except FileNotFoundError:
-      path = path_10 + f'/Informe_PanaPass_{fecha}_am.txt'
-      with open(path, 'r') as file:
-        return path
+    base_path = path_10
+  else:
+    return ''
+
+  for file in ['pm', 'am']:
+    path = os.path.join(base_path, f'Informe_PanaPass_{fecha}_{file}.txt')
+    if os.path.isfile(path):
+      return path
+
+  return ''
 
 #-----------------------------------------------------------------------------------------------
 

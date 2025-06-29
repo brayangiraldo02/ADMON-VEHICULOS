@@ -59,11 +59,11 @@ export class HomeUsersComponent {
   }
 
   obtenerUsuario() {
-    this.permisos = this.jwtService.decodeToken();
+    this.permisos = this.jwtService.getUserData();
     this.isAdmin = this.jwtService.isAdmin();
-    // console.log(this.permisos.user_data);
+    // console.log(this.permisos);
 
-    this.convertirValoresBooleanos(this.permisos.user_data);
+    this.convertirValoresBooleanos(this.permisos);
 
     this.options = [
       {
@@ -71,7 +71,7 @@ export class HomeUsersComponent {
         icon: '../../../../assets/icons/caja.svg',
         url: 'hoalalalal',
         click: () => null,
-        enabled: this.permisos.user_data.opcion01,
+        enabled: this.permisos.opcion01,
         disabled: true,
       },
       {
@@ -79,7 +79,7 @@ export class HomeUsersComponent {
         icon: '../../../../assets/icons/operaciones.svg',
         url: '/operations',
         click: () => null,
-        enabled: this.permisos.user_data.opcion02,
+        enabled: this.permisos.opcion02,
         disabled: false,
       },
       {
@@ -87,7 +87,7 @@ export class HomeUsersComponent {
         icon: '../../../../assets/icons/cobros.svg',
         url: null,
         click: () => this.openDialogCobros(),
-        enabled: this.permisos.user_data.opcion03,
+        enabled: this.permisos.opcion03,
         disabled: false,
       },
       {
@@ -95,7 +95,7 @@ export class HomeUsersComponent {
         icon: '../../../../assets/icons/tramites.svg',
         url: '/procedures',
         click: () => null,
-        enabled: this.permisos.user_data.opcion04,
+        enabled: this.permisos.opcion04,
         disabled: false,
       },
       {
@@ -103,7 +103,7 @@ export class HomeUsersComponent {
         icon: '../../../../assets/icons/almacen.svg',
         url: '/warehouse',
         click: () => null,
-        enabled: this.permisos.user_data.opcion05,
+        enabled: this.permisos.opcion05,
         disabled: false,
       },
       {
@@ -111,7 +111,7 @@ export class HomeUsersComponent {
         icon: '../../../../assets/icons/taller.svg',
         url: '/workshop',
         click: () => null,
-        enabled: this.permisos.user_data.opcion06,
+        enabled: this.permisos.opcion06,
         disabled: false,
       },
       {
@@ -119,7 +119,7 @@ export class HomeUsersComponent {
         icon: '../../../../assets/icons/chapisteria.svg',
         url: '/sheet-metal-work',
         click: () => null,
-        enabled: this.permisos.user_data.opcion07,
+        enabled: this.permisos.opcion07,
         disabled: false,
       },
       {
@@ -127,7 +127,7 @@ export class HomeUsersComponent {
         icon: '../../../../assets/icons/llavero.svg',
         url: '/keychain',
         click: () => null,
-        enabled: this.permisos.user_data.opcion08,
+        enabled: this.permisos.opcion08,
         disabled: false,
       },
       {
@@ -135,7 +135,7 @@ export class HomeUsersComponent {
         icon: '../../../../assets/icons/reclamos.svg',
         url: '/claims',
         click: () => null,
-        enabled: this.permisos.user_data.opcion09,
+        enabled: this.permisos.opcion09,
         disabled: false,
       },
       {
@@ -143,7 +143,7 @@ export class HomeUsersComponent {
         icon: '../../../../assets/icons/cartera.svg',
         url: '/wallet',
         click: () => null,
-        enabled: this.permisos.user_data.opcion10,
+        enabled: this.permisos.opcion10,
         disabled: false,
       },
       {
@@ -151,7 +151,7 @@ export class HomeUsersComponent {
         icon: '../../../../assets/icons/gerencia.svg',
         url: '/management',
         click: () => null,
-        enabled: this.permisos.user_data.opcion11,
+        enabled: this.permisos.opcion11,
         disabled: false,
       },
       {
@@ -159,7 +159,7 @@ export class HomeUsersComponent {
         icon: '../../../../assets/icons/gastos.svg',
         url: '/expenses',
         click: () => null,
-        enabled: this.permisos.user_data.opcion12,
+        enabled: this.permisos.opcion12,
         disabled: false,
       },
       {
@@ -167,7 +167,7 @@ export class HomeUsersComponent {
         icon: '../../../../assets/icons/cnt.svg',
         url: '/cnt',
         click: () => null,
-        enabled: this.permisos.user_data.opcion13,
+        enabled: this.permisos.opcion13,
         disabled: false,
       },
       {
@@ -175,7 +175,7 @@ export class HomeUsersComponent {
         icon: '../../../../assets/icons/contado.svg',
         url: 'hoalalalal',
         click: () => null,
-        enabled: this.permisos.user_data.opcion14,
+        enabled: this.permisos.opcion14,
         disabled: true,
       },
       {
@@ -183,7 +183,7 @@ export class HomeUsersComponent {
         icon: '../../../../assets/icons/utilidades1.svg',
         url: '/utilities',
         click: () => null,
-        enabled: this.permisos.user_data.opcion15,
+        enabled: this.permisos.opcion15,
         disabled: false,
       },
     ];

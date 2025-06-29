@@ -35,8 +35,8 @@ export class FeespaidComponent implements OnInit {
   }
 
   obtenerUsuario() {
-    let user = this.jwtService.decodeToken();
-    return user.user_data.nombre;
+    let user = this.jwtService.getUserData();
+    return user ? user.nombre : ''; // Si 'user' existe, devuelve 'user.nombre', si no, devuelve un string vacío.
   }
 
   getCompany() {

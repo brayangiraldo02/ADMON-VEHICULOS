@@ -120,7 +120,10 @@ async def get_collection_accounts(companies_list: list):
 
       # Obtener el archivo de texto para la empresa
       txt_file_path = get_txt_file(collectionAccount.empresa)
-      panapass_value = search_value_in_txt('Unidad', collectionAccount.vehiculos_numero, 'Saldo Cuenta PanaPass', txt_file_path)
+      if txt_file_path:
+        panapass_value = search_value_in_txt('Unidad', collectionAccount.vehiculos_numero, 'Saldo Cuenta PanaPass', txt_file_path)
+      else:
+        panapass_value = ''
 
       collectionAccount_temp = {
         'codigo': collectionAccount.propietarios_codigo, 
@@ -142,7 +145,7 @@ async def get_collection_accounts(companies_list: list):
         'diferencia': fon_inscri - deu_renta,
         'deu_sinies': deu_sinies,
         'deu_otras': deu_otras,
-        'panapass': panapass_value if panapass_value else '0',
+        'panapass': panapass_value if panapass_value else '',
         'mantenimiento_fecha': (collectionAccount.mantenimiento_fecha + timedelta(days=30)).strftime('%d-%m-%Y') if collectionAccount.mantenimiento_fecha else None,
         'mantenimiento_dias_restantes': (collectionAccount.mantenimiento_fecha + timedelta(days=30) - date.today()).days if collectionAccount.mantenimiento_fecha else None
       }
@@ -259,7 +262,10 @@ async def download_collection_accounts(companies_list: list):
       
       # Obtener el archivo de texto para la empresa
       txt_file_path = get_txt_file(collectionAccount.empresa)
-      panapass_value = search_value_in_txt('Unidad', collectionAccount.vehiculos_numero, 'Saldo Cuenta PanaPass', txt_file_path)
+      if txt_file_path:
+        panapass_value = search_value_in_txt('Unidad', collectionAccount.vehiculos_numero, 'Saldo Cuenta PanaPass', txt_file_path)
+      else:
+        panapass_value = ''
 
       collectionAccount_temp = {
         'codigo': collectionAccount.propietarios_codigo, 
@@ -281,7 +287,7 @@ async def download_collection_accounts(companies_list: list):
         'diferencia': fon_inscri - deu_renta,
         'deu_sinies': deu_sinies,
         'deu_otras': deu_otras,
-        'panapass': panapass_value if panapass_value else '0',
+        'panapass': panapass_value if panapass_value else '',
         'mantenimiento_fecha': (collectionAccount.mantenimiento_fecha + timedelta(days=30)).strftime('%d-%m-%Y') if collectionAccount.mantenimiento_fecha else None,
         'mantenimiento_dias_restantes': (collectionAccount.mantenimiento_fecha + timedelta(days=30) - date.today()).days if collectionAccount.mantenimiento_fecha else None
       }
@@ -407,7 +413,10 @@ async def collection_accounts_pdf(companies_list):
 
       # Obtener el archivo de texto para la empresa
       txt_file_path = get_txt_file(collectionAccount.empresa)
-      panapass_value = search_value_in_txt('Unidad', collectionAccount.vehiculos_numero, 'Saldo Cuenta PanaPass', txt_file_path)
+      if txt_file_path:
+        panapass_value = search_value_in_txt('Unidad', collectionAccount.vehiculos_numero, 'Saldo Cuenta PanaPass', txt_file_path)
+      else:
+        panapass_value = ''
       
       collectionAccount_temp = {
         'unidad': collectionAccount.vehiculos_numero, 
@@ -420,7 +429,7 @@ async def collection_accounts_pdf(companies_list):
         'cuotas_pendientes': deu_renta // collectionAccount.conductores_cuodiaria if collectionAccount.conductores_cuodiaria else 0,
         'deu_renta': deu_renta,
         'fon_inscri': fon_inscri,
-        'panapass': panapass_value if panapass_value else '0',
+        'panapass': panapass_value if panapass_value else '',
         'deu_sinies': deu_sinies,
         'mantenimiento_fecha': (collectionAccount.mantenimiento_fecha + timedelta(days=30)).strftime('%d-%m-%Y') if collectionAccount.mantenimiento_fecha != '0000-00-00' else '',
         'deu_otras': deu_otras,
