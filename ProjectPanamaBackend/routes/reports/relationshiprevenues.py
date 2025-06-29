@@ -67,6 +67,8 @@ async def relationshiprevenues_report(data: RelationshipRevenuesReport):
           CajaRecaudos.EMPRESA == Propietarios.EMPRESA
         ).all()
       else:
+        empresa = db.query(Propietarios.CODIGO).filter(Propietarios.NOMBRE == data.empresa).all()
+        empresa = empresa[0][0]
         conteo_reporte_ingresos = db.query(
           Propietarios.EMPRESA.label('codigo_empresa'),
           CajaRecaudos.EMPRESA.label('num_empresa'),
@@ -92,10 +94,13 @@ async def relationshiprevenues_report(data: RelationshipRevenuesReport):
           CajaRecaudos.FEC_RECIBO >= data.primeraFecha,
           CajaRecaudos.FEC_RECIBO <= data.ultimaFecha,
           CajaRecaudos.FORMAPAGO.in_(["1", "2", "3", "4", "5"]),
+          CajaRecaudos.PROPI_IDEN == empresa,
           CajaRecaudos.EMPRESA == Propietarios.EMPRESA
         ).all()
 
     elif data.unidad != "" and data.unidad != "TODOS":
+      empresa = db.query(Propietarios.CODIGO).filter(Propietarios.NOMBRE == data.empresa).all()
+      empresa = empresa[0][0]
       conteo_reporte_ingresos = db.query(
           Propietarios.EMPRESA.label('codigo_empresa'),
           CajaRecaudos.EMPRESA.label('num_empresa'),
@@ -122,6 +127,7 @@ async def relationshiprevenues_report(data: RelationshipRevenuesReport):
           CajaRecaudos.FEC_RECIBO <= data.ultimaFecha,
           CajaRecaudos.NUMERO == data.unidad,
           CajaRecaudos.FORMAPAGO.in_(["1", "2", "3", "4", "5"]),
+          CajaRecaudos.PROPI_IDEN == empresa,
           CajaRecaudos.EMPRESA == Propietarios.EMPRESA
         ).all()
       

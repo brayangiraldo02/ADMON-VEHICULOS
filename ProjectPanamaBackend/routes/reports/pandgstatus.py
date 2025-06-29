@@ -58,7 +58,8 @@ async def pandgstatus_report(data: PandGStatusReport):
           (CajaRecaudos.FEC_RECIBO >= data.primeraFecha) & 
           (CajaRecaudos.FEC_RECIBO <= data.ultimaFecha)
         ).filter(
-          Vehiculos.PROPI_IDEN == empresa
+          Vehiculos.PROPI_IDEN == empresa,
+          CajaRecaudos.PROPI_IDEN == empresa,
         ).group_by(
           Vehiculos.NUMERO,
           Vehiculos.FEC_CREADO,
@@ -80,6 +81,7 @@ async def pandgstatus_report(data: PandGStatusReport):
           Movimien.FECHA >= data.primeraFecha,
           Movimien.FECHA <= data.ultimaFecha,
           Movimien.TIPO.in_(['024', '027', '026', '022', '016']),
+          Movimien.PROPI_IDEN == empresa,
           # Movimien.FORMAPAGO.in_(['01', '02', '03', '04', '05'])
         ).group_by(
           Movimien.UNIDAD,
@@ -266,6 +268,9 @@ async def pandgstatus_report(data: PandGStatusReport):
 
     elif data.unidad != "" and data.unidad != "TODOS":
       # Optimizado: Obtener información del vehículo en una sola consulta
+      empresa = db.query(Propietarios.CODIGO).filter(Propietarios.NOMBRE == data.empresa).first()
+      empresa = empresa[0]
+
       info_unidad = db.query(
         Vehiculos.NUMERO,
         Vehiculos.FEC_CREADO,
@@ -281,7 +286,8 @@ async def pandgstatus_report(data: PandGStatusReport):
         (CajaRecaudos.FEC_RECIBO >= data.primeraFecha) & 
         (CajaRecaudos.FEC_RECIBO <= data.ultimaFecha)
       ).filter(
-        Vehiculos.NUMERO == data.unidad
+        Vehiculos.NUMERO == data.unidad,
+        CajaRecaudos.PROPI_IDEN == empresa
       ).group_by(
         Vehiculos.NUMERO,
         Vehiculos.FEC_CREADO,
@@ -302,6 +308,7 @@ async def pandgstatus_report(data: PandGStatusReport):
         Movimien.FECHA >= data.primeraFecha,
         Movimien.FECHA <= data.ultimaFecha,
         Movimien.TIPO.in_(['024', '027', '026', '022', '016']),
+        Movimien.PROPI_IDEN == empresa,
         # Movimien.FORMAPAGO.in_(['01', '02', '03', '04', '05'])
       ).group_by(
         Movimien.TIPO
@@ -320,7 +327,7 @@ async def pandgstatus_report(data: PandGStatusReport):
       total_016 = totales['016']
       total_almacen = total_022 - total_016
 
-      recaudos = vehiculo.total_recaudos + vehiculo.total_fondo_inscripcion + vehiculo.total_deuda_siniestro
+      recaudos = info_unidad.total_recaudos + info_unidad.total_fondo_inscripcion + info_unidad.total_deuda_siniestro
 
       # Calcular estado de pérdidas y ganancias
       estado_pyg = recaudos - total_024 - total_027 - total_026 - total_almacen
@@ -328,7 +335,7 @@ async def pandgstatus_report(data: PandGStatusReport):
       # Crear diccionario con la información procesada
       info_unidad_dict = {
         "NUMERO": data.unidad,
-        "FEC_CREADO": info_unidad.FEC_CREADO.strftime('%Y-%m-%d') if vehiculo.FEC_CREADO else None,
+        "FEC_CREADO": info_unidad.FEC_CREADO.strftime('%Y-%m-%d') if info_unidad.FEC_CREADO else None,
         "MODELO": info_unidad.MODELO,
         "VLR_COMPRA": info_unidad.VLR_COMPRA,
         "NOMESTADO": info_unidad.NOMESTADO,
