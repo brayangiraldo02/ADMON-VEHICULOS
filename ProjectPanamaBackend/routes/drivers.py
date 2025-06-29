@@ -5,13 +5,13 @@ from controller.drivers import *
 
 drivers_router = APIRouter()
 
-@drivers_router.get("/drivers/{company_code}", tags=["Drivers"])
+@drivers_router.get("/drivers/{company_code}/", tags=["Drivers"])
 async def get_drivers(company_code: str):
   return await drivers(company_code)
 
-@drivers_router.get("/drivers/all/", tags=["Drivers"])
-async def get_drivers():
-  return await drivers_all()
+@drivers_router.get("/drivers/all/{company_code}/", tags=["Drivers"])
+async def get_drivers(company_code: str):
+  return await drivers_all(company_code)
 
 @drivers_router.get('/directorio-conductores/', tags=["Drivers"])
 async def get_conductores_detalles():

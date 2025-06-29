@@ -43,8 +43,8 @@ async def get_vehicles(company_code: str):
 
 #-------------------------------------------------------------------------------------------
 
-@vehicles_router.get("/vehicles/all/", tags=["Vehicles"])
-async def get_vehicles():
+@vehicles_router.get("/vehicles/all/{company_code}/", tags=["Vehicles"])
+async def get_vehicles(company_code: str):
   db = session()
   try:
     vehicles = db.query(
@@ -71,6 +71,7 @@ async def get_vehicles():
         )   .join(Estados, Estados.CODIGO == Vehiculos.ESTADO) \
             .join(Conductores, Conductores.CODIGO == Vehiculos.CONDUCTOR) \
             .join(Centrales, Centrales.CODIGO == Vehiculos.CENTRAL) \
+            .filter(Vehiculos.EMPRESA == company_code) \
             .all()
 
     vehicles_list = [

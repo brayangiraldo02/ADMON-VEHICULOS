@@ -26,8 +26,14 @@ export class VehiclesTableComponent {
     this.getUser();
   }
 
+  getCompany() {
+    const userData = this.jwtService.getUserData();
+    return userData ? userData.empresa : '';
+  }
+
   fetchData() {
-    this.apiService.getData('vehicles/all').subscribe(
+    const company = this.getCompany();
+    this.apiService.getData('vehicles/all/'+company).subscribe(
       (response) => {
         this.data = response.filter((data: any) => data.unidad);
         this.data.sort((a, b) => a.unidad.localeCompare(b.unidad));

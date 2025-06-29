@@ -40,10 +40,32 @@ async def drivers(company_code: str):
 
 #-----------------------------------------------------------------------------------------------
 
-async def drivers_all():
+async def drivers_all(company_code: str):
   db = session()
   try:
-    drivers = db.query(Conductores.CODIGO, Conductores.UND_NRO, Conductores.UND_PRE, Conductores.NOMBRE, Conductores.CEDULA, Conductores.TELEFONO, Conductores.FEC_INGRES, Conductores.CUO_DIARIA, Conductores.NROENTREGA, Conductores.NROENTPAGO, Conductores.NROENTSDO, Conductores.LICEN_VCE, Conductores.CONTACTO, Conductores.TEL_CONTAC, Conductores.PAR_CONTAC, Conductores.CONTACTO1, Conductores.TEL_CONTA1, Conductores.PAR_CONTA1).all()
+    drivers = db.query(
+      Conductores.CODIGO, 
+      Conductores.UND_NRO, 
+      Conductores.UND_PRE, 
+      Conductores.NOMBRE, 
+      Conductores.CEDULA, 
+      Conductores.TELEFONO, 
+      Conductores.FEC_INGRES, 
+      Conductores.CUO_DIARIA, 
+      Conductores.NROENTREGA, 
+      Conductores.NROENTPAGO, 
+      Conductores.NROENTSDO, 
+      Conductores.LICEN_VCE, 
+      Conductores.CONTACTO, 
+      Conductores.TEL_CONTAC, 
+      Conductores.PAR_CONTAC,
+      Conductores.CONTACTO1, 
+      Conductores.TEL_CONTA1, 
+      Conductores.PAR_CONTA1
+      ) \
+    .filter(
+      Conductores.EMPRESA == company_code
+      ).all()
 
     drivers_list = [
       {

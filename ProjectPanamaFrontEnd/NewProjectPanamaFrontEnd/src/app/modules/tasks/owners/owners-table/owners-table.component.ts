@@ -26,8 +26,14 @@ export class OwnersTableComponent implements OnInit {
     this.getUser();
   }
 
+  getCompany() {
+    const userData = this.jwtService.getUserData();
+    return userData ? userData.empresa : '';
+  }
+
   fetchData() {
-    this.apiService.getData('owners/all').subscribe(
+    const company = this.getCompany();
+    this.apiService.getData('owners/all/'+company).subscribe(
       (response) => {
         this.data = response.filter((data: any) => data.codigo);
         this.data.sort((a, b) => a.nombre_propietario.localeCompare(b.nombre_propietario));
