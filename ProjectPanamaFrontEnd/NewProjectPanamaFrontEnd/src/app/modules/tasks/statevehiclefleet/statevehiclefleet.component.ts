@@ -81,7 +81,8 @@ export class StatevehiclefleetComponent implements OnInit {
   }
 
   listOwners(): void {
-    this.apiService.getData("owners").subscribe(
+    let company = this.getCompany();
+    this.apiService.getData("owners/"+company).subscribe(
       (response) => {
         this.owners = response.filter((owner: any) => owner.id);
         this.owners.sort((a, b) => a.name.localeCompare(b.name));
@@ -261,7 +262,8 @@ export class StatevehiclefleetComponent implements OnInit {
     let info = {
       usuario: this.user,
       empresas: this.empresasSeleccionadas,
-      estados: this.estadosSeleccionados
+      estados: this.estadosSeleccionados,
+      empresa: this.getCompany()
     }
     
     // Guardar endpoint y data en LocalStorage

@@ -658,6 +658,9 @@ async def get_vehiculos_detalles(infoReports: infoReports):
         )   .join(Vehiculos, Estados.CODIGO == Vehiculos.ESTADO) \
             .join(Conductores, Vehiculos.CONDUCTOR == Conductores.CODIGO) \
             .join(Propietarios, Vehiculos.PROPI_IDEN == Propietarios.CODIGO) \
+            .filter(Estados.CODIGO.in_(infoReports.estados)) \
+            .filter(Vehiculos.PROPI_IDEN.in_(infoReports.empresas)) \
+            .filter(Propietarios.CODIGO.in_(infoReports.empresas)) \
             .all()   
         
         # Convertir los resultados en un formato JSON

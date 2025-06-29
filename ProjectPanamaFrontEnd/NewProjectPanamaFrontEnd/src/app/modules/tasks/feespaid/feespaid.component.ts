@@ -45,7 +45,8 @@ export class FeespaidComponent implements OnInit {
   }
 
   listOwners(): void {
-    this.apiService.getData("owners").subscribe(
+    let company = this.getCompany();
+    this.apiService.getData("owners/"+company).subscribe(
       (response) => {
         this.owners = response.filter((owner: any) => owner.id);
         this.owners.sort((a, b) => a.name.localeCompare(b.name));
