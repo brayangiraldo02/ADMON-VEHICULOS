@@ -40,9 +40,8 @@ export class FeespaidComponent implements OnInit {
   }
 
   getCompany() {
-    let user = this.jwtService.decodeToken();
-    console.log("soy yo: ", user);
-    return user.user_data.empresa;
+    const userData = this.jwtService.getUserData();
+    return userData ? userData.empresa : '';
   }
 
   listOwners(): void {

@@ -43,9 +43,9 @@ export class OwnersFeespaidComponent  implements OnInit {
     this.listOwners();
   }
 
-  getCompany(): string {
-    const user = this.jwtService.decodeToken();
-    return user.user_data.empresa;
+  getCompany() {
+    const userData = this.jwtService.getUserData();
+    return userData ? userData.empresa : '';
   }
 
   listStates(): void {

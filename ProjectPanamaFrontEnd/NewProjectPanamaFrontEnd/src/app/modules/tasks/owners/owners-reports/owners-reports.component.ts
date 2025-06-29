@@ -52,8 +52,8 @@ export class OwnersReportsComponent implements OnInit {
   }
 
   getCompany() {
-    let user = this.jwtService.decodeToken();
-    return user.user_data.empresa;
+    const userData = this.jwtService.getUserData();
+    return userData ? userData.empresa : '';
   }
 
   listOwners(): void {
