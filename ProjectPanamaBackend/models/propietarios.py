@@ -26,6 +26,7 @@ class Propietarios(Base):
     REP_NACION = Column(CHAR(10), default='')
     FICHA = Column(CHAR(40), default='')
     DOCUMENTO = Column(CHAR(40), default='')
+    REP_ADMON = Column(CHAR(50), default='')
     CONTACTO = Column(CHAR(40), default='')
     CORREO = Column(CHAR(12), default='')
     CORREO1 = Column(CHAR(20), default='')
