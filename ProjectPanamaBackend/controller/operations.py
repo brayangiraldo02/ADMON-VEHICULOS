@@ -168,29 +168,6 @@ async def vehicle_delivery_info(vehicle_number: str):
       return JSONResponse(content={"message": "Central not found"}, status_code=404)
     
     state = db.query(Estados).filter(Estados.CODIGO == vehicle.ESTADO, Estados.EMPRESA == vehicle.EMPRESA).first()
-
-    vehicle_info = db.query(
-      Vehiculos.NOMMARCA, Vehiculos.PLACA, Vehiculos.NRO_CUPO,
-      Vehiculos.NROENTREGA, Vehiculos.CUO_DIARIA, Vehiculos.VLR_DEPOSI,
-      Vehiculos.ESTADO, Estados.NOMBRE.label('NOMBRE_ESTADO'), Vehiculos.FEC_ESTADO,
-      Vehiculos.CON_CUPO, Vehiculos.CONDUCTOR, Conductores.NOMBRE.label('NOMBRE_CONDUCTOR'),
-      Conductores.CEDULA, Conductores.TELEFONO, Conductores.CELULAR, Conductores.DIRECCION,
-      Propietarios.NOMBRE.label('PROPIETARIO_NOMBRE'), Centrales.NOMBRE.label('CENTRAL_NOMBRE')
-    ).join(
-      Estados, Vehiculos.ESTADO == Estados.CODIGO
-    ).join(
-      Propietarios, Vehiculos.PROPI_IDEN == Propietarios.CODIGO
-    ).join(
-      Centrales, Vehiculos.CENTRAL == Centrales.CODIGO
-    ).join(
-      Conductores, Vehiculos.CONDUCTOR == Conductores.CODIGO
-    ).filter(
-      Vehiculos.NUMERO == vehicle_number,
-      Vehiculos.EMPRESA == Centrales.EMPRESA
-    ).first()
-
-    if not vehicle_info:
-      return JSONResponse(content={"message": "Vehicle not found"}, status_code=404)
     
     wReg = 0
     # Verificar datos del vehiculo
