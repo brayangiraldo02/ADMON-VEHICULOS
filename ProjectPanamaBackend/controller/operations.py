@@ -151,6 +151,24 @@ async def delivery_vehicle_driver(data: DeliveryVehicleDriver):
 async def vehicle_delivery_info(vehicle_number: str):
   db = session()
   try:
+    vehicle = db.query(Vehiculos).filter(Vehiculos.NUMERO == vehicle_number).first()
+    if not vehicle:
+      return JSONResponse(content={"message": "Vehicle not found"}, status_code=404)
+    
+    driver = db.query(Conductores).filter(Conductores.CODIGO == vehicle.CONDUCTOR).first()
+    if not driver:
+      return JSONResponse(content={"message": "Driver not found"}, status_code=404)
+    
+    owner = db.query(Propietarios).filter(Propietarios.CODIGO == vehicle.PROPI_IDEN).first()
+    if not owner:
+      return JSONResponse(content={"message": "Owner not found"}, status_code=404)
+    
+    central = db.query(Centrales).filter(Centrales.CODIGO == vehicle.CENTRAL, Centrales.EMPRESA == vehicle.EMPRESA).first()
+    if not central:
+      return JSONResponse(content={"message": "Central not found"}, status_code=404)
+    
+    state = db.query(Estados).filter(Estados.CODIGO == vehicle.ESTADO, Estados.EMPRESA == vehicle.EMPRESA).first()
+
     vehicle_info = db.query(
       Vehiculos.NOMMARCA, Vehiculos.PLACA, Vehiculos.NRO_CUPO,
       Vehiculos.NROENTREGA, Vehiculos.CUO_DIARIA, Vehiculos.VLR_DEPOSI,
@@ -173,25 +191,138 @@ async def vehicle_delivery_info(vehicle_number: str):
 
     if not vehicle_info:
       return JSONResponse(content={"message": "Vehicle not found"}, status_code=404)
+    
+    wReg = 0
+    # Verificar datos del vehiculo
+    if float(vehicle.NROENTREGA) == 0:
+      wReg = 1
+      message = 'VEHICULO no Tiene Nº de Cuotas'
+    elif Vehiculos.VLR_DEPOSI == 0:
+      wReg = 1
+      message = 'VEHICULO no Tiene Valor del Deposito'
+    elif vehicle.NUEVOUSADO == '0':
+      wReg = 1
+      message = 'VEHICULO sin Seleccion de Nuevo o Usado'
+    elif not vehicle.PUERTAS:
+      wReg = 1
+      message = 'VEHICULO no Tiene Nº de Puertas'
+    elif not vehicle.CAPACIDAD:
+      wReg = 1
+      message = 'VEHICULO no Tiene Capacidad de Pasajeros'
+    elif not vehicle.NOMMARCA:
+      wReg = 1
+      message = 'VEHICULO no Tiene Nombre de Marca'
+    elif not vehicle.LINEA:
+      wReg = 1
+      message = 'VEHICULO no Tiene Nombre de Linea'
+    elif not vehicle.MODELO:
+      wReg = 1
+      message = 'VEHICULO no Tiene Año'
+    elif not vehicle.CHASISNRO:
+      wReg = 1
+      message = 'VEHICULO no Tiene Nº de Chasis'
+    elif not vehicle.MOTORNRO:
+      wReg = 1
+      message = 'VEHICULO no Tiene Nº de Motor'
+    elif (vehicle.CTA_RENTA + vehicle.CTA_SINIES) == 0:
+      wReg = 1
+      message = 'VEHICULO no Tiene Valor de la Cuota'
+    elif not vehicle.NUMERO:
+      wReg = 1
+      message = 'VEHICULO no Tiene Nº de Unidad'
+    elif not vehicle.PLACA:
+      wReg = 1
+      message = 'VEHICULO no Tiene Nº de Placa'
+    elif vehicle.CON_CUPO == '0':
+      wReg = 1
+      message = 'VEHICULO no Tiene marca Con Cupo o Sin Cupo'
+    # Verificar datos del propietario
+    elif not owner.REPRESENTA:
+      wReg = 1
+      message = 'PROPIETARIO no Tiene Representante'
+    elif not owner.REP_SEXO:
+      wReg = 1
+      message = 'No definio Sexo del REPRESENTANTE'
+    elif not owner.REP_ESTADO:
+      wReg = 1
+      message = 'No definio Estado Civil del REPRESENTANTE'
+    elif not owner.REP_TIPDOC:
+      wReg = 1
+      message = 'No definio Tipo de Documento del REPRESENTANTE'
+    elif not owner.REP_NUMERO:
+      wReg = 1
+      message = 'No definio Numero de Documento del REPRESENTANTE'
+    elif not owner.RAZONSOCIA:
+      wReg = 1
+      message = 'EMPRESA no Tiene Razon Social'
+    elif not owner.FICHA:
+      wReg = 1
+      message = 'EMPRESA no Tiene Ficha Inscripcion'
+    elif not owner.DOCUMENTO:
+      wReg = 1
+      message = 'EMPRESA no Tiene Documento de Inscripcion'
+    elif not owner.REP_ADMON:
+      wReg = 1
+      message = 'Empresa no Tiene Empresa Administradora'
+    # Verificar datos de la central
+    elif not central.LIMI_NORTE:
+      wReg = 1
+      message = 'CENTRAL no Tiene Limite por el Norte'
+    elif not central.LIMI_SUR:
+      wReg = 1
+      message = 'CENTRAL no Tiene Limite por el Sur'
+    elif not central.LIMI_ESTE:
+      wReg = 1
+      message = 'CENTRAL no Tiene Limite por el Este'
+    elif not central.LIMI_OESTE:
+      wReg = 1
+      message = 'CENTRAL no Tiene Limite por el Oeste'
+    # Verificar datos del conductor
+    elif not driver.NOMBRE:
+      wReg = 1
+      message = 'CONDUCTOR no Tiene Nombre'
+    elif driver.SEXO == '0':
+      wReg = 1
+      message = 'No definio Sexo del CONDUCTOR'
+    elif not driver.ESTA_CIVIL:
+      wReg = 1
+      message = 'No definio Estado Civil del CONDUCTOR'
+    elif not driver.NIT:
+      wReg = 1
+      message = 'CONDUCTOR no Tiene No. de Cedula'
+    elif not driver.DIRECCION:
+      wReg = 1
+      message = 'CONDUCTOR no Tiene Direccion'
+    elif not driver.TELEFONO and not driver.CELULAR:
+      wReg = 1
+      message = 'CONDUCTOR no Tiene Telefono o Celular'
+    elif not driver.RECOME_NOM:
+      wReg = 1
+      message = 'CONDUCTOR no Tiene RECOMENDADO'
+    elif not driver.RECOME_CED:
+      wReg = 1
+      message = 'RECOMENDADO no Tiene No. de Cedula'
 
     delivery_info = {
       'numero': vehicle_number,
-      'marca': vehicle_info.NOMMARCA,
-      'placa': vehicle_info.PLACA,
-      'cupo': vehicle_info.NRO_CUPO,
-      'central': vehicle_info.CENTRAL_NOMBRE,
-      'propietario_nombre': vehicle_info.PROPIETARIO_NOMBRE,
-      'nro_entrega': vehicle_info.NROENTREGA,
-      'cuota_diaria': vehicle_info.CUO_DIARIA,
-      'valor_deposito': vehicle_info.VLR_DEPOSI,
-      'estado': vehicle_info.ESTADO + ' - ' + vehicle_info.NOMBRE_ESTADO,
-      'con_cupo': 'Con Cupo' if vehicle_info.CON_CUPO == '1' else '',
-      'conductor_codigo': vehicle_info.CONDUCTOR,
-      'conductor_nombre': vehicle_info.NOMBRE_CONDUCTOR,
-      'conductor_cedula': vehicle_info.CEDULA,
-      'conductor_celular': vehicle_info.TELEFONO,
-      'conductor_direccion': vehicle_info.DIRECCION,
-      'fecha_contrato': vehicle_info.FEC_ESTADO.strftime('%d/%m/%Y') if vehicle_info.FEC_ESTADO else None
+      'marca': vehicle.NOMMARCA,
+      'placa': vehicle.PLACA,
+      'cupo': vehicle.NRO_CUPO,
+      'central': central.NOMBRE,
+      'propietario_nombre': owner.NOMBRE,
+      'nro_entrega': vehicle.NROENTREGA,
+      'cuota_diaria': vehicle.CUO_DIARIA,
+      'valor_deposito': vehicle.VLR_DEPOSI,
+      'estado': state.NOMBRE,
+      'con_cupo': 'Con Cupo' if vehicle.CON_CUPO == '1' else '',
+      'conductor_codigo': vehicle.CONDUCTOR,
+      'conductor_nombre': driver.NOMBRE,
+      'conductor_cedula': driver.CEDULA,
+      'conductor_celular': driver.TELEFONO,
+      'conductor_direccion': driver.DIRECCION,
+      'fecha_contrato': vehicle.FEC_ESTADO.strftime('%d/%m/%Y') if vehicle.FEC_ESTADO else None,
+      'permitido': wReg,
+      'mensaje': message if wReg == 1 else '',
     }
 
     return JSONResponse(content=jsonable_encoder(delivery_info), status_code=200)
