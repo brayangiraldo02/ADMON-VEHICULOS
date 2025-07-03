@@ -72,8 +72,10 @@ async def vehicles_data(company_code: str):
         "placa_vehiculo": vehicle.PLACA,
         "numero_unidad": vehicle.NUMERO,
         "codigo_conductor": vehicle.CONDUCTOR,
+        "codigo_propietario": vehicle.PROPI_IDEN,
         "marca": vehicle.NOMMARCA,
-        "linea": vehicle.LINEA
+        "linea": vehicle.LINEA,
+        "modelo": vehicle.MODELO
       })
 
     return JSONResponse(content=jsonable_encoder(result), status_code=200)
@@ -88,7 +90,15 @@ async def vehicles_data(company_code: str):
 async def drivers_data(company_code: str):
   db = session()
   try:
-    drivers = db.query(Conductores).filter(Conductores.EMPRESA == company_code, Conductores.CODIGO != "").all()
+    drivers = db.query(Conductores.CODIGO, Conductores.UND_NRO, Conductores.NOMBRE,
+                       Conductores.CEDULA, Vehiculos.PROPI_IDEN
+                      ).outerjoin(
+                        Vehiculos, Conductores.CODIGO == Vehiculos.CONDUCTOR
+                      ).filter(
+                        Conductores.EMPRESA == company_code, 
+                        Conductores.CODIGO != ""
+                      ).all()
+    
     if not drivers:
       return JSONResponse(content={"message": "Drivers not found"}, status_code=404)
 
@@ -99,7 +109,8 @@ async def drivers_data(company_code: str):
         "codigo_conductor": driver.CODIGO,
         "numero_unidad": driver.UND_NRO,
         "nombre_conductor": driver.NOMBRE,
-        "cedula": driver.CEDULA
+        "cedula": driver.CEDULA,
+        "codigo_propietario": driver.PROPI_IDEN or ""
       })
 
     return JSONResponse(content=jsonable_encoder(result), status_code=200)
