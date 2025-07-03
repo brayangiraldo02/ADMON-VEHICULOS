@@ -87,7 +87,7 @@ export class VehiclesTableComponent {
   openExternalLink(): void {
     this.isLoading = true;
     const data = { user: this.user };
-    localStorage.setItem('pdfEndpoint', 'directorio-vehiculos');
+    localStorage.setItem('pdfEndpoint', 'directorio-vehiculos/' + this.getCompany());
     localStorage.setItem('pdfData', '0');
     window.open(`/pdf`, '_blank')
     this.router.navigate(['/home/users']);
