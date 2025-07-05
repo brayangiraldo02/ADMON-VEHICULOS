@@ -5,6 +5,10 @@ from models.conductores import Conductores
 from models.vehiculos import Vehiculos
 from models.inspecciones import Inspecciones
 from fastapi.encoders import jsonable_encoder
+from fastapi import UploadFile, File
+import os
+import shutil
+from typing import List
 
 async def owners_data(company_code: str):
   db = session()
@@ -163,3 +167,25 @@ async def inspections_info(data):
     return JSONResponse(content={"message": str(e)}, status_code=500)
   finally:
     db.close()
+
+#-----------------------------------------------------------------------------------------------
+
+#! Cambiar por el directorio que es
+upload_directory = "uploads"
+
+
+async def upload_image(vehicle_number: str, image: UploadFile = File(...)):
+  try:
+    vehicle_number_path = os.path.join(upload_directory, vehicle_number, "fotos")
+    os.makedirs(vehicle_number_path, exist_ok=True)
+
+    file_path = os.path.join(vehicle_number_path, image.filename)
+    
+    with open(file_path, "wb") as buffer:
+      shutil.copyfileobj(image.file, buffer)
+
+    file_path = file_path.replace("\\", "/")  # Normalize path for JSON response
+
+    return JSONResponse(content={ "file_path": file_path}, status_code=200)
+  except Exception as e:
+    return JSONResponse(content={"message": str(e)}, status_code=500)
