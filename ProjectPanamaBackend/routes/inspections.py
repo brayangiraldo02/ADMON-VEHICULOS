@@ -16,9 +16,9 @@ async def get_vehicles_data(company_code: str):
 async def get_drivers_data(company_code: str):
   return await drivers_data(company_code)
 
-@inspections_router.post("/inspections/inspections_info/", tags=["Inspections"])
-async def post_inspections_info(data: InspectionInfo):
-  return await inspections_info(data)
+@inspections_router.post("/inspections/inspections_info/{company_code}", tags=["Inspections"])
+async def post_inspections_info(data: InspectionInfo, company_code: str):
+  return await inspections_info(data, company_code)
 
 @inspections_router.post("/inspections/upload_image/{vehicle_number}/", tags=["Inspections"])
 async def post_upload_image(vehicle_number: str, file: UploadFile = File(...)):

@@ -43,3 +43,33 @@
   height: 46px;
   width: 100%;
 }
+
+form {
+  padding-bottom: 20px;
+}
+
+.mat-elevation-z8 {
+  margin: 0px 22px;
+}
+
+.table-scroll-container {
+  overflow-x: auto; 
+  position: relative; 
+}
+
+th {
+  padding: 0;
+}
+
+th.mat-sort-header .mat-sort-header-container {
+  justify-content: center;
+}
+
+td {
+  padding: 0 8px;
+}
+
+th:first-child,
+td:first-child {
+  padding-left: 20px; 
+}

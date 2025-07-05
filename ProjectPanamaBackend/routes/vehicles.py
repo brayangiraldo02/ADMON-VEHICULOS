@@ -7,6 +7,7 @@ from models.conductores import Conductores
 from schemas.vehicles import VehicleUpdate, VehicleCreate
 from models.centrales import Centrales
 from models.cajarecaudos import CajaRecaudos
+from models.propietarios import Propietarios
 from models.cajarecaudoscontado import CajasRecaudosContado
 from models.cartera import Cartera
 from models.movienca import Movienca
@@ -48,31 +49,58 @@ async def get_vehicles(company_code: str):
   db = session()
   try:
     vehicles = db.query(
-            Vehiculos.NUMERO.label('vehiculo_numero'),
-            Vehiculos.CONSECUTIV.label('vehiculo_consecutivo'),
-            Vehiculos.PLACA.label('vehiculo_placa'),
-            Vehiculos.MODELO.label('vehiculo_modelo'),
-            Vehiculos.NRO_CUPO.label('vehiculo_nro_cupo'),
-            Vehiculos.PERMISONRO.label('vehiculo_permiso_nro'),
-            Vehiculos.MOTORNRO.label('vehiculo_motor'),
-            Vehiculos.CHASISNRO.label('vehiculo_chasis'),
-            Vehiculos.FEC_MATRIC.label('vehiculo_fec_matricula'),
-            Vehiculos.EMPRESA.label('vehiculo_empresa'),
-            Centrales.NOMBRE.label('vehiculo_central'),
-            Vehiculos.NRO_LLAVES.label('vehiculo_nro_llaves'),
-            Conductores.NOMBRE.label('vehiculo_conductor'),
-            Estados.SUMAR.label('vehiculo_estado'),
-            Estados.NOMBRE.label('vehiculo_nombre_estado'),
-            Vehiculos.CUO_DIARIA.label('vehiculo_cuota_diaria'),
-            Vehiculos.NROENTREGA.label('vehiculo_nro_Ctas'),
-            Vehiculos.PANAPASSNU.label('vehiculo_panapass'),
-            Vehiculos.PANAPASSPW.label('vehiculo_panapass_pwd'),
-            Vehiculos.SDO_PANAPA.label('vehiculo_saldo_panapass'),
-        )   .join(Estados, Estados.CODIGO == Vehiculos.ESTADO) \
-            .join(Conductores, Conductores.CODIGO == Vehiculos.CONDUCTOR) \
-            .join(Centrales, Centrales.CODIGO == Vehiculos.CENTRAL) \
-            .filter(Vehiculos.EMPRESA == company_code) \
-            .all()
+        Vehiculos.NUMERO.label('vehiculo_numero'),
+        Vehiculos.CONSECUTIV.label('vehiculo_consecutivo'),
+        Vehiculos.PLACA.label('vehiculo_placa'),
+        Vehiculos.MODELO.label('vehiculo_modelo'),
+        Vehiculos.NRO_CUPO.label('vehiculo_nro_cupo'),
+        Vehiculos.PERMISONRO.label('vehiculo_permiso_nro'),
+        Vehiculos.MOTORNRO.label('vehiculo_motor'),
+        Vehiculos.CHASISNRO.label('vehiculo_chasis'),
+        Vehiculos.FEC_MATRIC.label('vehiculo_fec_matricula'),
+        Vehiculos.PROPI_IDEN.label('vehiculo_propietario_codigo'),
+        Vehiculos.CENTRAL.label('vehiculo_central_codigo'),
+        Vehiculos.NRO_LLAVES.label('vehiculo_nro_llaves'),
+        Vehiculos.ESTADO.label('vehiculo_estado_codigo'),
+        Vehiculos.CONDUCTOR.label('vehiculo_conductor_codigo'),
+        Vehiculos.CUO_DIARIA.label('vehiculo_cuota_diaria'),
+        Vehiculos.NROENTREGA.label('vehiculo_nro_Ctas'),
+        Vehiculos.PANAPASSNU.label('vehiculo_panapass'),
+        Vehiculos.PANAPASSPW.label('vehiculo_panapass_pwd'),
+        Vehiculos.SDO_PANAPA.label('vehiculo_saldo_panapass'),
+    ).filter(Vehiculos.EMPRESA == company_code,
+        Vehiculos.PLACA != '',
+        Vehiculos.PLACA.isnot(None)) \
+    .all()
+
+    conductores = db.query(
+        Conductores.CODIGO,
+        Conductores.NOMBRE
+    ).filter(Conductores.EMPRESA == company_code).all()
+
+    conductores_dict = {conductor.CODIGO: conductor.NOMBRE for conductor in conductores}
+
+    estados = db.query(
+        Estados.CODIGO,
+        Estados.NOMBRE,
+        Estados.SUMAR
+    ).filter(Estados.EMPRESA == company_code).all()
+
+    estados_dict = {estado.CODIGO: {'nombre': estado.NOMBRE, 'sumar': estado.SUMAR} for estado in estados}
+
+    centrales = db.query(
+        Centrales.CODIGO,
+        Centrales.NOMBRE
+    ).filter(Centrales.EMPRESA == company_code).all()
+
+    centrales_dict = {central.CODIGO: central.NOMBRE for central in centrales}
+
+    propietarios = db.query(
+        Propietarios.CODIGO,
+        Propietarios.NOMBRE
+    ).filter(Propietarios.EMPRESA == company_code).all()
+
+    propietarios_dict = {prop.CODIGO: prop.NOMBRE for prop in propietarios}
 
     vehicles_list = [
       {
@@ -85,11 +113,11 @@ async def get_vehicles(company_code: str):
         'motor': vehicle.vehiculo_motor,
         'chasis': vehicle.vehiculo_chasis,
         'matricula': vehicle.vehiculo_fec_matricula,
-        'empresa': vehicle.vehiculo_empresa,
-        'central': vehicle.vehiculo_central,
-        'conductor': vehicle.vehiculo_conductor,
-        'estado': vehicle.vehiculo_estado,
-        'nombre_estado': vehicle.vehiculo_nombre_estado,
+        'empresa': propietarios_dict.get(vehicle.vehiculo_propietario_codigo, ''),
+        'central': centrales_dict.get(vehicle.vehiculo_central_codigo, ''),
+        'conductor': conductores_dict.get(vehicle.vehiculo_conductor_codigo, ''),
+        'estado': estados_dict.get(vehicle.vehiculo_estado_codigo, {}).get('sumar', ''),
+        'nombre_estado': estados_dict.get(vehicle.vehiculo_estado_codigo, {}).get('nombre', ''),
         'vlr_cta': vehicle.vehiculo_cuota_diaria,
         'nro_ctas': vehicle.vehiculo_nro_Ctas,
         'panapass': vehicle.vehiculo_panapass,
@@ -107,8 +135,8 @@ async def get_vehicles(company_code: str):
 
 #-------------------------------------------------------------------------------------------
 
-@vehicles_router.get('/directorio-vehiculos/', tags=["Vehicles"]) 
-async def get_vehiculos_detalles():
+@vehicles_router.get('/directorio-vehiculos/{company_code}/', tags=["Vehicles"]) 
+async def get_vehiculos_detalles(company_code: str):
     db = session()
     try:
         vehiculos_detalles = db.query(
@@ -123,11 +151,19 @@ async def get_vehiculos_detalles():
             Vehiculos.MOTORNRO.label('vehiculo_motor'),
             Vehiculos.CHASISNRO.label('vehiculo_chasis'),
             Vehiculos.FEC_MATRIC.label('vehiculo_fec_matricula'),
-            Vehiculos.EMPRESA.label('vehiculo_empresa'),
+            Vehiculos.PROPI_IDEN.label('vehiculo_empresa_codigo'),
             Centrales.NOMBRE.label('vehiculo_central'),
         )   .join(Estados, Estados.CODIGO == Vehiculos.ESTADO) \
             .join(Centrales, Centrales.CODIGO == Vehiculos.CENTRAL) \
+            .filter(Vehiculos.EMPRESA == company_code) \
             .all()
+        
+        propietarios = db.query(
+            Propietarios.CODIGO,
+            Propietarios.NOMBRE
+        ).filter(Propietarios.EMPRESA == company_code).all()
+
+        propietarios_dict = {prop.CODIGO: prop.NOMBRE for prop in propietarios}
         
         vehiculos_detalles_list = []  
         for resultado in vehiculos_detalles:
@@ -143,7 +179,7 @@ async def get_vehiculos_detalles():
                 'vehiculo_motor': resultado.vehiculo_motor,
                 'vehiculo_chasis': resultado.vehiculo_chasis,
                 'vehiculo_fec_matricula': resultado.vehiculo_fec_matricula,
-                'vehiculo_empresa': resultado.vehiculo_empresa,
+                'vehiculo_empresa': propietarios_dict.get(resultado.vehiculo_empresa_codigo, 'Sin propietario'),
                 'vehiculo_central': resultado.vehiculo_central,
             }
             vehiculos_detalles_list.append(vehiculo_detalle)

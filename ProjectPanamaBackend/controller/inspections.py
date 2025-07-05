@@ -4,6 +4,7 @@ from models.propietarios import Propietarios
 from models.conductores import Conductores
 from models.vehiculos import Vehiculos
 from models.inspecciones import Inspecciones
+from models.tiposinspeccion import TiposInspeccion
 from fastapi.encoders import jsonable_encoder
 from fastapi import UploadFile, File
 import os
@@ -126,25 +127,29 @@ async def drivers_data(company_code: str):
 
 #-----------------------------------------------------------------------------------------------
 
-async def inspections_info(data):
+async def inspections_info(data, company_code: str):
   db = session()
   try:
     filters = [
-        Inspecciones.FECHA >= data.primeraFecha,
-        Inspecciones.FECHA <= data.ultimaFecha
+        Inspecciones.FECHA >= data.fechaInicial,
+        Inspecciones.FECHA <= data.fechaFinal,
     ]
 
     # Filtrar inspecciones por propietario, conductor y vehículo
-    if data.propietario != '0':
+    if data.propietario != '':
         filters.append(Inspecciones.PROPI_IDEN == data.propietario)
     
-    if data.vehiculo != '0':
+    if data.vehiculo != '':
         filters.append(Inspecciones.UNIDAD == data.vehiculo)
     
-    if data.conductor != '0':
+    if data.conductor != '':
         filters.append(Inspecciones.CONDUCTOR == data.conductor)
 
     inspections = db.query(Inspecciones).filter(*filters).all()
+
+    inspections_types = db.query(TiposInspeccion).filter(TiposInspeccion.EMPRESA == company_code).all()
+
+    inspections_dict = {inspection.CODIGO: inspection.NOMBRE for inspection in inspections_types}
 
     inspections_data = []
 
@@ -152,7 +157,7 @@ async def inspections_info(data):
       inspections_data.append({
         "id": inspection.ID,
         "fecha_hora": inspection.FECHA.strftime('%d-%m-%Y') + ' ' + inspection.HORA.strftime('%H:%M') if inspection.FECHA and inspection.HORA else None,
-        "tipo_inspeccion": inspection.TIPO_INSPEC,
+        "tipo_inspeccion": inspections_dict.get(inspection.TIPO_INSPEC, ""),
         "descripcion": inspection.DESCRIPCION,
         "unidad": inspection.UNIDAD,
         "placa": inspection.PLACA,

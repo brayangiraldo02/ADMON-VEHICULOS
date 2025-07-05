@@ -56,10 +56,10 @@ async def pandgstatus_report(data: PandGStatusReport):
           CajaRecaudos,
           (CajaRecaudos.NUMERO == Vehiculos.NUMERO) & 
           (CajaRecaudos.FEC_RECIBO >= data.primeraFecha) & 
-          (CajaRecaudos.FEC_RECIBO <= data.ultimaFecha)
+          (CajaRecaudos.FEC_RECIBO <= data.ultimaFecha) &
+          (CajaRecaudos.PROPI_IDEN == empresa)
         ).filter(
           Vehiculos.PROPI_IDEN == empresa,
-          CajaRecaudos.PROPI_IDEN == empresa,
         ).group_by(
           Vehiculos.NUMERO,
           Vehiculos.FEC_CREADO,
@@ -284,10 +284,10 @@ async def pandgstatus_report(data: PandGStatusReport):
         CajaRecaudos,
         (CajaRecaudos.NUMERO == Vehiculos.NUMERO) & 
         (CajaRecaudos.FEC_RECIBO >= data.primeraFecha) & 
-        (CajaRecaudos.FEC_RECIBO <= data.ultimaFecha)
+        (CajaRecaudos.FEC_RECIBO <= data.ultimaFecha) &
+        (CajaRecaudos.PROPI_IDEN == empresa)
       ).filter(
         Vehiculos.NUMERO == data.unidad,
-        CajaRecaudos.PROPI_IDEN == empresa
       ).group_by(
         Vehiculos.NUMERO,
         Vehiculos.FEC_CREADO,
