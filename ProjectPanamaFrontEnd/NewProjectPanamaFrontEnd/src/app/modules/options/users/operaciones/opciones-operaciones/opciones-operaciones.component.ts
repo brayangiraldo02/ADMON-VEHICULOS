@@ -1,4 +1,7 @@
 import { Component } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { OperacionesContratoDeclaracionJuradaComponent } from '../operaciones-contrato-declaracion-jurada/operaciones-contrato-declaracion-jurada.component';
+import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 
 @Component({
   selector: 'app-opciones-operaciones',
@@ -8,7 +11,7 @@ import { Component } from '@angular/core';
 export class OpcionesOperacionesComponent {
   options = [
     { name: 'Entrega de Vehículo al Conductor', icon: 'info', url: 'EntregaVehiculoConductor', disabled: false },
-    { name: 'Generar Contrato y Declaración Jurada', icon: 'info', url: 'hoalalalal', disabled: true },
+    { name: 'Generar Contrato y Declaración Jurada', icon: 'info', url: 'ContratoDeclaracionJurada', disabled: false },
     { name: 'Crear Cuenta de Diario al Conductor (Anticipo de Cuenta)', icon: 'info', url: 'hoalalalal', disabled: true },
     { name: 'Cambiar de Estado a un Vehículo', icon: 'info', url: 'hoalalalal', disabled: true },
     { name: 'Prestamo de Vehículo al Conductor', icon: 'info', url: 'hoalalalal', disabled: true },
@@ -25,12 +28,19 @@ export class OpcionesOperacionesComponent {
 
   entregaVehiculoConductor: boolean = false;
 
-  constructor() { }
+  constructor(
+    private dialog: MatDialog,
+    private breakpointObserver: BreakpointObserver
+  ) { }
 
   ngOnInit(): void {
   }
 
   selectOption(option: string) {
+    const isSmallScreen = this.breakpointObserver.isMatched(Breakpoints.Small);
+    const isXsmallScreen = this.breakpointObserver.isMatched(Breakpoints.XSmall);
+    const dialogWidth = isSmallScreen || isXsmallScreen ? '90vw' : '60%';
+
     switch (option) {
       case 'EntregaVehiculoConductor':
         console.log('Entrega de Vehículo al Conductor');
@@ -39,8 +49,12 @@ export class OpcionesOperacionesComponent {
         document.documentElement.style.overflow = 'hidden';
         document.body.style.overflow = 'hidden';
         break;
-      case 'Generar Contrato y Declaración Jurada':
-        console.log('Generar Contrato y Declaración Jurada');
+      case 'ContratoDeclaracionJurada':
+        const dialogRef = this.dialog.open(OperacionesContratoDeclaracionJuradaComponent,
+          {
+            width: dialogWidth,
+          }
+        );
         break;
       case 'Crear Cuenta de Diario al Conductor (Anticipo de Cuenta)':
         console.log('Crear Cuenta de Diario al Conductor (Anticipo de Cuenta)');

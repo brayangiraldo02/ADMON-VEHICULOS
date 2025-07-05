@@ -87,6 +87,7 @@ import { LoginComponent } from './modules/users/login/login.component';
 import { NoAuthGuard } from './guards/no-auth.guard';
 import { PdfViewerComponent } from './modules/others/pdf-viewer/pdf-viewer.component';
 import { UsersGuard } from './guards/users.guard';
+import { OperacionesContratoDeclaracionJuradaComponent } from './modules/options/users/operaciones/operaciones-contrato-declaracion-jurada/operaciones-contrato-declaracion-jurada.component';
 // No es necesario importar LayoutComponent aquí
 // No es necesario importar los componentes de tareas/opciones aquí
 
@@ -108,7 +109,11 @@ const routes: Routes = [
     // o manejarlo dentro de navigation-routing.module.ts como haremos.
   },
   // Considera una ruta comodín para manejar rutas no encontradas, por ejemplo, redirigir a login o a una página 404
-  // { path: '**', redirectTo: 'login' } // O una página específica de "No encontrado"
+  // { path: '**', redirectTo: 'login' } // O una página específica de "No encontrado",
+  {
+    path: 'prueba',
+    component: OperacionesContratoDeclaracionJuradaComponent
+  }
 ];
 
 @NgModule({
