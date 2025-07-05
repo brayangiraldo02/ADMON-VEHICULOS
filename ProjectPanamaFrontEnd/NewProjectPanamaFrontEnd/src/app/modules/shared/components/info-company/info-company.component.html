@@ -1,0 +1,53 @@
+<div class="modal">
+  <div class="modal-content">
+    <span class="close" (click)="closeModal()">&times;</span>
+
+    <h2 class="title-container">Información de la Empresa</h2>
+
+    <div class="info-container" *ngIf="!isLoading">
+      <div class="info-table">
+        <table class="company-info-table">
+          <tbody>
+            <tr>
+              <td><strong>Nombre:</strong></td>
+              <td>{{infoCompany.name}}</td>
+            </tr>
+            <tr>
+              <td><strong>NIT:</strong></td>
+              <td>{{ infoCompany.nit }}</td>
+            </tr>
+            <tr>
+              <td><strong>Dirección:</strong></td>
+              <td>{{ infoCompany.direction }}</td>
+            </tr>
+            <tr>
+              <td><strong>Ciudad:</strong></td>
+              <td>{{ infoCompany.city }}</td>
+            </tr>
+            <tr>
+              <td><strong>Teléfono:</strong></td>
+              <td>{{ infoCompany.phone }}</td>
+            </tr>
+            <tr>
+              <td><strong>Correo:</strong></td>
+              <td>{{ infoCompany.email }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+       <div class="options-container">
+         <button class="option back" type="button" (click)="closeModal()">
+            <span class="material-symbols-outlined" translate="no">
+              close
+            </span>
+            <p class="option-text">Cerrar</p>
+          </button>
+       </div>
+    </div>
+
+    <div class="loading-container" *ngIf="isLoading">
+      <h2 class="subtitle-container">Cargando valores, por favor espere...</h2>
+    </div>
+
+  </div>
+</div>

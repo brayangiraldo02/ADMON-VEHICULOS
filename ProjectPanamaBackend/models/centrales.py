@@ -4,6 +4,7 @@ from sqlalchemy import Column, String, Numeric, DateTime
 class Centrales(Base):
   __tablename__ = 'CENTRALES'
   CODIGO = Column(String(12), primary_key=True, nullable=False)
+  EMPRESA = Column(String(2), nullable=False)
   NOMBRE = Column(String(50))
   NIT = Column(Numeric(12, 0))
   CONTROL = Column(String(2))
@@ -21,6 +22,11 @@ class Centrales(Base):
   DOCUMENTO = Column(String(8))
   CONTACTO = Column(String(40))
   CORREO = Column(String(40))
+  CON_CRE = Column(String(1))
+  LIMI_NORTE = Column(String(50))
+  LIMI_SUR = Column(String(50))
+  LIMI_ESTE = Column(String(50))
+  LIMI_OESTE = Column(String(50))
   FEC_CREADO = Column(DateTime)
   USU_CREADO = Column(String(12))
   USU_MODIFI = Column(String(12))

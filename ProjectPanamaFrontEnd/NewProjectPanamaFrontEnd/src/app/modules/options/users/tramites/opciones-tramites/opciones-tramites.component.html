@@ -1,0 +1,86 @@
+<!-- <app-header></app-header> -->
+<div class="container">
+  <h1>TRÁMITES</h1>
+  <!-- <a class="option">
+    <span class="material-symbols-outlined" translate="no">
+      info
+    </span>
+    <span class="option-text">Estado Trámite</span>
+  </a> -->
+  <div class="sections-container">
+    
+    <div class="section-container">
+      <h2>OPERACIONES</h2>
+      <div class="options-container">
+        <ng-container *ngFor="let option of operaciones">
+          <button class="option" type="button" [routerLink]="option.url" [disabled]="option.disabled">
+            <span class="material-symbols-outlined" translate="no">
+              {{ option.icon }}
+            </span>
+            <p class="option-text">{{ option.name }}</p>
+          </button>
+        </ng-container>
+      </div>
+    </div>
+
+    <div class="two-container">
+      <div class="section-container">
+        <h2>CONTROL CUPOS</h2>
+        <div class="options-container">
+          <ng-container *ngFor="let option of control_cupos">
+            <button class="option" type="button" [routerLink]="option.url" [disabled]="option.disabled">
+              <span class="material-symbols-outlined" translate="no">
+                {{ option.icon }}
+              </span>
+              <p class="option-text">{{ option.name }}</p>
+            </button>
+          </ng-container>
+        </div>
+      </div>
+  
+      <div class="section-container">
+        <h2>SEGUROS</h2>
+        <div class="options-container">
+          <ng-container *ngFor="let option of seguros">
+            <button class="option" type="button" [routerLink]="option.url" [disabled]="option.disabled">
+              <span class="material-symbols-outlined" translate="no">
+                {{ option.icon }}
+              </span>
+              <p class="option-text">{{ option.name }}</p>
+            </button>
+          </ng-container>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-container">
+      <h2>FORMATOS PARA TRÁMITES</h2>
+      <div class="options-container">
+        <ng-container *ngFor="let option of formatos_tramites">
+          <button class="option" type="button" [routerLink]="option.url" [disabled]="option.disabled">
+            <span class="material-symbols-outlined" translate="no">
+              {{ option.icon }}
+            </span>
+            <p class="option-text">{{ option.name }}</p>
+          </button>
+        </ng-container>
+      </div>
+    </div>
+
+    <div class="section-container">
+      <h2>SEGUIMIENTO DE TRASPASOS</h2>
+      <div class="options-container">
+        <ng-container *ngFor="let option of seguimiento_traspasos">
+          <button class="option" type="button" [routerLink]="option.url" [disabled]="option.disabled">
+            <span class="material-symbols-outlined" translate="no">
+              {{ option.icon }}
+            </span>
+            <p class="option-text">{{ option.name }}</p>
+          </button>
+        </ng-container>
+      </div>
+    </div>
+
+  </div>
+</div>
+<!-- <app-footer></app-footer> -->

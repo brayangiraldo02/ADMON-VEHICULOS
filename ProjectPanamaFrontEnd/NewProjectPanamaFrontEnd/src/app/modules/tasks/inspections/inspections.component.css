@@ -1,0 +1,75 @@
+.main-container {
+  min-height: 92vh;
+  padding: 2vh 20px 0px;
+}
+
+.title-container {
+  display: flex;
+  justify-content: center;
+}
+
+.title-container h1 {
+  font-weight: bold;
+  font-size: 2rem;
+}
+
+.inputs-container {
+  display: flex;
+  justify-content: space-around;
+}
+
+.field-input {
+  width: 30%;
+  height: 70px;
+}
+
+::ng-deep .field-input .mat-mdc-form-field-flex {
+  height: 100%;
+  align-items: center;
+}
+
+::ng-deep .field-input .mat-mdc-icon-button {
+  transform: scale(1);
+} 
+
+.buttons-container {
+  display: flex;
+  justify-content: space-evenly;
+  gap: 10px;
+}
+
+.buttons-container button {
+  /* background-color: #e7eeff; */
+  height: 46px;
+  width: 100%;
+}
+
+form {
+  padding-bottom: 20px;
+}
+
+.mat-elevation-z8 {
+  margin: 0px 22px;
+}
+
+.table-scroll-container {
+  overflow-x: auto; 
+  position: relative; 
+}
+
+th {
+  padding: 0;
+}
+
+th.mat-sort-header .mat-sort-header-container {
+  justify-content: center;
+}
+
+td {
+  padding: 0 8px;
+}
+
+th:first-child,
+td:first-child {
+  padding-left: 20px; 
+}

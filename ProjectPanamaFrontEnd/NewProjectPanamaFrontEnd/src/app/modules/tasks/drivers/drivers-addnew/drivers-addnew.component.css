@@ -1,0 +1,253 @@
+.main-container {
+  min-height: 90vh;
+  height: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  /* padding-top: 3vh; */
+  user-select: none;
+}
+
+hr {
+  width: 95%;
+  height: 1px;
+  background-color: #000000;
+  margin: 2px;
+}
+
+.title-container {
+  margin-bottom: 10px;
+  font-size: 28px;
+  display: flex;
+  justify-content: center;
+}
+
+.title-container h3 {
+  margin: 0;
+  padding: 0;
+  font-size: 16px;
+}
+
+.buttons-container {
+  display: flex;
+  flex-direction: row;
+  justify-content:space-evenly;
+  width: 98%;
+  padding-bottom: 10px;
+}
+
+button.selected {
+  background: #bcd1ec;
+}
+
+.select{
+  width: 12%;
+  margin: 4px;
+  box-sizing: border-box;
+  background: #ffffff; /* Fondo claro por defecto, ajustable */
+  border-radius: 10px; /* Bordes redondeados */
+  border: 1px solid #ccc;
+  display: flex;
+  align-items: center; /* Centrado vertical */
+  justify-content: center; /* Centrado horizontal */
+  text-align: center; /* Texto centrado */
+  cursor: pointer;
+  position: relative;
+}
+
+.select span.material-symbols-outlined {
+  margin-right: auto;  /* Empuja el icono a la izquierda */
+  font-size: 3.5vh;
+  color: black;
+}
+
+.select.selected {
+  background: #bcd1ec; /* Cambia este color según sea necesario */
+}
+
+.select:hover {
+  /* background: #fff8b4;  */
+  background: #bcd1ec;
+}
+
+.select:disabled {
+  background: #e0e0e0;
+  color: #888;
+  cursor: not-allowed;
+  border-color: #aaa;
+}
+
+.back {
+  background: #ffe9e9;
+}
+
+.back:hover {
+  background: #ffcdcd; 
+}
+
+.small-buttons {
+  width: auto;
+  margin: 5px;
+}
+
+.search-buttons-container {
+  display: flex;
+}
+
+.select-text {
+  flex-grow: 1;
+  text-align: center;  /* Asegura que el texto esté centrado */
+  font-size: 13px; /* Ajuste según necesidad */
+  color: #333; /* Color del texto */
+}
+
+.info-container, form {
+  width: 100%;
+  margin-top: 5px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.media-container {
+  display: flex;
+  flex-direction: row;
+  margin-bottom: 5px;
+}
+
+.media-container .photo-container {
+  width: 20vh;
+  height: 20vh;
+}
+
+.info-container {
+  width: 100%;
+  display: flex;
+  margin-top: 5px;
+  flex-direction: column;
+  align-content: center;
+  flex-wrap: wrap;
+}
+
+.info-code-container {
+  width: 90%;
+  display: flex;
+  margin-top: 5px;
+  flex-direction: row;
+  align-content: center;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: row;
+  flex-shrink: 0;
+  margin-bottom: 10px;
+}
+
+.form-group label {
+  padding-right: 10px;
+  display: flex;
+  align-items: center;
+  font-size: 14px
+}
+
+.form-group input, .form-group select {
+  padding: 8px;
+  background: #eeeeee;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  color: rgb(75, 75, 75);
+  font-size: 13px;
+}
+
+.form-group input:enabled, .form-group select:enabled {
+  background: #ffffff;
+  color: black;
+}
+
+.div-group {
+  display: flex;
+  justify-content: space-between;
+  width: 90%;
+}
+
+.all-size {
+  width: 100%;
+}
+
+.group-inputs {
+  display: flex;
+  flex-direction: column;
+  width: 80%;
+}
+
+.padding {
+  width: 5%;
+}
+
+.two-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  width: 90%;
+}
+
+.code-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.large-textarea {
+  width: 100%;            /* Toma todo el ancho del contenedor */
+  height: 150px;          /* Altura de la caja de texto */
+  padding: 10px;          /* Espacio interno para el texto */
+  border: 1px solid #ccc; /* Borde */
+  border-radius: 10px;    /* Bordes redondeados */
+  font-size: 16px;        /* Tamaño del texto */
+  background-color: #fff; /* Fondo blanco */
+  resize: none;       /* Permitir redimensionar verticalmente */
+  box-sizing: border-box; /* Asegura que el padding se incluya dentro del tamaño del textarea */
+  color: #333;            /* Color del texto */
+}
+
+.large-group {
+  width: 48%;
+}
+
+/* .two-container .form-group {
+  flex: 1;
+} */
+
+.semitotal {
+  width: 80%;
+}
+
+.total {
+  width: 100%;
+}
+
+.large {
+  width: 40vh;
+}
+
+.medium {
+  width: 20vh;
+}
+
+.small {
+  width: 10vh;
+}
+
+.validators {
+  color: #FE0108;
+  cursor: default;
+  margin: 0;
+  font-size:small;
+  width: 90%;
+}
+
+.validators p {
+  margin: 0;
+  margin-bottom: 5px;
+}

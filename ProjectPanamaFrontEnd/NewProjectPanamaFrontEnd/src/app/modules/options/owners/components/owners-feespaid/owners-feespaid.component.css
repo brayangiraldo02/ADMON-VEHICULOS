@@ -1,0 +1,198 @@
+.modal {
+  overflow: auto;
+  display: block;
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.4);
+}
+
+.modal-content {
+  background-color: #fefefe;
+  margin: 10% auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 50%;
+  border-radius: 10px;
+  text-align: center;
+}
+
+.close {
+  margin-bottom: 0;
+  color: #aaa;
+  /* float: right; */
+  display: flex;
+  font-size: 28px;
+  font-weight: bold;
+  justify-content: flex-end;
+}
+
+.close:hover,
+.close:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.title-container {
+  display: flex;
+  justify-content: center;
+  margin: 0;
+  font-size: 25px;
+}
+
+.subtitle-container {
+  font-size: 18px;
+  font-weight: normal;
+}
+
+.options-container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.option {
+  width: 40vh;
+  height: 7vh;
+  margin: 10px;
+  box-sizing: border-box;
+  background: #ffffff;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  text-decoration: none;
+  color: black;
+  font-size: 16px;
+  position: relative;  /* Permite posicionamiento absoluto de elementos hijos */
+}
+
+.option span.material-symbols-outlined {
+  margin-right: auto;  /* Empuja el icono a la izquierda */
+  font-size: 3.5vh;
+}
+
+.option-text {
+  flex-grow: 1;
+  text-align: center;  /* Asegura que el texto esté centrado */
+}
+
+.option:hover {
+  background: #bcd1ec;
+}
+
+.option:disabled {
+  background: #e0e0e0;
+  color: #888;
+  cursor: not-allowed;
+  border-color: #aaa;
+}
+
+.back {
+  background: #ffe9e9;
+}
+
+.back:hover {
+  background: #ffcdcd; 
+}
+
+.selects-container {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
+
+.cuadro-seleccion {
+  border: 1px solid #ccc;
+  padding: 10px;
+  min-height: 20vh;
+  max-height: 25vh;
+  width: 70%;
+  border-radius: 10px;
+  overflow-y: scroll;
+  height: auto;
+  background-color: white;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.cuadro-seleccion .checkbox-container {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  justify-content: flex-start; /* Alinea el contenido al inicio (izquierda) */
+  padding: 5px 0; /* Añadir algo de espaciado vertical */
+}
+
+.cuadro-seleccion .checkbox-container:hover {
+  background: #bcd1ec;
+}
+
+.cuadro-seleccion label {
+  padding-left: 5px;
+}
+
+@media (max-width: 1024px) {
+  .modal-content {
+    width: 70%;
+  }
+
+  .title-container {
+    font-size: 25px;
+  }
+
+  .subtitle-container {
+    font-size: 20px;
+  }
+
+  .cuadro-seleccion {
+    width: 90%;
+  }
+
+}
+
+@media (max-width: 768px) {
+  .modal-content {
+    width: 80%;
+  }
+
+  .title-container {
+    font-size: 25px;
+  }
+
+}
+
+@media (max-width: 480px) {
+  .title-container {
+    font-size: 20px;
+  }
+
+  .subtitle-container {
+    font-size: 16px;
+  }
+
+  .options-container {
+    flex-wrap: wrap;
+  }
+
+  .option {
+    width: 45vh;
+  }
+
+  .option-text {
+    font-size: 14px;
+  }
+
+  .cuadro-seleccion label {
+    font-size: 12px;
+  }
+}

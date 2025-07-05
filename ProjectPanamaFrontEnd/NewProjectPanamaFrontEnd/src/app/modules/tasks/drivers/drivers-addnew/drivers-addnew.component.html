@@ -1,0 +1,460 @@
+<!-- <app-header></app-header> -->
+
+<div class="main-container">
+  <h1 class="title-container">CONDUCTOR</h1>
+
+  <div class="buttons-container" *ngIf="isLoading">
+
+    <button class="select back" type="button" routerLink="/drivers">
+      <span class="material-symbols-outlined" translate="no">
+        arrow_back
+      </span>
+      <p class="select-text">Regresar</p>
+    </button>
+
+    <button class="select" type="button" (click)="goToDriverInfo()" [ngClass]="{'selected': selectedButton === 'personal'}">
+      <span class="material-symbols-outlined" translate="no">
+        badge
+      </span>
+      <p class="select-text">Personales</p>
+    </button>
+
+    <button class="select" type="button" (click)="goToDriverGeneral()" [ngClass]="{'selected': selectedButton === 'general'}" disabled>
+      <span class="material-symbols-outlined" translate="no">
+        import_contacts
+      </span>
+      <p class="select-text">Generales</p>
+    </button>
+
+    <button class="select" type="button" (click)="goToDriverDocuments()" [ngClass]="{'selected': selectedButton === 'documentacion'}" disabled>
+      <span class="material-symbols-outlined" translate="no">
+        file_copy
+      </span>
+      <p class="select-text">Documentación</p>
+    </button>
+
+  </div>
+
+  <hr>
+
+  <form [formGroup]="driverForm" (ngSubmit)="onSubmit()" *ngIf="isLoading">
+    <!-- INPUTS PERSONALES -->
+    <!-- -------------------------------------------------------------------------------------- -->
+    <div class="info-code-container">
+      <div class="div-group all-size">
+        <div class="code-container">
+
+          <div class="form-group">
+            <label for="codigo">CÓDIGO:</label><br>
+            <input type="number" id="codigo" formControlName="codigo"><br>
+          </div>
+
+          <div class="form-group">
+            <label for="nombre">Nombre:</label><br>
+            <input class="large" type="text" id="nombre" formControlName="nombre"><br>
+          </div>
+      
+          <div class="form-group">
+            <label for="cedula" for="nit">C.C:</label><br>
+            <input class="small" type="number" id="cedula" formControlName="cedula"><br>
+
+          </div>
+        </div>
+
+        <div class="media-container">
+          <img class="photo-container" [src]="this.imageDriver">
+          <img class="photo-container" [src]="this.signatureDriver">
+        </div>
+      </div>
+
+    </div>
+
+    <div *ngIf="driverForm.get('codigo')?.invalid && (driverForm.get('codigo')?.dirty || driverForm.get('codigo')?.touched)" class="validators">
+      <div *ngIf="driverForm.get('codigo')?.errors?.['required']"><p>- Código es requerido.</p></div>
+      <div *ngIf="driverForm.get('codigo')?.errors?.['pattern']"><p>- Código no puede exceder 12 caracteres.</p></div>
+    </div>
+
+    <div *ngIf="driverForm.get('nombre')?.invalid && (driverForm.get('nombre')?.dirty || driverForm.get('nombre')?.touched)" class="validators">
+      <div *ngIf="driverForm.get('nombre')?.errors?.['required']"><p>- Nombre es requerido.</p></div>
+      <div *ngIf="driverForm.get('nombre')?.errors?.['maxlength']"><p>- Nombre no puede exceder 50 caracteres.</p></div>
+    </div>
+
+    <div *ngIf="driverForm.get('cedula')?.invalid && (driverForm.get('cedula')?.dirty || driverForm.get('cedula')?.touched)" class="validators">
+      <div *ngIf="driverForm.get('cedula')?.errors?.['required']"><p>- Cedula es requerido.</p></div>
+      <div *ngIf="driverForm.get('cedula')?.errors?.['pattern']"><p>- Cedula no puede exceder 50 caracteres.</p></div>
+    </div>
+
+    <hr>
+
+    <div class="info-container">
+
+      <div class="div-group">
+        <div class="group-inputs">
+          <div class="form-group">
+            <label for="ciudad">Ciudad:</label><br>
+            <select class="total" id="ciudad" formControlName="ciudad">
+              <option *ngFor="let city of cities" [ngValue]="city.codigo" [selected]="city.codigo === data.ciudad">{{ city.codigo }} - {{ city.nombre }}</option>
+            </select><br>
+          </div>
+    
+          <div class="form-group">
+            <label for="telefono" for="celular">Teléfono/Cel:</label><br>
+            <input class="total" type="number" id="telefono" formControlName="telefono"><br>
+            <input class="total" type="number" id="celular" formControlName="celular"><br>
+          </div>
+    
+          <div class="form-group">
+            <label for="correo">Correo:</label><br>
+            <input class="total" type="text" id="correo" formControlName="correo"><br>
+          </div>
+    
+          <div class="form-group">
+            <label for="sexo">Sexo:</label><br>
+            <select class="total" id="sexo" formControlName="sexo">
+              <option value="1">Masculino</option>
+              <option value="2">Femenino</option>
+            </select><br>
+          </div>
+    
+          <div class="form-group">
+            <label for="fecha_ingreso">Fecha Ingreso:</label><br>
+            <input class="total" type="date" id="fecha_ingreso" formControlName="fecha_ingreso"><br>
+          </div>
+        </div>
+
+        <div class="padding"></div>
+
+        <div class="group-inputs">
+          <div class="form-group">
+            <label for="direccion">Dirección:</label><br>
+            <input class="total" type="text" id="direccion" formControlName="direccion"><br>
+          </div>
+    
+          <div class="form-group">
+            <label for="fecha_nacimiento">Fecha Nacimiento:</label><br>
+            <input class="total" type="date" id="fecha_nacimiento" formControlName="fecha_nacimiento"><br>
+          </div>
+    
+          <div class="form-group">
+            <label for="representa">Representante:</label><br>
+            <input class="total" type="text" id="representa" formControlName="representa"><br>
+          </div>
+    
+          <div class="form-group">
+            <label for="estado_civil">Estado civil:</label><br>
+            <select class="total" id="estado_civil" formControlName="estado_civil">
+              <option value="1">Soltero</option>
+              <option value="2">Casado</option>
+              <option value="3">Separado</option>
+              <option value="4">Unido</option>
+              <option value="5">Concubinato</option>
+              <option value="6">Viudo</option>
+            </select><br>
+          </div>
+    
+          <div class="form-group">
+            <label for="fecha_retiro">Fecha Retiro:</label><br>
+            <input class="total" type="date" id="fecha_retiro" formControlName="fecha_retiro"><br>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="driverForm.get('telefono')?.invalid && (driverForm.get('telefono')?.dirty || driverForm.get('telefono')?.touched)" class="validators">
+      <!-- <div *ngIf="driverForm.get('telefono')?.errors?.['required']"><p>- Telefono es requerido.</p></div> -->
+      <div *ngIf="driverForm.get('telefono')?.errors?.['pattern']"><p>- Telefono no puede exceder 30 caracteres.</p></div>
+    </div>
+
+    <div *ngIf="driverForm.get('celular')?.invalid && (driverForm.get('celular')?.dirty || driverForm.get('celular')?.touched)" class="validators">
+      <!-- <div *ngIf="driverForm.get('celular')?.errors?.['required']"><p>- Celular es requerido.</p></div> -->
+      <div *ngIf="driverForm.get('celular')?.errors?.['pattern']"><p>- Celular no puede exceder 30 caracteres.</p></div>
+    </div>
+
+    <div *ngIf="driverForm.get('correo')?.invalid && (driverForm.get('correo')?.dirty || driverForm.get('correo')?.touched)" class="validators">
+      <!-- <div *ngIf="driverForm.get('correo')?.errors?.['required']"><p>- Correo es requerido.</p></div> -->
+      <div *ngIf="driverForm.get('correo')?.errors?.['maxlength']"><p>- Correo no puede exceder 40 caracteres.</p></div>
+    </div>
+
+    <div *ngIf="driverForm.get('direccion')?.invalid && (driverForm.get('direccion')?.dirty || driverForm.get('direccion')?.touched)" class="validators">
+      <!-- <div *ngIf="driverForm.get('direccion')?.errors?.['required']"><p>- Direccion es requerido.</p></div> -->
+      <div *ngIf="driverForm.get('direccion')?.errors?.['maxlength']"><p>- Direccion no puede exceder 120 caracteres.</p></div>
+    </div>
+
+    <div *ngIf="driverForm.get('representa')?.invalid && (driverForm.get('representa')?.dirty || driverForm.get('representa')?.touched)" class="validators">
+      <!-- <div *ngIf="driverForm.get('representa')?.errors?.['required']"><p>- Representante es requerido.</p></div> -->
+      <div *ngIf="driverForm.get('representa')?.errors?.['maxlength']"><p>- Representante no puede exceder 30 caracteres.</p></div>
+    </div>
+
+    <hr>
+    <div class="info-container">
+
+      <div class="div-group">
+
+        <div class="group-inputs">
+
+          <div class="title-container">
+            <h3>CONTACTOS</h3>
+          </div>
+
+          <div class="form-group">
+            <label>1:</label><br>
+            <input class="total" type="text" id="contacto" formControlName="contacto"><br>
+          </div>
+
+          <div class="form-group">
+            <label>2:</label><br>
+            <input class="total" type="text" id="contacto1" formControlName="contacto1"><br>
+          </div>
+
+          <div class="form-group">
+            <label>3:</label><br>
+            <input class="total" type="text" id="contacto2" formControlName="contacto2"><br>
+          </div>
+        </div>
+
+        <div class="padding"></div>
+
+        <div class="group-inputs">
+          <div class="title-container">
+            <h3>TEL/CEL</h3>
+          </div>
+
+          <div class="form-group">
+            <input class="total" type="text" id="tel_contacto" formControlName="tel_contacto"><br>
+          </div>
+    
+          <div class="form-group">
+            <input class="total" type="text" id="tel_contacto1" formControlName="tel_contacto1"><br>
+          </div>
+
+          <div class="form-group">
+            <input class="total" type="text" id="tel_contacto2" formControlName="tel_contacto2"><br>
+          </div>
+        </div>
+
+        <div class="padding"></div>
+
+        <div class="group-inputs">
+          <div class="title-container">
+            <h3>PARENTESCO</h3>
+          </div>
+
+          <div class="form-group">
+            <input class="total" type="text" id="par_contacto" formControlName="par_contacto"><br>
+          </div>
+
+          <div class="form-group">
+            <input class="total" type="text" id="par_contacto1" formControlName="par_contacto1"><br>
+          </div>
+
+          <div class="form-group">
+            <input class="total" type="text" id="par_contacto2" formControlName="par_contacto2"><br>
+          </div>
+        </div>
+
+        </div>
+      </div>
+
+      <div class="two-container">
+        <div class="form-group semitotal">
+          <label for="recome_nom">RECOMENDADO:</label>
+          <input class="total" type="text" id="recome_nom" formControlName="recome_nom"><br>
+        </div>
+    
+        <div class="form-group ">
+          <label for="recome_ced">Cédula:</label>
+          <input class="small" type="text" id="recome_ced" formControlName="recome_ced"><br>
+        </div>
+      </div>
+
+      <div *ngIf="driverForm.get('contacto')?.invalid && (driverForm.get('contacto')?.dirty || driverForm.get('contacto')?.touched)" class="validators">
+        <!-- <div *ngIf="driverForm.get('contacto')?.errors?.['required']"><p>- Contacto 1 es requerido.</p></div> -->
+        <div *ngIf="driverForm.get('contacto')?.errors?.['maxlength']"><p>- Contacto 1 no puede exceder 40 caracteres.</p></div>
+      </div>
+
+      <div *ngIf="driverForm.get('contacto1')?.invalid && (driverForm.get('contacto1')?.dirty || driverForm.get('contacto1')?.touched)" class="validators">
+        <!-- <div *ngIf="driverForm.get('contacto1')?.errors?.['required']"><p>- Contacto 2 es requerido.</p></div> -->
+        <div *ngIf="driverForm.get('contacto1')?.errors?.['maxlength']"><p>- Contacto 2 no puede exceder 40 caracteres.</p></div>
+      </div>
+
+      <div *ngIf="driverForm.get('contacto2')?.invalid && (driverForm.get('contacto2')?.dirty || driverForm.get('contacto2')?.touched)" class="validators">
+        <!-- <div *ngIf="driverForm.get('contacto2')?.errors?.['required']"><p>- Contacto 3 es requerido.</p></div> -->
+        <div *ngIf="driverForm.get('contacto2')?.errors?.['maxlength']"><p>- Contacto 3 no puede exceder 40 caracteres.</p></div>
+      </div>
+
+      <div *ngIf="driverForm.get('tel_contacto')?.invalid && (driverForm.get('tel_contacto')?.dirty || driverForm.get('tel_contacto')?.touched)" class="validators">
+        <!-- <div *ngIf="driverForm.get('tel_contacto')?.errors?.['required']"><p>- Teléfono del contacto 1 es requerido.</p></div> -->
+        <div *ngIf="driverForm.get('tel_contacto')?.errors?.['pattern']"><p>- Teléfono del contacto 1 no puede exceder 40 caracteres.</p></div>
+      </div>
+
+      <div *ngIf="driverForm.get('tel_contacto1')?.invalid && (driverForm.get('tel_contacto1')?.dirty || driverForm.get('tel_contacto1')?.touched)" class="validators">
+        <!-- <div *ngIf="driverForm.get('tel_contacto1')?.errors?.['required']"><p>- Teléfono del contacto 2 es requerido.</p></div> -->
+        <div *ngIf="driverForm.get('tel_contacto1')?.errors?.['pattern']"><p>- Teléfono del contacto 2 no puede exceder 40 caracteres.</p></div>
+      </div>
+
+      <div *ngIf="driverForm.get('tel_contacto2')?.invalid && (driverForm.get('tel_contacto2')?.dirty || driverForm.get('tel_contacto2')?.touched)" class="validators">
+        <!-- <div *ngIf="driverForm.get('tel_contacto2')?.errors?.['required']"><p>- Teléfono del contacto 3 es requerido.</p></div> -->
+        <div *ngIf="driverForm.get('tel_contacto2')?.errors?.['pattern']"><p>- Teléfono del contacto 3 no puede exceder 40 caracteres.</p></div>
+      </div>
+
+      <div *ngIf="driverForm.get('par_contacto')?.invalid && (driverForm.get('par_contacto')?.dirty || driverForm.get('par_contacto')?.touched)" class="validators">
+        <!-- <div *ngIf="driverForm.get('par_contacto')?.errors?.['required']"><p>- Parentesco del contacto 1 es requerido.</p></div> -->
+        <div *ngIf="driverForm.get('par_contacto')?.errors?.['maxlength']"><p>- Parentesco del contacto 1 no puede exceder 20 caracteres.</p></div>
+      </div>
+
+      <div *ngIf="driverForm.get('par_contacto1')?.invalid && (driverForm.get('par_contacto1')?.dirty || driverForm.get('par_contacto1')?.touched)" class="validators">
+        <!-- <div *ngIf="driverForm.get('par_contacto1')?.errors?.['required']"><p>- Parentesco del contacto 2 es requerido.</p></div> -->
+        <div *ngIf="driverForm.get('par_contacto1')?.errors?.['maxlength']"><p>- Parentesco del contacto 2 no puede exceder 20 caracteres.</p></div>
+      </div>
+
+      <div *ngIf="driverForm.get('par_contacto2')?.invalid && (driverForm.get('par_contacto2')?.dirty || driverForm.get('par_contacto2')?.touched)" class="validators">
+        <!-- <div *ngIf="driverForm.get('par_contacto2')?.errors?.['required']"><p>- Parentesco del contacto 3 es requerido.</p></div> -->
+        <div *ngIf="driverForm.get('par_contacto2')?.errors?.['maxlength']"><p>- Parentesco del contacto 3 no puede exceder 20 caracteres.</p></div>
+      </div>
+
+      <div *ngIf="driverForm.get('recome_nom')?.invalid && (driverForm.get('recome_nom')?.dirty || driverForm.get('recome_nom')?.touched)" class="validators">
+        <!-- <div *ngIf="driverForm.get('recome_nom')?.errors?.['required']"><p>- Parentesco del contacto 3 es requerido.</p></div> -->
+        <div *ngIf="driverForm.get('recome_nom')?.errors?.['maxlength']"><p>- RECOMENDADO no puede exceder 50 caracteres.</p></div>
+      </div>
+
+      <div *ngIf="driverForm.get('recome_ced')?.invalid && (driverForm.get('recome_ced')?.dirty || driverForm.get('recome_ced')?.touched)" class="validators">
+        <!-- <div *ngIf="driverForm.get('recome_ced')?.errors?.['required']"><p>- Parentesco del contacto 3 es requerido.</p></div> -->
+        <div *ngIf="driverForm.get('recome_ced')?.errors?.['maxlength']"><p>- Cédula del recomendado no puede exceder 12 caracteres.</p></div>
+      </div>
+
+    <hr>
+
+    <div class="info-container">
+
+      <div class="div-group">
+
+        <div class="group-inputs">
+
+          <div class="form-group">
+            <label for="estado">Estado:</label><br>
+            <select class="total" id="estado" formControlName="estado">
+              <option value="1">Activo</option>
+              <option value="2">Suspendido</option>
+              <option value="3">Retirado</option>
+              <option value="4">Reportado</option>
+            </select><br>
+          </div>
+
+          <div class="form-group">
+            <label for="contrato_auto">Contrato Auto:</label><br>
+            <select class="total" id="contrato_auto" formControlName="contrato_auto">
+              <option value="0" disabled></option>
+              <option value="1">Nuevo</option>
+              <option value="2">Usado</option>
+            </select><br>
+          </div>
+        </div>
+
+        <div class="padding"></div>
+
+        <div class="group-inputs">
+          <div class="form-group">
+            <label for="fecha_estado">Fecha Estado:</label><br>
+            <input class="total" type="date" disabled><br>
+          </div>
+    
+          
+      
+          <div class="form-group">
+            <label for="cruce_ahorros">Cruzar Ahorros con Siniestros Mensual:</label><br>
+            <select class="total" id="cruce_ahorros" formControlName="cruce_ahorros">
+              <option value="1">Sí</option>
+              <option value="2">No</option>
+            </select><br>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <hr>
+
+    <div class="info-container">
+
+      <div class="two-container">
+        <div class="form-group">
+          <label for="licencia_numero">No Licencia:</label><br>
+          <input class="medium" type="text" id="licencia_numero" formControlName="licencia_numero"><br>
+        </div>
+
+        <div class="form-group">
+          <label for="licencia_categoria">Categoría:</label><br>
+          <input class="medium" type="text" id="licencia_categoria" formControlName="licencia_categoria"><br>
+        </div>
+    
+        <div class="form-group">
+          <label for="licencia_vencimiento">Vence:</label><br>
+          <input class="medium" type="date" id="licencia_vencimiento" formControlName="licencia_vencimiento"><br>
+        </div>
+      </div>
+
+    </div>
+
+    <div *ngIf="driverForm.get('licencia_numero')?.invalid && (driverForm.get('licencia_numero')?.dirty || driverForm.get('licencia_numero')?.touched)" class="validators
+    ">
+      <!-- <div *ngIf="driverForm.get('licencia_numero')?.errors?.['required']"><p>- No Licencia es requerido.</p></div> -->
+      <div *ngIf="driverForm.get('licencia_numero')?.errors?.['maxlength']"><p>- No Licencia no puede exceder 12 caracteres.</p></div>
+    </div>
+
+    <div *ngIf="driverForm.get('licencia_categoria')?.invalid && (driverForm.get('licencia_categoria')?.dirty || driverForm.get('licencia_categoria')?.touched)" class="validators">
+      <!-- <div *ngIf="driverForm.get('licencia_categoria')?.errors?.['required']"><p>- Categoría es requerido.</p></div> -->
+      <div *ngIf="driverForm.get('licencia_categoria')?.errors?.['maxlength']"><p>- Categoría no puede exceder 2 caracteres.</p></div>
+    </div>
+
+    <hr>
+
+    <div class="info-container">
+      <div class="div-group">
+        <div class="form-group large-group">
+          <label for="detalle">Descripción:</label>
+          <textarea id="detalle" class="large-textarea" placeholder="Escribe tu descripción aquí..." formControlName="detalle"></textarea>
+        </div>
+
+        <div class="form-group large-group">
+          <label for="observaciones">Condiciones del Contrato:</label>
+          <textarea id="observaciones" class="large-textarea" placeholder="Escribe tu condiciones aquí..." formControlName="observaciones"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="driverForm.get('detalle')?.invalid && (driverForm.get('detalle')?.dirty || driverForm.get('detalle')?.touched)" class="validators
+    ">
+      <!-- <div *ngIf="driverForm.get('detalle')?.errors?.['required']"><p>- Descripción es requerido.</p></div> -->
+      <div *ngIf="driverForm.get('detalle')?.errors?.['maxlength']"><p>- Descripción no puede exceder 50 caracteres.</p></div>
+    </div>
+
+    <div *ngIf="driverForm.get('observaciones')?.invalid && (driverForm.get('observaciones')?.dirty || driverForm.get('observaciones')?.touched)" class="validators">
+      <!-- <div *ngIf="driverForm.get('observaciones')?.errors?.['required']"><p>- Condiciones del Contrato es requerido.</p></div> -->
+      <div *ngIf="driverForm.get('observaciones')?.errors?.['maxlength']"><p>- Condiciones del Contrato no puede exceder 50 caracteres.</p></div>
+    </div>
+  <!-- -------------------------------------------------------------------------------------- -->
+
+    <hr>
+
+    <div class="buttons-container">
+
+      <button class="select" type="submit">
+        <span class="material-symbols-outlined" translate="no">
+          check
+        </span>
+        <p class="select-text">Aceptar</p>
+      </button>
+
+      <button class="select back" type="button" routerLink="/drivers">
+        <span class="material-symbols-outlined" translate="no">
+          close
+        </span>
+        <p class="select-text">Cancelar</p>
+      </button>
+
+    </div>
+  </form>
+
+  <p *ngIf="!isLoading">Creando conductor, por favor espere...</p>
+</div>
+<!-- <app-footer></app-footer> -->

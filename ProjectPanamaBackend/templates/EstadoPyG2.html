@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Estado de Pérdidas y Ganancias</title>
+  <style type="text/css">
+    #logo {
+      position: absolute;
+      top: 0;
+      right: 0;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      text-align: center;
+      font-family: sans-serif;
+    }
+
+    th, td {
+      padding: 10px;
+      text-align: center;
+    }
+
+    /* Bordes más definidos para los encabezados */
+    th {
+      border: 1px solid black;
+      background-color: #ddd;
+      border-right: none;
+      border-bottom: 2px solid black; /* Línea inferior más gruesa */
+    }
+
+    /* Último encabezado con borde derecho */
+    th:last-child {
+      border-right: 1px solid black;
+    }
+
+    /* Primer celda de cada fila con borde izquierdo */
+    td:first-child {
+      border-left: 1px solid black;
+    }
+
+    /* Última celda de cada fila con borde derecho */
+    td:last-child {
+      border-right: 1px solid black;
+    }
+
+    /* Fila de totales con bordes completos */
+    tr.total-row td {
+      border: 1px solid black;
+      border-top: 2px solid black;
+      border-bottom: 2px solid black;
+    }
+
+    td.group {
+      border-right: none;
+      border-left: none;
+    }
+
+    td.right {
+      border-right: none;
+    }
+
+    /* Estilo para la fila de encabezados */
+    thead {
+      background-color: #f2f2f2;
+    }
+
+    /* Línea divisoria entre grupos de datos */
+    tr.divisor td {
+      border-top: 2px solid #999;
+    }
+
+    /* Estilo para la celda de la empresa (mitad de la tabla) */
+    .empresa-cell {
+      border: 2px solid #000;
+      border-radius: 10px;
+      padding: 10px;
+      font-weight: bold;
+      text-align: left;
+      background-color: #f8f8f8;
+    }
+
+    /* Estilo para la celda de Total Empresa */
+    .empresa-total {
+      border: 2px solid #000;
+      border-radius: 10px;
+      padding: 10px;
+      font-weight: bold;
+      text-align: left;
+      background-color: #f0f0f0;
+    }
+
+    /* Estilo para el total control como en RelacionIngresos */
+    .box-propietario {
+      text-align: left;
+      font-size: 17px;
+      margin-top: 10px;
+      padding: 5px;
+    }
+
+    .sin-borde {
+      border: none !important;
+    }
+
+    /* Fila vacía pero con línea horizontal */
+    tr.empty-row-with-line td {
+      height: 10px;
+    }
+
+  </style>
+</head>
+<body>
+  <div style="font-weight: bold; display: flex; justify-content: space-between;">
+    <div>Desde: {{ data['fechas']['primeraFecha'] }} Hasta: {{ data['fechas']['ultimaFecha'] }}</div>
+  </div>
+
+  <table>
+    <thead>
+      <!-- Fila superior de encabezados -->
+      <tr>
+        <th rowspan="2">Unidad Nº</th>
+        <th rowspan="2">Fecha Inicio</th>
+        <th rowspan="2">Año</th>
+        <th rowspan="2">Valor Compra</th>
+        <th rowspan="2">Estado Vehículo</th>
+        
+        <th colspan="2">INGRESOS (+)</th>
+        <th colspan="3">GASTOS (-)</th>
+        <th colspan="2">PIEZAS / M.OBRA (-)</th>
+        <th colspan="2">ESTADO DE PgG ($)</th>
+        <th rowspan="2">AVANCE ($)</th>
+      </tr>
+      <tr>
+        <th>Ingresos</th>
+        <th>Seguros</th>
+        <th>Gasto Caja</th>
+        <th>Generales</th>
+        <th>Otro Gasto</th>
+        <th>Chapistería</th>
+        <th>Almacén</th>
+        <th>Utilidad</th>
+        <th>Pérdida</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr class="empty-row-with-line">
+        <td colspan="15"></td>
+      </tr>
+
+      <!-- INICIO SECCIÓN ITERATIVA POR EMPRESA -->
+      {% for empresa_nombre in data.empresas %}
+      <!-- Fila para mostrar la sección "EMPRESA..." -->
+      <tr class="empresa-row">
+        <td colspan="15" class="empresa-cell">
+          EMPRESA: {{ data.empresas[empresa_nombre].codigo }} &nbsp; {{ data.empresas[empresa_nombre].nombre }}
+        </td>
+      </tr>
+      
+      <!-- Filas de datos dinámicas cada unidad de la empresa -->
+      {% for unidad in data.empresas[empresa_nombre].unidades %}
+      <tr>
+        <td>{{ unidad['NUMERO'] }}</td>
+        <td>{{ unidad['FEC_CREADO'] }}</td>
+        <td>{{ unidad['MODELO'] }}</td>
+        <td>{{ "" if unidad['VLR_COMPRA'] == 0.00 else unidad['VLR_COMPRA'] }}</td>
+        <td>{{ unidad['NOMESTADO'] }}</td>
+        
+        <td>{{ "" if unidad['INGRESOS']['INGRESOS'] == 0.00 else unidad['INGRESOS']['INGRESOS'] }}</td>
+        <td>{{ "" if unidad['INGRESOS']['SEGUROS'] == 0.00 else unidad['INGRESOS']['SEGUROS'] }}</td>
+        <td>{{ "" if unidad['GASTOS']['GASTO_CAJA'] == 0.00 else unidad['GASTOS']['GASTO_CAJA'] }}</td>
+        <td>{{ "" if unidad['GASTOS']['GENERALES'] == 0.00 else unidad['GASTOS']['GENERALES'] }}</td>
+        <td>{{ "" if unidad['GASTOS']['OTRO_GASTO'] == 0.00 else unidad['GASTOS']['OTRO_GASTO'] }}</td>
+        <td>{{ "" if unidad['PIEZAS_MOBRA']['CHAPISTERIA'] == 0.00 else unidad['PIEZAS_MOBRA']['CHAPISTERIA'] }}</td>
+        <td>{{ "" if unidad['PIEZAS_MOBRA']['ALMACEN'] == 0.00 else unidad['PIEZAS_MOBRA']['ALMACEN'] }}</td>
+        <td>{{ "" if unidad['ESTADOPyG'] <= 0 else unidad['ESTADOPyG'] }}</td>
+        <td>{{ "" if unidad['ESTADOPyG'] >= 0 else -unidad['ESTADOPyG'] }}</td>
+        <td>{{ "" if unidad['AVANCE'] == 0.00 else unidad['AVANCE'] }}</td>
+      </tr>
+      {% endfor %}
+
+      <!-- Fila con el total de la empresa -->
+      <tr class="total-row">
+        <td colspan="5" class="empresa-total">Total Empresa: {{ data.empresas[empresa_nombre].totales_empresa.cantidad_unidades }}</td>
+        <td>{{ data.empresas[empresa_nombre].totales_empresa.ingresos }}</td>
+        <td>{{ data.empresas[empresa_nombre].totales_empresa.seguros }}</td>
+        <td>{{ data.empresas[empresa_nombre].totales_empresa.gasto_caja }}</td>
+        <td>{{ data.empresas[empresa_nombre].totales_empresa.generales }}</td>
+        <td>{{ data.empresas[empresa_nombre].totales_empresa.otro_gasto }}</td>
+        <td>{{ data.empresas[empresa_nombre].totales_empresa.chapisteria }}</td>
+        <td>{{ data.empresas[empresa_nombre].totales_empresa.almacen }}</td>
+        <td>{{ data.empresas[empresa_nombre].totales_empresa.utilidad }}</td>
+        <td>{{ data.empresas[empresa_nombre].totales_empresa.perdida }}</td>
+        <td>{{ data.empresas[empresa_nombre].totales_empresa.avance }}</td>
+      </tr>
+
+      <tr class="empty-row-with-line">
+        <td colspan="15"></td>
+      </tr>
+      {% endfor %}
+      <!-- FIN DE SECCIÓN ITERATIVA POR EMPRESA -->
+
+      <!-- Total Control como en RelacionIngresos -->
+      <tr class="total-row">
+        <td colspan="5" class="empresa-total">Total General: {{ data['totales']['cantidad_unidades'] }}</td>
+        <td>{{ data['totales']['ingresos'] }}</td>
+        <td>{{ data['totales']['seguros'] }}</td>
+        <td>{{ data['totales']['gasto_caja'] }}</td>
+        <td>{{ data['totales']['generales'] }}</td>
+        <td>{{ data['totales']['otro_gasto'] }}</td>
+        <td>{{ data['totales']['chapisteria'] }}</td>
+        <td>{{ data['totales']['almacen'] }}</td>
+        <td>{{ data['totales']['utilidad'] }}</td>
+        <td>{{ data['totales']['perdida'] }}</td>
+        <td>{{ data['totales']['avance'] }}</td>
+      </tr>
+    </tbody>
+  </table>
+</body>
+</html>

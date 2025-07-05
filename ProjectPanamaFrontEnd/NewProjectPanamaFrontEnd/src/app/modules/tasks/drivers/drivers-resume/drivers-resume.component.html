@@ -1,0 +1,415 @@
+<!-- <app-header></app-header> -->
+
+<div class="main-container">
+  <h1 class="title-container">CONDUCTOR {{code}}</h1>
+
+  <div class="buttons-container" *ngIf="!isLoading">
+
+    <button class="select back" type="button" routerLink="/drivers">
+      <span class="material-symbols-outlined" translate="no">
+        arrow_back
+      </span>
+      <p class="select-text">Regresar</p>
+    </button>
+
+    <button class="select" type="button" (click)="goToDriverInfo()" [ngClass]="{'selected': selectedButton === 'personal'}">
+      <span class="material-symbols-outlined" translate="no">
+        badge
+      </span>
+      <p class="select-text">Personales</p>
+    </button>
+
+    <button class="select" type="button" (click)="goToDriverGeneral()" [ngClass]="{'selected': selectedButton === 'general'}" disabled>
+      <span class="material-symbols-outlined" translate="no">
+        import_contacts
+      </span>
+      <p class="select-text">Generales</p>
+    </button>
+
+    <button class="select" type="button" (click)="goToDriverVehicles()" [ngClass]="{'selected': selectedButton === 'vehiculos'}" disabled>
+      <span class="material-symbols-outlined" translate="no">
+        traffic_jam
+      </span>
+      <p class="select-text">Vehículos</p>
+    </button>
+
+    <button class="select" type="button" (click)="goToDriverIncome()" [ngClass]="{'selected': selectedButton === 'ingresos'}" disabled>
+      <span class="material-symbols-outlined" translate="no">
+        payments
+      </span>
+      <p class="select-text">Ingresos</p>
+    </button>
+
+    <button class="select" type="button" (click)="goToDriverOrder()" [ngClass]="{'selected': selectedButton === 'ordenes'}" disabled>
+      <span class="material-symbols-outlined">
+        receipt_long
+      </span>
+      <p class="select-text">Ordenes</p>
+    </button>
+
+    <button class="select" type="button" (click)="goToDriverDocuments()" [ngClass]="{'selected': selectedButton === 'documentacion'}">
+      <span class="material-symbols-outlined" translate="no">
+        file_copy
+      </span>
+      <p class="select-text">Documentación</p>
+    </button>
+
+  </div>
+
+  <hr *ngIf="!isLoading">
+
+  <app-drivers-documentation *ngIf="VehiclesDocumentation"></app-drivers-documentation>
+
+  <!-- INPUTS PERSONALES -->
+  <!-- -------------------------------------------------------------------------------------- -->
+  <div class="info-code-container" *ngIf="!isLoading && (!VehiclesDocumentation)">
+    <div class="div-group all-size">
+      <div class="code-container">
+        <div class="form-group">
+          <label for="codigo">CÓDIGO:</label><br>
+          <input type="number" id="codigo" name="codigo" [value]="data.codigo" disabled><br>
+        </div>
+
+        <div class="form-group">
+          <label for="nombre">Nombre:</label><br>
+          <input class="large" type="text" id="nombre" name="nombre" [(ngModel)]="data.nombre" [disabled]="!isEditable"><br>
+        </div>
+    
+        <div class="form-group">
+          <label for="cedula">C.C:</label><br>
+          <input class="small" type="number" id="cedula" name="cedula" [(ngModel)]="data.cedula" [disabled]="!isEditable"><br>
+        </div>
+      </div>
+
+      <div class="media-container">
+        <img class="photo-container" [src]="this.imageDriver">
+        <img class="photo-container" [src]="this.signatureDriver">
+      </div>
+    </div>
+
+  </div>
+
+  <hr *ngIf="!isLoading && (!VehiclesDocumentation)">
+
+  <div class="info-container" *ngIf="!isLoading && (!VehiclesDocumentation)">
+
+    <div class="div-group">
+      <div class="group-inputs">
+        <div class="form-group">
+          <label for="ciudad">Ciudad:</label><br>
+          <select class="total" id="ciudad" name="ciudad" [(ngModel)]="data.ciudad" [disabled]="!isEditable">
+            <option *ngFor="let city of cities" [ngValue]="city.codigo" [selected]="city.codigo === data.ciudad">{{ city.codigo }} - {{ city.nombre }}</option>
+          </select><br>
+        </div>
+  
+        <div class="form-group">
+          <label for="telefono" for="celular">Teléfono/Cel:</label><br>
+          <input class="total" type="text" id="telefono" name="telefono" [(ngModel)]="data.telefono" [disabled]="!isEditable"><br>
+          <input class="total" type="text" id="celular" name="celular" [(ngModel)]="data.celular" [disabled]="!isEditable"><br>
+        </div>
+  
+        <div class="form-group">
+          <label for="correo">Correo:</label><br>
+          <input class="total" type="text" id="correo" name="correo" [(ngModel)]="data.correo" [disabled]="!isEditable"><br>
+        </div>
+  
+        <div class="form-group">
+          <label for="sexo">Sexo:</label><br>
+          <select class="total" id="sexo" name="sexo" [(ngModel)]="data.sexo" [disabled]="!isEditable">
+            <option value="1">Masculino</option>
+            <option value="2">Femenino</option>
+          </select><br>
+        </div>
+  
+        <div class="form-group">
+          <label for="fecha_ingreso">Fecha Ingreso:</label><br>
+          <input class="total" type="text" id="fecha_ingreso" name="fecha_ingreso" [value]="data.fecha_ingreso" disabled><br>
+        </div>
+      </div>
+
+      <div class="padding"></div>
+
+      <div class="group-inputs">
+        <div class="form-group">
+          <label for="direccion">Dirección:</label><br>
+          <input class="total" type="text" id="direccion" name="direccion" [(ngModel)]="data.direccion" [disabled]="!isEditable"><br>
+        </div>
+  
+        <div class="form-group">
+          <label for="fecha_nacimiento">Fecha Nacimiento:</label><br>
+          <input class="total" type="text" id="fecha_nacimiento" name="fecha_nacimiento" [value]="data.fecha_nacimiento" disabled><br>
+        </div>
+  
+        <div class="form-group">
+          <label for="representa">Representante:</label><br>
+          <input class="total" type="text" id="representa" name="representa" [(ngModel)]="data.representa" [disabled]="!isEditable"><br>
+        </div>
+  
+        <div class="form-group">
+          <label for="estado_civil">Estado civil:</label><br>
+          <select class="total" id="estado_civil" name="estado_civil" [(ngModel)]="data.estado_civil" [disabled]="!isEditable">
+            <option value="1">Soltero</option>
+            <option value="2">Casado</option>
+            <option value="3">Separado</option>
+            <option value="4">Unido</option>
+            <option value="5">Concubinato</option>
+            <option value="6">Viudo</option>
+          </select><br>
+        </div>
+  
+        <div class="form-group">
+          <label for="fecha_retiro">Fecha Retiro:</label><br>
+          <input class="total" type="text" id="fecha_retiro" name="fecha_retiro" [value]="data.fecha_retiro" disabled><br>
+        </div>
+      </div>
+    </div>
+    
+  </div>
+
+  <hr *ngIf="!isLoading && (!VehiclesDocumentation)">
+
+  <div class="info-container" *ngIf="!isLoading && (!VehiclesDocumentation)">
+
+    <div class="div-group">
+
+      <div class="group-inputs">
+
+        <div class="title-container">
+          <h3>CONTACTOS</h3>
+        </div>
+
+        <div class="form-group">
+          <label>1:</label><br>
+          <input class="total" type="text" id="contacto" name="contacto" [value]="data.contacto" [disabled]="!isEditable"><br>
+        </div>
+
+        <div class="form-group">
+          <label>2:</label><br>
+          <input class="total" type="text" id="contacto1" name="contacto1" [value]="data.contacto1" [disabled]="!isEditable"><br>
+        </div>
+
+        <div class="form-group">
+          <label>3:</label><br>
+          <input class="total" type="text" id="contacto2" name="contacto2" [value]="data.contacto2" [disabled]="!isEditable"><br>
+        </div>
+      </div>
+
+      <div class="padding"></div>
+
+      <div class="group-inputs">
+        <div class="title-container">
+          <h3>TEL/CEL</h3>
+        </div>
+
+        <div class="form-group">
+          <input class="total" type="text" id="tel_contacto" name="tel_contacto" [value]="data.tel_contacto" [disabled]="!isEditable"><br>
+        </div>
+  
+        <div class="form-group">
+          <input class="total" type="text" id="tel_contacto1" name="tel_contacto1" [value]="data.tel_contacto1" [disabled]="!isEditable"><br>
+        </div>
+
+        <div class="form-group">
+          <input class="total" type="text" id="tel_contacto2" name="tel_contacto2" [value]="data.tel_contacto2" [disabled]="!isEditable"><br>
+        </div>
+      </div>
+
+      <div class="padding"></div>
+
+      <div class="group-inputs">
+        <div class="title-container">
+          <h3>PARENTESCO</h3>
+        </div>
+
+        <div class="form-group">
+          <input class="total" type="text" id="par_contacto" name="par_contacto" [value]="data.par_contacto" [disabled]="!isEditable"><br>
+        </div>
+
+        <div class="form-group">
+          <input class="total" type="text" id="par_contacto1" name="par_contacto1" [value]="data.par_contacto1" [disabled]="!isEditable"><br>
+        </div>
+
+        <div class="form-group">
+          <input class="total" type="text" id="par_contacto2" name="par_contacto2" [value]="data.par_contacto2" [disabled]="!isEditable"><br>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="two-container" *ngIf="!isLoading && (!VehiclesDocumentation)">
+      <div class="form-group semitotal">
+        <label for="recome_nom">RECOMENDADO:</label>
+        <input class="total" type="text" id="recome_nom" name="recome_nom" [(ngModel)]="data.recome_nom" [disabled]="!isEditable"><br>
+      </div>
+  
+      <div class="form-group ">
+        <label for="recome_ced">Cédula:</label>
+        <input class="small" type="text" id="recome_ced" name="recome_ced" [(ngModel)]="data.recome_ced" [disabled]="!isEditable"><br>
+    </div>
+  </div>
+
+  <hr *ngIf="!isLoading && (!VehiclesDocumentation)">
+
+  <div class="info-container" *ngIf="!isLoading && (!VehiclesDocumentation)">
+
+    <div class="div-group">
+
+      <div class="group-inputs">
+
+        <div class="form-group">
+          <label for="estado">Estado:</label><br>
+          <select class="total" id="estado" name="estado" [(ngModel)]="data.estado" [disabled]="!isEditable">
+            <option value="1">Activo</option>
+            <option value="2">Suspendido</option>
+            <option value="3">Retirado</option>
+            <option value="4">Reportado</option>
+          </select><br>
+        </div>
+
+        <div class="form-group">
+          <label for="contrato_auto">Contrato Auto:</label><br>
+          <!-- <input class="total" type="text" id="contrato_auto" name="contrato_auto" [value]="data.contrato_auto" disabled><br> -->
+          <select class="total" id="contrato_auto" name="contrato_auto" [(ngModel)]="data.contrato_auto" [disabled]="!isEditable">
+            <option value="0" disabled></option>
+            <option value="1">Nuevo</option>
+            <option value="2">Usado</option>
+          </select><br>
+        </div>
+      </div>
+
+      <div class="padding"></div>
+
+      <div class="group-inputs">
+        <div class="form-group">
+          <label for="fecha_estado">Fecha Estado:</label><br>
+          <input class="total" type="text" id="fecha_estado" name="fecha_estado" [value]="data.fecha_estado" disabled><br>
+        </div>
+  
+        
+    
+        <div class="form-group">
+          <label for="cruce_ahorros">Cruzar Ahorros con Siniestros Mensual:</label><br>
+          <select class="total" id="cruce_ahorros" name="cruce_ahorros" [(ngModel)]="data.cruce_ahorros" [disabled]="!isEditable">
+            <option value="1">Sí</option>
+            <option value="2">No</option>
+          </select><br>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <hr *ngIf="!isLoading && (!VehiclesDocumentation)">
+
+  <div class="info-container" *ngIf="!isLoading && (!VehiclesDocumentation)">
+
+    <div class="two-container">
+      <div class="form-group">
+        <label for="licencia_numero">No Licencia:</label><br>
+        <input class="medium" type="text" id="licencia_numero" name="licencia_numero" [value]="data.licencia_numero" [disabled]="!isEditable"><br>
+      </div>
+
+      <div class="form-group">
+        <label for="licencia_categoria">Categoría:</label><br>
+        <input class="medium" type="text" id="licencia_categoria" name="licencia_categoria" [(ngModel)]="data.licencia_categoria" [disabled]="!isEditable"><br>
+      </div>
+  
+      <div class="form-group">
+        <label for="licencia_vencimiento">Vence:</label><br>
+        <input class="medium" type="date" id="licencia_vencimiento" name="licencia_vencimiento" [value]="data.licencia_vencimiento" [disabled]="!isEditable"><br>
+      </div>
+    </div>
+
+  </div>
+
+  <hr *ngIf="!isLoading && (!VehiclesDocumentation)">
+
+  <div class="info-container" *ngIf="!isLoading && (!VehiclesDocumentation)">
+    <div class="div-group">
+      <div class="form-group large-group">
+        <label for="detalle">Descripción:</label>
+        <textarea id="detalle" class="large-textarea" placeholder="Escribe tu descripción aquí..." [value]="data.detalle" [disabled]="!isEditable"></textarea>
+      </div>
+
+      <div class="form-group large-group">
+        <label for="observaciones">Condiciones del Contrato:</label>
+        <textarea id="observaciones" class="large-textarea" placeholder="Escribe tu condiciones aquí..." [value]="data.observaciones" [disabled]="!isEditable"></textarea>
+      </div>
+    </div>
+  </div>
+
+  <!-- -------------------------------------------------------------------------------------- -->
+
+  <hr *ngIf="!isLoading">
+
+  <div class="buttons-container" *ngIf="!isLoading">
+
+    <div class="search-buttons-container" *ngIf="!isEditable">
+      <button class="select small-buttons" type="button" (click)="firstDriver()">
+        <span class="material-symbols-outlined" translate="no">
+          first_page
+        </span>
+      </button>
+  
+      <button class="select small-buttons" type="button" (click)="backDriver()">
+        <span class="material-symbols-outlined" translate="no">
+          chevron_left
+        </span>
+      </button>
+  
+      <button class="select small-buttons" type="button" (click)="nextDriver()">
+        <span class="material-symbols-outlined" translate="no">
+          chevron_right
+        </span>
+      </button>
+  
+      <button class="select small-buttons" type="button" (click)="lastDriver()">
+        <span class="material-symbols-outlined" translate="no">
+          last_page
+        </span>
+      </button>
+    </div>
+
+    <button class="select" type="button" routerLink="/new-driver" *ngIf="!isEditable">
+      <span class="material-symbols-outlined" translate="no">
+        add_circle
+      </span>
+      <p class="select-text">Nuevo Conductor</p>
+    </button>
+
+    <button class="select" type="button" (click)="showModal()" *ngIf="!isEditable">
+      <span class="material-symbols-outlined" translate="no">
+        delete
+      </span>
+      <p class="select-text">Eliminar Conductor</p>
+    </button>
+
+    <button class="select" type="button" (click)="enableInputs()" *ngIf="!isEditable">
+      <span class="material-symbols-outlined" translate="no">
+        edit
+      </span>
+      <p class="select-text">Editar</p>
+    </button>
+
+    <button class="select" type="button" (click)="saveData()" *ngIf="isEditable">
+      <span class="material-symbols-outlined" translate="no">
+        check
+      </span>
+      <p class="select-text">Aceptar</p>
+    </button>
+
+    <button class="select back" type="button" (click)="enableInputs()" *ngIf="isEditable">
+      <span class="material-symbols-outlined" translate="no">
+        close
+      </span>
+      <p class="select-text">Cancelar</p>
+    </button>
+
+  </div>
+
+  <p *ngIf="isLoading">Cargando datos, por favor espere...</p>
+</div>
+
+<app-drivers-delete [isVisible]="isModalVisible" [driver]="code" (close)="hideModal()"></app-drivers-delete>
+<!-- <app-footer></app-footer> -->

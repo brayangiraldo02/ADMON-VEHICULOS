@@ -1,7 +1,9 @@
 import pdfkit
 import os
+from io import BytesIO
+import subprocess
 
-def html2pdf(titulo, html_path, pdf_path, header_path, footer_path):
+def html2pdf(titulo, html_path, pdf_path, header_path, footer_path, orientation='Portrait'):
     """
     Convertir HTML a PDF utilizando pdfkit, que es un envoltorio de wkhtmltopdf.
     """
@@ -24,11 +26,25 @@ def html2pdf(titulo, html_path, pdf_path, header_path, footer_path):
         'header-html': header_path,
         'header-center': titulo,
         '--header-font-name': 'Times New Roman', 
-        '--header-font-size': '14',
+        '--header-font-size': '12',
         'footer-center': 'Pág [page] de [topage]',  
         'footer-html': footer_path,
         'footer-font-size': '9',
+        'orientation': orientation,        
     }
 
-    with open(html_path) as f: 
-        pdfkit.from_file(f, pdf_path, options=options)
+    if isinstance(pdf_path, BytesIO):
+        with open(html_path) as f:
+            pdf_bytes = pdfkit.from_file(f, False, options=options)
+        pdf_path.write(pdf_bytes)
+    elif isinstance(pdf_path, (str, os.PathLike)):
+        with open(html_path) as f: 
+            pdfkit.from_file(f, pdf_path, options=options)
+
+def docx2pdf(docx_path):
+    """
+    Convertir un archivo DOCX a PDF utilizando libreoffice
+    """
+    subprocess.run([
+        'C:\Program Files\LibreOffice\program\soffice.exe', '--headless', '--convert-to', 'pdf', '--outdir', os.path.dirname(docx_path), docx_path
+      ], check=True)

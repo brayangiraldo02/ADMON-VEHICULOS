@@ -6,7 +6,7 @@ from models.vehiculos import Vehiculos
 from models.conductores import Conductores
 from models.estados import Estados
 from utils.reports import *
-from schemas.owners import PropietarioUpdate, PropietarioCreate, RepresentantePropietario
+from schemas.owners import *
 from models.centrales import Centrales
 from models.cajarecaudos import CajaRecaudos
 from models.cajarecaudoscontado  import CajasRecaudosContado
@@ -17,25 +17,29 @@ from middlewares.JWTBearer import JWTBearer
 from fastapi.encoders import jsonable_encoder
 from datetime import datetime
 import pytz
+import os
+
 owners_router = APIRouter()
 
 # PETICIÓN DE LISTA DE PROPIETARIOS A LA BASE DE DATOS 
 # ---------------------------------------------------------------------------------------------------------------
-@owners_router.get("/owners", tags=["Owners"])
-async def get_owners():
+@owners_router.get("/owners/{company_code}/", tags=["Owners"])
+async def get_owners(company_code: str):
   db = session()
   try:
-    owners = db.query(Propietarios.CODIGO, Propietarios.NOMBRE).all()
-    owners_list = [{'id': owner.CODIGO, 'name': owner.NOMBRE} for owner in owners]
-    return JSONResponse(content=jsonable_encoder(owners_list))
+    owners = db.query(Propietarios.CODIGO, Propietarios.NOMBRE).filter(Propietarios.EMPRESA == company_code).all()
+    if owners:
+      owners_list = [{'id': owner.CODIGO, 'name': owner.NOMBRE} for owner in owners]
+      return JSONResponse(content=jsonable_encoder(owners_list))
+    return JSONResponse(content={"message": "Owner not found"}, status_code=404)
   except Exception as e:
-    return JSONResponse(content={"error": str(e)})
+    return JSONResponse(content={"message": str(e)})
   finally:
     db.close()
 # ---------------------------------------------------------------------------------------------------------------
 
-@owners_router.get("/owners/all", tags=["Owners"])
-async def get_all_owners():
+@owners_router.get("/owners/all/{company_code}/", tags=["Owners"])
+async def get_all_owners(company_code: str):
   db = session()
   try:
     owners = db.query(
@@ -54,7 +58,11 @@ async def get_all_owners():
       PermisosUsuario, Propietarios.USUARIO == PermisosUsuario.CODIGO
     ).join(
       Centrales, Propietarios.CENTRAL == Centrales.CODIGO
-    ).all()
+    ).filter(
+      Centrales.EMPRESA == company_code,
+      Propietarios.EMPRESA == company_code
+    )\
+    .all()
 
     owners_list = []
     for owner in owners:
@@ -107,7 +115,7 @@ async def get_all_owners():
 
 # PETICIÓN DE UN PROPIETARIO ESPECÍFICO A LA BASE DE DATOS
 # ---------------------------------------------------------------------------------------------------------------
-@owners_router.get("/owner/{owner_id}", tags=["Owners"])
+@owners_router.get("/owner/{owner_id}/", tags=["Owners"])
 async def get_owner(owner_id: int):
   db = session()
   try:
@@ -174,7 +182,7 @@ async def get_owner(owner_id: int):
 
 #----------------------------------------------------------------------------------------------------------------
 
-@owners_router.put("/owner/{owner_id}", response_model=PropietarioUpdate, tags=["Owners"])
+@owners_router.put("/owner/{owner_id}/", response_model=PropietarioUpdate, tags=["Owners"])
 def update_propietario(owner_id: str, propietario: PropietarioUpdate):
     db = session()
     try:
@@ -226,13 +234,14 @@ def update_propietario(owner_id: str, propietario: PropietarioUpdate):
       db.commit()
       return JSONResponse(content={"message": "Owner updated"}, status_code=200)
     except Exception as e:
+      db.rollback()
       return JSONResponse(content={"error": str(e)}, status_code=500)
     finally:
       db.close()
 
 #----------------------------------------------------------------------------------------------------------------
 
-@owners_router.post("/owners", response_model=PropietarioCreate)
+@owners_router.post("/owners/", response_model=PropietarioCreate, tags=["Owners"])
 def create_propietario(propietario: PropietarioCreate):
   db = session()
   try:
@@ -295,7 +304,7 @@ def create_propietario(propietario: PropietarioCreate):
 
 #----------------------------------------------------------------------------------------------------------------
 
-@owners_router.get("/owner-vehicles/{owner_id}", tags=["Owners"])
+@owners_router.get("/owner-vehicles/{owner_id}/", tags=["Owners"])
 async def get_owners_vehicles(owner_id: int):
   db = session()
   try:
@@ -342,7 +351,7 @@ async def get_owners_vehicles(owner_id: int):
 
 #----------------------------------------------------------------------------------------------------------------
 
-@owners_router.get("/owner-representative/{owner_id}", tags=["Owners"])
+@owners_router.get("/owner-representative/{owner_id}/", tags=["Owners"])
 async def get_owner_rep(owner_id: int):
   db = session()
   try: 
@@ -385,7 +394,7 @@ async def get_owner_rep(owner_id: int):
 
 #----------------------------------------------------------------------------------------------------------------
 
-@owners_router.put("/owner-representative/{owner_id}", tags=["Owners"])
+@owners_router.put("/owner-representative/{owner_id}/", tags=["Owners"])
 async def update_owner_representative(owner_id: int, propietario: RepresentantePropietario):
   db = session()
   try:
@@ -424,7 +433,7 @@ async def get_owner_codes():
 
 #----------------------------------------------------------------------------------------------------------------
 
-@owners_router.get("/verify-owner-delete/{owner_id}", tags=["Owners"])
+@owners_router.delete("/owner/{owner_id}/", tags=["Owners"])
 async def verify_owner_delete(owner_id: int):
   db = session()
   try:
@@ -458,10 +467,199 @@ async def verify_owner_delete(owner_id: int):
       'movienca': owner.movienca
     }
 
-    data = check_owner_records(owner_conditions)
+    if any(owner_conditions.values()):
+      return JSONResponse(content={"message": "Owner cant be deleted"})
+    # Si no hay registros en otras tablas, eliminar al propietario
+    db.query(Propietarios).filter(Propietarios.CODIGO == owner_id).delete()
+    db.commit()
+    return JSONResponse(content={"message": "Owner deleted successfully"})
+  
+  except Exception as e:
+    db.rollback() 
+    return JSONResponse(content={"error": str(e)})
+  finally:
+    db.close()
 
-    return JSONResponse(content=jsonable_encoder(data))
+#----------------------------------------------------------------------------------------------------------------
+
+@owners_router.get("/verify-owner-delete/{owner_id}/", tags=["Owners"])
+async def verify_owner_delete(owner_id: int):
+  db = session()
+  try:
+    owner = db.query(
+            Vehiculos.PROPI_IDEN.label('vehiculo'),
+            CajaRecaudos.PROPI_IDEN.label('cajarecaudos'),
+            CajasRecaudosContado.PROPI_IDEN.label('cajarecaudoscontado'),
+            Cartera.PROPI_IDEN.label('cartera'),
+            Movienca.PROPI_IDEN.label('movienca')
+        ).select_from(Propietarios).outerjoin(
+            Vehiculos, Propietarios.CODIGO == Vehiculos.PROPI_IDEN
+        ).outerjoin(
+            CajaRecaudos, Propietarios.CODIGO == CajaRecaudos.PROPI_IDEN
+        ).outerjoin(
+            CajasRecaudosContado, Propietarios.CODIGO == CajasRecaudosContado.PROPI_IDEN
+        ).outerjoin(
+            Cartera, Propietarios.CODIGO == Cartera.PROPI_IDEN
+        ).outerjoin(
+            Movienca, Propietarios.CODIGO == Movienca.PROPI_IDEN
+        ).filter(
+            Propietarios.CODIGO == owner_id
+        ).first()
+    
+    if not owner:
+        return JSONResponse(content={"error": "Owner not found"}, status_code=404)
+    owner_conditions = {
+        'vehiculo': bool(owner.vehiculo),
+        'cajarecaudos': bool(owner.cajarecaudos),
+        'cajarecaudoscontado': bool(owner.cajarecaudoscontado),
+        'cartera': bool(owner.cartera),
+        'movienca': bool(owner.movienca)
+    }
+
+    return JSONResponse(content=jsonable_encoder(owner_conditions))
   except Exception as e:
     return JSONResponse(content={"error": str(e)})
+  finally:
+    db.close()
+
+#----------------------------------------------------------------------------------------------------------------
+
+@owners_router.post("/companies_owners/", tags=["Owners"])
+async def get_companies_owners(owner: Owner):
+  db = session()
+  try:
+    user_admin = os.getenv('USER_ADMIN')
+    if owner.propietario:
+      
+      if owner.propietario == user_admin:
+        owners = db.query(Propietarios.CODIGO, Propietarios.NOMBRE).all()
+        owners_list = [{'id': owner.CODIGO, 'name': owner.NOMBRE} for owner in owners]
+
+      else:
+        companies = db.query(PermisosUsuario.EMPRESAS).filter(PermisosUsuario.CODIGO == owner.propietario).first()
+        companies_list = companies.EMPRESAS.strip('[]').split()
+        owners = db.query(Propietarios.CODIGO, Propietarios.NOMBRE).filter(Propietarios.CODIGO.in_(companies_list)).all()
+        owners_list = [{'id': owner.CODIGO, 'name': owner.NOMBRE} for owner in owners]
+
+      return JSONResponse(content=jsonable_encoder(owners_list), status_code=200)
+
+    return JSONResponse(content={"error": "Propietario no encontrado"}, status_code=404)
+  except Exception as e:
+    return JSONResponse(content={"error": str(e)}, status_code=500)
+  finally:
+    db.close()
+
+# ---------------------------------------------------------------------------------------------------------------
+
+@owners_router.post("/companies_per_owners/", tags=["Owners"])
+async def get_companies_per_owners(owner: Owner):
+  db = session()
+  try:
+    user_admin = os.getenv('USER_ADMIN')
+    if owner.propietario:
+      
+      if owner.propietario == user_admin:
+        owners = db.query(Propietarios.CODIGO, Propietarios.NOMBRE).all()
+        owners_list = [{'id': owner.CODIGO, 'name': owner.NOMBRE} for owner in owners]
+
+      else:
+        companies = db.query(PermisosUsuario.EMPRESA).filter(PermisosUsuario.CODIGO == owner.propietario).first()
+        owners = db.query(Propietarios.CODIGO, Propietarios.NOMBRE).filter(Propietarios.EMPRESA == companies[0]).all()
+        owners_list = [{'id': owner.CODIGO, 'name': owner.NOMBRE} for owner in owners]
+  
+      return JSONResponse(content=jsonable_encoder(owners_list), status_code=200)
+
+    return JSONResponse(content={"error": "Propietario no encontrado"}, status_code=404)
+  except Exception as e:
+    return JSONResponse(content={"error": str(e)}, status_code=500)
+  finally:
+    db.close()
+
+# ---------------------------------------------------------------------------------------------------------------
+
+@owners_router.post("/vehicles_owners/", tags=["Owners"])
+async def get_vehicles_owners(owner: Owner):
+  db = session()
+  try:
+    user_admin = os.getenv('USER_ADMIN')
+    if owner.propietario:
+
+      if owner.propietario == user_admin:
+        vehicles = db.query(Vehiculos.PLACA, Vehiculos.NUMERO, Vehiculos.NOMMARCA, Vehiculos.CONSECUTIV).all()
+        vehicles_list = [{'placa': vehicle.PLACA, 'numero': vehicle.NUMERO, 'marca': vehicle.NOMMARCA, 'consecutivo': vehicle.CONSECUTIV} for vehicle in vehicles]
+      
+      else:
+        companies = db.query(PermisosUsuario.EMPRESAS).filter(PermisosUsuario.CODIGO == owner.propietario).first()
+        companies_list = companies.EMPRESAS.strip('[]').split()
+        vehicles = db.query(Vehiculos.PLACA, Vehiculos.NUMERO, Vehiculos.NOMMARCA, Vehiculos.CONSECUTIV).filter(Vehiculos.PROPI_IDEN.in_(companies_list)).all()
+
+        vehicles_list = [{'placa': vehicle.PLACA, 'numero': vehicle.NUMERO, 'marca': vehicle.NOMMARCA, 'consecutivo': vehicle.CONSECUTIV} for vehicle in vehicles]
+      
+      return JSONResponse(content=jsonable_encoder(vehicles_list), status_code=200)
+    
+    return JSONResponse(content={"error": "Propietario no encontrado"}, status_code=404)
+  
+  except Exception as e:
+    return JSONResponse(content={"error": str(e)}, status_code=500)
+  finally:
+    db.close()
+
+# ---------------------------------------------------------------------------------------------------------------
+
+@owners_router.post("/vehicles_per_owners/", tags=["Owners"])
+async def get_vehicles_owners(owner: Owner):
+  db = session()
+  try:
+    user_admin = os.getenv('USER_ADMIN')
+    vehicles_by_company = {}
+    if owner.propietario:
+      if owner.propietario == user_admin:
+        # Para el usuario admin, se obtienen todos los vehículos
+        # Se realiza join con Propietarios para obtener el nombre de la empresa
+        vehicles = db.query(
+          Vehiculos.PLACA,
+          Vehiculos.NUMERO,
+          Vehiculos.NOMMARCA,
+          Vehiculos.CONSECUTIV,
+          Vehiculos.PROPI_IDEN,
+          Propietarios.NOMBRE.label('empresa')
+        ).join(Propietarios, Propietarios.CODIGO == Vehiculos.PROPI_IDEN).all()
+      else:
+        # Para un usuario no admin, se filtran las empresas asignadas
+        companies = db.query(PermisosUsuario.EMPRESAS)\
+                      .filter(PermisosUsuario.CODIGO == owner.propietario)\
+                      .first()
+        # Se asume que companies.EMPRESAS es un string tipo "[50 51 57 60 63]"
+        companies_list = companies.EMPRESAS.strip('[]').split()
+        vehicles = db.query(
+          Vehiculos.PLACA,
+          Vehiculos.NUMERO,
+          Vehiculos.NOMMARCA,
+          Vehiculos.CONSECUTIV,
+          Vehiculos.PROPI_IDEN,
+          Propietarios.NOMBRE.label('empresa')
+        ).join(Propietarios, Propietarios.CODIGO == Vehiculos.PROPI_IDEN)\
+         .filter(Vehiculos.PROPI_IDEN.in_(companies_list)).all()
+      
+      # Agrupar vehículos por el nombre (empresa)
+      for vehicle in vehicles:
+        company_key = f"{vehicle.empresa} - {vehicle.PROPI_IDEN}"
+        if company_key not in vehicles_by_company:
+          vehicles_by_company[company_key] = []
+        vehicles_by_company[company_key].append({
+          'placa': vehicle.PLACA,
+          'numero': vehicle.NUMERO,
+          'marca': vehicle.NOMMARCA,
+          'consecutivo': vehicle.CONSECUTIV
+        })
+
+        sorted_vehicles_by_company = dict(sorted(vehicles_by_company.items()))
+      
+      return JSONResponse(content=jsonable_encoder(sorted_vehicles_by_company), status_code=200)
+    
+    return JSONResponse(content={"error": "Propietario no encontrado"}, status_code=404)
+  
+  except Exception as e:
+    return JSONResponse(content={"error": str(e)}, status_code=500)
   finally:
     db.close()

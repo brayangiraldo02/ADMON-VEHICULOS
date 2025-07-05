@@ -1,0 +1,18 @@
+<!-- <app-header></app-header> -->
+<div class="container">
+  <h1>OPERACIONES GENERALES DE VEHÍCULOS</h1>
+  <div class="options-container">
+    <ng-container *ngFor="let option of options">
+      <button class="option" type="button" [disabled]="option.disabled" (click)="selectOption(option.url)">
+        <span class="material-symbols-outlined" translate="no">
+          {{ option.icon }}
+        </span>
+        <p class="option-text">{{ option.name }}</p>
+      </button>
+    </ng-container>
+  </div>
+</div>
+
+<app-operaciones-entrega-vehiculo-conductor *ngIf="entregaVehiculoConductor" (close)="hideModal()"></app-operaciones-entrega-vehiculo-conductor>
+
+<!-- <app-footer></app-footer> -->

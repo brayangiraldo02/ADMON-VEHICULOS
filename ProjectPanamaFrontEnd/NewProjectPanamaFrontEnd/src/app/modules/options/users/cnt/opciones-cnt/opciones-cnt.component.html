@@ -1,0 +1,37 @@
+<!-- <app-header></app-header> -->
+<div class="container">
+  <h1>CONTABILIDAD</h1>
+
+  <div class="sections-container">
+    
+    <div class="section-container">
+      <h2>ALMACEN</h2>
+      <div class="options-container">
+        <ng-container *ngFor="let option of almacen">
+          <button class="option" type="button" [routerLink]="option.url" [disabled]="option.disabled">
+            <span class="material-symbols-outlined" translate="no">
+              {{ option.icon }}
+            </span>
+            <p class="option-text">{{ option.name }}</p>
+          </button>
+        </ng-container>
+      </div>
+    </div>
+
+    <div class="section-container">
+      <h2>CONSULTAS</h2>
+      <div class="options-container">
+        <ng-container *ngFor="let option of consultas">
+          <button class="option" type="button" [routerLink]="option.url" [disabled]="option.disabled">
+            <span class="material-symbols-outlined" translate="no">
+              {{ option.icon }}
+            </span>
+            <p class="option-text">{{ option.name }}</p>
+          </button>
+        </ng-container>
+      </div>
+    </div>
+
+  </div>
+</div>
+<!-- <app-footer></app-footer> -->

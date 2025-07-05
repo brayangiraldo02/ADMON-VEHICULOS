@@ -1,0 +1,111 @@
+/* login.component.css */
+
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.info-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.login-container .logo {
+  width: 15%; /* Establece el ancho del contenedor del logo */
+  /* max-width: 100px; */
+  max-width: 15%;
+  height: 15%; /* Permite que la altura se ajuste automáticamente */
+  margin-right: 15px; /* Añade un margen entre el logo y el título */
+}
+
+.login-container .logo img {
+  width: 100%; /* Ajusta el tamaño de la imagen al contenedor */
+  height: auto; /* Permite que la altura se ajuste automáticamente */
+  border-radius: 50%;
+}
+
+form {
+  width: 600px;
+  padding: 20px;
+  border: 2px solid #9c9c9c;
+  background-color: rgb(240, 240, 240);
+  border-radius: 10px;
+}
+
+form h1 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+
+.form-group {
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+input[type="text"],
+input[type="password"] {
+  width: calc(100% - 20px); /* Ajustamos el ancho restando el padding */
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+}
+
+.validators p {
+  color: #FE0108;
+  text-decoration: underline;
+  cursor: default;
+  margin: 0;
+  font-size:small;
+}
+
+button {
+  width: 100%; /* Ajustamos el ancho restando el padding */
+  padding: 10px;
+  background-color: #002B65;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #630003;
+}
+
+label {
+  display: block;
+  font-weight: bold;
+}
+
+.show-password-button {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  width: auto; /* Ajustamos el ancho según el tamaño del icono */
+}
+
+.show-password-button img {
+  width: 20px; /* Ajusta el ancho según el tamaño del icono */
+}
+
+.password-input {
+  position: relative;
+}
+
+.password-input button {
+  position: absolute;
+  top: 55%;
+  right: 5px;
+  transform: translateY(-50%);
+  background-color: transparent;
+  border: none;
+  color: #007bff;
+  cursor: pointer;
+}

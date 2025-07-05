@@ -1,0 +1,18 @@
+<!-- <app-dev-preview></app-dev-preview> -->
+<mat-drawer-container class="layout-container" autosize>
+  <mat-drawer #drawer class="layout-sidenav" mode="over">
+    <app-sidenav 
+      [isOpen]="drawer.opened"
+      (backdropClick)="drawer.close()"
+      (itemClick)="drawer.close()">
+    </app-sidenav>
+  </mat-drawer>
+
+  <div class="layout-content">
+    <app-toolbar (menuClick)="drawer.toggle()"></app-toolbar>
+    <main class="main-content">
+      <router-outlet></router-outlet>
+      <app-footer></app-footer>
+    </main>
+  </div>
+</mat-drawer-container>

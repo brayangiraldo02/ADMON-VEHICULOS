@@ -1,0 +1,65 @@
+<!-- <app-header></app-header> -->
+<div class="main-container">
+  <h1 class="title-container">CONDUCTORES</h1>
+  <p *ngIf="!isLoading">Total Registros: {{ filteredData.length }}</p>
+  <div class="options-container" *ngIf="!isLoading">
+    <input type="text" placeholder="Buscar..." [(ngModel)]="searchTerm" (input)="filterData()" class="search-container">
+    <div class="form-group">
+      <label for="estado">Manera de Listar:</label>
+      <select class="medium" id="estado" name="estado" (change)="listData($event)">
+        <option value="">Todos</option>
+        <option value="1">Con unidad</option>
+      </select><br>
+    </div>
+    <a class="report" (click)="openExternalLink()">
+      <span class="material-symbols-outlined" translate="no">
+        print
+      </span>
+      <span class="report-text">Ver Directorio</span>
+    </a>
+  </div>
+  <div class="table-container" *ngIf="!isLoading; else loadingTemplate">
+    <table>
+      <thead>
+        <tr>
+          <th class="col-campo1">CÓDIGO</th>
+          <th class="col-campo2">NÚMERO UNIDAD</th>
+          <th class="col-campo3">NOMBRE CONDUCTOR</th>
+          <th class="col-campo4">CÉDULA</th>
+          <th class="col-campo5">TELÉFONO</th>
+          <th class="col-campo6">FEC. INGRESO</th>
+          <th class="col-campo7">VLR. CUOTA</th>
+          <th class="col-campo8">N° CUOTAS</th>
+          <th class="col-campo9">PAGAS</th>
+          <th class="col-campo10">PENDIENTES</th>
+          <th class="col-campo11">VEC. LICENCIA</th>
+          <th class="col-campo12">CONTACTOS</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of filteredData" (dblclick)="goToOwnerResume(item.codigo)">
+          <td class="col-campo1">{{ item.codigo }}</td>
+          <td class="col-campo2">{{ item.unidad }}</td>
+          <td class="col-campo3">{{ item.nombre }}</td>
+          <td class="col-campo4">{{ item.cedula }}</td>
+          <td class="col-campo5">{{ item.telefono }}</td>
+          <td class="col-campo6">{{ item.fecha_ingreso }}</td>
+          <td class="col-campo7">{{ item.cuota_diaria }}</td>
+          <td class="col-campo8">{{ item.nro_entrega }}</td>
+          <td class="col-campo9">{{ item.nro_pago }}</td>
+          <td class="col-campo10">{{ item.nro_saldo }}</td>
+          <td class="col-campo11">{{ item.vce_licen }}</td>
+          <td class="col-campo12">{{ item.contacto }} // {{ item.contacto1 }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<ng-template #loadingTemplate>
+  <div class="loading-container">
+    <p>Cargando datos, por favor espere...</p>
+  </div>
+</ng-template>
+
+<!-- <app-footer></app-footer> -->

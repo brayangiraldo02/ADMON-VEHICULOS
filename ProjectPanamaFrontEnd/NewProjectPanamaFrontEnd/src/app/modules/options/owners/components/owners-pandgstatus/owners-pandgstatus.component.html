@@ -1,0 +1,65 @@
+<div class="modal">
+  <div class="modal-content">
+    <span class="close" (click)="closeModal()">&times;</span>
+
+    <h2 class="title-container">Informe Estado de P y G.</h2>
+
+    <div class="loading-container" *ngIf="!isLoading && !isLoadingValues">
+      <form [formGroup]="infoForm" (ngSubmit)="onSubmit()">
+        <div class="select-vehicle">
+          <div class="form-group full-width">
+            <label>Empresa:</label>
+            <select class="select-unit" formControlName="companie" (change)="onCompanyChange($event)">
+              <option *ngFor="let key of companiesKeys" [value]="key">{{ key }}</option>
+            </select>
+          </div>
+
+          <div class="form-group full-width">
+            <label>Unidad:</label>
+            <select class="select-unit" formControlName="vehicle" (change)="onCompanyChange($event)">
+              <option [value]="'TODOS'" [defaultSelected]="true">TODOS</option>
+              <option *ngFor="let veh of vehicles_per[infoForm.value.companie]" [value]="veh.numero">{{ veh.numero }} - {{ veh.placa }} - {{ veh.consecutivo }} - {{ veh.marca }}</option>
+            </select>
+          </div>
+
+          <div class="group-container">
+            <div class="form-group last-form-group">
+              <label for="firstDate">Desde:</label><br>
+              <input type="date" id="firstDate" name="firstDate" formControlName="firstDate" [max]="date.time"><br>
+            </div>
+    
+            <div class="form-group last-form-group">
+              <label for="lastDate">Hasta:</label><br>
+              <input type="date" id="lastDate" name="lastDate" formControlName="lastDate" [max]="date.time"><br>
+            </div>
+          </div>
+        </div>
+
+        <div class="options-container">
+          <button class="option" type="button" type="submit" [disabled]="!infoForm.valid">
+            <span class="material-symbols-outlined" translate="no">
+              check
+            </span>
+            <p class="option-text">Generar Informe</p>
+          </button>
+
+          <button class="option back" type="button" (click)="closeModal()">
+            <span class="material-symbols-outlined" translate="no">
+              close
+            </span>
+            <p class="option-text">Cancelar</p>
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <div class="loading-container" *ngIf="isLoadingValues">
+      <h2 class="subtitle-container">Cargando valores, por favor espere...</h2>
+    </div>
+
+    <div class="loading-container" *ngIf="isLoading">
+      <h2 class="subtitle-container">Generando informe, por favor espere...</h2>
+    </div>
+    
+  </div>
+</div>

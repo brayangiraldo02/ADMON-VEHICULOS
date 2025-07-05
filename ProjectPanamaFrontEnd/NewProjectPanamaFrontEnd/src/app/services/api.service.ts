@@ -48,6 +48,21 @@ export class ApiService {
   }
 
   /**
+   * Post data to a specified endpoint and get blob response (for any type of document downloads).
+   * @param {string} endpoint - The endpoint to post data to.
+   * @param {any} data - The data to post.
+   * @returns {Observable<Blob>} An Observable of the blob response.
+   */
+  postDocuments(endpoint: string, data: any): Observable<Blob> {
+    return this.http.post(`${this.baseURL}/${endpoint}/`, data, { 
+      responseType: 'blob', 
+      withCredentials: true 
+    }).pipe(
+      catchError(this.errorHandlerService.handleError)
+    );
+  }
+
+  /**
    * Post data to a specified endpoint.
    * @param {string} endpoint - The endpoint to post data to.
    * @param {any} data - The data to post.
@@ -67,6 +82,17 @@ export class ApiService {
    */
   updateData(endpoint: string, data: any): Observable<any> {
     return this.http.put<any>(`${this.baseURL}/${endpoint}/`, data, { withCredentials: true }).pipe(
+      catchError(this.errorHandlerService.handleError)
+    );
+  }
+
+  /**
+   * Delete data at a specified endpoint.
+   * @param {string} endpoint - The endpoint to delete data from.
+   * @returns {Observable<any>} An Observable of the HTTP response.
+   */
+  deleteData(endpoint: string): Observable<any> {
+    return this.http.delete<any>(`${this.baseURL}/${endpoint}/`, { withCredentials: true }).pipe(
       catchError(this.errorHandlerService.handleError)
     );
   }

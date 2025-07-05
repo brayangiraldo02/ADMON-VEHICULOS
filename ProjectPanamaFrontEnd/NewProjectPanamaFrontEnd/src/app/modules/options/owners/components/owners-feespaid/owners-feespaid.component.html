@@ -1,0 +1,119 @@
+<div class="modal">
+  <div class="modal-content">
+    <span class="close" (click)="closeModal()">&times;</span>
+
+    <h2 class="title-container">Informe de Cuotas Pagas.</h2>
+
+    <div class="loading-container" *ngIf="!isLoading">
+      <!-- <div class="display-container" *ngIf="!mostrarOpcionesEstados && !mostrarOpcionesEmpresas"> 
+
+        <div class="options-container">
+          <button class="option" type="button" (click)="toggleOpcionesEmpresas()">
+            <span class="material-symbols-outlined" translate="no">
+              apartment
+            </span>
+            <p class="option-text">Seleccionar Empresas</p>
+          </button>
+
+          <button class="option" type="button"  (click)="toggleOpcionesEstados()">
+            <span class="material-symbols-outlined" translate="no">
+              dataset
+            </span>
+            <p class="option-text">Seleccionar Estados</p>
+          </button>
+        </div>
+
+        <div class="options-container">
+          <button class="option" type="button" (click)="generarInforme()">
+            <span class="material-symbols-outlined" translate="no">
+              description
+            </span>
+            <p class="option-text">Generar Informe</p>
+          </button>
+
+          <button class="option back" type="button" (click)="closeModal()">
+            <span class="material-symbols-outlined" translate="no">
+              close
+            </span>
+            <p class="option-text">Cancelar</p>
+          </button>
+        </div>
+
+      </div> -->
+
+      <div class="display-container" *ngIf="mostrarOpcionesEstados">
+        <div class="selects-container">
+          <h2 class="subtitle-container">Selecciona los Estados.</h2>
+
+          <div class="cuadro-seleccion">
+            <div *ngFor="let opcion of states" class="checkbox-container" (click)="onCheckboxEstadoContainerClick(opcion.id, $event)">
+              <input type="checkbox" [id]="opcion.id" [value]="opcion.id" 
+                      [checked]="isEstadoSeleccionado(opcion.id)" 
+                      (change)="onCheckboxEstadoChange(opcion.id, $event)">
+              <label [for]="opcion.id">{{ opcion.name }}</label>
+            </div>
+          </div>
+        </div>
+
+        <div class="options-container">
+          <!-- <button class="option" type="button" (click)="onEstadoSeleccionar()">
+            <span class="material-symbols-outlined" translate="no">
+              check
+            </span>
+            <p class="option-text">Aceptar Estados</p>
+          </button> -->
+
+          <button class="option" type="button" (click)="generarInforme()">
+            <span class="material-symbols-outlined" translate="no">
+              description
+            </span>
+            <p class="option-text">Generar Informe</p>
+          </button>
+
+          <button class="option back" type="button" (click)="backOptions()">
+            <span class="material-symbols-outlined" translate="no">
+              arrow_back
+            </span>
+            <p class="option-text">Regresar</p>
+          </button>
+        </div>
+      </div>
+
+      <div class="display-container" *ngIf="mostrarOpcionesEmpresas">
+        <div class="selects-container">
+          <h2 class="subtitle-container">Selecciona las Empresas.</h2>
+
+          <div class="cuadro-seleccion">
+            <div *ngFor="let opcion of owners" class="checkbox-container" (click)="onCheckboxEmpresaContainerClick(opcion.id, $event)">
+              <input type="checkbox" [id]="opcion.id" [value]="opcion.id" 
+                      [checked]="isEmpresaSeleccionada(opcion.id)" 
+                      (change)="onCheckboxEmpresaChange(opcion.id, $event)">
+              <label [for]="opcion.id">{{ opcion.name }} - {{ opcion.id }}</label>
+            </div>
+          </div>
+        </div>
+
+        <div class="options-container">
+          <button class="option" type="button" (click)="onEmpresaSeleccionar()">
+            <span class="material-symbols-outlined" translate="no">
+              check
+            </span>
+            <p class="option-text">Aceptar Empresas</p>
+          </button>
+
+          <button class="option back" type="button" (click)="closeModal()">
+            <span class="material-symbols-outlined" translate="no">
+              close
+            </span>
+            <p class="option-text">Cancelar</p>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="loading-container" *ngIf="isLoading">
+      <h2 class="subtitle-container">Cargando valores, por favor espere...</h2>
+    </div>
+    
+  </div>
+</div>

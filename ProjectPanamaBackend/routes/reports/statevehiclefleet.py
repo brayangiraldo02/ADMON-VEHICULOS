@@ -5,6 +5,7 @@ from models.estados import Estados
 from models.vehiculos import Vehiculos
 from models.propietarios import Propietarios
 from models.conductores import Conductores
+from models.infoempresas import InfoEmpresas
 from schemas.reports import *
 from fastapi.encoders import jsonable_encoder
 from utils.reports import *
@@ -20,7 +21,7 @@ templateJinja = Jinja2Templates(directory="templates")
 
 statevehiclefleetReports_router = APIRouter()
 
-@statevehiclefleetReports_router.post('/estado-vehiculos-resumen', response_class=FileResponse)
+@statevehiclefleetReports_router.post('/estado-vehiculos-resumen/', response_class=FileResponse)
 async def get_conteo_vehiculos_estados(info: userInfo):
   db = session()
   try:
@@ -48,9 +49,9 @@ async def get_conteo_vehiculos_estados(info: userInfo):
     }
 
     # Activos
-    data_view["cant_activo"] = data.get("ACTIVO", 0)
+    data_view["cant_activo"] = data.get("ACTIVOS", 0)
     data_view["cant_backup"] = data.get("BACUPK", 0)
-    data_view["cant_activo_backup"] = data.get("ACTIVO", 0) + data.get("BACUPK", 0)
+    data_view["cant_activo_backup"] = data.get("ACTIVOS", 0) + data.get("BACUPK", 0)
     data_view["cant_chap_parado"] = data.get("CHAPISTERIA PARADO", 0)
     data_view["cant_chap_trabajando"] = data.get("CHAPISTERIA TRABAJANDO", 0)
     data_view["cant_custodia"] = data.get("CUSTODIA", 0)
@@ -60,6 +61,7 @@ async def get_conteo_vehiculos_estados(info: userInfo):
     data_view["cant_mecanica_parado"] = data.get("MECANICA PARADOS", 0)
     data_view["cant_otros"] = data.get("OTROS", 0)
     data_view["cant_vehiculos_pendientes_arraijan"] = data.get("VEHICULOS PENDIENTES ARRAIJAN", 0)
+    data_view["cant_carro_preparacion"] = data.get("CARRO EN PREPARACION", 0)
     # Otros Estados
     data_view["cant_traspasados"] = data.get("» CARROS TRASPASADOS", 0)
     data_view["cant_fin_contrato"] = data.get("» CULMINACION DE CONTRATO", 0)
@@ -73,7 +75,7 @@ async def get_conteo_vehiculos_estados(info: userInfo):
     data_view["cant_para_venta"] = data.get("» Vehiculos Para la Venta", 0)
     # Totales
 
-    data_view["total_activos"] = data.get("ACTIVO", 0) + data.get("BACUPK", 0) + data.get("CHAPISTERIA PARADO", 0) + data.get("CHAPISTERIA TRABAJANDO", 0) + data.get("CUSTODIA", 0) + data.get("DETENIDO", 0) + data.get("ESPERANDO OPERADOR", 0) + data.get("MECANICA MANTENIMIENTO", 0) + data.get("MECANICA PARADOS", 0) + data.get("OTROS", 0) + data.get("VEHICULOS PENDIENTES ARRAIJAN", 0)
+    data_view["total_activos"] = data.get("ACTIVOS", 0) + data.get("BACUPK", 0) + data.get("CHAPISTERIA PARADO", 0) + data.get("CHAPISTERIA TRABAJANDO", 0) + data.get("CUSTODIA", 0) + data.get("DETENIDO", 0) + data.get("ESPERANDO OPERADOR", 0) + data.get("MECANICA MANTENIMIENTO", 0) + data.get("MECANICA PARADOS", 0) + data.get("OTROS", 0) + data.get("VEHICULOS PENDIENTES ARRAIJAN", 0) + data.get("CARRO EN PREPARACION", 0)
 
     data_view["total_parados"] = data.get("» CARROS TRASPASADOS", 0) + data.get("» CULMINACION DE CONTRATO", 0) + data.get("» EN TRAMITE", 0) + data.get("» Fuera de Circulacion", 0) + data.get("» INACTIVOS", 0) + data.get("» PERDIDA TOTAL", 0) + data.get("» RETIRADO DE LA EMPRESA", 0) + data.get("» SIN CLASIFICAR", 0) + data.get("» VENDIDO", 0) + data.get("» Vehiculos Para la Venta", 0)
 
@@ -84,7 +86,7 @@ async def get_conteo_vehiculos_estados(info: userInfo):
     data_view["promedio_parados"] = round((100 - data_view["promedio_activos"]), 2)
 
     headers = {
-        "Content-Disposition": "inline; estado-vehiculos-resumen.pdf"
+        "Content-Disposition": "attachment; estado-vehiculos-resumen.pdf"
     }  
 
     data_view["usuario"] = usuario
@@ -125,13 +127,14 @@ async def get_conteo_vehiculos_estados(info: userInfo):
 
 #-----------------------------------------------------------------------------------------
 
-@statevehiclefleetReports_router.post('/estado-vehiculos-resumen-empresa/{id}', response_class=FileResponse)
+@statevehiclefleetReports_router.post('/estado-vehiculos-resumen-empresa/{id}/', response_class=FileResponse)
 async def get_conteo_propietarios_vehiculos_estados(id: str, info: userInfo):
     db = session()
     try:
         conteo_propietarios_vehiculos_estados = db.query(
+            Propietarios.EMPRESA.label('empresa_codigo'),
             Propietarios.CODIGO.label('propietario_codigo'), 
-            Propietarios.NOMBRE.label('propietario_nombre'), 
+            Propietarios.NOMBRE.label('propietario_nombre'),
             Estados.CODIGO.label('estado_codigo'),
             Estados.NOMBRE.label('estado_nombre'), 
             Vehiculos.NUMERO.label('vehiculo_numero')
@@ -139,7 +142,10 @@ async def get_conteo_propietarios_vehiculos_estados(id: str, info: userInfo):
         .join(Vehiculos, Estados.CODIGO == Vehiculos.ESTADO) \
         .join(Propietarios, Vehiculos.PROPI_IDEN == Propietarios.CODIGO) \
         .filter(Propietarios.CODIGO == id) \
+        .distinct() \
         .all()
+
+        id_empresa = conteo_propietarios_vehiculos_estados[0].empresa_codigo
 
         vehiculos_estados_propietarios_list = [] 
         for resultado in conteo_propietarios_vehiculos_estados:
@@ -156,6 +162,16 @@ async def get_conteo_propietarios_vehiculos_estados(id: str, info: userInfo):
         data = data.get("conteo_por_empresa")
         data = data.get(str(id))  # Usa el id directamente
 
+        # print(data)
+
+        info_empresa = db.query(
+            InfoEmpresas.NOMBRE, 
+            InfoEmpresas.NIT,
+            InfoEmpresas.LOGO
+        ) \
+        .filter(InfoEmpresas.ID == id_empresa) \
+        .first()
+
         # Datos de la fecha y hora actual
         # Define la zona horaria de Ciudad de Panamá
         panama_timezone = pytz.timezone('America/Panama')
@@ -171,13 +187,16 @@ async def get_conteo_propietarios_vehiculos_estados(id: str, info: userInfo):
         data_view = {
             "fecha": fecha,
             "hora": hora_actual,
+            "nombre_empresa": info_empresa.NOMBRE,
+            "nit_empresa": info_empresa.NIT,
+            "logo_empresa": info_empresa.LOGO,
             "codigo_empresa": id
         }
         
         data_view["empresa"] = data.get("nombre_empresa", 0)
-        data_view["cant_activo"] = data.get("ACTIVO", 0)
+        data_view["cant_activo"] = data.get("ACTIVOS", 0)
         data_view["cant_backup"] = data.get("BACUPK", 0)
-        data_view["cant_activo_backup"] = data.get("ACTIVO", 0) + data.get("BACUPK", 0)
+        data_view["cant_activo_backup"] = data.get("ACTIVOS", 0) + data.get("BACUPK", 0)
         data_view["cant_chap_parado"] = data.get("CHAPISTERIA PARADO", 0)
         data_view["cant_chap_trabajando"] = data.get("CHAPISTERIA TRABAJANDO", 0)
         data_view["cant_custodia"] = data.get("CUSTODIA", 0)
@@ -187,6 +206,7 @@ async def get_conteo_propietarios_vehiculos_estados(id: str, info: userInfo):
         data_view["cant_mecanica_parado"] = data.get("MECANICA PARADOS", 0)
         data_view["cant_otros"] = data.get("OTROS", 0)
         data_view["cant_vehiculos_pendientes_arraijan"] = data.get("VEHICULOS PENDIENTES ARRAIJAN", 0)
+        data_view["cant_carro_preparacion"] = data.get("CARRO EN PREPARACION", 0)
         data_view["cant_traspasados"] = data.get("» CARROS TRASPASADOS", 0)
         data_view["cant_fin_contrato"] = data.get("» CULMINACION DE CONTRATO", 0)
         data_view["cant_en_tramite"] = data.get("» EN TRAMITE", 0)
@@ -197,7 +217,7 @@ async def get_conteo_propietarios_vehiculos_estados(id: str, info: userInfo):
         data_view["cant_sin_calificar"] = data.get("» SIN CLASIFICAR", 0)
         data_view["cant_vendidos"] = data.get("» VENDIDO", 0)
         data_view["cant_para_venta"] = data.get("» Vehiculos Para la Venta", 0)
-        data_view["total_activos"] = data.get("ACTIVO", 0) + data.get("BACUPK", 0) + data.get("CHAPISTERIA PARADO", 0) + data.get("CHAPISTERIA TRABAJANDO", 0) + data.get("CUSTODIA", 0) + data.get("DETENIDO", 0) + data.get("ESPERANDO OPERADOR", 0) + data.get("MECANICA MANTENIMIENTO", 0) + data.get("MECANICA PARADOS", 0) + data.get("OTROS", 0) + data.get("VEHICULOS PENDIENTES ARRAIJAN", 0)
+        data_view["total_activos"] = data.get("ACTIVOS", 0) + data.get("BACUPK", 0) + data.get("CHAPISTERIA PARADO", 0) + data.get("CHAPISTERIA TRABAJANDO", 0) + data.get("CUSTODIA", 0) + data.get("DETENIDO", 0) + data.get("ESPERANDO OPERADOR", 0) + data.get("MECANICA MANTENIMIENTO", 0) + data.get("MECANICA PARADOS", 0) + data.get("OTROS", 0) + data.get("VEHICULOS PENDIENTES ARRAIJAN", 0) + data.get("CARRO EN PREPARACION", 0)
         data_view["total_parados"] = data.get("» CARROS TRASPASADOS", 0) + data.get("» CULMINACION DE CONTRATO", 0) + data.get("» EN TRAMITE", 0) + data.get("» Fuera de Circulacion", 0) + data.get("» INACTIVOS", 0) + data.get("» PERDIDA TOTAL", 0) + data.get("» RETIRADO DE LA EMPRESA", 0) + data.get("» SIN CLASIFICAR", 0) + data.get("» VENDIDO", 0) + data.get("» Vehiculos Para la Venta", 0)
         data_view["total_vehiculos"] = data_view["total_activos"] + data_view["total_parados"]
         if data_view["total_activos"] == 0:
@@ -211,13 +231,13 @@ async def get_conteo_propietarios_vehiculos_estados(id: str, info: userInfo):
         data_view["usuario"] = usuario
 
         headers = {
-            "Content-Disposition": "inline; estado-vehiculos-resumen-empresa.pdf"
+            "Content-Disposition": "attachment; estado-vehiculos-resumen-empresa.pdf"
         }  
 
         template_loader = jinja2.FileSystemLoader(searchpath="./templates")
         template_env = jinja2.Environment(loader=template_loader)
         template_file = "form1.html"
-        header_file = "header1.html"
+        header_file = "header2.html"
         footer_file = "footer1.html"
         template = template_env.get_template(template_file)
         header = template_env.get_template(header_file)
@@ -249,7 +269,7 @@ async def get_conteo_propietarios_vehiculos_estados(id: str, info: userInfo):
 #-----------------------------------------------------------------------------------------
 
 
-@statevehiclefleetReports_router.post('/informe-estados-detallado', response_class=FileResponse)
+@statevehiclefleetReports_router.post('/informe-estados-detallado/', response_class=FileResponse)
 async def get_conteo_vehiculos_estados_numeros(info: userInfo):
   db = session()
   try:
@@ -283,65 +303,98 @@ async def get_conteo_vehiculos_estados_numeros(info: userInfo):
         "fecha": fecha,
         "hora": hora_actual
     }
+
+    # Ordenar las listas de vehículos por número de unidad antes de asignarlas
     # Activos
-    data_view["cant_activo"] = len(data.get("ACTIVO", []))
-    data_view["activos"] = data.get("ACTIVO", [])
-    data_view["cant_backup"] = len(data.get("BACUPK", []))
-    data_view["backup"] = data.get("BACUPK", [])
-    data_view["cant_activo_backup"] = len(data.get("ACTIVO", [])) + len(data.get("BACUPK", []))
-    data_view["cant_chap_parado"] = len(data.get("CHAPISTERIA PARADO", []))
-    data_view["chap_parado"] = data.get("CHAPISTERIA PARADO", [])
-    data_view["cant_chap_trabajando"] = len(data.get("CHAPISTERIA TRABAJANDO", []))
-    data_view["chap_trabajando"] = data.get("CHAPISTERIA TRABAJANDO", [])
-    data_view["cant_custodia"] = len(data.get("CUSTODIA", []))
-    data_view["custodia"] = data.get("CUSTODIA", [])
-    data_view["cant_detenido"] = len(data.get("DETENIDO", []))
-    data_view["detenido"] = data.get("DETENIDO", [])
-    data_view["cant_esp_operador"] = len(data.get("ESPERANDO OPERADOR", []))
-    data_view["esp_operador"] = data.get("ESPERANDO OPERADOR", [])
-    data_view["cant_mecanica_mantenimiento"] = len(data.get("MECANICA MANTENIMIENTO", []))
-    data_view["mecanica_mantenimiento"] = data.get("MECANICA MANTENIMIENTO", [])
-    data_view["cant_mecanica_parado"] = len(data.get("MECANICA PARADOS", []))
-    data_view["mecanica_parado"] = data.get("MECANICA PARADOS", [])
-    data_view["cant_otros"] = len(data.get("OTROS", []))
-    data_view["otros"] = data.get("OTROS", [])
-    data_view["cant_vehiculos_pendientes_arraijan"] = len(data.get("VEHICULOS PENDIENTES ARRAIJAN", []))
-    data_view["vehiculos_pendientes_arraijan"] = data.get("VEHICULOS PENDIENTES ARRAIJAN", [])
+    activos_ordenados = sorted(data.get("ACTIVOS", []))
+    backup_ordenados = sorted(data.get("BACUPK", []))
+    chap_parado_ordenados = sorted(data.get("CHAPISTERIA PARADO", []))
+    chap_trabajando_ordenados = sorted(data.get("CHAPISTERIA TRABAJANDO", []))
+    custodia_ordenados = sorted(data.get("CUSTODIA", []))
+    detenido_ordenados = sorted(data.get("DETENIDO", []))
+    esp_operador_ordenados = sorted(data.get("ESPERANDO OPERADOR", []))
+    mecanica_mantenimiento_ordenados = sorted(data.get("MECANICA MANTENIMIENTO", []))
+    mecanica_parado_ordenados = sorted(data.get("MECANICA PARADOS", []))
+    otros_ordenados = sorted(data.get("OTROS", []))
+    vehiculos_pendientes_arraijan_ordenados = sorted(data.get("VEHICULOS PENDIENTES ARRAIJAN", []))
+    vehiculos_preparacion_ordenados = sorted(data.get("CARRO EN PREPARACION", []))
+    
     # Otros Estados
-    data_view["cant_traspasados"] = len(data.get("» CARROS TRASPASADOS", []))
-    data_view["traspasados"] = data.get("» CARROS TRASPASADOS", [])
-    data_view["cant_fin_contrato"] = len(data.get("» CULMINACION DE CONTRATO", []))
-    data_view["fin_contrato"] = data.get("» CULMINACION DE CONTRATO", [])
-    data_view["cant_en_tramite"] = len(data.get("» EN TRAMITE", []))
-    data_view["en_tramite"] = data.get("» EN TRAMITE", [])
-    data_view["cant_fuera_circulacion"] = len(data.get("» Fuera de Circulacion", []))
-    data_view["fuera_circulacion"] = data.get("» Fuera de Circulacion", [])
-    data_view["cant_inactivos"] = len(data.get("» INACTIVOS", []))
-    data_view["inactivos"] = data.get("» INACTIVOS", [])
-    data_view["cant_perdida_total"] = len(data.get("» PERDIDA TOTAL", []))
-    data_view["perdida_total"] = data.get("» PERDIDA TOTAL", [])
-    data_view["cant_retirado_empresa"] = len(data.get("» RETIRADO DE LA EMPRESA", []))
-    data_view["retirado_empresa"] = data.get("» RETIRADO DE LA EMPRESA", [])
-    data_view["cant_sin_calificar"] = len(data.get("» SIN CLASIFICAR", []))
-    data_view["sin_calificar"] = data.get("» SIN CLASIFICAR", [])
-    data_view["cant_vendidos"] = len(data.get("» VENDIDO", []))
-    data_view["vendidos"] = data.get("» VENDIDO", [])
-    data_view["cant_para_venta"] = len(data.get("» Vehiculos Para la Venta", []))
-    data_view["para_venta"] = data.get("» Vehiculos Para la Venta", [])
+    traspasados_ordenados = sorted(data.get("» CARROS TRASPASADOS", []))
+    fin_contrato_ordenados = sorted(data.get("» CULMINACION DE CONTRATO", []))
+    en_tramite_ordenados = sorted(data.get("» EN TRAMITE", []))
+    fuera_circulacion_ordenados = sorted(data.get("» Fuera de Circulacion", []))
+    inactivos_ordenados = sorted(data.get("» INACTIVOS", []))
+    perdida_total_ordenados = sorted(data.get("» PERDIDA TOTAL", []))
+    retirado_empresa_ordenados = sorted(data.get("» RETIRADO DE LA EMPRESA", []))
+    sin_calificar_ordenados = sorted(data.get("» SIN CLASIFICAR", []))
+    vendidos_ordenados = sorted(data.get("» VENDIDO", []))
+    para_venta_ordenados = sorted(data.get("» Vehiculos Para la Venta", []))
+
+    # Asignar las listas ordenadas al diccionario data_view
+    data_view["cant_activo"] = len(activos_ordenados)
+    data_view["activos"] = activos_ordenados
+    data_view["cant_backup"] = len(backup_ordenados)
+    data_view["backup"] = backup_ordenados
+    data_view["cant_activo_backup"] = len(activos_ordenados) + len(backup_ordenados)
+    data_view["cant_chap_parado"] = len(chap_parado_ordenados)
+    data_view["chap_parado"] = chap_parado_ordenados
+    data_view["cant_chap_trabajando"] = len(chap_trabajando_ordenados)
+    data_view["chap_trabajando"] = chap_trabajando_ordenados
+    data_view["cant_custodia"] = len(custodia_ordenados)
+    data_view["custodia"] = custodia_ordenados
+    data_view["cant_detenido"] = len(detenido_ordenados)
+    data_view["detenido"] = detenido_ordenados
+    data_view["cant_esp_operador"] = len(esp_operador_ordenados)
+    data_view["esp_operador"] = esp_operador_ordenados
+    data_view["cant_mecanica_mantenimiento"] = len(mecanica_mantenimiento_ordenados)
+    data_view["mecanica_mantenimiento"] = mecanica_mantenimiento_ordenados
+    data_view["cant_mecanica_parado"] = len(mecanica_parado_ordenados)
+    data_view["mecanica_parado"] = mecanica_parado_ordenados
+    data_view["cant_otros"] = len(otros_ordenados)
+    data_view["otros"] = otros_ordenados
+    data_view["cant_vehiculos_pendientes_arraijan"] = len(vehiculos_pendientes_arraijan_ordenados)
+    data_view["vehiculos_pendientes_arraijan"] = vehiculos_pendientes_arraijan_ordenados
+    data_view["cant_carro_preparacion"] = len(vehiculos_preparacion_ordenados)
+    data_view["carro_preparacion"] = vehiculos_preparacion_ordenados
+    
+    # Otros Estados
+    data_view["cant_traspasados"] = len(traspasados_ordenados)
+    data_view["traspasados"] = traspasados_ordenados
+    data_view["cant_fin_contrato"] = len(fin_contrato_ordenados)
+    data_view["fin_contrato"] = fin_contrato_ordenados
+    data_view["cant_en_tramite"] = len(en_tramite_ordenados)
+    data_view["en_tramite"] = en_tramite_ordenados
+    data_view["cant_fuera_circulacion"] = len(fuera_circulacion_ordenados)
+    data_view["fuera_circulacion"] = fuera_circulacion_ordenados
+    data_view["cant_inactivos"] = len(inactivos_ordenados)
+    data_view["inactivos"] = inactivos_ordenados
+    data_view["cant_perdida_total"] = len(perdida_total_ordenados)
+    data_view["perdida_total"] = perdida_total_ordenados
+    data_view["cant_retirado_empresa"] = len(retirado_empresa_ordenados)
+    data_view["retirado_empresa"] = retirado_empresa_ordenados
+    data_view["cant_sin_calificar"] = len(sin_calificar_ordenados)
+    data_view["sin_calificar"] = sin_calificar_ordenados
+    data_view["cant_vendidos"] = len(vendidos_ordenados)
+    data_view["vendidos"] = vendidos_ordenados
+    data_view["cant_para_venta"] = len(para_venta_ordenados)
+    data_view["para_venta"] = para_venta_ordenados
+    
     # Totales
+    data_view["total_activos"] = len(activos_ordenados) + len(backup_ordenados) + len(chap_parado_ordenados) + len(chap_trabajando_ordenados) + len(custodia_ordenados) + len(detenido_ordenados) + len(esp_operador_ordenados) + len(mecanica_mantenimiento_ordenados) + len(mecanica_parado_ordenados) + len(otros_ordenados) + len(vehiculos_pendientes_arraijan_ordenados) + len(vehiculos_preparacion_ordenados)
 
-    data_view["total_activos"] = len(data.get("ACTIVO", [])) + len(data.get("BACUPK", [])) + len(data.get("CHAPISTERIA PARADO", [])) + len(data.get("CHAPISTERIA TRABAJANDO", [])) + len(data.get("CUSTODIA", [])) + len(data.get("DETENIDO", [])) + len(data.get("ESPERANDO OPERADOR", [])) + len(data.get("MECANICA MANTENIMIENTO", [])) + len(data.get("MECANICA PARADOS", [])) + len(data.get("OTROS", [])) + len(data.get("VEHICULOS PENDIENTES ARRAIJAN", []))
-
-    data_view["total_parados"] = len(data.get("» CARROS TRASPASADOS", [])) + len(data.get("» CULMINACION DE CONTRATO", [])) + len(data.get("» EN TRAMITE", [])) + len(data.get("» Fuera de Circulacion", [])) + len(data.get("» INACTIVOS", [])) + len(data.get("» PERDIDA TOTAL", [])) + len(data.get("» RETIRADO DE LA EMPRESA", [])) + len(data.get("» SIN CLASIFICAR", [])) + len(data.get("» VENDIDO", [])) + len(data.get("» Vehiculos Para la Venta", []))
+    data_view["total_parados"] = len(traspasados_ordenados) + len(fin_contrato_ordenados) + len(en_tramite_ordenados) + len(fuera_circulacion_ordenados) + len(inactivos_ordenados) + len(perdida_total_ordenados) + len(retirado_empresa_ordenados) + len(sin_calificar_ordenados) + len(vendidos_ordenados) + len(para_venta_ordenados)
 
     data_view["total_vehiculos"] = data_view["total_activos"] + data_view["total_parados"]
 
-    data_view["promedio_activos"] = round((data_view["cant_activo_backup"] / data_view["total_activos"] * 100), 2)
-
+    if data_view["total_activos"] == 0:
+            data_view["promedio_activos"] = 0
+    else:
+        data_view["promedio_activos"] = round((data_view["cant_activo_backup"] / data_view["total_activos"] * 100), 2)
     data_view["promedio_parados"] = round((100 - data_view["promedio_activos"]), 2)
 
     headers = {
-        "Content-Disposition": "inline; estado-vehiculos-numeros.pdf"
+        "Content-Disposition": "attachment; estado-vehiculos-numeros.pdf"
     }  
 
     titulo = 'Informe Por Estados Detallado'
@@ -350,7 +403,7 @@ async def get_conteo_vehiculos_estados_numeros(info: userInfo):
     data_view["usuario"] = usuario
 
     headers = {
-        "Content-Disposition": "inline; informe-estados-detallado.pdf"
+        "Content-Disposition": "attachment; informe-estados-detallado.pdf"
     }  
 
     template_loader = jinja2.FileSystemLoader(searchpath="./templates")
@@ -389,17 +442,20 @@ async def get_conteo_vehiculos_estados_numeros(info: userInfo):
 
 # -----------------------------------------------------------------------------------------
 
-@statevehiclefleetReports_router.post('/informe-estados-detallado-empresa/{id}', response_class=FileResponse)
-async def get_conteo_propietarios_vehiculos_estados_numeros(id: int, info: userInfo):
+@statevehiclefleetReports_router.post('/informe-estados-detallado-empresa/{id}/', response_class=FileResponse)
+async def get_conteo_propietarios_vehiculos_estados_numeros(id: str, info: userInfo):
   db = session()
   try:
     conteo_propietarios_vehiculos_estados = db.query(
+        Propietarios.EMPRESA.label('empresa_codigo'),
         Propietarios.CODIGO.label('propietario_codigo'),
         Propietarios.NOMBRE.label('propietario_nombre'),
         Estados.CODIGO.label('estado_codigo'),
         Estados.NOMBRE.label('estado_nombre'),
         Vehiculos.NUMERO.label('vehiculo_numero')
-    ).join(Vehiculos, Estados.CODIGO == Vehiculos.ESTADO).join(Propietarios, Vehiculos.PROPI_IDEN == Propietarios.CODIGO).filter(Propietarios.CODIGO == id).all()
+    ).join(Vehiculos, Estados.CODIGO == Vehiculos.ESTADO).join(Propietarios, Vehiculos.PROPI_IDEN == Propietarios.CODIGO).filter(Propietarios.CODIGO == id).distinct().all()
+
+    id_empresa = conteo_propietarios_vehiculos_estados[0].empresa_codigo
 
     vehiculos_estados_propietarios_list = []
     for resultado in conteo_propietarios_vehiculos_estados:
@@ -413,7 +469,14 @@ async def get_conteo_propietarios_vehiculos_estados_numeros(id: int, info: userI
         vehiculos_estados_propietarios_list.append(propietarios_vehiculos_estados)
     data = obtener_numeros_por_propietario(vehiculos_estados_propietarios_list)
     data = data.get("numeros_por_propietario")
-    data = data.get(str(id))  
+    data = data.get(id.zfill(2))
+    
+    info_empresa = db.query(
+        InfoEmpresas.NOMBRE,
+        InfoEmpresas.NIT,
+        InfoEmpresas.LOGO
+    ).filter(InfoEmpresas.ID == id_empresa).first()
+
     # Datos de la fecha y hora actual
     # Define la zona horaria de Ciudad de Panamá
     panama_timezone = pytz.timezone('America/Panama')
@@ -427,59 +490,93 @@ async def get_conteo_propietarios_vehiculos_estados_numeros(id: int, info: userI
     data_view = {
         "fecha": fecha,
         "hora": hora_actual, 
+        "nombre_empresa": info_empresa.NOMBRE,
+        "nit_empresa": info_empresa.NIT,
+        "logo_empresa": info_empresa.LOGO,
         "codigo_empresa": id
     }
     data_view["empresa"] = data.get("nombre_empresa", 0)
+
+    # Ordenar las listas de vehículos por número de unidad antes de asignarlas
     # Activos
-    data_view["cant_activo"] = len(data.get("ACTIVO", []))
-    data_view["activos"] = data.get("ACTIVO", [])
-    data_view["cant_backup"] = len(data.get("BACUPK", []))
-    data_view["backup"] = data.get("BACUPK", [])
-    data_view["cant_activo_backup"] = len(data.get("ACTIVO", [])) + len(data.get("BACUPK", []))
-    data_view["cant_chap_parado"] = len(data.get("CHAPISTERIA PARADO", []))
-    data_view["chap_parado"] = data.get("CHAPISTERIA PARADO", [])
-    data_view["cant_chap_trabajando"] = len(data.get("CHAPISTERIA TRABAJANDO", []))
-    data_view["chap_trabajando"] = data.get("CHAPISTERIA TRABAJANDO", [])
-    data_view["cant_custodia"] = len(data.get("CUSTODIA", []))
-    data_view["custodia"] = data.get("CUSTODIA", [])
-    data_view["cant_detenido"] = len(data.get("DETENIDO", []))
-    data_view["detenido"] = data.get("DETENIDO", [])
-    data_view["cant_esp_operador"] = len(data.get("ESPERANDO OPERADOR", []))
-    data_view["esp_operador"] = data.get("ESPERANDO OPERADOR", [])
-    data_view["cant_mecanica_mantenimiento"] = len(data.get("MECANICA MANTENIMIENTO", []))
-    data_view["mecanica_mantenimiento"] = data.get("MECANICA MANTENIMIENTO", [])
-    data_view["cant_mecanica_parado"] = len(data.get("MECANICA PARADOS", []))
-    data_view["mecanica_parado"] = data.get("MECANICA PARADOS", [])
-    data_view["cant_otros"] = len(data.get("OTROS", []))
-    data_view["otros"] = data.get("OTROS", [])
-    data_view["cant_vehiculos_pendientes_arraijan"] = len(data.get("VEHICULOS PENDIENTES ARRAIJAN", []))
-    data_view["vehiculos_pendientes_arraijan"] = data.get("VEHICULOS PENDIENTES ARRAIJAN", [])
+    activos_ordenados = sorted(data.get("ACTIVOS", []))
+    backup_ordenados = sorted(data.get("BACUPK", []))
+    chap_parado_ordenados = sorted(data.get("CHAPISTERIA PARADO", []))
+    chap_trabajando_ordenados = sorted(data.get("CHAPISTERIA TRABAJANDO", []))
+    custodia_ordenados = sorted(data.get("CUSTODIA", []))
+    detenido_ordenados = sorted(data.get("DETENIDO", []))
+    esp_operador_ordenados = sorted(data.get("ESPERANDO OPERADOR", []))
+    mecanica_mantenimiento_ordenados = sorted(data.get("MECANICA MANTENIMIENTO", []))
+    mecanica_parado_ordenados = sorted(data.get("MECANICA PARADOS", []))
+    otros_ordenados = sorted(data.get("OTROS", []))
+    vehiculos_pendientes_arraijan_ordenados = sorted(data.get("VEHICULOS PENDIENTES ARRAIJAN", []))
+    vehiculos_preparacion_ordenados = sorted(data.get("CARRO EN PREPARACION", []))
+    
     # Otros Estados
-    data_view["cant_traspasados"] = len(data.get("» CARROS TRASPASADOS", []))
-    data_view["traspasados"] = data.get("» CARROS TRASPASADOS", [])
-    data_view["cant_fin_contrato"] = len(data.get("» CULMINACION DE CONTRATO", []))
-    data_view["fin_contrato"] = data.get("» CULMINACION DE CONTRATO", [])
-    data_view["cant_en_tramite"] = len(data.get("» EN TRAMITE", []))
-    data_view["en_tramite"] = data.get("» EN TRAMITE", [])
-    data_view["cant_fuera_circulacion"] = len(data.get("» Fuera de Circulacion", []))
-    data_view["fuera_circulacion"] = data.get("» Fuera de Circulacion", [])
-    data_view["cant_inactivos"] = len(data.get("» INACTIVOS", []))
-    data_view["inactivos"] = data.get("» INACTIVOS", [])
-    data_view["cant_perdida_total"] = len(data.get("» PERDIDA TOTAL", []))
-    data_view["perdida_total"] = data.get("» PERDIDA TOTAL", [])
-    data_view["cant_retirado_empresa"] = len(data.get("» RETIRADO DE LA EMPRESA", []))
-    data_view["retirado_empresa"] = data.get("» RETIRADO DE LA EMPRESA", [])
-    data_view["cant_sin_calificar"] = len(data.get("» SIN CLASIFICAR", []))
-    data_view["sin_calificar"] = data.get("» SIN CLASIFICAR", [])
-    data_view["cant_vendidos"] = len(data.get("» VENDIDO", []))
-    data_view["vendidos"] = data.get("» VENDIDO", [])
-    data_view["cant_para_venta"] = len(data.get("» Vehiculos Para la Venta", []))
-    data_view["para_venta"] = data.get("» Vehiculos Para la Venta", [])
+    traspasados_ordenados = sorted(data.get("» CARROS TRASPASADOS", []))
+    fin_contrato_ordenados = sorted(data.get("» CULMINACION DE CONTRATO", []))
+    en_tramite_ordenados = sorted(data.get("» EN TRAMITE", []))
+    fuera_circulacion_ordenados = sorted(data.get("» Fuera de Circulacion", []))
+    inactivos_ordenados = sorted(data.get("» INACTIVOS", []))
+    perdida_total_ordenados = sorted(data.get("» PERDIDA TOTAL", []))
+    retirado_empresa_ordenados = sorted(data.get("» RETIRADO DE LA EMPRESA", []))
+    sin_calificar_ordenados = sorted(data.get("» SIN CLASIFICAR", []))
+    vendidos_ordenados = sorted(data.get("» VENDIDO", []))
+    para_venta_ordenados = sorted(data.get("» Vehiculos Para la Venta", []))
+    
+    # Asignar las listas ordenadas al diccionario data_view
+    data_view["cant_activo"] = len(activos_ordenados)
+    data_view["activos"] = activos_ordenados
+    data_view["cant_backup"] = len(backup_ordenados)
+    data_view["backup"] = backup_ordenados
+    data_view["cant_activo_backup"] = len(activos_ordenados) + len(backup_ordenados)
+    data_view["cant_chap_parado"] = len(chap_parado_ordenados)
+    data_view["chap_parado"] = chap_parado_ordenados
+    data_view["cant_chap_trabajando"] = len(chap_trabajando_ordenados)
+    data_view["chap_trabajando"] = chap_trabajando_ordenados
+    data_view["cant_custodia"] = len(custodia_ordenados)
+    data_view["custodia"] = custodia_ordenados
+    data_view["cant_detenido"] = len(detenido_ordenados)
+    data_view["detenido"] = detenido_ordenados
+    data_view["cant_esp_operador"] = len(esp_operador_ordenados)
+    data_view["esp_operador"] = esp_operador_ordenados
+    data_view["cant_mecanica_mantenimiento"] = len(mecanica_mantenimiento_ordenados)
+    data_view["mecanica_mantenimiento"] = mecanica_mantenimiento_ordenados
+    data_view["cant_mecanica_parado"] = len(mecanica_parado_ordenados)
+    data_view["mecanica_parado"] = mecanica_parado_ordenados
+    data_view["cant_otros"] = len(otros_ordenados)
+    data_view["otros"] = otros_ordenados
+    data_view["cant_vehiculos_pendientes_arraijan"] = len(vehiculos_pendientes_arraijan_ordenados)
+    data_view["vehiculos_pendientes_arraijan"] = vehiculos_pendientes_arraijan_ordenados
+    data_view["cant_carro_preparacion"] = len(vehiculos_preparacion_ordenados)
+    data_view["carro_preparacion"] = vehiculos_preparacion_ordenados
+    
+    # Otros Estados
+    data_view["cant_traspasados"] = len(traspasados_ordenados)
+    data_view["traspasados"] = traspasados_ordenados
+    data_view["cant_fin_contrato"] = len(fin_contrato_ordenados)
+    data_view["fin_contrato"] = fin_contrato_ordenados
+    data_view["cant_en_tramite"] = len(en_tramite_ordenados)
+    data_view["en_tramite"] = en_tramite_ordenados
+    data_view["cant_fuera_circulacion"] = len(fuera_circulacion_ordenados)
+    data_view["fuera_circulacion"] = fuera_circulacion_ordenados
+    data_view["cant_inactivos"] = len(inactivos_ordenados)
+    data_view["inactivos"] = inactivos_ordenados
+    data_view["cant_perdida_total"] = len(perdida_total_ordenados)
+    data_view["perdida_total"] = perdida_total_ordenados
+    data_view["cant_retirado_empresa"] = len(retirado_empresa_ordenados)
+    data_view["retirado_empresa"] = retirado_empresa_ordenados
+    data_view["cant_sin_calificar"] = len(sin_calificar_ordenados)
+    data_view["sin_calificar"] = sin_calificar_ordenados
+    data_view["cant_vendidos"] = len(vendidos_ordenados)
+    data_view["vendidos"] = vendidos_ordenados
+    data_view["cant_para_venta"] = len(para_venta_ordenados)
+    data_view["para_venta"] = para_venta_ordenados
+    
     # Totales
+    data_view["total_activos"] = len(activos_ordenados) + len(backup_ordenados) + len(chap_parado_ordenados) + len(chap_trabajando_ordenados) + len(custodia_ordenados) + len(detenido_ordenados) + len(esp_operador_ordenados) + len(mecanica_mantenimiento_ordenados) + len(mecanica_parado_ordenados) + len(otros_ordenados) + len(vehiculos_pendientes_arraijan_ordenados) + len(vehiculos_preparacion_ordenados)
 
-    data_view["total_activos"] = len(data.get("ACTIVO", [])) + len(data.get("BACUPK", [])) + len(data.get("CHAPISTERIA PARADO", [])) + len(data.get("CHAPISTERIA TRABAJANDO", [])) + len(data.get("CUSTODIA", [])) + len(data.get("DETENIDO", [])) + len(data.get("ESPERANDO OPERADOR", [])) + len(data.get("MECANICA MANTENIMIENTO", [])) + len(data.get("MECANICA PARADOS", [])) + len(data.get("OTROS", [])) + len(data.get("VEHICULOS PENDIENTES ARRAIJAN", []))
-
-    data_view["total_parados"] = len(data.get("» CARROS TRASPASADOS", [])) + len(data.get("» CULMINACION DE CONTRATO", [])) + len(data.get("» EN TRAMITE", [])) + len(data.get("» Fuera de Circulacion", [])) + len(data.get("» INACTIVOS", [])) + len(data.get("» PERDIDA TOTAL", [])) + len(data.get("» RETIRADO DE LA EMPRESA", [])) + len(data.get("» SIN CLASIFICAR", [])) + len(data.get("» VENDIDO", [])) + len(data.get("» Vehiculos Para la Venta", []))
+    data_view["total_parados"] = len(traspasados_ordenados) + len(fin_contrato_ordenados) + len(en_tramite_ordenados) + len(fuera_circulacion_ordenados) + len(inactivos_ordenados) + len(perdida_total_ordenados) + len(retirado_empresa_ordenados) + len(sin_calificar_ordenados) + len(vendidos_ordenados) + len(para_venta_ordenados)
 
     data_view["total_vehiculos"] = data_view["total_activos"] + data_view["total_parados"]
 
@@ -495,13 +592,13 @@ async def get_conteo_propietarios_vehiculos_estados_numeros(id: int, info: userI
     data_view["usuario"] = usuario
 
     headers = {
-        "Content-Disposition": "inline; informe-estados-detallado-empresa.pdf"
+        "Content-Disposition": "attachment; informe-estados-detallado-empresa.pdf"
     }  
 
     template_loader = jinja2.FileSystemLoader(searchpath="./templates")
     template_env = jinja2.Environment(loader=template_loader)
     template_file = "form2.html"
-    header_file = "header1.html"
+    header_file = "header2.html"
     footer_file = "footer1.html"
     template = template_env.get_template(template_file)
     header = template_env.get_template(header_file)
@@ -534,7 +631,7 @@ async def get_conteo_propietarios_vehiculos_estados_numeros(id: int, info: userI
 
 #-----------------------------------------------------------------------------------------
 
-@statevehiclefleetReports_router.post('/relacion-vehiculos-propietario', response_class=FileResponse)
+@statevehiclefleetReports_router.post('/relacion-vehiculos-propietario/', response_class=FileResponse)
 async def get_vehiculos_detalles(infoReports: infoReports):
     db = session()
     try:
@@ -561,6 +658,9 @@ async def get_vehiculos_detalles(infoReports: infoReports):
         )   .join(Vehiculos, Estados.CODIGO == Vehiculos.ESTADO) \
             .join(Conductores, Vehiculos.CONDUCTOR == Conductores.CODIGO) \
             .join(Propietarios, Vehiculos.PROPI_IDEN == Propietarios.CODIGO) \
+            .filter(Estados.CODIGO.in_(infoReports.estados)) \
+            .filter(Vehiculos.PROPI_IDEN.in_(infoReports.empresas)) \
+            .filter(Propietarios.CODIGO.in_(infoReports.empresas)) \
             .all()   
         
         # Convertir los resultados en un formato JSON
@@ -656,7 +756,7 @@ async def get_vehiculos_detalles(infoReports: infoReports):
         data_view["usuario"] = usuario
 
         headers = {
-            "Content-Disposition": "inline; relacion-vehiculos-propietario.pdf"
+            "Content-Disposition": "attachment; relacion-vehiculos-propietario.pdf"
         }  
 
         template_loader = jinja2.FileSystemLoader(searchpath="./templates")

@@ -1,0 +1,41 @@
+<div class="sidenav-header">
+  <div class="user-info">
+    <img [src]="imgUser" alt="User Avatar" class="user-avatar-img">
+    <div class="user-details">
+      <div class="user-name">{{this.infoCompanyName}}</div>
+      <div class="user-email">{{this.permisos.nombre}}</div>
+    </div>
+  </div>
+</div>
+
+<mat-divider></mat-divider>
+
+<mat-nav-list class="sidenav-menu">
+  <ng-container *ngFor="let item of menuItems">
+    <mat-list-item
+      *ngIf="!ownerView && item.conditions"
+      [routerLink]="item.route"
+      routerLinkActive="active-link"
+      (click)="onItemClick()">
+      <mat-icon matListItemIcon>{{item.icon}}</mat-icon>
+      <span matListItemTitle>{{item.label}}</span>
+    </mat-list-item>
+  </ng-container>
+</mat-nav-list>
+
+<mat-divider></mat-divider>
+
+<mat-nav-list>
+  <mat-list-item routerLink="/home/users" routerLinkActive="active-link" (click)="onItemClick()">
+    <mat-icon matListItemIcon>home</mat-icon>
+    <span matListItemTitle>Inicio</span>
+  </mat-list-item>
+  <mat-list-item (click)="openDialogInfoCompany()">
+    <mat-icon matListItemIcon>info</mat-icon>
+    <span matListItemTitle>Infomación de la Empresa</span>
+  </mat-list-item>
+  <mat-list-item (click)="logout()">
+    <mat-icon matListItemIcon>logout</mat-icon>
+    <span matListItemTitle>Cerrar Sesión</span>
+  </mat-list-item>
+</mat-nav-list>
