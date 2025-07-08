@@ -312,7 +312,7 @@ export class InspectionsComponent implements OnInit {
     if (endpoint) {
       localStorage.setItem('pdfEndpoint', endpoint);
       localStorage.setItem('pdfData', JSON.stringify(formattedValues));
-      window.open('/pdf', '_blank');
+      window.open(`/pdf`, '_blank');
     }
   }
 
