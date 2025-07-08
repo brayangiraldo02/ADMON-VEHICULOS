@@ -1,4 +1,4 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, BackgroundTasks
 from fastapi.responses import JSONResponse
 from config.dbconnection import session
 from models.estados import Estados
@@ -16,6 +16,8 @@ from fastapi.templating import Jinja2Templates
 from fastapi.responses import FileResponse
 import jinja2
 from utils.pdf import html2pdf
+import os
+import tempfile
 
 templateJinja = Jinja2Templates(directory="templates")
 
@@ -785,26 +787,35 @@ async def get_vehiculos_detalles(infoReports: infoReports):
         output_header = header.render(data_view=data_view)
         output_footer = footer.render(data_view=data_view)
 
-        html_path = f'./templates/renderRelacionVehiculos.html'
-        header_path = f'./templates/renderheader.html'
-        footer_path = f'./templates/renderfooter.html'
-        html_file = open(html_path, 'w')
-        header_file = open(header_path, 'w')
-        html_footer = open(footer_path, 'w') 
-        html_file.write(output_text)
-        header_file.write(output_header)
-        html_footer.write(output_footer) 
-        html_file.close()
-        header_file.close()
-        html_footer.close()
-        pdf_path = 'relacion-vehiculos-propietario.pdf'
+        with tempfile.NamedTemporaryFile(delete=False, suffix='.html', mode='w') as html_file:
+            html_path = html_file.name
+            html_file.write(output_text)
+        with tempfile.NamedTemporaryFile(delete=False, suffix='.html', mode='w') as header_file:
+            header_path = header_file.name
+            header_file.write(output_header)
+        with tempfile.NamedTemporaryFile(delete=False, suffix='.html', mode='w') as footer_file:
+            footer_path = footer_file.name
+            footer_file.write(output_footer)
+        pdf_path = tempfile.NamedTemporaryFile(delete=False, suffix='.pdf').name
+
         html2pdf(titulo, html_path, pdf_path, header_path=header_path, footer_path=footer_path)
 
-        response = FileResponse(pdf_path, media_type='application/pdf', filename='templates/relacion-vehiculos-propietario.pdf', headers=headers) 
+        background_tasks = BackgroundTasks()
+        background_tasks.add_task(os.remove, html_path)
+        background_tasks.add_task(os.remove, header_path)
+        background_tasks.add_task(os.remove, footer_path)
+        background_tasks.add_task(os.remove, pdf_path)
+
+        response = FileResponse(
+            pdf_path, media_type='application/pdf', 
+            filename='templates/relacion-vehiculos-propietario.pdf', 
+            headers=headers,
+            background=background_tasks
+        ) 
         
         return response
-    
-        #return JSONResponse(content=jsonable_encoder(datos))
+    except Exception as e:
+        return JSONResponse(content={"message": str(e)}, status_code=500)
     finally:
         db.close()
 

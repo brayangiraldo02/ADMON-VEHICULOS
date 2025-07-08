@@ -298,19 +298,6 @@ async def report_inspections(data, company_code: str):
     output_header = header.render(data_view=data_view)
     output_footer = footer.render(data_view=data_view)
 
-    # html_path = f'./templates/renderInspecciones.html'
-    # header_path = f'./templates/renderheader.html'
-    # footer_path = f'./templates/renderfooter.html'
-    # html_file = open(html_path, 'w')
-    # header_file = open(header_path, 'w')
-    # html_footer = open(footer_path, 'w') 
-    # html_file.write(output_text)
-    # header_file.write(output_header)
-    # html_footer.write(output_footer) 
-    # html_file.close()
-    # header_file.close()
-    # html_footer.close()
-    # pdf_path = 'reporte-inspecciones.pdf'
     with tempfile.NamedTemporaryFile(delete=False, suffix='.html', mode='w', encoding='latin-1') as html_file:
       html_path = html_file.name
       html_file.write(output_text)
@@ -321,11 +308,6 @@ async def report_inspections(data, company_code: str):
       footer_path = footer_file.name
       footer_file.write(output_footer)
     pdf_path = tempfile.NamedTemporaryFile(delete=False, suffix='.pdf').name
-
-    print(f"HTML Path: {html_path}")
-    print(f"Header Path: {header_path}")
-    print(f"Footer Path: {footer_path}")
-    print(f"PDF Path: {pdf_path}")
 
     html2pdf(titulo, html_path, pdf_path, header_path=header_path, footer_path=footer_path)
 
