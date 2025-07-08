@@ -311,13 +311,13 @@ async def report_inspections(data, company_code: str):
     # header_file.close()
     # html_footer.close()
     # pdf_path = 'reporte-inspecciones.pdf'
-    with tempfile.NamedTemporaryFile(delete=False, suffix='.html', mode='w', encoding='latin-1') as html_file:
+    with tempfile.NamedTemporaryFile(delete=False, suffix='.html', mode='w', encoding='utf-8') as html_file:
       html_path = html_file.name
       html_file.write(output_text)
-    with tempfile.NamedTemporaryFile(delete=False, suffix='.html', mode='w', encoding='latin-1') as header_file:
+    with tempfile.NamedTemporaryFile(delete=False, suffix='.html', mode='w', encoding='utf-8') as header_file:
       header_path = header_file.name
       header_file.write(output_header)
-    with tempfile.NamedTemporaryFile(delete=False, suffix='.html', mode='w', encoding='latin-1') as footer_file:
+    with tempfile.NamedTemporaryFile(delete=False, suffix='.html', mode='w', encoding='utf-8') as footer_file:
       footer_path = footer_file.name
       footer_file.write(output_footer)
     pdf_path = tempfile.NamedTemporaryFile(delete=False, suffix='.pdf').name
