@@ -42,6 +42,7 @@ import { SharedModule } from './modules/shared/shared.module';
 import { DevPreviewComponent } from './modules/others/dev-preview/dev-preview.component';
 import { MaterialModule } from './modules/shared/material/material.module';
 import { InspectionsComponent } from './modules/tasks/inspections/inspections.component';
+import { OperacionesContratoDeclaracionJuradaComponent } from './modules/options/users/operaciones/operaciones-contrato-declaracion-jurada/operaciones-contrato-declaracion-jurada.component';
 
 @NgModule({
   declarations: [
@@ -81,6 +82,7 @@ import { InspectionsComponent } from './modules/tasks/inspections/inspections.co
     OperacionesEntregaVehiculoConductorComponent,
     DevPreviewComponent,
     InspectionsComponent,
+    OperacionesContratoDeclaracionJuradaComponent,
   ],
   imports: [
     BrowserModule,
