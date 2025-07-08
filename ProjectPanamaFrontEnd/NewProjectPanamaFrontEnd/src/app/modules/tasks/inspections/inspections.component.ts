@@ -67,6 +67,8 @@ export class InspectionsComponent implements OnInit {
   optionsDrivers!: Observable<drivers[]>;
   optionsVehicles!: Observable<vehicles[]>;
 
+  maxDate: Date = new Date();
+
   isLoading = true;
 
   displayedColumns: string[] = [
@@ -102,6 +104,7 @@ export class InspectionsComponent implements OnInit {
     });
 
     this.getDataAutoCompletes();
+    this.getMaxDate();
   }
 
   ngAfterViewInit() {
@@ -113,6 +116,27 @@ export class InspectionsComponent implements OnInit {
     this.getDataOwners();
     this.getDataDrivers();
     this.getDataVehicles();
+  }
+
+  getMaxDate() {
+    this.apiService.getData('extras/time').subscribe(
+      (response: any) => {
+        const dateParts = response.time.split('-');
+        this.maxDate = new Date(
+          parseInt(dateParts[0]), 
+          parseInt(dateParts[1]) - 1, 
+          parseInt(dateParts[2])
+        );
+      },
+      (error) => {
+        this.maxDate = new Date();
+      }
+    );
+  }
+
+  getUser() {
+    const userData = this.jwtService.getUserData();
+    return userData ? userData.nombre : '';
   }
 
   getCompany() {
@@ -260,6 +284,36 @@ export class InspectionsComponent implements OnInit {
         }
       }
     });
+  }
+
+  getPdfData(){
+    if (this.inspectionForm.invalid) {
+      this.inspectionForm.markAllAsTouched();
+      return;
+    }
+
+    const formValues = this.inspectionForm.value;
+    const user = this.getUser();
+  
+    // Formatear las fechas para enviar solo YYYY-MM-DD
+    const formattedValues = {
+      usuario: user,
+      conductor: formValues.conductor && formValues.conductor.codigo_conductor ? formValues.conductor.codigo_conductor : '',
+      propietario: formValues.propietario && formValues.propietario.id ? formValues.propietario.id : '',
+      vehiculo: formValues.vehiculo && formValues.vehiculo.numero_unidad ? formValues.vehiculo.numero_unidad : '',
+      fechaInicial: formValues.fechaInicial ? new Date(formValues.fechaInicial).toISOString().split('T')[0] : '',
+      fechaFinal: formValues.fechaFinal ? new Date(formValues.fechaFinal).toISOString().split('T')[0] : ''
+    };
+
+    const company = this.getCompany();
+
+    const endpoint = 'inspections/report_inspections/'+company;
+
+    if (endpoint) {
+      localStorage.setItem('pdfEndpoint', endpoint);
+      localStorage.setItem('pdfData', JSON.stringify(formattedValues));
+      window.open('/pdf', '_blank');
+    }
   }
 
   openSnackbar(message: string) {
