@@ -300,7 +300,7 @@ async def vehicle_delivery_info(vehicle_number: str):
       'conductor_cedula': driver.CEDULA,
       'conductor_celular': driver.TELEFONO,
       'conductor_direccion': driver.DIRECCION,
-      'fecha_contrato': vehicle.FEC_CONTRA.strftime('%d/%m/%Y') if vehicle.FEC_CONTRA else None,
+      'fecha_contrato': vehicle.FEC_CONTRA.strftime('%d/%m/%Y') if vehicle.FEC_CONTRA and hasattr(vehicle.FEC_CONTRA, 'strftime') else None,
       'permitido': wReg,
       'mensaje': message if wReg == 1 else '',
     }
