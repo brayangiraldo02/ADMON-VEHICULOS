@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import { FormControl, Validators } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { map, Observable, startWith } from 'rxjs';
@@ -41,7 +41,7 @@ interface contractInfo {
 export class OperacionesContratoDeclaracionJuradaComponent implements OnInit {
   vehicles = new FormControl('');
   drivers = new FormControl({value: '', disabled: true});
-  selectedDate = new FormControl('');
+  selectedDate = new FormControl<Date | null>({value: null, disabled: true}, {validators: [Validators.required]});
   options: vehicle[] = [];
   filteredOptions!: Observable<vehicle[]>;
   maxDate = new Date(); 
@@ -75,7 +75,7 @@ export class OperacionesContratoDeclaracionJuradaComponent implements OnInit {
     private apiService: ApiService,
     private jwtService: JwtService,
     private snackBar: MatSnackBar,
-    private dialogRef: MatDialogRef<OperacionesContratoDeclaracionJuradaComponent>
+    private dialogRef: MatDialogRef<OperacionesContratoDeclaracionJuradaComponent>,
   ) {}
 
   ngOnInit() {
@@ -90,7 +90,7 @@ export class OperacionesContratoDeclaracionJuradaComponent implements OnInit {
         this.maxDate = new Date(
           parseInt(dateParts[0]), 
           parseInt(dateParts[1]) - 1, 
-          parseInt(dateParts[2]) 
+          parseInt(dateParts[2])
         );
       },
       (error) => {
@@ -154,6 +154,9 @@ export class OperacionesContratoDeclaracionJuradaComponent implements OnInit {
       mensaje: ''
     };
     this.drivers.setValue('');
+    this.selectedDate.setValue(this.maxDate);
+    this.selectedDate.markAsUntouched(); 
+    this.selectedDate.markAsPristine(); 
   }
 
   resetVehicleAutocomplete(){
@@ -184,10 +187,16 @@ export class OperacionesContratoDeclaracionJuradaComponent implements OnInit {
       this.apiService.getData('operations/generate-contract/info/'+selectedVehicle).subscribe(
         (response: contractInfo) => {
           console.log('Contract Info:', response);
-          // Handle the response as needed
+
           this.isLoadingContractInfo = false;
           this.contractInfo = response;
           this.drivers.setValue(response.conductor_codigo);
+
+          const dateParts = response.fecha_contrato.split('/');
+          const day = parseInt(dateParts[0]);
+          const month = parseInt(dateParts[1]) - 1; 
+          const year = parseInt(dateParts[2]);
+          this.selectedDate.setValue(new Date(year, month, day));
         },
         (error) => {
           console.error('Error fetching contract info:', error);
@@ -209,8 +218,28 @@ export class OperacionesContratoDeclaracionJuradaComponent implements OnInit {
     );
   }
 
-  generateContract() {
+  openExternalLink() {
+    const endpoint = 'operations/generate-contract/pdf/' + this.vehicles.value;
 
+    localStorage.setItem('pdfEndpoint', endpoint);
+    window.open(`/pdf`, '_blank');
+    this.closeDialog();
+  }
+
+  generateContract() {
+    if(this.vehicles.value === '') {
+      this.openSnackbar('Debes seleccionar una unidad.');
+      return;
+    }
+
+    // Validar que el formulario sea válido
+    if (this.drivers.value === '' || this.selectedDate.value === null) {
+      this.openSnackbar('Debes completar todos los campos obligatorios.');
+      this.selectedDate.markAsTouched();
+      return;
+    }
+
+    this.openExternalLink();
   }
 
   closeDialog(){
