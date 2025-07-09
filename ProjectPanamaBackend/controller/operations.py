@@ -171,7 +171,10 @@ async def vehicle_delivery_info(vehicle_number: str):
     
     wReg = 0
     # Verificar datos del vehiculo
-    if float(vehicle.NROENTREGA) == 0:
+    if vehicle.FEC_CONTRA is None or vehicle.FEC_CONTRA == '' or vehicle.FEC_CONTRA == '0000-00-00':
+      wReg = 1
+      message = 'VEHICULO no Tiene Fecha de Contrato'
+    elif float(vehicle.NROENTREGA) == 0:
       wReg = 1
       message = 'VEHICULO no Tiene Nº de Cuotas'
     elif Vehiculos.VLR_DEPOSI == 0:
@@ -297,7 +300,7 @@ async def vehicle_delivery_info(vehicle_number: str):
       'conductor_cedula': driver.CEDULA,
       'conductor_celular': driver.TELEFONO,
       'conductor_direccion': driver.DIRECCION,
-      'fecha_contrato': vehicle.FEC_ESTADO.strftime('%d/%m/%Y') if vehicle.FEC_ESTADO else None,
+      'fecha_contrato': vehicle.FEC_CONTRA.strftime('%d/%m/%Y') if vehicle.FEC_CONTRA else None,
       'permitido': wReg,
       'mensaje': message if wReg == 1 else '',
     }
