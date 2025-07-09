@@ -92,13 +92,9 @@ export class OperacionesContratoDeclaracionJuradaComponent implements OnInit {
           parseInt(dateParts[1]) - 1, 
           parseInt(dateParts[2])
         );
-
-        this.selectedDate.setValue(this.maxDate);
       },
       (error) => {
         this.maxDate = new Date();
-
-        this.selectedDate.setValue(this.maxDate);
       }
     );
   }
@@ -191,10 +187,16 @@ export class OperacionesContratoDeclaracionJuradaComponent implements OnInit {
       this.apiService.getData('operations/generate-contract/info/'+selectedVehicle).subscribe(
         (response: contractInfo) => {
           console.log('Contract Info:', response);
-          // Handle the response as needed
+
           this.isLoadingContractInfo = false;
           this.contractInfo = response;
           this.drivers.setValue(response.conductor_codigo);
+
+          const dateParts = response.fecha_contrato.split('/');
+          const day = parseInt(dateParts[0]);
+          const month = parseInt(dateParts[1]) - 1; 
+          const year = parseInt(dateParts[2]);
+          this.selectedDate.setValue(new Date(year, month, day));
         },
         (error) => {
           console.error('Error fetching contract info:', error);
