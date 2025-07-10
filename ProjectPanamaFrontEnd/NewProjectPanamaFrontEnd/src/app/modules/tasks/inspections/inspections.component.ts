@@ -63,6 +63,10 @@ export class InspectionsComponent implements OnInit {
   owners: owners[] = [];
   drivers: drivers[] = [];
   vehicles: vehicles[] = [];
+
+  allDrivers: drivers[] = [];
+  allVehicles: vehicles[] = [];
+
   optionsOwners!: Observable<owners[]>;
   optionsDrivers!: Observable<drivers[]>;
   optionsVehicles!: Observable<vehicles[]>;
@@ -105,6 +109,8 @@ export class InspectionsComponent implements OnInit {
 
     this.getDataAutoCompletes();
     this.getMaxDate();
+    this.setupOwnerListener();
+    this.setupDriverListener();
   }
 
   ngAfterViewInit() {
@@ -159,11 +165,100 @@ export class InspectionsComponent implements OnInit {
     );
   }
 
+  setupOwnerListener() {
+    this.inspectionForm.get('propietario')?.valueChanges.subscribe(selectedOwner => {
+      // Limpiar selecciones de conductor y vehículo cuando cambie el propietario
+      this.inspectionForm.patchValue({
+        conductor: '',
+        vehiculo: ''
+      });
+
+      if (selectedOwner && selectedOwner.id) {
+        // Filtrar conductores y vehículos por propietario seleccionado
+        this.filterDriversByOwner(selectedOwner.id);
+        this.filterVehiclesByOwner(selectedOwner.id);
+      } else {
+        // Si no hay propietario seleccionado, mostrar todos
+        this.resetFilters();
+      }
+    });
+  }
+
+  setupDriverListener() {
+    this.inspectionForm.get('conductor')?.valueChanges.subscribe(selectedDriver => {
+      // Limpiar selección de vehículo cuando cambie el conductor
+      this.inspectionForm.patchValue({
+        vehiculo: ''
+      });
+
+      if (selectedDriver && selectedDriver.numero_unidad) {
+        // Filtrar vehículos por conductor seleccionado
+        this.filterVehiclesByDriver(selectedDriver.numero_unidad);
+      } else {
+        // Si no hay conductor seleccionado, filtrar por propietario (si hay uno seleccionado)
+        const selectedOwner = this.inspectionForm.get('propietario')?.value;
+        if (selectedOwner && selectedOwner.id) {
+          this.filterVehiclesByOwner(selectedOwner.id);
+        } else {
+          this.resetVehicleFilter();
+        }
+      }
+    });
+  }
+
+  filterDriversByOwner(ownerId: string) {
+    this.drivers = this.allDrivers.filter(driver => driver.codigo_propietario === ownerId);
+    this.optionsDrivers = this.inspectionForm.get('conductor')!.valueChanges.pipe(
+      startWith(''),
+      map(value => this._filterDrivers(value || '')),
+    );
+  }
+
+  filterVehiclesByOwner(ownerId: string) {
+    this.vehicles = this.allVehicles.filter(vehicle => vehicle.codigo_propietario === ownerId);
+    this.optionsVehicles = this.inspectionForm.get('vehiculo')!.valueChanges.pipe(
+      startWith(''),
+      map(value => this._filterVehicles(value || '')),
+    );
+  }
+
+  filterVehiclesByDriver(numeroUnidad: string) {
+    this.vehicles = this.allVehicles.filter(vehicle => vehicle.numero_unidad === numeroUnidad);
+    this.optionsVehicles = this.inspectionForm.get('vehiculo')!.valueChanges.pipe(
+      startWith(''),
+      map(value => this._filterVehicles(value || '')),
+    );
+  }
+
+  resetVehicleFilter() {
+    this.vehicles = [...this.allVehicles];
+    this.optionsVehicles = this.inspectionForm.get('vehiculo')!.valueChanges.pipe(
+      startWith(''),
+      map(value => this._filterVehicles(value || '')),
+    );
+  }
+
+  resetFilters() {
+    this.drivers = [...this.allDrivers];
+    this.vehicles = [...this.allVehicles];
+    
+    this.optionsDrivers = this.inspectionForm.get('conductor')!.valueChanges.pipe(
+      startWith(''),
+      map(value => this._filterDrivers(value || '')),
+    );
+    
+    this.optionsVehicles = this.inspectionForm.get('vehiculo')!.valueChanges.pipe(
+      startWith(''),
+      map(value => this._filterVehicles(value || '')),
+    );
+  }
+
   getDataDrivers(){
     const company = this.getCompany();
     this.apiService.getData('inspections/drivers_data/'+company).subscribe(
       (data: drivers[]) => {
-        this.drivers = data;
+        this.allDrivers = data; // Guardar todos los conductores
+        this.drivers = [...data]; // Inicializar con todos los datos
         this.optionsDrivers = this.inspectionForm.get('conductor')!.valueChanges.pipe(
           startWith(''),
           map(value => this._filterDrivers(value || '')),
@@ -176,7 +271,8 @@ export class InspectionsComponent implements OnInit {
     const company = this.getCompany();
     this.apiService.getData('inspections/vehicles_data/'+company).subscribe(
       (data: vehicles[]) => {
-        this.vehicles = data;
+        this.allVehicles = data; // Guardar todos los vehículos
+        this.vehicles = [...data]; // Inicializar con todos los datos
         this.optionsVehicles = this.inspectionForm.get('vehiculo')!.valueChanges.pipe(
           startWith(''),
           map(value => this._filterVehicles(value || '')),
