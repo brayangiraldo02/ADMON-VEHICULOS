@@ -121,7 +121,9 @@
     </div>
   </form>
 
-  <div class="mat-elevation-z8">
+  <mat-progress-bar mode="indeterminate" *ngIf="isLoadingData"></mat-progress-bar>
+
+  <div class="mat-elevation-z8" *ngIf="!isLoading && dataSource.data.length > 0">
     <div class="table-scroll-container">
       <table
         mat-table

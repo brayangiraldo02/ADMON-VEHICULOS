@@ -74,6 +74,7 @@ export class InspectionsComponent implements OnInit {
   maxDate: Date = new Date();
 
   isLoading = true;
+  isLoadingData = false;
 
   displayedColumns: string[] = [
     'Fecha',
@@ -334,6 +335,8 @@ export class InspectionsComponent implements OnInit {
     // Limpiar datos existentes de la tabla
     this.clearTableData();
 
+    this.isLoadingData = true; 
+
     const formValues = this.inspectionForm.value;
   
     // Formatear las fechas para enviar solo YYYY-MM-DD
@@ -369,6 +372,8 @@ export class InspectionsComponent implements OnInit {
         } else {
           this.openSnackbar('Inspecciones cargadas correctamente.');
         }
+
+        this.isLoadingData = false;
       },
       error: (error) => {
         console.error('Error fetching inspections:', error);
@@ -378,6 +383,7 @@ export class InspectionsComponent implements OnInit {
         } else {
           this.openSnackbar('Error al cargar las inspecciones. Por favor, inténtelo de nuevo más tarde.');
         }
+        this.isLoadingData = false;
       }
     });
   }

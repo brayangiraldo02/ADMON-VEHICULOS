@@ -73,3 +73,42 @@ th:first-child,
 td:first-child {
   padding-left: 20px; 
 }
+
+@media (max-width: 768px) {
+  .main-container {
+    padding: 2vh 20px;
+  }
+
+  .inputs-container {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .field-input {
+    width: 100%;
+    height: 100%;
+  }
+
+  .buttons-container {
+    flex-direction: column;
+    align-items: center;
+    gap: 0px;
+  }
+
+  .buttons-container button {
+    width: 100%;
+    margin-bottom: 10px;
+  }
+
+  .mat-elevation-z8 {
+    margin: 0px 0px;
+  }
+
+  ::ng-deep .mat-elevation-z8 .mat-mdc-paginator-page-size {
+    margin-bottom: 8px;
+  }
+
+  ::ng-deep .mat-elevation-z8 .mat-mdc-table thead {
+    padding: 8px;
+  }
+}
