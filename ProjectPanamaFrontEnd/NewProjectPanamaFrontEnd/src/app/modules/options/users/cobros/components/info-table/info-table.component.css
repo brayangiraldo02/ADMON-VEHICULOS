@@ -77,15 +77,15 @@ td:last-child {
   padding-right: 20px; /* Ajusta este valor según sea necesario */
 }
 
-.filters-container {
+/* .filters-container {
   transition: all 0.3s ease;
-}
+} */
 
-.mat-elevation-z8 {
+/* .mat-elevation-z8 {
   transition: all 0.3s ease;
-}
+} */
 
-::ng-deep .mat-mdc-option {
+/* ::ng-deep .mat-mdc-option {
   transition: all 0.2s ease !important;
   margin: 2px !important;
   transform-origin: center !important;
@@ -102,7 +102,7 @@ td:last-child {
   padding: 4px !important;
   overflow-y: auto !important;
   overflow-x: hidden !important;
-}
+} */
 
 .padding-header{
   padding-right: 10px;
