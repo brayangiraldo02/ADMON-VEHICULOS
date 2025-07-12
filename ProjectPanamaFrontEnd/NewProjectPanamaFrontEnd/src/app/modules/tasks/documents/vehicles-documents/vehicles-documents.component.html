@@ -1,6 +1,6 @@
 <form [formGroup]="vehiclesForm">
   <div class="inputs-container">
-    <mat-progress-bar mode="indeterminate" *ngIf="isLoading"></mat-progress-bar>
+    <mat-progress-bar mode="indeterminate" *ngIf="isLoading || loadingDocumentsInfoVehicles"></mat-progress-bar>
     <mat-form-field class="field-input" *ngIf="!isLoading">
       <mat-label>Vehículos</mat-label>
       <input
@@ -10,7 +10,7 @@
         formControlName="vehiculo"
         [matAutocomplete]="auto3"
       />
-      <mat-autocomplete #auto3="matAutocomplete" [displayWith]="displayVehiclePlate">
+      <mat-autocomplete #auto3="matAutocomplete" [displayWith]="displayVehiclePlate" (optionSelected)="selectedOptionVehicle($event)">
         <mat-option [value]="">
           -
         </mat-option>
@@ -22,5 +22,126 @@
         </mat-option>
       </mat-autocomplete>
     </mat-form-field>
+  </div>
+
+  <div class="documents-options-container" *ngIf="selectedVehicle">
+    <div class="required-documents-container">
+      <h3 class="button title">
+        Documentos Obligatorios
+      </h3>
+      <button
+        mat-raised-button 
+        class="button"
+      >
+        <mat-icon>description</mat-icon>
+        <span>Transferencia (Recibo de Asignación de Cupo)</span>
+      </button>
+      <button
+        mat-raised-button 
+        class="button"
+      >
+        <mat-icon>description</mat-icon>
+        <span>Registro Único Propiedad Vehicular</span>
+      </button>
+      <button
+        mat-raised-button 
+        class="button"
+      >
+        <mat-icon>description</mat-icon>
+        <span>Seguro de Responsabilidad Civil (Aseguradora)</span>
+      </button>
+      <button
+        mat-raised-button 
+        class="button"
+      >
+        <mat-icon>description</mat-icon>
+        <span>Recibo de Pago de Placa Municipal (Paz y Salvo)</span>
+      </button>
+      <button
+        mat-raised-button 
+        class="button"
+      >
+        <mat-icon>description</mat-icon>
+        <span>Certificado de Inspección Vehicular Particular (Revisado)</span>
+      </button>
+      <button
+        mat-raised-button 
+        class="button"
+      >
+        <mat-icon>description</mat-icon>
+        <span>Recibo de Pago de Cupo</span>
+      </button>
+      <button
+        mat-raised-button 
+        class="button"
+      >
+        <mat-icon>description</mat-icon>
+        <span>Certificado de Operación</span>
+      </button>
+      <button
+        mat-raised-button 
+        class="button"
+      >
+        <mat-icon>description</mat-icon>
+        <span>Contrato de Afiliación al Sistema Panapass</span>
+      </button>
+    </div>
+    <div class="optional-documents-container">
+      <h3 class="button title">
+        Documentos Opcionales
+      </h3>
+      <button
+        mat-raised-button 
+        class="button"
+      >
+        <mat-icon>description</mat-icon>
+        <span>Inscripción del Vehículo</span>
+      </button>
+      <button
+        mat-raised-button 
+        class="button"
+      >
+        <mat-icon>description</mat-icon>
+        <span>Traspaso por Venta</span>
+      </button>
+      <button
+        mat-raised-button 
+        class="button"
+      >
+        <mat-icon>description</mat-icon>
+        <span>Inscripcipon de Hipoteca</span>
+      </button>
+      <button
+        mat-raised-button 
+        class="button"
+      >
+        <mat-icon>description</mat-icon>
+        <span>Recibo de Pago (Pre-Inscripción)</span>
+      </button>
+      <button
+        mat-raised-button 
+        class="button"
+      >
+        <mat-icon>description</mat-icon>
+        <span>Certificado de Garantía de Vehículo Nuevo</span>
+      </button>
+      <h3 class="button title">
+        Documentos de Traspaso
+      </h3>
+      <button
+        mat-raised-button 
+        class="button"
+      >
+        <mat-icon>description</mat-icon>
+        <span>Certificado de Operación</span>
+      </button>
+      <button
+        mat-raised-button 
+        class="button"
+      >
+        <mat-icon>description</mat-icon>
+        <span>Registro Vehicular</span>
+      </button>
+    </div>
   </div>
 </form>

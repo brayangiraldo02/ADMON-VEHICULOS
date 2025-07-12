@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
+import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { map, Observable, startWith } from 'rxjs';
 import { ApiService } from 'src/app/services/api.service';
 import { JwtService } from 'src/app/services/jwt.service';
@@ -23,6 +24,8 @@ export class VehiclesDocumentsComponent implements OnInit {
   vehiclesForm!: FormGroup;
 
   isLoading: boolean = true;
+  selectedVehicle: boolean = false;
+  loadingDocumentsInfoVehicles: boolean = false;
 
   vehicles: vehicles[] = [];
 
@@ -74,5 +77,17 @@ export class VehiclesDocumentsComponent implements OnInit {
 
   displayVehiclePlate(vehicle: vehicles): string {
     return vehicle ? `${vehicle.numero_unidad} ${vehicle.placa_vehiculo} - ${vehicle.marca} ${vehicle.linea} ${vehicle.modelo}` : '';
+  }
+
+  selectedOptionVehicle(event: MatAutocompleteSelectedEvent): void {
+    const selectedVehicle = event.option.value;
+
+    if (selectedVehicle) {
+      console.log('Vehículo seleccionado:', selectedVehicle);
+      this.selectedVehicle = true;
+    } else {
+      console.log('Se seleccionó la opción para limpiar el campo.');
+      this.selectedVehicle = false;
+    }
   }
 }
