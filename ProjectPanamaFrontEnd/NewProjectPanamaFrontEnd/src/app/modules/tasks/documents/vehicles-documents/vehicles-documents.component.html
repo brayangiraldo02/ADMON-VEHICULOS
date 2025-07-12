@@ -1,0 +1,26 @@
+<form [formGroup]="vehiclesForm">
+  <div class="inputs-container">
+    <mat-progress-bar mode="indeterminate" *ngIf="isLoading"></mat-progress-bar>
+    <mat-form-field class="field-input" *ngIf="!isLoading">
+      <mat-label>Vehículos</mat-label>
+      <input
+        type="text"
+        placeholder="Selecciona un vehículo"
+        matInput
+        formControlName="vehiculo"
+        [matAutocomplete]="auto3"
+      />
+      <mat-autocomplete #auto3="matAutocomplete" [displayWith]="displayVehiclePlate">
+        <mat-option [value]="">
+          -
+        </mat-option>
+        <mat-option
+          *ngFor="let option of optionsVehicles | async"
+          [value]="option"
+        >
+          {{ option.numero_unidad }} - {{ option.placa_vehiculo }} - {{ option.marca }} {{ option.linea }} {{ option.modelo }}
+        </mat-option>
+      </mat-autocomplete>
+    </mat-form-field>
+  </div>
+</form>

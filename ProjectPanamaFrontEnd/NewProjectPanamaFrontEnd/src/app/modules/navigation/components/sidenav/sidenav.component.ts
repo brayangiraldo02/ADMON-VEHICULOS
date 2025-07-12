@@ -6,6 +6,7 @@ import { OwnersGuard } from 'src/app/guards/owners.guard';
 import { MatDialog } from '@angular/material/dialog';
 import { InfoCompanyComponent } from '../info-company/info-company.component';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
+import { OptionsDocumentsDialogComponent } from 'src/app/modules/tasks/documents/options-documents-dialog/options-documents-dialog.component';
 
 @Component({
   selector: 'app-sidenav',
@@ -97,12 +98,12 @@ export class SidenavComponent implements OnInit {
         route: '/inspections',
         conditions: true
       },
-      // {
-      //   icon: 'insert_drive_file',
-      //   label: 'Documentos',
-      //   route: '/feespaid',
-      //   conditions: this.permisos.tarea05
-      // }
+      {
+        icon: 'insert_drive_file',
+        label: 'Documentos',
+        action: () => this.openDialogDocuments(),
+        conditions: true
+      }
     ];
   }
 
@@ -142,6 +143,17 @@ export class SidenavComponent implements OnInit {
 
   onBackdropClick(): void {
     this.backdropClick.emit();
+  }
+
+  openDialogDocuments(): void {
+    const isSmallScreen = this.breakpointObserver.isMatched(Breakpoints.XSmall);
+    const dialogWidth = isSmallScreen ? '90vw' : '60%';
+
+    const dialogRef = this.dialog.open(OptionsDocumentsDialogComponent,
+      {
+        width: dialogWidth,
+      }
+    );
   }
 
   openDialogInfoCompany(): void {

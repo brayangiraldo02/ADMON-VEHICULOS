@@ -43,6 +43,9 @@ import { DevPreviewComponent } from './modules/others/dev-preview/dev-preview.co
 import { MaterialModule } from './modules/shared/material/material.module';
 import { InspectionsComponent } from './modules/tasks/inspections/inspections.component';
 import { OperacionesContratoDeclaracionJuradaComponent } from './modules/options/users/operaciones/operaciones-contrato-declaracion-jurada/operaciones-contrato-declaracion-jurada.component';
+import { VehiclesDocumentsComponent } from './modules/tasks/documents/vehicles-documents/vehicles-documents.component';
+import { DriversDocumentsComponent } from './modules/tasks/documents/drivers-documents/drivers-documents.component';
+import { OptionsDocumentsDialogComponent } from './modules/tasks/documents/options-documents-dialog/options-documents-dialog.component';
 
 @NgModule({
   declarations: [
@@ -83,6 +86,9 @@ import { OperacionesContratoDeclaracionJuradaComponent } from './modules/options
     DevPreviewComponent,
     InspectionsComponent,
     OperacionesContratoDeclaracionJuradaComponent,
+    VehiclesDocumentsComponent,
+    DriversDocumentsComponent,
+    OptionsDocumentsDialogComponent,
   ],
   imports: [
     BrowserModule,

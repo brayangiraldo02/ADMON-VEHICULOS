@@ -1,0 +1,26 @@
+<form [formGroup]="driversForm">
+  <div class="inputs-container">
+    <mat-progress-bar mode="indeterminate" *ngIf="isLoading"></mat-progress-bar>
+    <mat-form-field class="field-input" *ngIf="!isLoading">
+      <mat-label>Conductor</mat-label>
+      <input
+        type="text"
+        placeholder="Selecciona un conductor"
+        matInput
+        formControlName="conductor"
+        [matAutocomplete]="auto2"
+      />
+      <mat-autocomplete #auto2="matAutocomplete" [displayWith]="displayDriverName">
+        <mat-option [value]="">
+          -
+        </mat-option>
+        <mat-option
+          *ngFor="let option of optionsDrivers | async"
+          [value]="option"
+        >
+          {{ option.nombre_conductor }} - {{ option.cedula }}
+        </mat-option>
+      </mat-autocomplete>
+    </mat-form-field>
+  </div>
+</form>

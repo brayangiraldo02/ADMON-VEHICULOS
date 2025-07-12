@@ -1,0 +1,17 @@
+.buttons-container {
+  display: flex;
+  justify-content: space-evenly;
+  gap: 10px;
+}
+
+.buttons-container button {
+  /* background-color: #e7eeff; */
+  height: 46px;
+  width: 100%;
+}
+
+@media (max-width: 410px) {
+  .buttons-container {
+    flex-direction: column;
+  }
+}
