@@ -13,7 +13,7 @@ async def vehicle_documents(company_code: str, vehicle_number: str):
     documents = []
 
     if not os.path.exists(base_path):
-      return JSONResponse(content={"message": "No documents found for this vehicle."}, status_code=404)
+      return JSONResponse(content={"message": "Documentos no encontrados para la unidad."}, status_code=404)
 
     for i in range(1, 16):
       doc_id = f"docu{str(i).zfill(2)}"
