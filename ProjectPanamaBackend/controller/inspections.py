@@ -16,6 +16,7 @@ from datetime import datetime
 import pytz
 from utils.pdf import html2pdf
 import tempfile
+from utils.panapass import get_txt_file, search_value_in_txt
 
 async def owners_data(company_code: str):
   db = session()
@@ -240,7 +241,8 @@ async def report_inspections(data, company_code: str):
         "descripcion": inspection.DESCRIPCION,
         "unidad": inspection.UNIDAD,
         "placa": inspection.PLACA,
-        "nombre_usuario": inspection.USUARIO,
+        "kilometraje": inspection.KILOMETRAJ if inspection.KILOMETRAJ else "",
+        "nombre_usuario": inspection.USUARIO if inspection.USUARIO else "",
         "propietario": inspection.PROPI_IDEN,
         "acciones": ""
       }
@@ -331,3 +333,69 @@ async def report_inspections(data, company_code: str):
     return JSONResponse(content={"message": str(e)}, status_code=500)
   finally:
     db.close()
+
+#-----------------------------------------------------------------------------------------------
+
+async def inspection_types(company_code: str):
+  db = session()
+  try:
+    inspection_types = db.query(TiposInspeccion).filter(TiposInspeccion.EMPRESA == company_code).all()
+
+    if not inspection_types:
+      return JSONResponse(content={"message": "Inspection types not found"}, status_code=404)
+
+    result = [{"id": inspection_type.CODIGO, "nombre": inspection_type.NOMBRE} for inspection_type in inspection_types]
+
+    return JSONResponse(content=jsonable_encoder(result), status_code=200)
+  except Exception as e:
+    return JSONResponse(content={"message": str(e)}, status_code=500)
+  finally:
+    db.close()
+
+#-----------------------------------------------------------------------------------------------
+
+async def new_inspection_data(vehicle_number: str):
+  db = session()
+  try:
+    vehicle = db.query(Vehiculos).filter(Vehiculos.NUMERO == vehicle_number).first()
+    if not vehicle:
+      return JSONResponse(content={"message": "Vehicle not found"}, status_code=404)
+    
+    driver = db.query(Conductores).filter(Conductores.CODIGO == vehicle.CONDUCTOR).first()
+    
+    panama_timezone = pytz.timezone('America/Panama')
+    # Obtén la hora actual en la zona horaria de Ciudad de Panamá
+    now_in_panama = datetime.now(panama_timezone)
+    # Formatea la fecha y la hora según lo requerido
+    fecha = now_in_panama.strftime("%d/%m/%Y")
+    hora_actual = now_in_panama.strftime("%I:%M:%S %p")
+
+    # Obtener el archivo de texto para la empresa
+    txt_file_path = get_txt_file(vehicle.EMPRESA)
+    if txt_file_path:
+      panapass_value = search_value_in_txt('Unidad', vehicle_number, 'Saldo Cuenta PanaPass', txt_file_path)
+    else:
+      panapass_value = ''
+    
+    vehicle_info = {
+      'numero': vehicle_number,
+      'marca': vehicle.NOMMARCA + ' ' + vehicle.LINEA,
+      'modelo': vehicle.MODELO,
+      'placa': vehicle.PLACA,
+      'conductor_nombre': driver.NOMBRE if driver else '',
+      'conductor_codigo': vehicle.CONDUCTOR if vehicle.CONDUCTOR else '',
+      'conductor_celular': driver.TELEFONO if driver else '',
+      'kilometraje': vehicle.KILOMETRAJ if vehicle.KILOMETRAJ else '',
+      'fecha_inspeccion': fecha,
+      'hora_inspeccion': hora_actual,
+      'panapass': 0 #panapass_value if panapass_value else ''
+    }
+    
+    return JSONResponse(content=jsonable_encoder(vehicle_info), status_code=200)
+    
+  except Exception as e:
+    return JSONResponse(content={"message": str(e)}, status_code=500)
+  finally:
+    db.close()
+    
+#-----------------------------------------------------------------------------------------------
