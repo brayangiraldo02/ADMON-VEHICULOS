@@ -173,19 +173,20 @@ export class OwnersPandgstatusComponent  implements OnInit {
   openExternalLink(): void {
     let endpoint = 'pandgstatus';
     if (endpoint) {
-      const companyValue = this.infoForm.value.companie;
-      let companyName = companyValue; // Default to the full value
-      if (companyValue && companyValue.includes(' - ')) {
-        companyName = companyValue.split(' - ')[0].trim();
-      }
+      const companyValue: string = this.infoForm.value.companie;
+      
+      const companyId = companyValue.split(' - ').pop()?.trim() || companyValue;
+
       const data = {
         usuario: this.user,
         primeraFecha: this.infoForm.value.firstDate,
         ultimaFecha: this.infoForm.value.lastDate,
         unidad: this.infoForm.value.vehicle,
-        empresa: companyName,
+        empresa: companyId, 
       };
-      console.log(data);
+      
+      console.log('Datos enviados:', data); 
+      
       localStorage.setItem('pdfEndpoint', endpoint);
       localStorage.setItem('pdfData', JSON.stringify(data));
       window.open(`/pdf`, '_blank');
