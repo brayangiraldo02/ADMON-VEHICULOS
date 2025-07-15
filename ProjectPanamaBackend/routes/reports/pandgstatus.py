@@ -36,11 +36,11 @@ async def pandgstatus_report(data: PandGStatusReport):
 
       #* Si el usuario no es el administrador, se obtiene la información de las unidades de la empresa a la que pertenece
       # if data.usuario != user_admin:
-        empresa = db.query(Propietarios.CODIGO).filter(Propietarios.NOMBRE == data.empresa).first()
-        if len(empresa) == 0:
-          return JSONResponse(status_code=400, content={"error": "No se encontró la empresa"})
+        # empresa = db.query(Propietarios.CODIGO).filter(Propietarios.NOMBRE == data.empresa).first()
+        # if len(empresa) == 0:
+        #   return JSONResponse(status_code=400, content={"error": "No se encontró la empresa"})
 
-        empresa = empresa[0]
+        empresa = data.empresa
 
         # Obtener vehículos con sus recaudos en una sola consulta
         vehiculos_con_recaudos = db.query(
@@ -268,8 +268,8 @@ async def pandgstatus_report(data: PandGStatusReport):
 
     elif data.unidad != "" and data.unidad != "TODOS":
       # Optimizado: Obtener información del vehículo en una sola consulta
-      empresa = db.query(Propietarios.CODIGO).filter(Propietarios.NOMBRE == data.empresa).first()
-      empresa = empresa[0]
+      # empresa = db.query(Propietarios.CODIGO).filter(Propietarios.NOMBRE == data.empresa).first()
+      empresa = data.empresa
 
       info_unidad = db.query(
         Vehiculos.NUMERO,
