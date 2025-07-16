@@ -2,6 +2,8 @@ import pdfkit
 import os
 from io import BytesIO
 import subprocess
+import PyPDF2
+import tempfile
 
 def html2pdf(titulo, html_path, pdf_path, header_path, footer_path, orientation='Portrait'):
     """
@@ -48,3 +50,23 @@ def docx2pdf(docx_path):
     subprocess.run([
         'C:\Program Files\LibreOffice\program\soffice.exe', '--headless', '--convert-to', 'pdf', '--outdir', os.path.dirname(docx_path), docx_path
       ], check=True)
+
+def merge_pdfs(pdf_list):
+    """
+    Une una lista de archivos PDF en un solo PDF temporal y retorna su ruta.
+    """
+    pdf_merger = PyPDF2.PdfMerger()
+
+    try:
+        for pdf in pdf_list:
+            pdf_merger.append(pdf)
+        
+        temp_file = tempfile.NamedTemporaryFile(delete=False, suffix=".pdf")
+        pdf_merger.write(temp_file.name)
+        pdf_merger.close()
+        
+        return temp_file.name # Ruta del archivo temporal generado
+
+    except Exception as e:
+        pdf_merger.close()
+        raise RuntimeError(f"Error al unir los PDFs: {e}")
