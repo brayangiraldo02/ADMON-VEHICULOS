@@ -1,0 +1,18 @@
+.info-container {
+  display: flex;
+  align-items: center;
+  gap: 12px; /* Espacio entre el ícono y el texto */
+}
+
+.info-container mat-icon {
+  color: #3f51b5; /* Color índigo de Material, puedes cambiarlo */
+  font-size: 28px;
+  height: 28px;
+  width: 28px;
+}
+
+.info-container p {
+  margin: 0; /* Elimina el margen por defecto del párrafo */
+  flex: 1;
+  color: #333;
+}

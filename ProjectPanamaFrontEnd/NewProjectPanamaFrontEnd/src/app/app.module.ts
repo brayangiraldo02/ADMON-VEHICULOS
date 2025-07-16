@@ -46,6 +46,7 @@ import { OperacionesContratoDeclaracionJuradaComponent } from './modules/options
 import { VehiclesDocumentsComponent } from './modules/tasks/documents/vehicles-documents/vehicles-documents.component';
 import { DriversDocumentsComponent } from './modules/tasks/documents/drivers-documents/drivers-documents.component';
 import { OptionsDocumentsDialogComponent } from './modules/tasks/documents/options-documents-dialog/options-documents-dialog.component';
+import { FolioInfoDialogComponent } from './modules/tasks/documents/folio-info-dialog/folio-info-dialog.component';
 
 @NgModule({
   declarations: [
@@ -89,6 +90,7 @@ import { OptionsDocumentsDialogComponent } from './modules/tasks/documents/optio
     VehiclesDocumentsComponent,
     DriversDocumentsComponent,
     OptionsDocumentsDialogComponent,
+    FolioInfoDialogComponent,
   ],
   imports: [
     BrowserModule,
