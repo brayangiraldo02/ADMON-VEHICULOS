@@ -5,7 +5,11 @@ from typing import List
 import os
 import shutil
 
+# PATH DE PRODUCCIÓN PARA XIMENA
 documents_path  = "C:/Users/Ximena/Desktop/vehiculos"
+
+#PATH DE DESARROLLO PARA BRAYAN
+# documents_path  = "/home/giraldo/Personal/Proyectos Externos/AlfaSoft/temp/vehiculos"
 
 async def vehicle_documents(company_code: str, vehicle_number: str):
   try:
