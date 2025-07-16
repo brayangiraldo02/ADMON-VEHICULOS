@@ -130,7 +130,6 @@
         <th colspan="3">GASTOS (-)</th>
         <th colspan="2">PIEZAS / M.OBRA (-)</th>
         <th colspan="2">ESTADO DE PgG ($)</th>
-        <th rowspan="2">AVANCE ($)</th>
       </tr>
       <tr>
         <th>Ingresos</th>
@@ -176,7 +175,6 @@
         <td>{{ "" if unidad['PIEZAS_MOBRA']['ALMACEN'] == 0.00 else unidad['PIEZAS_MOBRA']['ALMACEN'] }}</td>
         <td>{{ "" if unidad['ESTADOPyG'] <= 0 else unidad['ESTADOPyG'] }}</td>
         <td>{{ "" if unidad['ESTADOPyG'] >= 0 else -unidad['ESTADOPyG'] }}</td>
-        <td>{{ "" if unidad['AVANCE'] == 0.00 else unidad['AVANCE'] }}</td>
       </tr>
       {% endfor %}
 
@@ -192,7 +190,6 @@
         <td>{{ data.empresas[empresa_nombre].totales_empresa.almacen }}</td>
         <td>{{ data.empresas[empresa_nombre].totales_empresa.utilidad }}</td>
         <td>{{ data.empresas[empresa_nombre].totales_empresa.perdida }}</td>
-        <td>{{ data.empresas[empresa_nombre].totales_empresa.avance }}</td>
       </tr>
 
       <tr class="empty-row-with-line">
@@ -213,7 +210,6 @@
         <td>{{ data['totales']['almacen'] }}</td>
         <td>{{ data['totales']['utilidad'] }}</td>
         <td>{{ data['totales']['perdida'] }}</td>
-        <td>{{ data['totales']['avance'] }}</td>
       </tr>
     </tbody>
   </table>

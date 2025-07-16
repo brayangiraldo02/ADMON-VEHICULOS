@@ -149,7 +149,6 @@ async def pandgstatus_report(data: PandGStatusReport):
                       "ALMACEN": total_almacen
                   },
                   "ESTADOPyG": estado_pyg,  # Utilidad si es valor positivo, pérdida si es valor negativo
-                  "AVANCE": 0
               }
               
               info_unidades.append(info_unidad_dict)
@@ -353,7 +352,6 @@ async def pandgstatus_report(data: PandGStatusReport):
           "ALMACEN": total_almacen
         },
         "ESTADOPyG": estado_pyg,  # Utilidad si es valor positivo, pérdida si es valor negativo
-        "AVANCE": 0
       }
 
       info_unidades = info_unidad_dict
@@ -409,7 +407,6 @@ async def pandgstatus_report(data: PandGStatusReport):
                     "almacen": info_unidades['PIEZAS_MOBRA']['ALMACEN'],
                     "utilidad": max(0, info_unidades['ESTADOPyG']),
                     "perdida": max(0, -info_unidades['ESTADOPyG']),
-                    "avance": info_unidades['AVANCE']
                 }
             }
     else:
@@ -467,7 +464,6 @@ async def pandgstatus_report(data: PandGStatusReport):
                 "almacen": 0,
                 "utilidad": 0,
                 "perdida": 0,
-                "avance": 0
             }
             
             # Calcular totales de la empresa con las unidades ya ordenadas
@@ -505,7 +501,6 @@ async def pandgstatus_report(data: PandGStatusReport):
         "almacen": 0,
         "utilidad": 0,
         "perdida": 0,
-        "avance": 0
     }
 
     # Solo calculamos los totales si hay empresas en el diccionario
@@ -521,7 +516,6 @@ async def pandgstatus_report(data: PandGStatusReport):
             "almacen": sum(e["totales_empresa"]["almacen"] for e in empresas_dict.values()),
             "utilidad": sum(e["totales_empresa"]["utilidad"] for e in empresas_dict.values()),
             "perdida": sum(e["totales_empresa"]["perdida"] for e in empresas_dict.values()),
-            "avance": sum(e["totales_empresa"]["avance"] for e in empresas_dict.values())
         }
 
     info_empresa = db.query(
