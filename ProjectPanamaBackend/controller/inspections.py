@@ -76,18 +76,25 @@ async def vehicles_data(company_code: str):
     vehicles = db.query(Vehiculos).filter(Vehiculos.EMPRESA == company_code, Vehiculos.PLACA != "", Vehiculos.NUMERO != "").all()
     if not vehicles:
       return JSONResponse(content={"message": "Vehicles not found"}, status_code=404)
+    
+    owners = db.query(Propietarios).filter(Propietarios.EMPRESA == company_code, Propietarios.CODIGO != "").all()
+    owners_dict = {owner.CODIGO: owner.NOMBRE for owner in owners}
 
     result = []
 
     for vehicle in vehicles:
+      owner_name = owners_dict.get(vehicle.PROPI_IDEN, "")
+      
       result.append({
         "placa_vehiculo": vehicle.PLACA,
         "numero_unidad": vehicle.NUMERO,
         "codigo_conductor": vehicle.CONDUCTOR,
         "codigo_propietario": vehicle.PROPI_IDEN,
+        "nombre_propietario": owner_name,
         "marca": vehicle.NOMMARCA,
         "linea": vehicle.LINEA,
-        "modelo": vehicle.MODELO
+        "modelo": vehicle.MODELO,
+        "nro_cupo": vehicle.NRO_CUPO,
       })
 
     return JSONResponse(content=jsonable_encoder(result), status_code=200)
