@@ -419,7 +419,6 @@ export class InfoTableComponent implements AfterViewInit, OnDestroy {
   }
 
   downloadCollectionAccountsPDF() {
-    this.openSnackbar(this.isIOS ? 'iOS true' : 'iOS false');
     const selectedOwners = this.globalStates.getSelectedOwners();
     if (selectedOwners.owners.length === 0) {
       console.error('No owners selected for PDF download');
