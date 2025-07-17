@@ -23,8 +23,9 @@
           *ngFor="let option of optionsVehicles | async"
           [value]="option"
         >
-          {{ option.numero_unidad }} - {{ option.placa_vehiculo }} -
-          {{ option.marca }} {{ option.linea }} {{ option.modelo }}
+          {{ option.numero_unidad }} - {{ option.placa_vehiculo }} - {{ option.nro_cupo}} -
+          {{ option.marca }} {{ option.linea }} {{ option.modelo }} - {{ option.nombre_propietario }} 
+          ({{ option.codigo_propietario }})
         </mat-option>
       </mat-autocomplete>
     </mat-form-field>

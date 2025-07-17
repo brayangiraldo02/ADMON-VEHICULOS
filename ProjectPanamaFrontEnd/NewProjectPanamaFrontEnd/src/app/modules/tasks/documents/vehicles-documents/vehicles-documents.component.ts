@@ -15,9 +15,11 @@ export interface vehicles {
   numero_unidad: string;
   codigo_conductor: string;
   codigo_propietario: string;
+  nombre_propietario: string;
   marca: string;
   linea: string;
   modelo: string;
+  nro_cupo: string;
 }
 
 export interface existDocumentsVehicles {
@@ -42,7 +44,6 @@ export class VehiclesDocumentsComponent implements OnInit {
   vehicles: vehicles[] = [];
 
   optionsVehicles!: Observable<vehicles[]>;
-  // ✅ Renombrado para mayor simplicidad
   documentsInfo: existDocumentsVehicles[] = [];
 
   constructor(
@@ -88,7 +89,9 @@ export class VehiclesDocumentsComponent implements OnInit {
     const filterValue = typeof value === 'string' ? value.toLowerCase() : value.placa_vehiculo.toLowerCase();
     return this.vehicles.filter(option => 
       option.placa_vehiculo.toLowerCase().includes(filterValue) || 
-      option.numero_unidad.toLowerCase().includes(filterValue)
+      option.numero_unidad.toLowerCase().includes(filterValue) ||
+      option.nro_cupo.toLowerCase().includes(filterValue) ||
+      option.nombre_propietario.toLowerCase().includes(filterValue) 
     );
   }
 
@@ -149,6 +152,11 @@ export class VehiclesDocumentsComponent implements OnInit {
       vehiculo: vehicle,
       documento: document
     });
+
+    const endpoint = 'documents/send-vehicle-documents/' + company + '/' + vehicle + '/' + document;
+
+    localStorage.setItem('pdfEndpoint', endpoint);
+    window.open(`/pdf`, '_blank');
   }
 
   validateDocumentVehicle(document: existDocumentsVehicles, nombreHtml: string): void {
