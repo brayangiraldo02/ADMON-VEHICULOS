@@ -29,4 +29,4 @@ class PandGStatusReport(BaseModel):
   primeraFecha: str
   ultimaFecha: str
   unidad: str
-  empresa: str
+  empresa: List[str]

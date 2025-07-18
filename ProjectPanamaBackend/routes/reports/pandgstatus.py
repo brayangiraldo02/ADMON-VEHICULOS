@@ -57,9 +57,9 @@ async def pandgstatus_report(data: PandGStatusReport):
           (CajaRecaudos.NUMERO == Vehiculos.NUMERO) & 
           (CajaRecaudos.FEC_RECIBO >= data.primeraFecha) & 
           (CajaRecaudos.FEC_RECIBO <= data.ultimaFecha) &
-          (CajaRecaudos.PROPI_IDEN == empresa)
+          (CajaRecaudos.PROPI_IDEN.in_(empresa))
         ).filter(
-          Vehiculos.PROPI_IDEN == empresa,
+          Vehiculos.PROPI_IDEN.in_(empresa),
         ).group_by(
           Vehiculos.NUMERO,
           Vehiculos.FEC_CREADO,
@@ -81,7 +81,7 @@ async def pandgstatus_report(data: PandGStatusReport):
           Movimien.FECHA >= data.primeraFecha,
           Movimien.FECHA <= data.ultimaFecha,
           Movimien.TIPO.in_(['024', '027', '026', '022', '016']),
-          Movimien.PROPI_IDEN == empresa,
+          Movimien.PROPI_IDEN.in_(empresa),
           # Movimien.FORMAPAGO.in_(['01', '02', '03', '04', '05'])
         ).group_by(
           Movimien.UNIDAD,
@@ -284,7 +284,7 @@ async def pandgstatus_report(data: PandGStatusReport):
         (CajaRecaudos.NUMERO == Vehiculos.NUMERO) & 
         (CajaRecaudos.FEC_RECIBO >= data.primeraFecha) & 
         (CajaRecaudos.FEC_RECIBO <= data.ultimaFecha) &
-        (CajaRecaudos.PROPI_IDEN == empresa)
+        (CajaRecaudos.PROPI_IDEN.in_(empresa))
       ).filter(
         Vehiculos.NUMERO == data.unidad,
       ).group_by(
@@ -307,7 +307,7 @@ async def pandgstatus_report(data: PandGStatusReport):
         Movimien.FECHA >= data.primeraFecha,
         Movimien.FECHA <= data.ultimaFecha,
         Movimien.TIPO.in_(['024', '027', '026', '022', '016']),
-        Movimien.PROPI_IDEN == empresa,
+        Movimien.PROPI_IDEN.in_(empresa),
         # Movimien.FORMAPAGO.in_(['01', '02', '03', '04', '05'])
       ).group_by(
         Movimien.TIPO
@@ -517,6 +517,21 @@ async def pandgstatus_report(data: PandGStatusReport):
             "utilidad": sum(e["totales_empresa"]["utilidad"] for e in empresas_dict.values()),
             "perdida": sum(e["totales_empresa"]["perdida"] for e in empresas_dict.values()),
         }
+
+    #! Mustra la resta de utilidad y pérdida
+    total_pyg = totales_generales["utilidad"] - totales_generales["perdida"]
+    if total_pyg > 0:
+        totales_generales["utilidad"] = total_pyg
+        totales_generales["perdida"] = ''
+    else:
+        totales_generales["perdida"] = -total_pyg
+        totales_generales["utilidad"] = ''
+
+    #! Mustra el total de utilidad o pérdida
+    # if totales_generales["utilidad"] > 0:
+    #     totales_generales["perdida"] = ''
+    # else:
+    #     totales_generales["utilidad"] = ''
 
     info_empresa = db.query(
         InfoEmpresas.NOMBRE,
