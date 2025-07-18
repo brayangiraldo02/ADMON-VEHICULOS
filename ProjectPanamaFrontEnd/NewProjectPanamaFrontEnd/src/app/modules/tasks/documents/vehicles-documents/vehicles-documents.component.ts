@@ -95,7 +95,7 @@ export class VehiclesDocumentsComponent implements OnInit {
     );
   }
 
-  displayVehiclePlate(vehicle: vehicles): string {
+  displayVehicleData(vehicle: vehicles): string {
     return vehicle ? `${vehicle.numero_unidad} ${vehicle.placa_vehiculo} - ${vehicle.marca} ${vehicle.linea} ${vehicle.modelo}` : '';
   }
 
