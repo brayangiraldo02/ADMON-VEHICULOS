@@ -111,14 +111,14 @@ async def send_vehicle_documents(company_code: str, vehicle_number: str, doc_id:
   try:
     base_path = os.path.join(documents_path, company_code, vehicle_number)
 
-    if not os.path.exists(base_path):
-      return JSONResponse(content={"message": "Documentos no encontrados para la unidad."}, status_code=404)
+    if not os.path.isdir(base_path): 
+      return JSONResponse(content={"message": "Directorio del vehículo no encontrado."}, status_code=404)
 
-    pdf_path = os.path.join(base_path, f"{doc_id}.pdf")
+    base_id = doc_id.lower().replace(".pdf", "")
 
     folios = [
         os.path.join(base_path, f) for f in sorted(os.listdir(base_path))
-        if f.startswith(doc_id) and f.endswith(".pdf")
+        if f.lower().startswith(base_id) and f.lower().endswith(".pdf")
     ]
 
     if not folios:
@@ -127,7 +127,7 @@ async def send_vehicle_documents(company_code: str, vehicle_number: str, doc_id:
     if len(folios) == 1:
       return FileResponse(
         path=folios[0],
-        filename=f"{doc_id}.pdf",
+        filename=f"{doc_id}",
         media_type='application/pdf'
       )
     
@@ -137,7 +137,7 @@ async def send_vehicle_documents(company_code: str, vehicle_number: str, doc_id:
 
     return FileResponse(
       path=merged_pdf_path,
-      filename=f"{doc_id}.pdf",
+      filename=f"{base_id}_unido.pdf",
       media_type='application/pdf',
       background=background_tasks
     )
