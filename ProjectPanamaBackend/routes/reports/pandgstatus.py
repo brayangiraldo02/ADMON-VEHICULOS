@@ -480,6 +480,15 @@ async def pandgstatus_report(data: PandGStatusReport):
                     totales_empresa["utilidad"] += unidad["ESTADOPyG"]
                 else:
                     totales_empresa["perdida"] += -unidad["ESTADOPyG"]
+
+            # Ajustar utilidad y pérdida
+            total_pyg_empresa = totales_empresa["utilidad"] - totales_empresa["perdida"]
+            if total_pyg_empresa > 0:
+                totales_empresa["utilidad"] = total_pyg_empresa
+                totales_empresa["perdida"] = 0
+            else:
+                totales_empresa["perdida"] = -total_pyg_empresa
+                totales_empresa["utilidad"] = 0
             
             # Agregar la empresa con sus unidades ordenadas al diccionario final
             empresas_dict[nombre_empresa] = {
@@ -518,26 +527,32 @@ async def pandgstatus_report(data: PandGStatusReport):
             "perdida": sum(e["totales_empresa"]["perdida"] for e in empresas_dict.values()),
         }
 
-    #! Mustra la resta de utilidad y pérdida
     total_pyg = totales_generales["utilidad"] - totales_generales["perdida"]
     if total_pyg > 0:
         totales_generales["utilidad"] = total_pyg
-        totales_generales["perdida"] = ''
+        totales_generales["perdida"] = 0
     else:
         totales_generales["perdida"] = -total_pyg
-        totales_generales["utilidad"] = ''
-
-    #! Mustra el total de utilidad o pérdida
-    # if totales_generales["utilidad"] > 0:
-    #     totales_generales["perdida"] = ''
-    # else:
-    #     totales_generales["utilidad"] = ''
+        totales_generales["utilidad"] = 0
 
     info_empresa = db.query(
         InfoEmpresas.NOMBRE,
         InfoEmpresas.NIT,
         InfoEmpresas.LOGO
     ).filter(InfoEmpresas.ID == id_empresa).first()
+
+    # Convertir 0 a cadenas vacías para la presentación final
+    def format_for_display(value):
+        return '' if value == 0 else value
+
+    # Aplicar formato de presentación a los totales de empresas
+    for empresa in empresas_dict.values():
+        empresa["totales_empresa"]["utilidad"] = format_for_display(empresa["totales_empresa"]["utilidad"])
+        empresa["totales_empresa"]["perdida"] = format_for_display(empresa["totales_empresa"]["perdida"])
+
+    # Aplicar formato de presentación a los totales generales
+    totales_generales["utilidad"] = format_for_display(totales_generales["utilidad"])
+    totales_generales["perdida"] = format_for_display(totales_generales["perdida"])
 
     # Construir la respuesta final
     response = {

@@ -153,7 +153,7 @@
       <!-- Fila para mostrar la sección "EMPRESA..." -->
       <tr class="empresa-row">
         <td colspan="15" class="empresa-cell">
-          EMPRESA: {{ data.empresas[empresa_nombre].codigo }} &nbsp; {{ data.empresas[empresa_nombre].nombre }}
+          EMPRESA: {{ data.empresas[empresa_nombre].codigo }} &nbsp; - &nbsp; {{ data.empresas[empresa_nombre].nombre }}
         </td>
       </tr>
       
@@ -180,7 +180,7 @@
 
       <!-- Fila con el total de la empresa -->
       <tr class="total-row">
-        <td colspan="5" class="empresa-total">Total Empresa: {{ data.empresas[empresa_nombre].totales_empresa.cantidad_unidades }}</td>
+        <td colspan="5" class="empresa-total">Total Unidades Empresa: {{ data.empresas[empresa_nombre].totales_empresa.cantidad_unidades }}</td>
         <td>{{ data.empresas[empresa_nombre].totales_empresa.ingresos }}</td>
         <td>{{ data.empresas[empresa_nombre].totales_empresa.seguros }}</td>
         <td>{{ data.empresas[empresa_nombre].totales_empresa.gasto_caja }}</td>
@@ -200,7 +200,7 @@
 
       <!-- Total Control como en RelacionIngresos -->
       <tr class="total-row">
-        <td colspan="5" class="empresa-total">Total General: {{ data['totales']['cantidad_unidades'] }}</td>
+        <td colspan="5" class="empresa-total">Total General de Unidades: {{ data['totales']['cantidad_unidades'] }}</td>
         <td>{{ data['totales']['ingresos'] }}</td>
         <td>{{ data['totales']['seguros'] }}</td>
         <td>{{ data['totales']['gasto_caja'] }}</td>
