@@ -24,6 +24,7 @@ export interface vehicles {
 
 export interface existDocumentsVehicles {
   nombre_documento: string;
+  nombre_archivo: string;
   existe: boolean;
   folios: boolean;
   mensaje: string;
@@ -169,7 +170,7 @@ export class VehiclesDocumentsComponent implements OnInit {
     });
 
     if(!document.folios){
-      this.getDocumentVehicle(this.vehiclesForm.get('vehiculo')?.value.numero_unidad, document.nombre_documento);
+      this.getDocumentVehicle(this.vehiclesForm.get('vehiculo')?.value.numero_unidad, document.nombre_archivo);
       return;
     }
 
@@ -189,7 +190,7 @@ export class VehiclesDocumentsComponent implements OnInit {
       console.log('El diálogo se cerró con el resultado:', result);
   
       if (result === true) {
-        this.getDocumentVehicle(this.vehiclesForm.get('vehiculo')?.value.numero_unidad, document.nombre_documento);
+        this.getDocumentVehicle(this.vehiclesForm.get('vehiculo')?.value.numero_unidad, document.nombre_archivo);
       }
     });
   }
