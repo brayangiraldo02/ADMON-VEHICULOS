@@ -175,6 +175,7 @@ export class OwnersPandgstatusComponent  implements OnInit {
     if (endpoint) {
       const companyValue: string = this.infoForm.value.companie;
       
+      // TODO: Hacer que se puedan seleccionar varias empresas
       const companyId = companyValue.split(' - ').pop()?.trim() || companyValue;
 
       const data = {
@@ -182,7 +183,7 @@ export class OwnersPandgstatusComponent  implements OnInit {
         primeraFecha: this.infoForm.value.firstDate,
         ultimaFecha: this.infoForm.value.lastDate,
         unidad: this.infoForm.value.vehicle,
-        empresa: companyId, 
+        empresa: [companyId], 
       };
       
       console.log('Datos enviados:', data); 
