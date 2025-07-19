@@ -61,6 +61,7 @@ form {
 .subtitle-container {
   font-weight: normal;
   font-size: 18px;
+  margin: 0;
 }
 
 .select-vehicle {
@@ -78,19 +79,10 @@ form {
   width: 80%;
 }
 
-.select-unit {
-  width: 100%; 
-  padding: 10px; /* Ajuste de padding para mejor apariencia */
-  box-sizing: border-box; /* Incluye el padding y el borde en el ancho total */
-  border: 1px solid #ccc; /* Borde ligero para mejor visibilidad */
-  border-radius: 10px; /* Bordes ligeramente redondeados */
-  background-color: #f9f9f9; /* Fondo claro */
-}
-
 .group-container {
   width: 100%;
   display: flex;
-  justify-content: space-between;
+  justify-content: space-around;
 }
 
 .full-width {
@@ -184,6 +176,44 @@ form {
   background: #ffcdcd; 
 }
 
+.selects-container {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
+
+.cuadro-seleccion {
+  border: 1px solid #ccc;
+  padding: 10px;
+  margin-bottom: 10px;
+  min-height: 20vh;
+  max-height: 25vh;
+  width: 90%;
+  border-radius: 10px;
+  overflow-y: scroll;
+  height: auto;
+  background-color: white;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.cuadro-seleccion .checkbox-container {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  justify-content: flex-start; /* Alinea el contenido al inicio (izquierda) */
+  padding: 5px 0; /* Añadir algo de espaciado vertical */
+}
+
+.cuadro-seleccion .checkbox-container:hover {
+  background: #bcd1ec;
+}
+
+.cuadro-seleccion label {
+  padding-left: 5px;
+}
+
 @media (max-width: 1024px) {
   .modal-content {
     width: 70%;
@@ -214,11 +244,12 @@ form {
   }
 
   .select-vehicle {
-    width: 90%;
+    width: 100%;
   }
 
   .group-container {
     flex-direction: column;
+    gap: 8px;
   }
 
   .form-group input {
