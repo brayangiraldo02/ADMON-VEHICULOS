@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { InfoCompanyComponent } from '../info-company/info-company.component';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
+import { OptionsDocumentsDialogComponent } from 'src/app/modules/tasks/documents/options-documents-dialog/options-documents-dialog.component';
 
 @Component({
   selector: 'app-toolbar',
@@ -81,8 +82,15 @@ export class ToolbarComponent implements OnInit {
     );
   }
 
-  openDialogDocumentos(): void {
-    
+  openDialogDocuments(): void {
+    const isSmallScreen = this.breakpointObserver.isMatched(Breakpoints.XSmall);
+    const dialogWidth = isSmallScreen ? '90vw' : '60%';
+
+    const dialogRef = this.dialog.open(OptionsDocumentsDialogComponent,
+      {
+        width: dialogWidth,
+      }
+    );
   }
 
   onMenuClick() {
