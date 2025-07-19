@@ -4,12 +4,24 @@
   </button>
   <span class="toolbar-title">{{this.permissions.nombre}}</span>
   <span class="example-spacer"></span>
-  <button mat-icon-button routerLink="/home/users" aria-label="Inicio" *ngIf="!ownerView">
+
+  <!-- ! Botones para todos -->
+  <button mat-icon-button routerLink="/home" aria-label="Inicio">
     <mat-icon>home</mat-icon>
   </button>
-  <button mat-icon-button arias-label="Información de la empresa" *ngIf="ownerView" (click)="openDialogInfoCompany()">
+
+  <!-- ! Botones para propietarios -->
+  <button mat-icon-button aria-label="Documentos" *ngIf="ownerView" (click)="openDialogDocumentos()">
+    <mat-icon>insert_drive_file</mat-icon>
+  </button>
+  <button mat-icon-button routerLink="/inspections" aria-label="Inspecciones" *ngIf="ownerView">
+    <mat-icon>card_travel</mat-icon>
+  </button>
+  <button mat-icon-button aria-label="Información de la empresa" *ngIf="ownerView" (click)="openDialogInfoCompany()">
     <mat-icon>info</mat-icon>
   </button>
+
+  <!-- ! Botones para todos -->
   <button mat-icon-button aria-label="Cerrar sesión" (click)="logout()">
     <mat-icon>logout</mat-icon>
   </button>

@@ -1,0 +1,40 @@
+<h2 mat-dialog-title>Nueva Inspección</h2>
+
+<mat-dialog-content>
+  <form [formGroup]="vehiclesForm">
+    <div class="inputs-container">
+      <mat-progress-bar
+        mode="indeterminate"
+        *ngIf="isLoading"
+      ></mat-progress-bar>
+      <mat-form-field class="field-input" *ngIf="!isLoading">
+        <mat-label>Vehículos</mat-label>
+        <input
+          type="text"
+          placeholder="Selecciona un vehículo"
+          matInput
+          formControlName="vehiculo"
+          [matAutocomplete]="auto3"
+        />
+        <mat-autocomplete
+          #auto3="matAutocomplete"
+          [displayWith]="displayVehicleData"
+          (optionSelected)="selectedOptionVehicle($event)"
+        >
+          <mat-option [value]=""> - </mat-option>
+          <mat-option
+            *ngFor="let option of optionsVehicles | async"
+            [value]="option"
+          >
+            {{ option.numero_unidad }} - {{ option.placa_vehiculo }} - {{ option.nro_cupo}} -
+            {{ option.marca }} {{ option.linea }} {{ option.modelo }}
+          </mat-option>
+        </mat-autocomplete>
+      </mat-form-field>
+    </div>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close cdkFocusInitial>Cancelar</button>
+</mat-dialog-actions>

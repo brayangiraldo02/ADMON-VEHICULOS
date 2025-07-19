@@ -24,6 +24,7 @@ interface AppJwtPayload extends JwtPayload {
     opcion14: string;
     opcion15: string;
     opcion16: string;
+    opcion17: string;
     tarea01: string;
     tarea02: string;
     tarea03: string;
@@ -65,8 +66,9 @@ export class JwtService {
   isOwner(): boolean {
     if (!this.isAuthenticated()) return false;
     const userData = this.decodedToken!.user_data;
-    // La lógica para ser "Owner" está centralizada aquí
-    return userData.opcion16 === 'T' || userData.nombre === 'Administrador';
+    const userPermissions = this.convertBooleanValues(userData);
+
+    return userPermissions.opcion16 === true || userData.nombre === 'Administrador';
   }
 
   isRegularUser(): boolean {
@@ -81,6 +83,16 @@ export class JwtService {
 
   getUserData() {
     return this.isAuthenticated() ? this.decodedToken!.user_data : null;
+  }
+
+  getPermissionUser(permission: string): boolean {
+    if (!this.isAuthenticated()) return false;
+    const userData = this.decodedToken!.user_data;
+    const userPermissions = this.convertBooleanValues(userData);
+
+    console.log('userPermissions:', userPermissions); 
+
+    return userPermissions[permission] === true;
   }
 
   // --- Métodos Privados de Ayuda ---
@@ -111,5 +123,20 @@ export class JwtService {
       console.error("Error al decodificar el token, es posible que esté malformado.", error);
       this.decodedToken = null;
     }
+  }
+
+  private convertBooleanValues(obj: any): any {
+    const newObj = { ...obj }; // Crear una copia superficial para no mutar el original
+    for (const key in newObj) {
+      if (Object.prototype.hasOwnProperty.call(newObj, key)) {
+        const value = newObj[key];
+        if (value === 'T') {
+          newObj[key] = true;
+        } else if (value === 'F' || value === null) {
+          newObj[key] = false;
+        }
+      }
+    }
+    return newObj; // Devolver el nuevo objeto con los valores convertidos
   }
 }

@@ -1,5 +1,7 @@
+import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatSort } from '@angular/material/sort';
@@ -7,6 +9,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { map, Observable, startWith } from 'rxjs';
 import { ApiService } from 'src/app/services/api.service';
 import { JwtService } from 'src/app/services/jwt.service';
+import { InspectionsAddDialogComponent } from '../inspections-add-dialog/inspections-add-dialog.component';
 
 export interface owners {
   id: string;
@@ -55,10 +58,10 @@ export interface apiResponse {
 
 @Component({
   selector: 'app-inspections',
-  templateUrl: './inspections.component.html',
-  styleUrls: ['./inspections.component.css']
+  templateUrl: './inspections-table.component.html',
+  styleUrls: ['./inspections-table.component.css']
 })
-export class InspectionsComponent implements OnInit {
+export class InspectionsTableComponent implements OnInit {
   inspectionForm!: FormGroup;
   owners: owners[] = [];
   drivers: drivers[] = [];
@@ -95,6 +98,8 @@ export class InspectionsComponent implements OnInit {
     private apiService: ApiService,
     private jwtService: JwtService,
     private snackBar: MatSnackBar,
+    private dialog: MatDialog,
+    private breakpointObserver: BreakpointObserver
   ) {
     this.dataSource = new MatTableDataSource<InspectionsInfoData>([]);
   }
@@ -416,6 +421,17 @@ export class InspectionsComponent implements OnInit {
       localStorage.setItem('pdfData', JSON.stringify(formattedValues));
       window.open(`/pdf`, '_blank');
     }
+  }
+
+  openDialogInspectionAdd() {
+    const isSmallScreen = this.breakpointObserver.isMatched(Breakpoints.XSmall);
+    const dialogWidth = isSmallScreen ? '90vw' : '60%';
+
+    const dialogRef = this.dialog.open(InspectionsAddDialogComponent,
+      {
+        width: dialogWidth,
+      }
+    );
   }
 
   openSnackbar(message: string) {

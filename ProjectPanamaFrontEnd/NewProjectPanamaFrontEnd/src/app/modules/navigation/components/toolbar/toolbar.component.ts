@@ -81,6 +81,10 @@ export class ToolbarComponent implements OnInit {
     );
   }
 
+  openDialogDocumentos(): void {
+    
+  }
+
   onMenuClick() {
     this.menuClick.emit();
   }
