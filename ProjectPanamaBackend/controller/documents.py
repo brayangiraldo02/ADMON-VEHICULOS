@@ -38,7 +38,7 @@ async def vehicle_documents(company_code: str, vehicle_number: str):
 
       if folios_existentes:
         folios = 1
-        mensaje = f"Tiene {len(folios_existentes) + 1} folios."
+        mensaje = f"Tiene {len(folios_existentes) + 1} documentos."
 
       documents.append({
         "nombre_documento": doc_id,
