@@ -1,7 +1,8 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { map, Observable, startWith } from 'rxjs';
 import { ApiService } from 'src/app/services/api.service';
 import { JwtService } from 'src/app/services/jwt.service';
@@ -13,6 +14,13 @@ interface Vehicles {
   linea: string;
   modelo: string;
   nro_cupo: string;
+  codigo_propietario: string;
+  nombre_propietario: string;
+}
+
+interface InspectionTypes {
+  id: string;
+  nombre: string;
 }
 
 interface InspectionsVehicleData {
@@ -42,20 +50,35 @@ export class InspectionsAddDialogComponent implements OnInit {
   vehicles: Vehicles[] = [];
   optionsVehicles!: Observable<Vehicles[]>;
 
+  inspectionTypes: InspectionTypes[] = [];
+
+  loadingVehicleInfo: boolean = false;
+  selectedVehicle: boolean = false;
+
+  vehicleInfo!: InspectionsVehicleData;
+
   constructor(
     private apiService: ApiService,
     private jwtService: JwtService,
     private formBuilder: FormBuilder,
+    private snackBar: MatSnackBar,
   ) {}
 
   ngOnInit(): void {
-    this.getDataVehicles();
+    this.getInputsData();
+    this.resetVehicleInfo();
     this.initForm();
+  }
+
+  getInputsData() {
+    this.getDataVehicles();
+    this.getInspectionTypes();
   }
 
   initForm(): void {
     this.vehiclesForm = this.formBuilder.group({
-      vehiculo: ['']
+      vehiculo: ['', Validators.required],
+      tipo_inspeccion: ['', Validators.required],
     });
   }
 
@@ -83,22 +106,87 @@ export class InspectionsAddDialogComponent implements OnInit {
     return this.vehicles.filter(option => 
       option.placa_vehiculo.toLowerCase().includes(filterValue) || 
       option.numero_unidad.toLowerCase().includes(filterValue) ||
-      option.nro_cupo.toLowerCase().includes(filterValue)
+      option.nro_cupo.toLowerCase().includes(filterValue) ||
+      option.nombre_propietario.toLowerCase().includes(filterValue)
     );
   }
 
   displayVehicleData(vehicle: Vehicles): string {
-    return vehicle ? `${vehicle.numero_unidad} ${vehicle.placa_vehiculo} - ${vehicle.marca} ${vehicle.linea} ${vehicle.modelo}` : '';
+    return vehicle ? `${vehicle.numero_unidad} - ${vehicle.marca} ${vehicle.linea} ${vehicle.modelo}` : '';
+  }
+
+  getInspectionTypes() {
+    const company = this.getCompany();
+    this.apiService.getData('inspections/inspection_types/'+company).subscribe(
+      (data: InspectionTypes[]) => {
+        this.inspectionTypes = [...data];
+      },
+      (error) => {
+        console.error('Error fetching inspection types:', error);
+      }
+    );
+  }
+
+  openSnackbar(message: string) {
+    this.snackBar.open(message, 'Cerrar', {
+      duration: 3000,
+      horizontalPosition: 'center',
+      verticalPosition: 'top',
+    })
+  }
+
+  resetVehicleInfo() {
+    this.vehicleInfo = {
+      numero: '',
+      marca: '',
+      modelo: '',
+      placa: '',
+      conductor_nombre: '',
+      conductor_codigo: '',
+      conductor_celular: '',
+      kilometraje: 0,
+      fecha_inspeccion: '',
+      hora_inspeccion: '',
+      panapass: 0
+    };
   }
 
   selectedOptionVehicle(event: MatAutocompleteSelectedEvent): void {
-    const selectedVehicle = event.option.value;
-    // this.documentsInfo = []; // Limpiamos al cambiar de vehículo
+    this.resetVehicleInfo();
+    this.selectedVehicle = false;
+
+    const selectedVehicle = event.option.value.numero_unidad;
 
     if (selectedVehicle) {
-      console.log('Vehículo seleccionado:', selectedVehicle);
+      this.loadingVehicleInfo = true;
+      this.getVehicleInfo(selectedVehicle);
     } else {
       this.vehiclesForm.get('vehiculo')?.reset('');
+      this.openSnackbar('No se ha encontrado información del vehículo seleccionado. Prueba con otro.');
+    }
+  }
+
+  getVehicleInfo(vehicle: string){
+    this.apiService.getData('inspections/new_inspection_data/'+vehicle).subscribe(
+      (data: InspectionsVehicleData) => {
+        this.vehicleInfo = data;
+        this.loadingVehicleInfo = false;
+        this.selectedVehicle = true;
+      },
+      (error) => {
+        console.error('Error fetching vehicle info:', error);
+        this.openSnackbar('error al obtener la información del vehículo seleccionado. Vuelve a intentarlo más tarde.');
+        this.loadingVehicleInfo = false;
+        this.selectedVehicle = false;
+      }
+    );
+  }
+
+  startInspection() {
+    if( this.vehiclesForm.invalid || !this.selectedVehicle) {
+      this.openSnackbar('Por favor, completa los campos requeridos.');
+      this.vehiclesForm.markAllAsTouched();
+      return;
     }
   }
 }
