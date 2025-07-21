@@ -1,11 +1,16 @@
 from fastapi.responses import FileResponse, JSONResponse
 from fastapi.encoders import jsonable_encoder
+from config.dbconnection import session
+from models.propietarios import Propietarios
+from models.conductores import Conductores
+from models.vehiculos import Vehiculos
 from fastapi import BackgroundTasks
 from typing import List
 from utils.pdf import merge_pdfs
 import os
 import re
 import shutil
+from utils.panapass import get_txt_file, search_value_in_txt
 
 # PATH DE PRODUCCIÓN PARA XIMENA
 documents_path  = "C:/Users/Ximena/Desktop/vehiculos"
@@ -142,5 +147,39 @@ async def send_vehicle_documents(company_code: str, vehicle_number: str, doc_id:
       background=background_tasks
     )
 
+  except Exception as e:
+    return JSONResponse(content={"message": str(e)}, status_code=500)
+  
+#-----------------------------------------------------------------------------------------------
+
+async def vehicle_info(vehicle_number: str):
+  db = session()
+  try:
+    vehicles = db.query(Vehiculos).filter(Vehiculos.NUMERO == vehicle_number).first()
+    if not vehicles:
+      return JSONResponse(content={"message": "Vehículo no encontrado."}, status_code=404)
+
+    owners = db.query(Propietarios).filter(Propietarios.CODIGO == vehicles.PROPI_IDEN).first()
+    drivers = db.query(Conductores).filter(Conductores.CODIGO == vehicles.CONDUCTOR).first()
+
+    txt_file_path = get_txt_file(vehicles.EMPRESA)
+    if txt_file_path:
+      panapass_value = search_value_in_txt('Unidad', vehicle_number, 'Saldo Cuenta PanaPass', txt_file_path)
+    else:
+      panapass_value = ''
+
+    vehicle_data = {
+      "numero_unidad": vehicles.NUMERO,
+      "placa_vehiculo": vehicles.PLACA,
+      "nro_cupo": vehicles.NRO_CUPO,
+      "propietario": owners.NOMBRE + ' - ' + owners.CODIGO if owners else '',
+      "codigo_conductor": vehicles.CONDUCTOR,
+      "nombre_conductor": drivers.NOMBRE if drivers else '',
+      "telefono_conductor": drivers.TELEFONO if drivers else '',
+      "panapass": '', #panapass_value if panapass_value else ''
+      "fecha_entrega": ''
+    }
+
+    return JSONResponse(content=jsonable_encoder(vehicle_data), status_code=200)
   except Exception as e:
     return JSONResponse(content={"message": str(e)}, status_code=500)
