@@ -395,7 +395,7 @@ async def new_inspection_data(vehicle_number: str):
       'kilometraje': vehicle.KILOMETRAJ if vehicle.KILOMETRAJ else '',
       'fecha_inspeccion': fecha,
       'hora_inspeccion': hora_actual,
-      'panapass': 0 #panapass_value if panapass_value else ''
+      'panapass': panapass_value if panapass_value else ''
     }
     
     return JSONResponse(content=jsonable_encoder(vehicle_info), status_code=200)

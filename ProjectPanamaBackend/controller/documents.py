@@ -176,7 +176,7 @@ async def vehicle_info(vehicle_number: str):
       "codigo_conductor": vehicles.CONDUCTOR,
       "nombre_conductor": drivers.NOMBRE if drivers else '',
       "telefono_conductor": drivers.TELEFONO if drivers else '',
-      "panapass": '', #panapass_value if panapass_value else ''
+      "panapass": panapass_value if panapass_value else '',
       "fecha_entrega": ''
     }
 
