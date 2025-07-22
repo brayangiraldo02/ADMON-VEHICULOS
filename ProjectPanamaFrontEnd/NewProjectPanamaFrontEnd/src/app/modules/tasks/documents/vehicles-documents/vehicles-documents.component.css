@@ -8,12 +8,17 @@
   gap: 10px;
 }
 
+.documents-options-container .info-vehicle-container,
 .documents-options-container .required-documents-container,
 .documents-options-container .optional-documents-container {
   display: flex;
   flex-direction: column;
   width: 100%;
   gap: 10px;
+}
+
+.documents-options-container .info-vehicle-container {
+  padding-bottom: 10px;
 }
 
 .documents-options-container .button { 
@@ -53,9 +58,9 @@
     flex-direction: column;
   }
 
-  .mat-mdc-option:first-child {
+  /* .mat-mdc-option:first-child {
     padding-top: 0;
-  }
+  } */
 
   .mat-mdc-option {
     padding-top: 10px;  

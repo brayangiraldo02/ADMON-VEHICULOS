@@ -9,6 +9,7 @@ import { ApiService } from 'src/app/services/api.service';
 import { JwtService } from 'src/app/services/jwt.service';
 import { FolioInfoDialogComponent } from '../folio-info-dialog/folio-info-dialog.component';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
+import { InfoVehicleDialogComponent } from '../info-vehicle-dialog/info-vehicle-dialog.component';
 
 export interface vehicles {
   placa_vehiculo: string;
@@ -41,6 +42,7 @@ export class VehiclesDocumentsComponent implements OnInit {
   isLoading: boolean = true;
   selectedVehicle: boolean = false;
   loadingDocumentsInfoVehicles: boolean = false;
+  displayInfoVehicle: boolean = false;
 
   vehicles: vehicles[] = [];
 
@@ -123,20 +125,29 @@ export class VehiclesDocumentsComponent implements OnInit {
         this.openSnackbar(snackbarMessage);
 
         this.loadingDocumentsInfoVehicles = false;
-        this.vehiclesForm.get('vehiculo')?.reset('');
+        // this.vehiclesForm.get('vehiculo')?.reset('');
         this.selectedVehicle = false;
         this.documentsInfo = []; // Limpiamos los datos en caso de error
       }
     });
   }
 
+  resetAutocomplete() {
+    this.vehiclesForm.get('vehiculo')?.setValue('');
+    this.selectedVehicle = false;
+    this.displayInfoVehicle = false;
+    this.documentsInfo = []; 
+  }
+
   selectedOptionVehicle(event: MatAutocompleteSelectedEvent): void {
     const selectedVehicle = event.option.value;
     this.selectedVehicle = false;
+    this.displayInfoVehicle = false;
     this.documentsInfo = []; // Limpiamos al cambiar de vehículo
 
     if (selectedVehicle) {
       console.log('Vehículo seleccionado:', selectedVehicle);
+      this.displayInfoVehicle = true; 
       this.getDocumentsInfoVehicle(selectedVehicle.numero_unidad);
     } else {
       this.vehiclesForm.get('vehiculo')?.reset('');
@@ -192,6 +203,22 @@ export class VehiclesDocumentsComponent implements OnInit {
       if (result === true) {
         this.getDocumentVehicle(this.vehiclesForm.get('vehiculo')?.value.numero_unidad, document.nombre_archivo);
       }
+    });
+  }
+
+  openInfoVehicleDialog() {
+    const vehicleNumber = this.vehiclesForm.get('vehiculo')?.value.numero_unidad;
+    if (!vehicleNumber) {
+      this.openSnackbar('Por favor, selecciona un vehículo primero.');
+      return;
+    }
+
+    const isSmallScreen = this.breakpointObserver.isMatched(Breakpoints.XSmall);
+    const dialogWidth = isSmallScreen ? '90vw' : '40%';
+
+    const dialogRef = this.dialog.open(InfoVehicleDialogComponent, {
+      width: dialogWidth,
+      data: { vehicleNumber }
     });
   }
 

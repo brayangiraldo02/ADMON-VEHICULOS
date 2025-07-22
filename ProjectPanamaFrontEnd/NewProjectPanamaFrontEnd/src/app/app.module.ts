@@ -48,6 +48,7 @@ import { DriversDocumentsComponent } from './modules/tasks/documents/drivers-doc
 import { OptionsDocumentsDialogComponent } from './modules/tasks/documents/options-documents-dialog/options-documents-dialog.component';
 import { FolioInfoDialogComponent } from './modules/tasks/documents/folio-info-dialog/folio-info-dialog.component';
 import { InspectionsAddDialogComponent } from './modules/tasks/inspections/inspections-add-dialog/inspections-add-dialog.component';
+import { InfoVehicleDialogComponent } from './modules/tasks/documents/info-vehicle-dialog/info-vehicle-dialog.component';
 
 @NgModule({
   declarations: [
@@ -93,6 +94,7 @@ import { InspectionsAddDialogComponent } from './modules/tasks/inspections/inspe
     OptionsDocumentsDialogComponent,
     FolioInfoDialogComponent,
     InspectionsAddDialogComponent,
+    InfoVehicleDialogComponent,
   ],
   imports: [
     BrowserModule,

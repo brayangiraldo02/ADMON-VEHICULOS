@@ -18,6 +18,7 @@ import { MatDividerModule } from '@angular/material/divider';
 import {MatAutocompleteModule} from '@angular/material/autocomplete';
 import {MatDatepickerModule} from '@angular/material/datepicker';
 import {MatNativeDateModule} from '@angular/material/core';
+import { ClipboardModule } from '@angular/cdk/clipboard';
 
 const materialModules = [
   MatFormFieldModule, 
@@ -39,6 +40,7 @@ const materialModules = [
   MatAutocompleteModule,
   MatNativeDateModule,
   MatDatepickerModule,
+  ClipboardModule
 ]
 
 @NgModule({

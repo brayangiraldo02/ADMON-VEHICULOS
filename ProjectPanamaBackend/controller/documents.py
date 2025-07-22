@@ -40,7 +40,6 @@ async def vehicle_documents(company_code: str, vehicle_number: str):
         else:
           classified_docs[doc_id]["folios"].append(filename)
 
-    # 2. CONSTRUCCIÓN DE LA RESPUESTA: (Aquí está el ajuste)
     response_documents = []
     for i in range(1, 16):
       doc_id = f"docu{str(i).zfill(2)}"
