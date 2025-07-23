@@ -10,7 +10,7 @@ export class inspectionsGuard implements CanActivate {
 
   canActivate(): boolean | UrlTree {
     console.log('prueba: ',);
-    if (this.jwtService.isOwner() || this.jwtService.getPermissionUser('opcion17')) {
+    if (this.jwtService.isOwner() || this.jwtService.getPermissionUser('opcion18')) {
       return true; 
     }
 

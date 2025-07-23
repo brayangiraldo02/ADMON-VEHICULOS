@@ -95,13 +95,13 @@ export class SidenavComponent implements OnInit {
         icon: 'card_travel',
         label: 'Inspecciones',
         route: '/inspections',
-        conditions: true
+        conditions: this.permisos.opcion18
       },
       {
         icon: 'insert_drive_file',
         label: 'Documentos',
         action: () => this.openDialogDocuments(),
-        conditions: true
+        conditions: this.permisos.opcion17
       }
     ];
   }
