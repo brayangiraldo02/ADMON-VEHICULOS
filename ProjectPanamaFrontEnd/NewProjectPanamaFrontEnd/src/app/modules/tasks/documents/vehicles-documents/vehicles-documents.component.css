@@ -6,9 +6,13 @@
   display: flex;
   flex-direction: row;
   gap: 10px;
+  justify-content: center;
 }
 
-.documents-options-container .info-vehicle-container,
+.documents-options-container .info-vehicle-container {
+  width: 45%;
+}
+
 .documents-options-container .required-documents-container,
 .documents-options-container .optional-documents-container {
   display: flex;
@@ -70,5 +74,9 @@
 
   .mat-mdc-option .mdc-list-item__primary-text {
     white-space: normal;
+  }
+
+  .documents-options-container .info-vehicle-container {
+    width: 100%;
   }
 }
