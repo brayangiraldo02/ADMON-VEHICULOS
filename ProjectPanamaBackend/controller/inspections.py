@@ -194,9 +194,9 @@ async def inspections_info(data, company_code: str):
 upload_directory = "uploads"
 
 
-async def upload_image(vehicle_number: str, image: UploadFile = File(...)):
+async def upload_image(company_code: str, vehicle_number: str, image: UploadFile = File(...)):
   try:
-    vehicle_number_path = os.path.join(upload_directory, vehicle_number, "fotos")
+    vehicle_number_path = os.path.join(upload_directory, company_code, vehicle_number, "fotos")
     os.makedirs(vehicle_number_path, exist_ok=True)
 
     file_path = os.path.join(vehicle_number_path, image.filename)
@@ -361,10 +361,10 @@ async def inspection_types(company_code: str):
 
 #-----------------------------------------------------------------------------------------------
 
-async def new_inspection_data(vehicle_number: str):
+async def new_inspection_data(company_code: str, vehicle_number: str):
   db = session()
   try:
-    vehicle = db.query(Vehiculos).filter(Vehiculos.NUMERO == vehicle_number).first()
+    vehicle = db.query(Vehiculos).filter(Vehiculos.NUMERO == vehicle_number, Vehiculos.EMPRESA == company_code).first()
     if not vehicle:
       return JSONResponse(content={"message": "Vehicle not found"}, status_code=404)
     
