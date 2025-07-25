@@ -32,6 +32,7 @@ class Vehiculos(Base):
     PROPI_IDEN = Column(CHAR(12), default="")
     CTA_GASTO = Column(CHAR(12), default="")
     CENTRAL = Column(CHAR(12), default="")
+    PATIO = Column(CHAR(2), default="")
     FOTO = Column(TEXT, default="")
     FOTO01 = Column(TEXT, default="")
     FOTO02 = Column(TEXT, default="")
