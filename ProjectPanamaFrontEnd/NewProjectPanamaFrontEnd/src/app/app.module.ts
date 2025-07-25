@@ -41,8 +41,18 @@ import { OperacionesEntregaVehiculoConductorComponent } from './modules/options/
 import { SharedModule } from './modules/shared/shared.module';
 import { DevPreviewComponent } from './modules/others/dev-preview/dev-preview.component';
 import { MaterialModule } from './modules/shared/material/material.module';
-import { InspectionsComponent } from './modules/tasks/inspections/inspections.component';
+import { InspectionsTableComponent } from './modules/tasks/inspections/inspections-table/inspections-table.component';
 import { OperacionesContratoDeclaracionJuradaComponent } from './modules/options/users/operaciones/operaciones-contrato-declaracion-jurada/operaciones-contrato-declaracion-jurada.component';
+import { VehiclesDocumentsComponent } from './modules/tasks/documents/vehicles-documents/vehicles-documents.component';
+import { DriversDocumentsComponent } from './modules/tasks/documents/drivers-documents/drivers-documents.component';
+import { OptionsDocumentsDialogComponent } from './modules/tasks/documents/options-documents-dialog/options-documents-dialog.component';
+import { FolioInfoDialogComponent } from './modules/tasks/documents/folio-info-dialog/folio-info-dialog.component';
+import { InspectionsAddDialogComponent } from './modules/tasks/inspections/inspections-add-dialog/inspections-add-dialog.component';
+import { InfoVehicleDialogComponent } from './modules/tasks/documents/info-vehicle-dialog/info-vehicle-dialog.component';
+import { OperacionesCrearCuentaDiarioConductorComponent } from './modules/options/users/operaciones/operaciones-crear-cuenta-diario-conductor/operaciones-crear-cuenta-diario-conductor.component';
+import { OperacionesCambiarEstadoVehiculoComponent } from './modules/options/users/operaciones/operaciones-cambiar-estado-vehiculo/operaciones-cambiar-estado-vehiculo.component';
+import { OperacionesCambiarPatioVehiculoComponent } from './modules/options/users/operaciones/operaciones-cambiar-patio-vehiculo/operaciones-cambiar-patio-vehiculo.component';
+import { OperacionesCorregirKilometrajeActualComponent } from './modules/options/users/operaciones/operaciones-corregir-kilometraje-actual/operaciones-corregir-kilometraje-actual.component';
 
 @NgModule({
   declarations: [
@@ -81,8 +91,18 @@ import { OperacionesContratoDeclaracionJuradaComponent } from './modules/options
     DriversDocumentationComponent,
     OperacionesEntregaVehiculoConductorComponent,
     DevPreviewComponent,
-    InspectionsComponent,
+    InspectionsTableComponent,
     OperacionesContratoDeclaracionJuradaComponent,
+    VehiclesDocumentsComponent,
+    DriversDocumentsComponent,
+    OptionsDocumentsDialogComponent,
+    FolioInfoDialogComponent,
+    InspectionsAddDialogComponent,
+    InfoVehicleDialogComponent,
+    OperacionesCrearCuentaDiarioConductorComponent,
+    OperacionesCambiarEstadoVehiculoComponent,
+    OperacionesCambiarPatioVehiculoComponent,
+    OperacionesCorregirKilometrajeActualComponent,
   ],
   imports: [
     BrowserModule,

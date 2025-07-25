@@ -1,0 +1,30 @@
+.inputs-container {
+  display: flex;
+  gap: 10px;
+}
+
+.field-input {
+  width: 100%;
+}
+
+@media (max-width: 950px) {
+  .inputs-container {
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .mat-mdc-option:first-child {
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+
+  .mat-mdc-option {
+    padding-top: 10px;  
+    padding-bottom: 10px;
+    height: auto;
+  }
+
+  .mat-mdc-option .mdc-list-item__primary-text {
+    white-space: normal;
+  }
+}

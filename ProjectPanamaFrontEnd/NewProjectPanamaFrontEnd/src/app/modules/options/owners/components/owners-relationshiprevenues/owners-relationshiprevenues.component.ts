@@ -174,16 +174,14 @@ export class OwnersRelationshiprevenuesComponent implements OnInit{
       let endpoint = 'relationshiprevenues';
       if (endpoint) {
         const companyValue = this.infoForm.value.companie;
-        let companyName = companyValue; // Default to the full value
-        if (companyValue && companyValue.includes(' - ')) {
-          companyName = companyValue.split(' - ')[0].trim(); 
-        }
+        const companyId = companyValue.split(' - ').pop()?.trim() || companyValue;
+
         const data = {
           'usuario': this.user,
           'primeraFecha': this.infoForm.value.firstDate,
           'ultimaFecha': this.infoForm.value.lastDate,
           'unidad': this.infoForm.value.vehicle,
-          'empresa': companyName
+          'empresa': companyId
         };
         console.log(data);
         localStorage.setItem('pdfEndpoint', endpoint);

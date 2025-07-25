@@ -77,15 +77,15 @@ td:last-child {
   padding-right: 20px; /* Ajusta este valor según sea necesario */
 }
 
-.filters-container {
+/* .filters-container {
   transition: all 0.3s ease;
-}
+} */
 
-.mat-elevation-z8 {
+/* .mat-elevation-z8 {
   transition: all 0.3s ease;
-}
+} */
 
-::ng-deep .mat-mdc-option {
+/* ::ng-deep .mat-mdc-option {
   transition: all 0.2s ease !important;
   margin: 2px !important;
   transform-origin: center !important;
@@ -102,8 +102,41 @@ td:last-child {
   padding: 4px !important;
   overflow-y: auto !important;
   overflow-x: hidden !important;
-}
+} */
 
 .padding-header{
   padding-right: 10px;
+}
+
+@media (max-width: 600px) {
+  .cobros-container {
+    padding: 2vh 10px 20px;
+  }
+
+  .buttons-container {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .unified-buttons-container {
+    display: flex;
+    width: 100%;
+    gap: 10px;
+  }
+
+  .mat-mdc-raised-button.mat-mdc-button-base {
+    width: 100%;
+  }
+
+  .filters-container {
+    flex-direction: column;
+    width: 100%;
+    gap: 0px;
+  }
+
+  .debt-filter {
+    width: 100% !important;
+  }
+  
 }

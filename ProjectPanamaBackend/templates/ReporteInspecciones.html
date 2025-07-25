@@ -92,7 +92,7 @@
       background-color: #f0f0f0;
     }
 
-    /* Estilo para el total control como en RelacionIngresos */
+    /* Estilo para el total*/
     .box-propietario {
       text-align: left;
       font-size: 17px;
@@ -107,6 +107,19 @@
     /* Fila vacía pero con línea horizontal */
     tr.empty-row-with-line td {
       height: 10px;
+    }
+
+    .total-general-row td {
+      background-color: #f2f2f2;
+      border: 3px solid #000;
+      font-size: 16px;
+      font-weight: bold;
+      text-align: left;
+      padding: 15px;
+    }
+
+    .total-general-cell {
+      border-radius: 8px;
     }
 
   </style>
@@ -148,7 +161,7 @@
       <tr>
         <td>{{ inspeccion['id'] }}</td>
         <td>{{ inspeccion['descripcion'] }}</td>
-        <td></td>
+        <td>{{ inspeccion['kilometraje'] }}</td>
         <td>{{ inspeccion['placa'] }}</td>
         <td>{{ inspeccion['unidad'] }}</td>
         <td>{{ inspeccion['fecha_hora'] }}</td>
@@ -168,9 +181,11 @@
       {% endfor %}
       <!-- FIN DE SECCIÓN ITERATIVA POR EMPRESA -->
 
-      <!-- Total Control como en RelacionIngresos -->
-      <tr class="total-row">
-        <td colspan="8" class="empresa-total">Total General: {{ data_view['total_inspecciones'] }}</td>
+      <tr class="empty-row-with-line">
+        <td colspan="8" style="border-top: 2px dashed #999;"></td>
+      </tr>
+      <tr class="total-general-row">
+        <td colspan="8" class="total-general-cell"> TOTAL GENERAL DE INSPECCIONES: {{ data_view['total_inspecciones'] }}</td>
       </tr>
     </tbody>
   </table>

@@ -14,9 +14,9 @@
   <ng-container *ngFor="let item of menuItems">
     <mat-list-item
       *ngIf="!ownerView && item.conditions"
-      [routerLink]="item.route"
+      [routerLink]="item.route || null"
       routerLinkActive="active-link"
-      (click)="onItemClick()">
+      (click)="item.action ? item.action() : onItemClick()">
       <mat-icon matListItemIcon>{{item.icon}}</mat-icon>
       <span matListItemTitle>{{item.label}}</span>
     </mat-list-item>

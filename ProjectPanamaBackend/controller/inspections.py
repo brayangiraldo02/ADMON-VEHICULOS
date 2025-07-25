@@ -16,6 +16,7 @@ from datetime import datetime
 import pytz
 from utils.pdf import html2pdf
 import tempfile
+from utils.panapass import get_txt_file, search_value_in_txt
 
 async def owners_data(company_code: str):
   db = session()
@@ -75,18 +76,25 @@ async def vehicles_data(company_code: str):
     vehicles = db.query(Vehiculos).filter(Vehiculos.EMPRESA == company_code, Vehiculos.PLACA != "", Vehiculos.NUMERO != "").all()
     if not vehicles:
       return JSONResponse(content={"message": "Vehicles not found"}, status_code=404)
+    
+    owners = db.query(Propietarios).filter(Propietarios.EMPRESA == company_code, Propietarios.CODIGO != "").all()
+    owners_dict = {owner.CODIGO: owner.NOMBRE for owner in owners}
 
     result = []
 
     for vehicle in vehicles:
+      owner_name = owners_dict.get(vehicle.PROPI_IDEN, "")
+      
       result.append({
         "placa_vehiculo": vehicle.PLACA,
         "numero_unidad": vehicle.NUMERO,
         "codigo_conductor": vehicle.CONDUCTOR,
         "codigo_propietario": vehicle.PROPI_IDEN,
+        "nombre_propietario": owner_name,
         "marca": vehicle.NOMMARCA,
         "linea": vehicle.LINEA,
-        "modelo": vehicle.MODELO
+        "modelo": vehicle.MODELO,
+        "nro_cupo": vehicle.NRO_CUPO,
       })
 
     return JSONResponse(content=jsonable_encoder(result), status_code=200)
@@ -163,6 +171,7 @@ async def inspections_info(data, company_code: str):
       inspections_data.append({
         "id": inspection.ID,
         "fecha_hora": inspection.FECHA.strftime('%d-%m-%Y') + ' ' + inspection.HORA.strftime('%H:%M') if inspection.FECHA and inspection.HORA else None,
+        "propietario": inspection.PROPI_IDEN,
         "tipo_inspeccion": inspections_dict.get(inspection.TIPO_INSPEC, ""),
         "descripcion": inspection.DESCRIPCION,
         "unidad": inspection.UNIDAD,
@@ -185,9 +194,9 @@ async def inspections_info(data, company_code: str):
 upload_directory = "uploads"
 
 
-async def upload_image(vehicle_number: str, image: UploadFile = File(...)):
+async def upload_image(company_code: str, vehicle_number: str, image: UploadFile = File(...)):
   try:
-    vehicle_number_path = os.path.join(upload_directory, vehicle_number, "fotos")
+    vehicle_number_path = os.path.join(upload_directory, company_code, vehicle_number, "fotos")
     os.makedirs(vehicle_number_path, exist_ok=True)
 
     file_path = os.path.join(vehicle_number_path, image.filename)
@@ -239,7 +248,8 @@ async def report_inspections(data, company_code: str):
         "descripcion": inspection.DESCRIPCION,
         "unidad": inspection.UNIDAD,
         "placa": inspection.PLACA,
-        "nombre_usuario": inspection.USUARIO,
+        "kilometraje": inspection.KILOMETRAJ if inspection.KILOMETRAJ else "",
+        "nombre_usuario": inspection.USUARIO if inspection.USUARIO else "",
         "propietario": inspection.PROPI_IDEN,
         "acciones": ""
       }
@@ -298,34 +308,16 @@ async def report_inspections(data, company_code: str):
     output_header = header.render(data_view=data_view)
     output_footer = footer.render(data_view=data_view)
 
-    # html_path = f'./templates/renderInspecciones.html'
-    # header_path = f'./templates/renderheader.html'
-    # footer_path = f'./templates/renderfooter.html'
-    # html_file = open(html_path, 'w')
-    # header_file = open(header_path, 'w')
-    # html_footer = open(footer_path, 'w') 
-    # html_file.write(output_text)
-    # header_file.write(output_header)
-    # html_footer.write(output_footer) 
-    # html_file.close()
-    # header_file.close()
-    # html_footer.close()
-    # pdf_path = 'reporte-inspecciones.pdf'
-    with tempfile.NamedTemporaryFile(delete=False, suffix='.html', mode='w', encoding='latin-1') as html_file:
+    with tempfile.NamedTemporaryFile(delete=False, suffix='.html', mode='w') as html_file:
       html_path = html_file.name
       html_file.write(output_text)
-    with tempfile.NamedTemporaryFile(delete=False, suffix='.html', mode='w', encoding='latin-1') as header_file:
+    with tempfile.NamedTemporaryFile(delete=False, suffix='.html', mode='w') as header_file:
       header_path = header_file.name
       header_file.write(output_header)
-    with tempfile.NamedTemporaryFile(delete=False, suffix='.html', mode='w', encoding='latin-1') as footer_file:
+    with tempfile.NamedTemporaryFile(delete=False, suffix='.html', mode='w') as footer_file:
       footer_path = footer_file.name
       footer_file.write(output_footer)
     pdf_path = tempfile.NamedTemporaryFile(delete=False, suffix='.pdf').name
-
-    print(f"HTML Path: {html_path}")
-    print(f"Header Path: {header_path}")
-    print(f"Footer Path: {footer_path}")
-    print(f"PDF Path: {pdf_path}")
 
     html2pdf(titulo, html_path, pdf_path, header_path=header_path, footer_path=footer_path)
 
@@ -348,3 +340,69 @@ async def report_inspections(data, company_code: str):
     return JSONResponse(content={"message": str(e)}, status_code=500)
   finally:
     db.close()
+
+#-----------------------------------------------------------------------------------------------
+
+async def inspection_types(company_code: str):
+  db = session()
+  try:
+    inspection_types = db.query(TiposInspeccion).filter(TiposInspeccion.EMPRESA == company_code).all()
+
+    if not inspection_types:
+      return JSONResponse(content={"message": "Inspection types not found"}, status_code=404)
+
+    result = [{"id": inspection_type.CODIGO, "nombre": inspection_type.NOMBRE} for inspection_type in inspection_types]
+
+    return JSONResponse(content=jsonable_encoder(result), status_code=200)
+  except Exception as e:
+    return JSONResponse(content={"message": str(e)}, status_code=500)
+  finally:
+    db.close()
+
+#-----------------------------------------------------------------------------------------------
+
+async def new_inspection_data(company_code: str, vehicle_number: str):
+  db = session()
+  try:
+    vehicle = db.query(Vehiculos).filter(Vehiculos.NUMERO == vehicle_number, Vehiculos.EMPRESA == company_code).first()
+    if not vehicle:
+      return JSONResponse(content={"message": "Vehicle not found"}, status_code=404)
+    
+    driver = db.query(Conductores).filter(Conductores.CODIGO == vehicle.CONDUCTOR).first()
+    
+    panama_timezone = pytz.timezone('America/Panama')
+    # Obtén la hora actual en la zona horaria de Ciudad de Panamá
+    now_in_panama = datetime.now(panama_timezone)
+    # Formatea la fecha y la hora según lo requerido
+    fecha = now_in_panama.strftime("%d/%m/%Y")
+    hora_actual = now_in_panama.strftime("%I:%M:%S %p")
+
+    # Obtener el archivo de texto para la empresa
+    txt_file_path = get_txt_file(vehicle.EMPRESA)
+    if txt_file_path:
+      panapass_value = search_value_in_txt('Unidad', vehicle_number, 'Saldo Cuenta PanaPass', txt_file_path)
+    else:
+      panapass_value = ''
+    
+    vehicle_info = {
+      'numero': vehicle_number,
+      'marca': vehicle.NOMMARCA + ' ' + vehicle.LINEA,
+      'modelo': vehicle.MODELO,
+      'placa': vehicle.PLACA,
+      'conductor_nombre': driver.NOMBRE if driver else '',
+      'conductor_codigo': vehicle.CONDUCTOR if vehicle.CONDUCTOR else '',
+      'conductor_celular': driver.TELEFONO if driver else '',
+      'kilometraje': vehicle.KILOMETRAJ if vehicle.KILOMETRAJ else '',
+      'fecha_inspeccion': fecha,
+      'hora_inspeccion': hora_actual,
+      'panapass': panapass_value if panapass_value else ''
+    }
+    
+    return JSONResponse(content=jsonable_encoder(vehicle_info), status_code=200)
+    
+  except Exception as e:
+    return JSONResponse(content={"message": str(e)}, status_code=500)
+  finally:
+    db.close()
+    
+#-----------------------------------------------------------------------------------------------

@@ -61,7 +61,7 @@ export class PdfViewerComponent implements OnInit, OnDestroy {
         try {
           data = JSON.parse(dataParam);
         } catch (e) {
-          this.pdfLoadError = 'Error: Invalid PDF parameters.';
+          this.pdfLoadError = 'Error: Parámetros del PDF inválidos. Contacta a soporte con este error.';
           this.isLoading = false;
           this.cleanupLocalStorage();
           this.cdr.detectChanges();
@@ -72,7 +72,7 @@ export class PdfViewerComponent implements OnInit, OnDestroy {
         this.loadPdf(endpoint);
       }
     } else {
-      this.pdfLoadError = 'Error: PDF endpoint not found.';
+      this.pdfLoadError = 'Error: Endpoint del PDF no encontrado. Contacta a soporte con este error.';
       this.isLoading = false;
       this.cleanupLocalStorage();
       this.cdr.detectChanges();
@@ -89,7 +89,7 @@ export class PdfViewerComponent implements OnInit, OnDestroy {
       async (responseBlob: Blob) => {
         console.log('loadPdf success: Received responseBlob', responseBlob);
         if (!responseBlob || responseBlob.size === 0) {
-          this.pdfLoadError = 'Error: Received empty PDF data from server.';
+          this.pdfLoadError = 'Error: Datos de PDF vacíos recibidos del servidor. Contacta a soporte con este error.';
           this.isLoading = false;
           this.cleanupLocalStorage();
           this.cdr.detectChanges();
@@ -132,7 +132,7 @@ export class PdfViewerComponent implements OnInit, OnDestroy {
             try {
               const arrayBuffer = await this.pdfBlob.arrayBuffer();
               if (arrayBuffer.byteLength === 0) {
-                this.pdfLoadError = 'Error: PDF data is empty after conversion for Android.';
+                this.pdfLoadError = 'Error: Los datos del PDF están vacíos después de la conversión para Android. Contacta a soporte con este error.';
                 this.isLoading = false;
                 this.cdr.detectChanges();
                 return;
@@ -149,18 +149,18 @@ export class PdfViewerComponent implements OnInit, OnDestroy {
                     this.renderAllPages();
                   } else {
                     console.error('loadPdf Android: pdfPagesContainer still not available after DOM update.');
-                    this.pdfLoadError = 'Error: PDF display area could not be initialized for Android.';
+                    this.pdfLoadError = 'Error: El área de visualización del PDF no pudo ser inicializada para Android. Contacta a soporte con este error.';
                     this.cdr.detectChanges();
                   }
                 });
               } else {
-                this.pdfLoadError = 'Error: Failed to parse PDF document structure for Android.';
+                this.pdfLoadError = 'Error: Falló al analizar la estructura del documento PDF para Android. Contacta a soporte con este error.';
                 this.isLoading = false;
                 this.cdr.detectChanges();
               }
             } catch (error) {
               console.error('loadPdf Android: Error loading or rendering PDF with PDF.js:', error);
-              this.pdfLoadError = 'Error: Could not load or render PDF for Android.';
+              this.pdfLoadError = 'Error: No se pudo cargar o renderizar el PDF para Android. Contacta a soporte con este error.';
               this.isLoading = false;
               this.cdr.detectChanges();
             }
@@ -171,7 +171,7 @@ export class PdfViewerComponent implements OnInit, OnDestroy {
             try {
               const arrayBuffer = await this.pdfBlob.arrayBuffer();
               if (arrayBuffer.byteLength === 0) {
-                this.pdfLoadError = 'Error: PDF data is empty after conversion for Other Mobile.';
+                this.pdfLoadError = 'Error: Los datos del PDF están vacíos después de la conversión para Otro Móvil. Contacta a soporte con este error.';
                 this.isLoading = false;
                 this.cdr.detectChanges();
                 return;
@@ -185,18 +185,18 @@ export class PdfViewerComponent implements OnInit, OnDestroy {
                   if (this.pdfPagesContainer && this.pdfPagesContainer.nativeElement) {
                     this.renderAllPages();
                   } else {
-                    this.pdfLoadError = 'Error: PDF display area not ready for Other Mobile.';
+                    this.pdfLoadError = 'Error: Área de visualización del PDF no está lista para Otro Móvil. Contacta a soporte con este error.';
                     this.cdr.detectChanges();
                   }
                 });
               } else {
-                this.pdfLoadError = 'Error: Failed to parse PDF document structure for Other Mobile.';
+                this.pdfLoadError = 'Error: Falló al analizar la estructura del documento PDF para Otro Móvil. Contacta a soporte con este error.';
                 this.isLoading = false;
                 this.cdr.detectChanges();
               }
             } catch (error) {
               console.error('loadPdf Other Mobile: Error loading or rendering PDF with PDF.js:', error);
-              this.pdfLoadError = 'Error: Could not load or render PDF for Other Mobile.';
+              this.pdfLoadError = 'Error: No se pudo cargar o renderizar el PDF para Otro Móvil. Contacta a soporte con este error.';
               this.isLoading = false;
               this.cdr.detectChanges();
             }
@@ -205,7 +205,7 @@ export class PdfViewerComponent implements OnInit, OnDestroy {
       },
       (error) => {
         console.error('loadPdf error: Error fetching PDF from API:', error);
-        this.pdfLoadError = 'Error: Could not fetch PDF from server.';
+        this.pdfLoadError = 'Error: No se pudo obtener el PDF del servidor. Contacta a soporte con este error.';
         this.isLoading = false;
         this.cleanupLocalStorage();
         this.cdr.detectChanges();
@@ -221,7 +221,7 @@ export class PdfViewerComponent implements OnInit, OnDestroy {
       return;
     }
     if (!this.pdfPagesContainer || !this.pdfPagesContainer.nativeElement) {
-      this.pdfLoadError = 'Error: PDF display area not ready for mobile.';
+      this.pdfLoadError = 'Error: Área de visualización del PDF no está lista para móvil. Contacta a soporte con este error.';
       // isLoading ya debería ser false
       this.cdr.detectChanges();
       return;
@@ -235,7 +235,7 @@ export class PdfViewerComponent implements OnInit, OnDestroy {
     const numPages = this.pdfDocument.numPages;
     console.log(`renderAllPages (mobile): Document has ${numPages} pages.`);
     if (numPages === 0) {
-      this.pdfLoadError = 'Info: The PDF document has no pages.';
+      this.pdfLoadError = 'Info: El documento PDF no tiene páginas. Contacta a soporte con este error.';
       this.cdr.detectChanges();
       return;
     }
@@ -270,7 +270,7 @@ export class PdfViewerComponent implements OnInit, OnDestroy {
         console.log(`renderAllPages (mobile): Appended canvas for page ${pageNum}.`);
       } catch (pageError) {
         console.error(`renderAllPages (mobile): Error rendering page ${pageNum}:`, pageError);
-        this.pdfLoadError = `Error rendering page ${pageNum}.`;
+        this.pdfLoadError = `Error renderizando página ${pageNum}. Contacta a soporte con este error.`;
         this.cdr.detectChanges();
       }
     }
@@ -294,7 +294,7 @@ export class PdfViewerComponent implements OnInit, OnDestroy {
       console.log('downloadPdf: PDF download initiated.');
     } else {
       console.error('downloadPdf: pdfBlob is null, cannot download.');
-      this.pdfLoadError = 'Error: No hay PDF para descargar.';
+      this.pdfLoadError = 'Error: No hay PDF para descargar. Contacta a soporte con este error.';
       this.cdr.detectChanges();
     }
   }

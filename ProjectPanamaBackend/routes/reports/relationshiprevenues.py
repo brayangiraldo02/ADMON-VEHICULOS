@@ -33,10 +33,10 @@ async def relationshiprevenues_report(data: RelationshipRevenuesReport):
     
     if data.unidad == "" or data.unidad == "TODOS":
       if data.usuario != user_admin:
-        empresa = db.query(Propietarios.CODIGO).filter(Propietarios.NOMBRE == data.empresa).all()
-        if len(empresa) == 0:
-          return JSONResponse(content={"error": "No se encontró la empresa"}, status_code=400)
-        empresa = empresa[0][0]
+        # empresa = db.query(Propietarios.CODIGO).filter(Propietarios.NOMBRE == data.empresa).all()
+        # if len(empresa) == 0:
+        #   return JSONResponse(content={"error": "No se encontró la empresa"}, status_code=400)
+        empresa = data.empresa
 
         conteo_reporte_ingresos = db.query(
           Propietarios.EMPRESA.label('codigo_empresa'),
@@ -67,8 +67,8 @@ async def relationshiprevenues_report(data: RelationshipRevenuesReport):
           CajaRecaudos.EMPRESA == Propietarios.EMPRESA
         ).all()
       else:
-        empresa = db.query(Propietarios.CODIGO).filter(Propietarios.NOMBRE == data.empresa).all()
-        empresa = empresa[0][0]
+        # empresa = db.query(Propietarios.CODIGO).filter(Propietarios.NOMBRE == data.empresa).all()
+        empresa = data.empresa
         conteo_reporte_ingresos = db.query(
           Propietarios.EMPRESA.label('codigo_empresa'),
           CajaRecaudos.EMPRESA.label('num_empresa'),
@@ -99,8 +99,8 @@ async def relationshiprevenues_report(data: RelationshipRevenuesReport):
         ).all()
 
     elif data.unidad != "" and data.unidad != "TODOS":
-      empresa = db.query(Propietarios.CODIGO).filter(Propietarios.NOMBRE == data.empresa).all()
-      empresa = empresa[0][0]
+      # empresa = db.query(Propietarios.CODIGO).filter(Propietarios.NOMBRE == data.empresa).all()
+      empresa = data.empresa
       conteo_reporte_ingresos = db.query(
           Propietarios.EMPRESA.label('codigo_empresa'),
           CajaRecaudos.EMPRESA.label('num_empresa'),

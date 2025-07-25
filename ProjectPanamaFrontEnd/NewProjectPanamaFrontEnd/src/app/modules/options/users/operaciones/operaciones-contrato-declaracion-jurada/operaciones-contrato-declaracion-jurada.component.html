@@ -104,13 +104,14 @@
         <strong class="message-strong">NO PERMITIDO:</strong> {{ contractInfo.mensaje }}.
       </p>
 
-      <mat-form-field class="form-field" (click)="datepicker.open()" *ngIf="contractInfo.permitido === 0">
+      <mat-form-field class="form-field date-form" (click)="datepicker.open()" *ngIf="contractInfo.permitido === 0">
         <input
           matInput
           placeholder="Selecciona una fecha inicial"
           [matDatepicker]="datepicker"
           [formControl]="selectedDate"
           [max]="maxDate"
+          required
           readonly
         />
         <mat-hint>DD/MM/YYYY</mat-hint>
@@ -120,6 +121,9 @@
         ></mat-datepicker-toggle>
         <mat-datepicker #datepicker></mat-datepicker>
       </mat-form-field>
+      <mat-error *ngIf="selectedDate.invalid && selectedDate.touched">
+        Debes seleccionar una fecha.
+      </mat-error>
     </div>
   </div>
 
@@ -129,7 +133,8 @@
   <button 
     mat-button 
     cdkFocusInitial
-    [disabled]="contractInfo.permitido === 1 || contractInfo.permitido === null || contractInfo.permitido === undefined">
+    [disabled]="contractInfo.permitido === 1 || contractInfo.permitido === null || contractInfo.permitido === undefined || selectedDate.invalid"
+    (click)="generateContract()">
     Confirmar
   </button>
 </mat-dialog-actions> 

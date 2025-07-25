@@ -241,19 +241,15 @@ export class InfoTableComponent implements AfterViewInit, OnDestroy {
 
     let css = `
       .mat-mdc-option {
-        transition: all 0.2s ease !important;
         margin: 1px !important;
         border-radius: 4px !important;
       }
     `;
 
-    // Generar CSS dinámicamente desde el array debtList
     this.debtList.forEach((debt, index) => {
       css += `
         .debt-option-${index}:hover {
           background-color: ${debt.hoverColor} !important;
-          transform: scale(1.02) !important;
-          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15) !important;
         }
       `;
     });
@@ -423,7 +419,6 @@ export class InfoTableComponent implements AfterViewInit, OnDestroy {
   }
 
   downloadCollectionAccountsPDF() {
-    this.openSnackbar(this.isIOS ? 'iOS true' : 'iOS false');
     const selectedOwners = this.globalStates.getSelectedOwners();
     if (selectedOwners.owners.length === 0) {
       console.error('No owners selected for PDF download');

@@ -1,4 +1,4 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, BackgroundTasks
 from fastapi.responses import JSONResponse
 from config.dbconnection import session
 from models.estados import Estados
@@ -16,6 +16,8 @@ from fastapi.templating import Jinja2Templates
 from fastapi.responses import FileResponse
 import jinja2
 from utils.pdf import html2pdf
+import os
+import tempfile
 
 templateJinja = Jinja2Templates(directory="templates")
 
@@ -635,57 +637,71 @@ async def get_conteo_propietarios_vehiculos_estados_numeros(id: str, info: userI
 async def get_vehiculos_detalles(infoReports: infoReports):
     db = session()
     try:
-        vehiculos_detalles = db.query(
-            Propietarios.CODIGO.label('propietario_codigo'),
-            Propietarios.NOMBRE.label('propietario_nombre'),
-            Estados.CODIGO.label('estado_codigo'),
-            Estados.NOMBRE.label('estado_nombre'),
-            Vehiculos.NUMERO.label('vehiculo_numero'),
-            Vehiculos.PLACA.label('vehiculo_placa'),
-            Vehiculos.NOMMARCA.label('vehiculo_marca'),
-            Vehiculos.MODELO.label('vehiculo_modelo'),
-            Vehiculos.LINEA.label('vehiculo_linea'),
-            Vehiculos.NRO_CUPO.label('vehiculo_nro_cupo'),
-            Vehiculos.MOTORNRO.label('vehiculo_motor'),
-            Vehiculos.CHASISNRO.label('vehiculo_chasis'),
-            Conductores.NROENTREGA.label('conductor_nro_entrega'),
-            Conductores.CUO_DIARIA.label('conductor_cuo_diaria'),
-            Conductores.NROENTSDO.label('conductor_nro_ent_sdo'),
-            Conductores.CODIGO.label('conductor_codigo'),
-            Conductores.NOMBRE.label('conductor_nombre'),
-            Conductores.CEDULA.label('conductor_cedula'),
-            Conductores.TELEFONO.label('conductor_telefono')
-        )   .join(Vehiculos, Estados.CODIGO == Vehiculos.ESTADO) \
-            .join(Conductores, Vehiculos.CONDUCTOR == Conductores.CODIGO) \
-            .join(Propietarios, Vehiculos.PROPI_IDEN == Propietarios.CODIGO) \
-            .filter(Estados.CODIGO.in_(infoReports.estados)) \
-            .filter(Vehiculos.PROPI_IDEN.in_(infoReports.empresas)) \
-            .filter(Propietarios.CODIGO.in_(infoReports.empresas)) \
-            .all()   
+        vehiculos = db.query(
+            Vehiculos.NUMERO,
+            Vehiculos.PLACA, 
+            Vehiculos.NOMMARCA,
+            Vehiculos.MODELO,
+            Vehiculos.LINEA,
+            Vehiculos.NRO_CUPO,
+            Vehiculos.MOTORNRO,
+            Vehiculos.CHASISNRO,
+            Vehiculos.ESTADO,
+            Vehiculos.CONDUCTOR,
+            Vehiculos.PROPI_IDEN
+        ).filter(
+            Vehiculos.ESTADO.in_(infoReports.estados),
+            Vehiculos.PROPI_IDEN.in_(infoReports.empresas)
+        ).all()
         
-        # Convertir los resultados en un formato JSON
+        estado_ids = list(set([v.ESTADO for v in vehiculos]))
+        conductor_ids = list(set([v.CONDUCTOR for v in vehiculos]))
+        propietario_ids = list(set([v.PROPI_IDEN for v in vehiculos]))
+        
+        estados_dict = {e.CODIGO: e.NOMBRE for e in db.query(Estados.CODIGO, Estados.NOMBRE).filter(Estados.CODIGO.in_(estado_ids)).all()}
+        
+        conductores_dict = {c.CODIGO: {
+            'nombre': c.NOMBRE,
+            'cedula': c.CEDULA,
+            'telefono': c.TELEFONO,
+            'nro_entrega': c.NROENTREGA,
+            'cuo_diaria': c.CUO_DIARIA,
+            'nro_ent_sdo': c.NROENTSDO
+        } for c in db.query(
+            Conductores.CODIGO,
+            Conductores.NOMBRE,
+            Conductores.CEDULA,
+            Conductores.TELEFONO,
+            Conductores.NROENTREGA,
+            Conductores.CUO_DIARIA,
+            Conductores.NROENTSDO
+        ).filter(Conductores.CODIGO.in_(conductor_ids)).all()}
+        
+        propietarios_dict = {p.CODIGO: p.NOMBRE for p in db.query(Propietarios.CODIGO, Propietarios.NOMBRE).filter(Propietarios.CODIGO.in_(propietario_ids)).all()}
+        
         vehiculos_detalles_list = []
-        for resultado in vehiculos_detalles:
+        for vehiculo in vehiculos:
+            conductor_info = conductores_dict.get(vehiculo.CONDUCTOR, {})
             vehiculo_detalle = {
-                'propietario_codigo': resultado.propietario_codigo,
-                'propietario_nombre': resultado.propietario_nombre,
-                'estado_codigo': resultado.estado_codigo,
-                'estado_nombre': resultado.estado_nombre,
-                'vehiculo_numero': resultado.vehiculo_numero,
-                'vehiculo_placa': resultado.vehiculo_placa,
-                'vehiculo_marca': resultado.vehiculo_marca,
-                'vehiculo_modelo': resultado.vehiculo_modelo,
-                'vehiculo_linea': resultado.vehiculo_linea,
-                'vehiculo_nro_cupo': resultado.vehiculo_nro_cupo,
-                'vehiculo_motor': resultado.vehiculo_motor,
-                'vehiculo_chasis': resultado.vehiculo_chasis,
-                'conductor_nro_entrega': resultado.conductor_nro_entrega,
-                'conductor_cuo_diaria': resultado.conductor_cuo_diaria,
-                'conductor_nro_ent_sdo': resultado.conductor_nro_ent_sdo,
-                'conductor_codigo': resultado.conductor_codigo,
-                'conductor_nombre': resultado.conductor_nombre,
-                'conductor_cedula': resultado.conductor_cedula,
-                'conductor_telefono': resultado.conductor_telefono
+                'propietario_codigo': vehiculo.PROPI_IDEN,
+                'propietario_nombre': propietarios_dict.get(vehiculo.PROPI_IDEN, ''),
+                'estado_codigo': vehiculo.ESTADO,
+                'estado_nombre': estados_dict.get(vehiculo.ESTADO, ''),
+                'vehiculo_numero': vehiculo.NUMERO,
+                'vehiculo_placa': vehiculo.PLACA,
+                'vehiculo_marca': vehiculo.NOMMARCA,
+                'vehiculo_modelo': vehiculo.MODELO,
+                'vehiculo_linea': vehiculo.LINEA,
+                'vehiculo_nro_cupo': vehiculo.NRO_CUPO,
+                'vehiculo_motor': vehiculo.MOTORNRO,
+                'vehiculo_chasis': vehiculo.CHASISNRO,
+                'conductor_nro_entrega': conductor_info.get('nro_entrega', ''),
+                'conductor_cuo_diaria': conductor_info.get('cuo_diaria', 0),
+                'conductor_nro_ent_sdo': conductor_info.get('nro_ent_sdo', ''),
+                'conductor_codigo': vehiculo.CONDUCTOR,
+                'conductor_nombre': conductor_info.get('nombre', ''),
+                'conductor_cedula': conductor_info.get('cedula', ''),
+                'conductor_telefono': conductor_info.get('telefono', '')
             }
             vehiculos_detalles_list.append(vehiculo_detalle)
 
@@ -771,26 +787,35 @@ async def get_vehiculos_detalles(infoReports: infoReports):
         output_header = header.render(data_view=data_view)
         output_footer = footer.render(data_view=data_view)
 
-        html_path = f'./templates/renderRelacionVehiculos.html'
-        header_path = f'./templates/renderheader.html'
-        footer_path = f'./templates/renderfooter.html'
-        html_file = open(html_path, 'w')
-        header_file = open(header_path, 'w')
-        html_footer = open(footer_path, 'w') 
-        html_file.write(output_text)
-        header_file.write(output_header)
-        html_footer.write(output_footer) 
-        html_file.close()
-        header_file.close()
-        html_footer.close()
-        pdf_path = 'relacion-vehiculos-propietario.pdf'
+        with tempfile.NamedTemporaryFile(delete=False, suffix='.html', mode='w') as html_file:
+            html_path = html_file.name
+            html_file.write(output_text)
+        with tempfile.NamedTemporaryFile(delete=False, suffix='.html', mode='w') as header_file:
+            header_path = header_file.name
+            header_file.write(output_header)
+        with tempfile.NamedTemporaryFile(delete=False, suffix='.html', mode='w') as footer_file:
+            footer_path = footer_file.name
+            footer_file.write(output_footer)
+        pdf_path = tempfile.NamedTemporaryFile(delete=False, suffix='.pdf').name
+
         html2pdf(titulo, html_path, pdf_path, header_path=header_path, footer_path=footer_path)
 
-        response = FileResponse(pdf_path, media_type='application/pdf', filename='templates/relacion-vehiculos-propietario.pdf', headers=headers) 
+        background_tasks = BackgroundTasks()
+        background_tasks.add_task(os.remove, html_path)
+        background_tasks.add_task(os.remove, header_path)
+        background_tasks.add_task(os.remove, footer_path)
+        background_tasks.add_task(os.remove, pdf_path)
+
+        response = FileResponse(
+            pdf_path, media_type='application/pdf', 
+            filename='templates/relacion-vehiculos-propietario.pdf', 
+            headers=headers,
+            background=background_tasks
+        ) 
         
         return response
-    
-        #return JSONResponse(content=jsonable_encoder(datos))
+    except Exception as e:
+        return JSONResponse(content={"message": str(e)}, status_code=500)
     finally:
         db.close()
 

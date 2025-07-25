@@ -36,6 +36,8 @@ class PermisosUsuario(Base):
   OPCION14 = Column(CHAR(1))
   OPCION15 = Column(CHAR(1))
   OPCION16 = Column(CHAR(1))
+  OPCION17 = Column(CHAR(1))
+  OPCION18 = Column(CHAR(1))
   TAREA01 = Column(CHAR(1))
   TAREA02 = Column(CHAR(1))
   TAREA03 = Column(CHAR(1))

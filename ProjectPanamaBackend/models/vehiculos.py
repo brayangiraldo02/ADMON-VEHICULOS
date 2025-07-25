@@ -194,3 +194,4 @@ class Vehiculos(Base):
     NOMCENTRAL = Column(VARCHAR(50), default="")
     EMPRESA = Column(VARCHAR(50), default="")
     SEL = Column(CHAR(1), default="")
+    FEC_CONTRA = Column(DateTime, default=None)

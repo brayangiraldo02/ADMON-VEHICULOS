@@ -57,7 +57,8 @@ import { DriversAddnewComponent } from '../tasks/drivers/drivers-addnew/drivers-
 import { VehiclesTableComponent } from '../tasks/vehicles/vehicles-table/vehicles-table.component';
 import { VehiclesResumeComponent } from '../tasks/vehicles/vehicles-resume/vehicles-resume.component';
 import { VehiclesAddnewComponent } from '../tasks/vehicles/vehicles-addnew/vehicles-addnew.component';
-import { InspectionsComponent } from '../tasks/inspections/inspections.component';
+import { InspectionsTableComponent } from '../tasks/inspections/inspections-table/inspections-table.component';
+import { inspectionsGuard } from 'src/app/guards/inspections.guard';
 // VehiclesDocumentationComponent y DriversDocumentationComponent no estaban en tu app-routing, si las necesitas, impórtalas.
 
 const routes: Routes = [
@@ -100,7 +101,8 @@ const routes: Routes = [
       },
       {
         path: 'inspections',
-        component: InspectionsComponent
+        component: InspectionsTableComponent,
+        canActivate: [inspectionsGuard],
       }
       // Las rutas 'pdf' y 'login' NO se definen aquí.
       // La ruta 'prueba' ya no es necesaria como tal, ya que su funcionalidad (cargar NavigationModule)

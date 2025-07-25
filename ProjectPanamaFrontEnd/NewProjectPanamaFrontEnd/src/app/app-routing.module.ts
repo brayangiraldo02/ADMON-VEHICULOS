@@ -110,10 +110,10 @@ const routes: Routes = [
   },
   // Considera una ruta comodín para manejar rutas no encontradas, por ejemplo, redirigir a login o a una página 404
   // { path: '**', redirectTo: 'login' } // O una página específica de "No encontrado",
-  {
-    path: 'prueba',
-    component: OperacionesContratoDeclaracionJuradaComponent
-  }
+  // {
+  //   path: 'prueba',
+  //   component: OperacionesContratoDeclaracionJuradaComponent
+  // }
 ];
 
 @NgModule({

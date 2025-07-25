@@ -1,5 +1,7 @@
+import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatSort } from '@angular/material/sort';
@@ -7,6 +9,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { map, Observable, startWith } from 'rxjs';
 import { ApiService } from 'src/app/services/api.service';
 import { JwtService } from 'src/app/services/jwt.service';
+import { InspectionsAddDialogComponent } from '../inspections-add-dialog/inspections-add-dialog.component';
 
 export interface owners {
   id: string;
@@ -55,19 +58,26 @@ export interface apiResponse {
 
 @Component({
   selector: 'app-inspections',
-  templateUrl: './inspections.component.html',
-  styleUrls: ['./inspections.component.css']
+  templateUrl: './inspections-table.component.html',
+  styleUrls: ['./inspections-table.component.css']
 })
-export class InspectionsComponent implements OnInit {
+export class InspectionsTableComponent implements OnInit {
   inspectionForm!: FormGroup;
   owners: owners[] = [];
   drivers: drivers[] = [];
   vehicles: vehicles[] = [];
+
+  allDrivers: drivers[] = [];
+  allVehicles: vehicles[] = [];
+
   optionsOwners!: Observable<owners[]>;
   optionsDrivers!: Observable<drivers[]>;
   optionsVehicles!: Observable<vehicles[]>;
 
+  maxDate: Date = new Date();
+
   isLoading = true;
+  isLoadingData = false;
 
   displayedColumns: string[] = [
     'Fecha',
@@ -88,6 +98,8 @@ export class InspectionsComponent implements OnInit {
     private apiService: ApiService,
     private jwtService: JwtService,
     private snackBar: MatSnackBar,
+    private dialog: MatDialog,
+    private breakpointObserver: BreakpointObserver
   ) {
     this.dataSource = new MatTableDataSource<InspectionsInfoData>([]);
   }
@@ -102,6 +114,9 @@ export class InspectionsComponent implements OnInit {
     });
 
     this.getDataAutoCompletes();
+    this.getMaxDate();
+    this.setupOwnerListener();
+    this.setupDriverListener();
   }
 
   ngAfterViewInit() {
@@ -113,6 +128,27 @@ export class InspectionsComponent implements OnInit {
     this.getDataOwners();
     this.getDataDrivers();
     this.getDataVehicles();
+  }
+
+  getMaxDate() {
+    this.apiService.getData('extras/time').subscribe(
+      (response: any) => {
+        const dateParts = response.time.split('-');
+        this.maxDate = new Date(
+          parseInt(dateParts[0]), 
+          parseInt(dateParts[1]) - 1, 
+          parseInt(dateParts[2])
+        );
+      },
+      (error) => {
+        this.maxDate = new Date();
+      }
+    );
+  }
+
+  getUser() {
+    const userData = this.jwtService.getUserData();
+    return userData ? userData.nombre : '';
   }
 
   getCompany() {
@@ -135,11 +171,100 @@ export class InspectionsComponent implements OnInit {
     );
   }
 
+  setupOwnerListener() {
+    this.inspectionForm.get('propietario')?.valueChanges.subscribe(selectedOwner => {
+      // Limpiar selecciones de conductor y vehículo cuando cambie el propietario
+      this.inspectionForm.patchValue({
+        conductor: '',
+        vehiculo: ''
+      });
+
+      if (selectedOwner && selectedOwner.id) {
+        // Filtrar conductores y vehículos por propietario seleccionado
+        this.filterDriversByOwner(selectedOwner.id);
+        this.filterVehiclesByOwner(selectedOwner.id);
+      } else {
+        // Si no hay propietario seleccionado, mostrar todos
+        this.resetFilters();
+      }
+    });
+  }
+
+  setupDriverListener() {
+    this.inspectionForm.get('conductor')?.valueChanges.subscribe(selectedDriver => {
+      // Limpiar selección de vehículo cuando cambie el conductor
+      this.inspectionForm.patchValue({
+        vehiculo: ''
+      });
+
+      if (selectedDriver && selectedDriver.numero_unidad) {
+        // Filtrar vehículos por conductor seleccionado
+        this.filterVehiclesByDriver(selectedDriver.numero_unidad);
+      } else {
+        // Si no hay conductor seleccionado, filtrar por propietario (si hay uno seleccionado)
+        const selectedOwner = this.inspectionForm.get('propietario')?.value;
+        if (selectedOwner && selectedOwner.id) {
+          this.filterVehiclesByOwner(selectedOwner.id);
+        } else {
+          this.resetVehicleFilter();
+        }
+      }
+    });
+  }
+
+  filterDriversByOwner(ownerId: string) {
+    this.drivers = this.allDrivers.filter(driver => driver.codigo_propietario === ownerId);
+    this.optionsDrivers = this.inspectionForm.get('conductor')!.valueChanges.pipe(
+      startWith(''),
+      map(value => this._filterDrivers(value || '')),
+    );
+  }
+
+  filterVehiclesByOwner(ownerId: string) {
+    this.vehicles = this.allVehicles.filter(vehicle => vehicle.codigo_propietario === ownerId);
+    this.optionsVehicles = this.inspectionForm.get('vehiculo')!.valueChanges.pipe(
+      startWith(''),
+      map(value => this._filterVehicles(value || '')),
+    );
+  }
+
+  filterVehiclesByDriver(numeroUnidad: string) {
+    this.vehicles = this.allVehicles.filter(vehicle => vehicle.numero_unidad === numeroUnidad);
+    this.optionsVehicles = this.inspectionForm.get('vehiculo')!.valueChanges.pipe(
+      startWith(''),
+      map(value => this._filterVehicles(value || '')),
+    );
+  }
+
+  resetVehicleFilter() {
+    this.vehicles = [...this.allVehicles];
+    this.optionsVehicles = this.inspectionForm.get('vehiculo')!.valueChanges.pipe(
+      startWith(''),
+      map(value => this._filterVehicles(value || '')),
+    );
+  }
+
+  resetFilters() {
+    this.drivers = [...this.allDrivers];
+    this.vehicles = [...this.allVehicles];
+    
+    this.optionsDrivers = this.inspectionForm.get('conductor')!.valueChanges.pipe(
+      startWith(''),
+      map(value => this._filterDrivers(value || '')),
+    );
+    
+    this.optionsVehicles = this.inspectionForm.get('vehiculo')!.valueChanges.pipe(
+      startWith(''),
+      map(value => this._filterVehicles(value || '')),
+    );
+  }
+
   getDataDrivers(){
     const company = this.getCompany();
     this.apiService.getData('inspections/drivers_data/'+company).subscribe(
       (data: drivers[]) => {
-        this.drivers = data;
+        this.allDrivers = data; // Guardar todos los conductores
+        this.drivers = [...data]; // Inicializar con todos los datos
         this.optionsDrivers = this.inspectionForm.get('conductor')!.valueChanges.pipe(
           startWith(''),
           map(value => this._filterDrivers(value || '')),
@@ -152,7 +277,8 @@ export class InspectionsComponent implements OnInit {
     const company = this.getCompany();
     this.apiService.getData('inspections/vehicles_data/'+company).subscribe(
       (data: vehicles[]) => {
-        this.vehicles = data;
+        this.allVehicles = data; // Guardar todos los vehículos
+        this.vehicles = [...data]; // Inicializar con todos los datos
         this.optionsVehicles = this.inspectionForm.get('vehiculo')!.valueChanges.pipe(
           startWith(''),
           map(value => this._filterVehicles(value || '')),
@@ -214,6 +340,8 @@ export class InspectionsComponent implements OnInit {
     // Limpiar datos existentes de la tabla
     this.clearTableData();
 
+    this.isLoadingData = true; 
+
     const formValues = this.inspectionForm.value;
   
     // Formatear las fechas para enviar solo YYYY-MM-DD
@@ -249,6 +377,8 @@ export class InspectionsComponent implements OnInit {
         } else {
           this.openSnackbar('Inspecciones cargadas correctamente.');
         }
+
+        this.isLoadingData = false;
       },
       error: (error) => {
         console.error('Error fetching inspections:', error);
@@ -258,8 +388,50 @@ export class InspectionsComponent implements OnInit {
         } else {
           this.openSnackbar('Error al cargar las inspecciones. Por favor, inténtelo de nuevo más tarde.');
         }
+        this.isLoadingData = false;
       }
     });
+  }
+
+  getPdfData(){
+    if (this.inspectionForm.invalid) {
+      this.inspectionForm.markAllAsTouched();
+      return;
+    }
+
+    const formValues = this.inspectionForm.value;
+    const user = this.getUser();
+  
+    // Formatear las fechas para enviar solo YYYY-MM-DD
+    const formattedValues = {
+      usuario: user,
+      conductor: formValues.conductor && formValues.conductor.codigo_conductor ? formValues.conductor.codigo_conductor : '',
+      propietario: formValues.propietario && formValues.propietario.id ? formValues.propietario.id : '',
+      vehiculo: formValues.vehiculo && formValues.vehiculo.numero_unidad ? formValues.vehiculo.numero_unidad : '',
+      fechaInicial: formValues.fechaInicial ? new Date(formValues.fechaInicial).toISOString().split('T')[0] : '',
+      fechaFinal: formValues.fechaFinal ? new Date(formValues.fechaFinal).toISOString().split('T')[0] : ''
+    };
+
+    const company = this.getCompany();
+
+    const endpoint = 'inspections/report_inspections/'+company;
+
+    if (endpoint) {
+      localStorage.setItem('pdfEndpoint', endpoint);
+      localStorage.setItem('pdfData', JSON.stringify(formattedValues));
+      window.open(`/pdf`, '_blank');
+    }
+  }
+
+  openDialogInspectionAdd() {
+    const isSmallScreen = this.breakpointObserver.isMatched(Breakpoints.XSmall);
+    const dialogWidth = isSmallScreen ? '90vw' : '60%';
+
+    const dialogRef = this.dialog.open(InspectionsAddDialogComponent,
+      {
+        width: dialogWidth,
+      }
+    );
   }
 
   openSnackbar(message: string) {
