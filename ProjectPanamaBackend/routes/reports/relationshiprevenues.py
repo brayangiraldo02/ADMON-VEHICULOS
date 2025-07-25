@@ -33,10 +33,10 @@ async def relationshiprevenues_report(data: RelationshipRevenuesReport):
     
     if data.unidad == "" or data.unidad == "TODOS":
       if data.usuario != user_admin:
-        empresa = db.query(Propietarios.CODIGO).filter(Propietarios.NOMBRE == data.empresa).all()
-        if len(empresa) == 0:
-          return JSONResponse(content={"error": "No se encontró la empresa"}, status_code=400)
-        empresa = empresa[0][0]
+        # empresa = db.query(Propietarios.CODIGO).filter(Propietarios.NOMBRE == data.empresa).all()
+        # if len(empresa) == 0:
+        #   return JSONResponse(content={"error": "No se encontró la empresa"}, status_code=400)
+        empresa = data.empresa
 
         conteo_reporte_ingresos = db.query(
           Propietarios.EMPRESA.label('codigo_empresa'),
@@ -67,6 +67,8 @@ async def relationshiprevenues_report(data: RelationshipRevenuesReport):
           CajaRecaudos.EMPRESA == Propietarios.EMPRESA
         ).all()
       else:
+        # empresa = db.query(Propietarios.CODIGO).filter(Propietarios.NOMBRE == data.empresa).all()
+        empresa = data.empresa
         conteo_reporte_ingresos = db.query(
           Propietarios.EMPRESA.label('codigo_empresa'),
           CajaRecaudos.EMPRESA.label('num_empresa'),
@@ -92,10 +94,13 @@ async def relationshiprevenues_report(data: RelationshipRevenuesReport):
           CajaRecaudos.FEC_RECIBO >= data.primeraFecha,
           CajaRecaudos.FEC_RECIBO <= data.ultimaFecha,
           CajaRecaudos.FORMAPAGO.in_(["1", "2", "3", "4", "5"]),
+          CajaRecaudos.PROPI_IDEN == empresa,
           CajaRecaudos.EMPRESA == Propietarios.EMPRESA
         ).all()
 
     elif data.unidad != "" and data.unidad != "TODOS":
+      # empresa = db.query(Propietarios.CODIGO).filter(Propietarios.NOMBRE == data.empresa).all()
+      empresa = data.empresa
       conteo_reporte_ingresos = db.query(
           Propietarios.EMPRESA.label('codigo_empresa'),
           CajaRecaudos.EMPRESA.label('num_empresa'),
@@ -122,6 +127,7 @@ async def relationshiprevenues_report(data: RelationshipRevenuesReport):
           CajaRecaudos.FEC_RECIBO <= data.ultimaFecha,
           CajaRecaudos.NUMERO == data.unidad,
           CajaRecaudos.FORMAPAGO.in_(["1", "2", "3", "4", "5"]),
+          CajaRecaudos.PROPI_IDEN == empresa,
           CajaRecaudos.EMPRESA == Propietarios.EMPRESA
         ).all()
       
@@ -273,7 +279,8 @@ async def relationshiprevenues_report(data: RelationshipRevenuesReport):
         "nequi": total_nequi,
         "yappy": total_yappy,
         "total": total_total,
-        "total_admon": total_admon
+        "total_admon": total_admon,
+        "total_resta_admon": total_total - total_admon
       },
       "fechas": {
         "primeraFecha": data.primeraFecha,
@@ -290,7 +297,7 @@ async def relationshiprevenues_report(data: RelationshipRevenuesReport):
     data_reporte = response
 
     headers = {
-      "Content-Disposition": "inline; relacion-ingresos.pdf"
+      "Content-Disposition": "attachment; relacion-ingresos.pdf"
     }  
 
     # return JSONResponse(content=jsonable_encoder(data_reporte)) 

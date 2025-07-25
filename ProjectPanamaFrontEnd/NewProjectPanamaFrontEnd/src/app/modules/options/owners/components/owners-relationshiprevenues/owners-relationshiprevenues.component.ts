@@ -89,10 +89,11 @@ export class OwnersRelationshiprevenuesComponent implements OnInit{
       }
     
       listVehiclesPerOwners(): void {
-        console.log(this.jwtService.obtainId());
+        const userData = this.jwtService.getUserData();
+        console.log(userData);
         const vehicle = {
-          propietario: this.jwtService.obtainId()
-        }
+          propietario: userData ? userData.id : null,
+        };
     
         console.log(vehicle);
     
@@ -110,10 +111,11 @@ export class OwnersRelationshiprevenuesComponent implements OnInit{
       }
     
       listVehicles(): void {
-        console.log(this.jwtService.obtainId());
+        const userData = this.jwtService.getUserData();
+        console.log(userData);
         const vehicle = {
-          propietario: this.jwtService.obtainId()
-        }
+          propietario: userData ? userData.id : null,
+        };
     
         console.log(vehicle);
     
@@ -139,15 +141,17 @@ export class OwnersRelationshiprevenuesComponent implements OnInit{
       }
     
       getUser() {
-        this.user = this.jwtService.decodeToken();
-        this.user = this.user.user_data.nombre;
+        this.user = this.jwtService.getUserData();
+        this.user = this.user.nombre;
         this.getCompanies();
       }
     
       getCompanies() {
+        const userData = this.jwtService.getUserData();
+        console.log(userData);
         const owner = {
-          propietario: this.jwtService.obtainId()
-        }
+          propietario: userData ? userData.id : null,
+        };
         this.apiService.postData('companies_owners', owner).subscribe(
           (response: any[]) => {
             this.companiesOwners = response.map(item => item.id);
@@ -170,16 +174,14 @@ export class OwnersRelationshiprevenuesComponent implements OnInit{
       let endpoint = 'relationshiprevenues';
       if (endpoint) {
         const companyValue = this.infoForm.value.companie;
-        let companyName = companyValue; // Default to the full value
-        if (companyValue && companyValue.includes(' - ')) {
-          companyName = companyValue.split(' - ')[0].trim(); 
-        }
+        const companyId = companyValue.split(' - ').pop()?.trim() || companyValue;
+
         const data = {
           'usuario': this.user,
           'primeraFecha': this.infoForm.value.firstDate,
           'ultimaFecha': this.infoForm.value.lastDate,
           'unidad': this.infoForm.value.vehicle,
-          'empresa': companyName
+          'empresa': companyId
         };
         console.log(data);
         localStorage.setItem('pdfEndpoint', endpoint);

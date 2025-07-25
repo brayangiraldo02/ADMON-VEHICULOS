@@ -26,8 +26,14 @@ export class VehiclesTableComponent {
     this.getUser();
   }
 
+  getCompany() {
+    const userData = this.jwtService.getUserData();
+    return userData ? userData.empresa : '';
+  }
+
   fetchData() {
-    this.apiService.getData('vehicles/all').subscribe(
+    const company = this.getCompany();
+    this.apiService.getData('vehicles/all/'+company).subscribe(
       (response) => {
         this.data = response.filter((data: any) => data.unidad);
         this.data.sort((a, b) => a.unidad.localeCompare(b.unidad));
@@ -70,8 +76,8 @@ export class VehiclesTableComponent {
   }
 
   getUser() {
-    this.user = this.jwtService.decodeToken();
-    this.user = this.user.user_data.nombre;
+    this.user = this.jwtService.getUserData();
+    this.user = this.user.nombre;
   }
 
   goToVehicleResume(codigo: string) {
@@ -81,7 +87,7 @@ export class VehiclesTableComponent {
   openExternalLink(): void {
     this.isLoading = true;
     const data = { user: this.user };
-    localStorage.setItem('pdfEndpoint', 'directorio-vehiculos');
+    localStorage.setItem('pdfEndpoint', 'directorio-vehiculos/' + this.getCompany());
     localStorage.setItem('pdfData', '0');
     window.open(`/pdf`, '_blank')
     this.router.navigate(['/home/users']);

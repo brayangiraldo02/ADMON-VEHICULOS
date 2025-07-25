@@ -1,0 +1,26 @@
+.mat-toolbar-single-row {
+  background-color: #e7eeff;
+}
+
+:host ::ng-deep .mat-toolbar-single-row, mat-toolbar {
+  background-color: #e7eeff;
+  flex-wrap: wrap; /* Permite que los elementos pasen a la siguiente línea */
+  height: auto; /* Permite que la altura de la barra se ajuste al contenido */
+  min-height: 64px; /* Mantiene la altura mínima estándar en pantallas grandes */
+}
+
+.toolbar-title {
+  white-space: normal;
+  word-break: break-word;
+  text-align: left;
+  line-height: 1.2; /* Ajusta el espaciado entre líneas si el texto se envuelve */
+  padding: 8px 0; /* Añade un poco de padding vertical para que no se vea apretado */
+}
+
+::ng-deep .cdk-overlay-pane {
+  max-width: 90vw !important;
+}
+
+.example-spacer {
+  flex: 1 1 auto;
+}

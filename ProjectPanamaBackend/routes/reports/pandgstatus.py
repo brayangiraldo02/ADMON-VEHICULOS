@@ -36,11 +36,11 @@ async def pandgstatus_report(data: PandGStatusReport):
 
       #* Si el usuario no es el administrador, se obtiene la información de las unidades de la empresa a la que pertenece
       # if data.usuario != user_admin:
-        empresa = db.query(Propietarios.CODIGO).filter(Propietarios.NOMBRE == data.empresa).first()
-        if len(empresa) == 0:
-          return JSONResponse(status_code=400, content={"error": "No se encontró la empresa"})
+        # empresa = db.query(Propietarios.CODIGO).filter(Propietarios.NOMBRE == data.empresa).first()
+        # if len(empresa) == 0:
+        #   return JSONResponse(status_code=400, content={"error": "No se encontró la empresa"})
 
-        empresa = empresa[0]
+        empresa = data.empresa
 
         # Obtener vehículos con sus recaudos en una sola consulta
         vehiculos_con_recaudos = db.query(
@@ -56,9 +56,10 @@ async def pandgstatus_report(data: PandGStatusReport):
           CajaRecaudos,
           (CajaRecaudos.NUMERO == Vehiculos.NUMERO) & 
           (CajaRecaudos.FEC_RECIBO >= data.primeraFecha) & 
-          (CajaRecaudos.FEC_RECIBO <= data.ultimaFecha)
+          (CajaRecaudos.FEC_RECIBO <= data.ultimaFecha) &
+          (CajaRecaudos.PROPI_IDEN.in_(empresa))
         ).filter(
-          Vehiculos.PROPI_IDEN == empresa
+          Vehiculos.PROPI_IDEN.in_(empresa),
         ).group_by(
           Vehiculos.NUMERO,
           Vehiculos.FEC_CREADO,
@@ -80,6 +81,7 @@ async def pandgstatus_report(data: PandGStatusReport):
           Movimien.FECHA >= data.primeraFecha,
           Movimien.FECHA <= data.ultimaFecha,
           Movimien.TIPO.in_(['024', '027', '026', '022', '016']),
+          Movimien.PROPI_IDEN.in_(empresa),
           # Movimien.FORMAPAGO.in_(['01', '02', '03', '04', '05'])
         ).group_by(
           Movimien.UNIDAD,
@@ -147,7 +149,6 @@ async def pandgstatus_report(data: PandGStatusReport):
                       "ALMACEN": total_almacen
                   },
                   "ESTADOPyG": estado_pyg,  # Utilidad si es valor positivo, pérdida si es valor negativo
-                  "AVANCE": 0
               }
               
               info_unidades.append(info_unidad_dict)
@@ -266,6 +267,9 @@ async def pandgstatus_report(data: PandGStatusReport):
 
     elif data.unidad != "" and data.unidad != "TODOS":
       # Optimizado: Obtener información del vehículo en una sola consulta
+      # empresa = db.query(Propietarios.CODIGO).filter(Propietarios.NOMBRE == data.empresa).first()
+      empresa = data.empresa
+
       info_unidad = db.query(
         Vehiculos.NUMERO,
         Vehiculos.FEC_CREADO,
@@ -279,9 +283,10 @@ async def pandgstatus_report(data: PandGStatusReport):
         CajaRecaudos,
         (CajaRecaudos.NUMERO == Vehiculos.NUMERO) & 
         (CajaRecaudos.FEC_RECIBO >= data.primeraFecha) & 
-        (CajaRecaudos.FEC_RECIBO <= data.ultimaFecha)
+        (CajaRecaudos.FEC_RECIBO <= data.ultimaFecha) &
+        (CajaRecaudos.PROPI_IDEN.in_(empresa))
       ).filter(
-        Vehiculos.NUMERO == data.unidad
+        Vehiculos.NUMERO == data.unidad,
       ).group_by(
         Vehiculos.NUMERO,
         Vehiculos.FEC_CREADO,
@@ -302,6 +307,7 @@ async def pandgstatus_report(data: PandGStatusReport):
         Movimien.FECHA >= data.primeraFecha,
         Movimien.FECHA <= data.ultimaFecha,
         Movimien.TIPO.in_(['024', '027', '026', '022', '016']),
+        Movimien.PROPI_IDEN.in_(empresa),
         # Movimien.FORMAPAGO.in_(['01', '02', '03', '04', '05'])
       ).group_by(
         Movimien.TIPO
@@ -320,7 +326,7 @@ async def pandgstatus_report(data: PandGStatusReport):
       total_016 = totales['016']
       total_almacen = total_022 - total_016
 
-      recaudos = vehiculo.total_recaudos + vehiculo.total_fondo_inscripcion + vehiculo.total_deuda_siniestro
+      recaudos = info_unidad.total_recaudos + info_unidad.total_fondo_inscripcion + info_unidad.total_deuda_siniestro
 
       # Calcular estado de pérdidas y ganancias
       estado_pyg = recaudos - total_024 - total_027 - total_026 - total_almacen
@@ -328,7 +334,7 @@ async def pandgstatus_report(data: PandGStatusReport):
       # Crear diccionario con la información procesada
       info_unidad_dict = {
         "NUMERO": data.unidad,
-        "FEC_CREADO": info_unidad.FEC_CREADO.strftime('%Y-%m-%d') if vehiculo.FEC_CREADO else None,
+        "FEC_CREADO": info_unidad.FEC_CREADO.strftime('%Y-%m-%d') if info_unidad.FEC_CREADO else None,
         "MODELO": info_unidad.MODELO,
         "VLR_COMPRA": info_unidad.VLR_COMPRA,
         "NOMESTADO": info_unidad.NOMESTADO,
@@ -346,7 +352,6 @@ async def pandgstatus_report(data: PandGStatusReport):
           "ALMACEN": total_almacen
         },
         "ESTADOPyG": estado_pyg,  # Utilidad si es valor positivo, pérdida si es valor negativo
-        "AVANCE": 0
       }
 
       info_unidades = info_unidad_dict
@@ -402,7 +407,6 @@ async def pandgstatus_report(data: PandGStatusReport):
                     "almacen": info_unidades['PIEZAS_MOBRA']['ALMACEN'],
                     "utilidad": max(0, info_unidades['ESTADOPyG']),
                     "perdida": max(0, -info_unidades['ESTADOPyG']),
-                    "avance": info_unidades['AVANCE']
                 }
             }
     else:
@@ -460,7 +464,6 @@ async def pandgstatus_report(data: PandGStatusReport):
                 "almacen": 0,
                 "utilidad": 0,
                 "perdida": 0,
-                "avance": 0
             }
             
             # Calcular totales de la empresa con las unidades ya ordenadas
@@ -477,6 +480,15 @@ async def pandgstatus_report(data: PandGStatusReport):
                     totales_empresa["utilidad"] += unidad["ESTADOPyG"]
                 else:
                     totales_empresa["perdida"] += -unidad["ESTADOPyG"]
+
+            # Ajustar utilidad y pérdida
+            total_pyg_empresa = totales_empresa["utilidad"] - totales_empresa["perdida"]
+            if total_pyg_empresa > 0:
+                totales_empresa["utilidad"] = total_pyg_empresa
+                totales_empresa["perdida"] = 0
+            else:
+                totales_empresa["perdida"] = -total_pyg_empresa
+                totales_empresa["utilidad"] = 0
             
             # Agregar la empresa con sus unidades ordenadas al diccionario final
             empresas_dict[nombre_empresa] = {
@@ -498,7 +510,6 @@ async def pandgstatus_report(data: PandGStatusReport):
         "almacen": 0,
         "utilidad": 0,
         "perdida": 0,
-        "avance": 0
     }
 
     # Solo calculamos los totales si hay empresas en el diccionario
@@ -514,14 +525,34 @@ async def pandgstatus_report(data: PandGStatusReport):
             "almacen": sum(e["totales_empresa"]["almacen"] for e in empresas_dict.values()),
             "utilidad": sum(e["totales_empresa"]["utilidad"] for e in empresas_dict.values()),
             "perdida": sum(e["totales_empresa"]["perdida"] for e in empresas_dict.values()),
-            "avance": sum(e["totales_empresa"]["avance"] for e in empresas_dict.values())
         }
+
+    total_pyg = totales_generales["utilidad"] - totales_generales["perdida"]
+    if total_pyg > 0:
+        totales_generales["utilidad"] = total_pyg
+        totales_generales["perdida"] = 0
+    else:
+        totales_generales["perdida"] = -total_pyg
+        totales_generales["utilidad"] = 0
 
     info_empresa = db.query(
         InfoEmpresas.NOMBRE,
         InfoEmpresas.NIT,
         InfoEmpresas.LOGO
     ).filter(InfoEmpresas.ID == id_empresa).first()
+
+    # Convertir 0 a cadenas vacías para la presentación final
+    def format_for_display(value):
+        return '' if value == 0 else value
+
+    # Aplicar formato de presentación a los totales de empresas
+    for empresa in empresas_dict.values():
+        empresa["totales_empresa"]["utilidad"] = format_for_display(empresa["totales_empresa"]["utilidad"])
+        empresa["totales_empresa"]["perdida"] = format_for_display(empresa["totales_empresa"]["perdida"])
+
+    # Aplicar formato de presentación a los totales generales
+    totales_generales["utilidad"] = format_for_display(totales_generales["utilidad"])
+    totales_generales["perdida"] = format_for_display(totales_generales["perdida"])
 
     # Construir la respuesta final
     response = {
@@ -540,7 +571,7 @@ async def pandgstatus_report(data: PandGStatusReport):
     }
 
     headers = {
-      "Content-Disposition": "inline; estado-perdidas-ganancias.pdf"
+      "Content-Disposition": "attachment; estado-perdidas-ganancias.pdf"
     }  
 
     # return JSONResponse(status_code=200, content=jsonable_encoder(response))

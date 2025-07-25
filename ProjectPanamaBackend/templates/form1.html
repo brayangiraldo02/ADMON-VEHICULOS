@@ -158,6 +158,12 @@
                           <td style="text-align: center;"><p>{{ cant_vehiculos_pendientes_arraijan }}</p></td>
                       </tr>
                       {% endif %}
+                      {% if cant_carro_preparacion > 0 %}               
+                      <tr>
+                          <td><p><img src="https://res.cloudinary.com/dhry2v8qz/image/upload/v1716101865/AlfaSoft/templates-backend/img/vitc2vqse8giio9a4z5w.png" height="30" width="30" style="margin-right: 30px;">Vehiculos Preparacion:</p></td>
+                          <td style="text-align: center;"><p>{{ cant_carro_preparacion }}</p></td>
+                      </tr>
+                      {% endif %}
                     </tbody>
                 </table>
 

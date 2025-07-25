@@ -339,6 +339,36 @@
                         </tr>
                         {% endif %}
 
+                        {% if cant_carro_preparacion > 0 %}               
+                        <tr>
+                          <td>
+                            <p><img src="https://res.cloudinary.com/dhry2v8qz/image/upload/v1716101865/AlfaSoft/templates-backend/img/vitc2vqse8giio9a4z5w.png" height="26" width="26" style="margin-right: 30px;">Vehiculos Preparacion:</p>
+                          </td>
+                          <td style="text-align: center;"><p>{{ cant_carro_preparacion }}</p></td>
+                        </tr>
+                        <tr>
+                          <td>
+                              <table>
+                                  <tr>
+                                  {% for numero in carro_preparacion %}
+                                      <td style="width: 14.28%; line-height: 1.3; 
+                                      font-size: 24px;
+                                      color: #a9a;">{{ numero }}</td>
+                                      {% if loop.index % 7 == 0 %}
+                                          </tr><tr>
+                                      {% endif %}
+                                  {% endfor %}
+                                  </tr>
+                              </table>
+                          </td>
+                      </tr>
+                          <tr>
+                              <td colspan="3">
+                                  <hr>
+                              </td>
+                          </tr>
+                          {% endif %}
+
                         {% if cant_traspasados > 0 %}               
                       <tr style="float: left;  margin-left: 100px;">
                         <td>

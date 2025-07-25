@@ -1,106 +1,142 @@
 import { Injectable } from '@angular/core';
-import { jwtDecode } from 'jwt-decode';
+import { jwtDecode, JwtPayload } from 'jwt-decode';
+
+// Definimos una interfaz para la estructura de nuestro payload personalizado
+interface AppJwtPayload extends JwtPayload {
+  user_data: {
+    id: string;
+    nombre: string;
+    empresa: string;
+    foto: string;
+    opcion01: string;
+    opcion02: string;
+    opcion03: string;
+    opcion04: string;
+    opcion05: string;
+    opcion06: string;
+    opcion07: string;
+    opcion08: string;
+    opcion09: string;
+    opcion10: string;
+    opcion11: string;
+    opcion12: string;
+    opcion13: string;
+    opcion14: string;
+    opcion15: string;
+    opcion16: string;
+    opcion17: string;
+    tarea01: string;
+    tarea02: string;
+    tarea03: string;
+    tarea04: string;
+    tarea05: string;
+  };
+}
 
 @Injectable({
   providedIn: 'root'
 })
-
 export class JwtService {
 
   private readonly TOKEN_KEY = 'info_token';
+  private decodedToken: AppJwtPayload | null = null;
 
-  constructor() { }
+  constructor() {
+    // Al iniciar el servicio, intentamos decodificar el token existente
+    this.decodeAndValidateToken();
+  }
+
+  // --- Métodos Públicos Principales ---
 
   setToken(token: string): void {
     localStorage.setItem(this.TOKEN_KEY, token);
+    this.decodeAndValidateToken(); // Actualizamos el token decodificado en memoria
   }
 
-  getToken(): string | null {
-    return localStorage.getItem(this.TOKEN_KEY);
-  }
-
-  removeToken(): void {
+  logout(): void {
     localStorage.removeItem(this.TOKEN_KEY);
+    this.decodedToken = null; // Limpiamos el token de la memoria
   }
 
-  tokenExistsAndValid(): boolean {
-    const token = this.getToken();
-    if (!token) return false;
-
-    const decoded: any = jwtDecode(token);
-    const expiration = decoded.exp; // Tiempo de expiración como Unix timestamp (segundos)
-    const now = Date.now() / 1000; // Fecha/hora actual como Unix timestamp (segundos)
-    
-    // Verificar si el token aún no ha expirado
-    return expiration > now;
+  isAuthenticated(): boolean {
+    // La autenticación depende de si tenemos un token válido en memoria
+    return this.decodedToken !== null;
   }
 
-  tokenExistsAndValidForUsers(): boolean {
-    const token = this.getToken();
-    if (!token) return false;
+  isOwner(): boolean {
+    if (!this.isAuthenticated()) return false;
+    const userData = this.decodedToken!.user_data;
+    const userPermissions = this.convertBooleanValues(userData);
 
-    const decoded: any = jwtDecode(token);
-    const expiration = decoded.exp; // Tiempo de expiración como Unix timestamp (segundos)
-    const now = Date.now() / 1000; // Fecha/hora actual como Unix timestamp (segundos)
-    
-    // Verificar si el token aún no ha expirado
-    return expiration > now && (decoded.user_data.opcion16 !== 'T' || decoded.user_data.nombre === 'Administrador');
+    return userPermissions.opcion16 === true || userData.nombre === 'Administrador';
   }
 
-  tokenExistsAndValidForOwner(): boolean {
-    const token = this.getToken();
-    if (!token) return false;
-
-    const decoded: any = jwtDecode(token);
-    const expiration = decoded.exp; // Tiempo de expiración como Unix timestamp (segundos)
-    const now = Date.now() / 1000; // Fecha/hora actual como Unix timestamp (segundos)
-
-    // Verificar si el token aún no ha expirado y si el usuario es dueño
-    return expiration > now && (decoded.user_data.opcion16 === 'T' || decoded.user_data.nombre === 'Administrador');
-  }
-
-  verifyOwner(): boolean {
-    const token = this.getToken();
-    if (!token) return false;
-
-    const decoded: any = jwtDecode(token);
-
-    // Verificar si el usuario es dueño
-    return decoded.user_data.opcion16 === 'T' || decoded.user_data.nombre === 'Administrador';
+  isRegularUser(): boolean {
+    // Un "usuario regular" es alguien autenticado pero que no es "Owner"
+    return this.isAuthenticated() && !this.isOwner();
   }
 
   isAdmin(): boolean {
-    const token = this.getToken();
-    if (!token) return false;
-
-    const decoded: any = jwtDecode(token);
-
-    // Verificar si el usuario es administrador
-    return decoded.user_data.nombre === 'Administrador';
+    if (!this.isAuthenticated()) return false;
+    return this.decodedToken!.user_data.nombre === 'Administrador';
   }
 
-  obtainId(): string {
-    const token = this.getToken();
-    if (!token) return '';
-
-    const decoded: any = jwtDecode(token);
-
-    // Obtener el ID del usuario
-    return decoded.user_data.id;
+  getUserData() {
+    return this.isAuthenticated() ? this.decodedToken!.user_data : null;
   }
 
-  decodeToken(): any {
-    const token = this.getToken();
-    return token ? jwtDecode(token) : null;
+  getPermissionUser(permission: string): boolean {
+    if (!this.isAuthenticated()) return false;
+    const userData = this.decodedToken!.user_data;
+    const userPermissions = this.convertBooleanValues(userData);
+
+    console.log('userPermissions:', userPermissions); 
+
+    return userPermissions[permission] === true;
   }
 
-  getIdCompany(): string {
+  // --- Métodos Privados de Ayuda ---
+
+  private getToken(): string | null {
+    return localStorage.getItem(this.TOKEN_KEY);
+  }
+
+  private decodeAndValidateToken(): void {
     const token = this.getToken();
-    if (!token) return '';
+    if (!token) {
+      this.decodedToken = null;
+      return;
+    }
 
-    const decoded: any = jwtDecode(token);
+    try {
+      const decoded: AppJwtPayload = jwtDecode(token);
+      const isExpired = decoded.exp! * 1000 < Date.now(); // se multiplica por 1000 para comparar milisegundos
 
-    // Obtener el ID de la empresa
-    return decoded.user_data.empresa;
+      if (isExpired) {
+        this.decodedToken = null;
+        // Opcional: Proactivamente borramos el token expirado
+        // localStorage.removeItem(this.TOKEN_KEY); 
+      } else {
+        this.decodedToken = decoded;
+      }
+    } catch (error) {
+      console.error("Error al decodificar el token, es posible que esté malformado.", error);
+      this.decodedToken = null;
+    }
+  }
+
+  private convertBooleanValues(obj: any): any {
+    const newObj = { ...obj }; // Crear una copia superficial para no mutar el original
+    for (const key in newObj) {
+      if (Object.prototype.hasOwnProperty.call(newObj, key)) {
+        const value = newObj[key];
+        if (value === 'T') {
+          newObj[key] = true;
+        } else if (value === 'F' || value === null) {
+          newObj[key] = false;
+        }
+      }
+    }
+    return newObj; // Devolver el nuevo objeto con los valores convertidos
   }
 }

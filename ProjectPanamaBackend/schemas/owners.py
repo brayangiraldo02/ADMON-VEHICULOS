@@ -86,4 +86,5 @@ class Owner(BaseModel):
     propietario: str
 
 class OwnersList(BaseModel):
+    usuario: Optional[str] = None
     owners: list[str]

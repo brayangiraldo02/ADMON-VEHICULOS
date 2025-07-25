@@ -12,6 +12,13 @@ import {MatDialogModule} from '@angular/material/dialog';
 import {MatListModule} from '@angular/material/list';
 import {MatProgressBarModule} from '@angular/material/progress-bar';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
+import {MatToolbarModule} from '@angular/material/toolbar';
+import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatDividerModule } from '@angular/material/divider';
+import {MatAutocompleteModule} from '@angular/material/autocomplete';
+import {MatDatepickerModule} from '@angular/material/datepicker';
+import {MatNativeDateModule} from '@angular/material/core';
+import { ClipboardModule } from '@angular/cdk/clipboard';
 
 const materialModules = [
   MatFormFieldModule, 
@@ -26,7 +33,14 @@ const materialModules = [
   MatDialogModule,
   MatListModule,
   MatProgressBarModule,
-  MatSnackBarModule
+  MatSnackBarModule,
+  MatToolbarModule,
+  MatSidenavModule,
+  MatDividerModule,
+  MatAutocompleteModule,
+  MatNativeDateModule,
+  MatDatepickerModule,
+  ClipboardModule
 ]
 
 @NgModule({

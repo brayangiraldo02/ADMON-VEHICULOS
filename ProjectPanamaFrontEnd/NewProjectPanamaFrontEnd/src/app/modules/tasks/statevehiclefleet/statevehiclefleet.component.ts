@@ -71,12 +71,18 @@ export class StatevehiclefleetComponent implements OnInit {
   }
 
   getUser() {
-    this.user = this.jwtService.decodeToken();
-    this.user = this.user.user_data.nombre;
+    this.user = this.jwtService.getUserData();
+    this.user = this.user.nombre;
+  }
+
+  getCompany() {
+    const userData = this.jwtService.getUserData();
+    return userData ? userData.empresa : '';
   }
 
   listOwners(): void {
-    this.apiService.getData("owners").subscribe(
+    let company = this.getCompany();
+    this.apiService.getData("owners/"+company).subscribe(
       (response) => {
         this.owners = response.filter((owner: any) => owner.id);
         this.owners.sort((a, b) => a.name.localeCompare(b.name));
@@ -88,7 +94,8 @@ export class StatevehiclefleetComponent implements OnInit {
   }
 
   listStates(): void {
-    this.apiService.getData("states").subscribe(
+    const company = this.getCompany();
+    this.apiService.getData("states/"+company).subscribe(
       (response) => {
         this.states = response.filter((state: any) => state.id);
         this.states.sort((a, b) => {
@@ -255,7 +262,8 @@ export class StatevehiclefleetComponent implements OnInit {
     let info = {
       usuario: this.user,
       empresas: this.empresasSeleccionadas,
-      estados: this.estadosSeleccionados
+      estados: this.estadosSeleccionados,
+      empresa: this.getCompany()
     }
     
     // Guardar endpoint y data en LocalStorage

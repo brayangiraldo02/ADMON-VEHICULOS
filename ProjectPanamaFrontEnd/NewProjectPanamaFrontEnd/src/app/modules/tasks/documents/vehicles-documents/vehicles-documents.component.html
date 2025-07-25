@@ -1,0 +1,252 @@
+<form [formGroup]="vehiclesForm">
+  <div class="inputs-container">
+    <mat-progress-bar
+      mode="indeterminate"
+      *ngIf="isLoading"
+    ></mat-progress-bar>
+    <mat-form-field class="field-input" *ngIf="!isLoading">
+      <mat-label>Vehículos</mat-label>
+      <input
+        type="text"
+        placeholder="Selecciona un vehículo"
+        matInput
+        formControlName="vehiculo"
+        [matAutocomplete]="auto3"
+      />
+      <mat-autocomplete
+        #auto3="matAutocomplete"
+        [displayWith]="displayVehicleData"
+        (optionSelected)="selectedOptionVehicle($event)"
+        (opened)="resetAutocomplete()"
+      >
+        <!-- <mat-option [value]=""> - </mat-option> -->
+        <mat-option
+          *ngFor="let option of optionsVehicles | async"
+          [value]="option"
+        >
+          {{ option.numero_unidad }} - {{ option.placa_vehiculo }} -
+          {{ option.nro_cupo }} - {{ option.marca }} {{ option.linea }}
+          {{ option.modelo }} - {{ option.nombre_propietario }} ({{
+            option.codigo_propietario
+          }})
+        </mat-option>
+      </mat-autocomplete>
+    </mat-form-field>
+    <mat-progress-bar
+      mode="indeterminate"
+      *ngIf="loadingDocumentsInfoVehicles"
+    ></mat-progress-bar>
+  </div>
+
+  <div class="documents-options-container" *ngIf="displayInfoVehicle">
+    <div class="info-vehicle-container">
+      <button
+        mat-raised-button
+        class="button"
+        (click)="openInfoVehicleDialog()"
+      >
+        <mat-icon>garage_check</mat-icon>
+        <span>INFORMACIÓN DEL VEHÍCULO</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="documents-options-container" *ngIf="selectedVehicle">
+    <div class="required-documents-container">
+      <h3 class="button title">Documentos Obligatorios</h3>
+      <button
+        mat-raised-button
+        class="button"
+        [disabled]="!documentsInfo[0].existe"
+        (click)="
+          validateDocumentVehicle(
+            documentsInfo[0],
+            'Transferencia (Recibo de Asignación de Cupo)'
+          )
+        "
+      >
+        <mat-icon>description</mat-icon>
+        <span>Transferencia (Recibo de Asignación de Cupo)</span>
+      </button>
+      <button
+        mat-raised-button
+        class="button"
+        [disabled]="!documentsInfo[1].existe"
+        (click)="
+          validateDocumentVehicle(
+            documentsInfo[1],
+            'Registro Único Propiedad Vehicular'
+          )
+        "
+      >
+        <mat-icon>description</mat-icon>
+        <span>Registro Único Propiedad Vehicular</span>
+      </button>
+      <button
+        mat-raised-button
+        class="button"
+        [disabled]="!documentsInfo[2].existe"
+        (click)="
+          validateDocumentVehicle(
+            documentsInfo[2],
+            'Seguro de Responsabilidad Civil (Aseguradora)'
+          )
+        "
+      >
+        <mat-icon>description</mat-icon>
+        <span>Seguro de Responsabilidad Civil (Aseguradora)</span>
+      </button>
+      <button
+        mat-raised-button
+        class="button"
+        [disabled]="!documentsInfo[3].existe"
+        (click)="
+          validateDocumentVehicle(
+            documentsInfo[3],
+            'Recibo de Pago de Placa Municipal (Paz y Salvo)'
+          )
+        "
+      >
+        <mat-icon>description</mat-icon>
+        <span>Recibo de Pago de Placa Municipal (Paz y Salvo)</span>
+      </button>
+      <button
+        mat-raised-button
+        class="button"
+        [disabled]="!documentsInfo[4].existe"
+        (click)="
+          validateDocumentVehicle(
+            documentsInfo[4],
+            'Certificado de Inspección Vehicular Particular (Revisado)'
+          )
+        "
+      >
+        <mat-icon>description</mat-icon>
+        <span>Certificado de Inspección Vehicular Particular (Revisado)</span>
+      </button>
+      <button
+        mat-raised-button
+        class="button"
+        [disabled]="!documentsInfo[5].existe"
+        (click)="
+          validateDocumentVehicle(documentsInfo[5], 'Recibo de Pago de Cupo')
+        "
+      >
+        <mat-icon>description</mat-icon>
+        <span>Recibo de Pago de Cupo</span>
+      </button>
+      <button
+        mat-raised-button
+        class="button"
+        [disabled]="!documentsInfo[6].existe"
+        (click)="
+          validateDocumentVehicle(documentsInfo[6], 'Certificado de Operación')
+        "
+      >
+        <mat-icon>description</mat-icon>
+        <span>Certificado de Operación</span>
+      </button>
+      <button
+        mat-raised-button
+        class="button"
+        [disabled]="!documentsInfo[7].existe"
+        (click)="
+          validateDocumentVehicle(
+            documentsInfo[7],
+            'Contrato de Afiliación al Sistema Panapass'
+          )
+        "
+      >
+        <mat-icon>description</mat-icon>
+        <span>Contrato de Afiliación al Sistema Panapass</span>
+      </button>
+    </div>
+    <div class="optional-documents-container">
+      <h3 class="button title">Documentos Opcionales</h3>
+      <button
+        mat-raised-button
+        class="button"
+        [disabled]="!documentsInfo[8].existe"
+        (click)="
+          validateDocumentVehicle(documentsInfo[8], 'Inscripción del Vehículo')
+        "
+      >
+        <mat-icon>description</mat-icon>
+        <span>Inscripción del Vehículo</span>
+      </button>
+      <button
+        mat-raised-button
+        class="button"
+        [disabled]="!documentsInfo[9].existe"
+        (click)="
+          validateDocumentVehicle(documentsInfo[9], 'Traspaso por Venta')
+        "
+      >
+        <mat-icon>description</mat-icon>
+        <span>Traspaso por Venta</span>
+      </button>
+      <button
+        mat-raised-button
+        class="button"
+        [disabled]="!documentsInfo[10].existe"
+        (click)="
+          validateDocumentVehicle(documentsInfo[10], 'Inscripcipon de Hipoteca')
+        "
+      >
+        <mat-icon>description</mat-icon>
+        <span>Inscripcipon de Hipoteca</span>
+      </button>
+      <button
+        mat-raised-button
+        class="button"
+        [disabled]="!documentsInfo[11].existe"
+        (click)="
+          validateDocumentVehicle(
+            documentsInfo[11],
+            'Recibo de Pago (Pre-Inscripción)'
+          )
+        "
+      >
+        <mat-icon>description</mat-icon>
+        <span>Recibo de Pago (Pre-Inscripción)</span>
+      </button>
+      <button
+        mat-raised-button
+        class="button"
+        [disabled]="!documentsInfo[12].existe"
+        (click)="
+          validateDocumentVehicle(
+            documentsInfo[12],
+            'Certificado de Garantía de Vehículo Nuevo'
+          )
+        "
+      >
+        <mat-icon>description</mat-icon>
+        <span>Certificado de Garantía de Vehículo Nuevo</span>
+      </button>
+      <h3 class="button title">Documentos de Traspaso</h3>
+      <button
+        mat-raised-button
+        class="button"
+        [disabled]="!documentsInfo[13].existe"
+        (click)="
+          validateDocumentVehicle(documentsInfo[13], 'Certificado de Operación')
+        "
+      >
+        <mat-icon>description</mat-icon>
+        <span>Certificado de Operación</span>
+      </button>
+      <button
+        mat-raised-button
+        class="button"
+        [disabled]="!documentsInfo[14].existe"
+        (click)="
+          validateDocumentVehicle(documentsInfo[14], 'Registro Vehicular')
+        "
+      >
+        <mat-icon>description</mat-icon>
+        <span>Registro Vehicular</span>
+      </button>
+    </div>
+  </div>
+</form>

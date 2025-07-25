@@ -136,6 +136,7 @@ class Vehiculos(Base):
     CTA_RENTA = Column(DECIMAL(8, 2), default=0)
     NUEVOUSADO = Column(CHAR(1), default="")
     CTA_SINIES = Column(DECIMAL(8, 2), default=0)
+    VLR_DEPOSI = Column(DECIMAL(8, 2), default=0)
     CON_CUPO = Column(CHAR(1), default="1")
     PAGA_ADMON = Column(CHAR(1), default="")
     GLOBAL_UND = Column(CHAR(1), default="")
@@ -193,3 +194,4 @@ class Vehiculos(Base):
     NOMCENTRAL = Column(VARCHAR(50), default="")
     EMPRESA = Column(VARCHAR(50), default="")
     SEL = Column(CHAR(1), default="")
+    FEC_CONTRA = Column(DateTime, default=None)

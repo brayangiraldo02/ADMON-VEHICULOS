@@ -119,6 +119,13 @@
   font-size: 3.5vh;
 }
 
+.option .option-icon {
+  margin-right: auto; /* Empuja el icono a la izquierda */
+  padding-left: 2px;
+  width: 3vh;
+  height: 3vh;
+}
+
 .option-text {
   flex-grow: 1;
   text-align: center;  /* Asegura que el texto esté centrado */
@@ -181,6 +188,11 @@
 
   .option span.material-symbols-outlined {
     font-size: 2.5vh;
+  }
+
+  .option .option-icon {
+    width: 2.2vh;
+    height: 2.2vh;
   }
 
   .option-text {

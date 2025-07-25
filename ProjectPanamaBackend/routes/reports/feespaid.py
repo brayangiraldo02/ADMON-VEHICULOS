@@ -43,10 +43,13 @@ async def get_vehiculos_detalles(infoReports: infoReports):
             Conductores.NROENTREGA.label('conductor_nro_cuotas'),
             Conductores.NROENTPAGO.label('conductor_nro_cuotas_pagas'),
             Conductores.NROENTSDO.label('conductor_nro_ent_sdo'),   
-        )   .join(Vehiculos, Estados.CODIGO == Vehiculos.ESTADO) \
-            .join(Conductores, Vehiculos.CONDUCTOR == Conductores.CODIGO) \
-            .join(Propietarios, Vehiculos.PROPI_IDEN == Propietarios.CODIGO) \
-            .all()            
+        ).join(Vehiculos, Estados.CODIGO == Vehiculos.ESTADO) \
+         .join(Conductores, Vehiculos.CONDUCTOR == Conductores.CODIGO) \
+         .join(Propietarios, Vehiculos.PROPI_IDEN == Propietarios.CODIGO) \
+         .filter(Propietarios.CODIGO.in_(infoReports.empresas)) \
+         .filter(Estados.CODIGO.in_(infoReports.estados)) \
+         .order_by(Propietarios.NOMBRE, Vehiculos.NUMERO) \
+         .all()            
         
         # Convertir los resultados en un formato JSON
         vehiculos_detalles_list = []
@@ -172,7 +175,7 @@ async def get_vehiculos_detalles(infoReports: infoReports):
         data_view["usuario"] = usuario
 
         headers = {
-            "Content-Disposition": "inline; informe-cuotas-pagas.pdf"
+            "Content-Disposition": "attachment; informe-cuotas-pagas.pdf"
         }  
 
         template_loader = jinja2.FileSystemLoader(searchpath="./templates")

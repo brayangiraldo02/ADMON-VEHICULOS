@@ -23,7 +23,7 @@ owners_router = APIRouter()
 
 # PETICIÓN DE LISTA DE PROPIETARIOS A LA BASE DE DATOS 
 # ---------------------------------------------------------------------------------------------------------------
-@owners_router.get("/owners/{company_code}", tags=["Owners"])
+@owners_router.get("/owners/{company_code}/", tags=["Owners"])
 async def get_owners(company_code: str):
   db = session()
   try:
@@ -38,8 +38,8 @@ async def get_owners(company_code: str):
     db.close()
 # ---------------------------------------------------------------------------------------------------------------
 
-@owners_router.get("/owners/all/", tags=["Owners"])
-async def get_all_owners():
+@owners_router.get("/owners/all/{company_code}/", tags=["Owners"])
+async def get_all_owners(company_code: str):
   db = session()
   try:
     owners = db.query(
@@ -58,7 +58,11 @@ async def get_all_owners():
       PermisosUsuario, Propietarios.USUARIO == PermisosUsuario.CODIGO
     ).join(
       Centrales, Propietarios.CENTRAL == Centrales.CODIGO
-    ).all()
+    ).filter(
+      Centrales.EMPRESA == company_code,
+      Propietarios.EMPRESA == company_code
+    )\
+    .all()
 
     owners_list = []
     for owner in owners:

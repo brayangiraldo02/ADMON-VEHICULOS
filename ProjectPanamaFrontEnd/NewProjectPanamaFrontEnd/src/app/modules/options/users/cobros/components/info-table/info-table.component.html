@@ -1,4 +1,4 @@
-<app-header></app-header>
+<!-- <app-header></app-header> -->
 <div class="cobros-container">
   <div class="buttons-container">
     <button
@@ -11,26 +11,18 @@
     </button>
 
     <div class="unified-buttons-container">
-      <button mat-raised-button class="uniform-width-button" (click)="nextFeatures()">
+      <button mat-raised-button class="uniform-width-button" (click)="downloadCollectionAccountsPDF()">
         <mat-icon>description</mat-icon>
-        Informes
+        PDF
       </button>
       <button
         mat-raised-button
-        [matMenuTriggerFor]="menu"
         class="uniform-width-button"
+        (click)="downloadCollectionAccountsXLS()"
       >
         <mat-icon>insert_drive_file</mat-icon>
-        Exportar
+        Excel
       </button>
-      <mat-menu #menu="matMenu">
-        <button mat-menu-item class="options-mat-menu" (click)="nextFeatures()">
-          PDF para Imprimir
-        </button>
-        <button mat-menu-item class="options-mat-menu" (click)="downloadCollectionAccountsXLS()">
-          Excel
-        </button>
-      </mat-menu>
     </div>
   </div>
   <div class="table-container">
@@ -49,11 +41,11 @@
         <mat-label>Nivel de deuda</mat-label>
         <mat-select [formControl]="debts" (selectionChange)="onDebtSelectionChange($event)">
           <mat-select-trigger>
-            {{ debts.value }}
+            {{ getSelectedDebtText() }}
           </mat-select-trigger>
           <mat-option
             *ngFor="let debt of debtList; let i = index"
-            [value]="debt.text"
+            [value]="debt.id"
             [class]="'debt-option-' + i"
             [ngStyle]="{ 'background-color': debt.color }"
           >
@@ -69,7 +61,6 @@
           mat-table
           [dataSource]="dataSource"
           matSort
-          [@listAnimation]="dataSource.data.length"
         >
           <!-- Unidad Column -->
           <ng-container matColumnDef="Unidad">
@@ -110,7 +101,7 @@
           <!-- Sin Pagar Column -->
           <ng-container matColumnDef="Sin Pagar">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>Sin Pagar</th>
-            <td mat-cell *matCellDef="let row">{{ row["Sin Pagar"] }}</td>
+            <td mat-cell *matCellDef="let row">{{ row.DiasSinPago }} / {{ row.CuotasPendientes }}</td>
           </ng-container>
 
           <!-- Sdo.Renta Column -->
@@ -140,7 +131,7 @@
           <!-- Mantenimien Column -->
           <ng-container matColumnDef="Mantenimien">
             <th mat-header-cell *matHeaderCellDef class="padding-header">Mantenim.</th>
-            <td mat-cell *matCellDef="let row">{{ row.Mantenimien }}</td>
+            <td mat-cell *matCellDef="let row" [ngStyle]="{'background-color': getMaintenanceColor(row.MantenimientoDiasRestantes)}">{{ row.MantenimientoFecha }}</td>
           </ng-container>
 
           <!-- Otra Deu Column -->
@@ -171,7 +162,6 @@
           <tr
             mat-row
             *matRowDef="let row; columns: displayedColumns"
-            [@fadeInOut]
           ></tr>
 
           <!-- Row shown when there is no matching data. -->
@@ -180,8 +170,9 @@
               <!-- Updated colspan to match number of columns -->
               <mat-progress-bar
                 mode="indeterminate"
-                [@fadeInOut]
+                *ngIf="!dataIsZero"
               ></mat-progress-bar>
+              <span *ngIf="dataIsZero">No se encontraron resultados</span>
             </td>
           </tr>
         </table>
@@ -194,4 +185,4 @@
     </div>
   </div>
 </div>
-<app-footer></app-footer>
+<!-- <app-footer></app-footer> -->

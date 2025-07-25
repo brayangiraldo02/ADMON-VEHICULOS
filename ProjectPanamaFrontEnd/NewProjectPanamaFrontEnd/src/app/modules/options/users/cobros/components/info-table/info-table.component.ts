@@ -35,16 +35,19 @@ export interface VehicleInfoData {
   'Vlr.Cta': string;
   Celular: string;
   Ingreso: string;
-  'Sin Pagar': string;
   'Sdo.Renta': string;
   Deposito: string;
-  PanaPass: string;
+  PanaPass: string | null;
   Siniestro: string;
-  Mantenimien: string;
   'Otra Deu': string;
   Empresa: string;
   Central: string;
   Estado: string;
+  DiasSinPago?: number;
+  CuotasPendientes?: number;
+  Panapass?: string | null;
+  MantenimientoFecha?: string | null;
+  MantenimientoDiasRestantes?: number | null;
 }
 
 interface apiResponse {
@@ -62,86 +65,102 @@ interface apiResponse {
   nombre?: string;
   centrales_nombre?: string;
   estado?: string;
+  dias_sin_pago?: number;
+  cuotas_pendientes?: number;
+  panapass?: string | null;
+  mantenimiento_fecha?: string | null;
+  mantenimiento_dias_restantes?: number | null;
 }
 
 interface DebtOption {
   text: string;
   color: string;
   hoverColor: string;
+  id?: number;
 }
 
 @Component({
   selector: 'app-info-table',
   templateUrl: './info-table.component.html',
   styleUrls: ['./info-table.component.css'],
-  animations: [
-    trigger('fadeInOut', [
-      transition(':enter', [
-        style({ opacity: 0, transform: 'translateY(-10px)' }),
-        animate(
-          '300ms ease-in',
-          style({ opacity: 1, transform: 'translateY(0)' })
-        ),
-      ]),
-      transition(':leave', [
-        animate(
-          '200ms ease-out',
-          style({ opacity: 0, transform: 'translateY(-10px)' })
-        ),
-      ]),
-    ]),
-    // Animación para los elementos de la lista/tabla
-    trigger('listAnimation', [
-      transition('* => *', [
-        query(
-          ':enter',
-          [
-            style({ opacity: 0, transform: 'translateY(20px)' }),
-            stagger(50, [
-              animate(
-                '300ms ease-out',
-                style({ opacity: 1, transform: 'translateY(0)' })
-              ),
-            ]),
-          ],
-          { optional: true }
-        ),
-      ]),
-    ]),
-  ],
+  // animations: [
+  //   trigger('fadeInOut', [
+  //     transition(':enter', [
+  //       style({ opacity: 0, transform: 'translateY(-10px)' }),
+  //       animate(
+  //         '300ms ease-in',
+  //         style({ opacity: 1, transform: 'translateY(0)' })
+  //       ),
+  //     ]),
+  //     transition(':leave', [
+  //       animate(
+  //         '200ms ease-out',
+  //         style({ opacity: 0, transform: 'translateY(-10px)' })
+  //       ),
+  //     ]),
+  //   ]),
+  //   // Animación para los elementos de la lista/tabla
+  //   trigger('listAnimation', [
+  //     transition('* => *', [
+  //       query(
+  //         ':enter',
+  //         [
+  //           style({ opacity: 0, transform: 'translateY(20px)' }),
+  //           stagger(50, [
+  //             animate(
+  //               '300ms ease-out',
+  //               style({ opacity: 1, transform: 'translateY(0)' })
+  //             ),
+  //           ]),
+  //         ],
+  //         { optional: true }
+  //       ),
+  //     ]),
+  //   ]),
+  // ],
 })
 export class InfoTableComponent implements AfterViewInit, OnDestroy {
-  debts = new FormControl<string>('Todos');
+  isIOS: boolean = /iPhone|iPad|iPod/.test(navigator.userAgent) && !('MSStream' in window);
+  
+  private originalData: VehicleInfoData[] = [];
+  dataIsZero: boolean = false;
+
+  debts = new FormControl<number>(0);
 
   debtList: DebtOption[] = [
     {
-      text: 'Más de 3 Días',
+      text: 'Más de 3 Cuotas',
       color: '#FFCDD2',
       hoverColor: '#FFAAAA',
+      id: 3,
     },
     {
-      text: 'Menor o Igual a 2 Días',
+      text: 'Menor o Igual a 2 Cuotas',
       color: '#FFE0B2',
       hoverColor: '#FFCC80',
+      id: 2,
     },
     {
-      text: 'Menor o Igual a 1 Día',
+      text: 'Menor o Igual a 1 Cuota',
       color: '#FFF9C4',
       hoverColor: '#FFF176',
+      id: 1,
     },
     {
       text: 'Sin Deuda',
       color: '#C8E6C9',
       hoverColor: '#A5D6A7',
+      id: 4,
     },
     {
       text: 'Todos',
       color: '#ADD8E6',
       hoverColor: '#90CAF9',
+      id: 0
     },
   ];
 
-  selectedDebtLevel: string = 'Todos'; 
+  selectedDebtLevel: number = 0;
 
   displayedColumns: string[] = [
     'Unidad',
@@ -183,6 +202,7 @@ export class InfoTableComponent implements AfterViewInit, OnDestroy {
       if (selectedOwners.owners.length > 0) {
         console.log('Selected owners in info table components: ', selectedOwners);
         this.getTableData(selectedOwners);
+
         // TODO: Limpiar info guardada en los estados globales una vez se deja de utilizar
         // this.globalStates.clearSelectedOwners();
       }
@@ -203,6 +223,11 @@ export class InfoTableComponent implements AfterViewInit, OnDestroy {
     }
   }
 
+  getSelectedDebtText(): string {
+    const selectedDebt = this.debtList.find(debt => debt.id === this.debts.value);
+    return selectedDebt ? selectedDebt.text : 'Todos';
+  }
+
   generateHoverStyles() {
     // Eliminar estilos previos si existen
     const existingStyle = this.document.getElementById('debt-hover-styles');
@@ -216,19 +241,15 @@ export class InfoTableComponent implements AfterViewInit, OnDestroy {
 
     let css = `
       .mat-mdc-option {
-        transition: all 0.2s ease !important;
         margin: 1px !important;
         border-radius: 4px !important;
       }
     `;
 
-    // Generar CSS dinámicamente desde el array debtList
     this.debtList.forEach((debt, index) => {
       css += `
         .debt-option-${index}:hover {
           background-color: ${debt.hoverColor} !important;
-          transform: scale(1.02) !important;
-          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15) !important;
         }
       `;
     });
@@ -240,14 +261,46 @@ export class InfoTableComponent implements AfterViewInit, OnDestroy {
   onDebtSelectionChange(event: any) {
     this.selectedDebtLevel = event.value;
     console.log('Selected debt level:', this.selectedDebtLevel);
-    // TODO: Agregar lógica para filtrar la tabla según el nivel de deuda seleccionado
-    this.nextFeatures();
-    this.selectedDebtLevel = 'Todos';
-    this.debts.setValue('Todos');
+    this.filterByDebtLevel(this.selectedDebtLevel);
+  }
+  
+  filterByDebtLevel(debtLevelId: number) {
+    // Usar originalData en lugar de dataSource.data
+    let filteredData: VehicleInfoData[];
+  
+    switch (debtLevelId) {
+      case 1: // Menor o Igual a 1 Cuota
+        filteredData = this.originalData.filter(row => (row.CuotasPendientes || 0) <= 1);
+        break;
+      
+      case 2: // Menor o Igual a 2 Cuotas
+        filteredData = this.originalData.filter(row => (row.CuotasPendientes || 0) <= 2);
+        break;
+      
+      case 3: // Más de 3 Cuotas
+        filteredData = this.originalData.filter(row => (row.CuotasPendientes || 0) > 3);
+        break;
+      
+      case 4: // Sin Deuda
+        filteredData = this.originalData.filter(row => (row.CuotasPendientes || 0) === 0);
+        break;
+      
+      case 0: // Todos
+      default:
+        filteredData = this.originalData;
+        break;
+    }
+  
+    // Aplicar los datos filtrados
+    this.dataSource.data = filteredData;
+    
+    // Resetear el paginador a la primera página
+    if (this.dataSource.paginator) {
+      this.dataSource.paginator.firstPage();
+    }
   }
 
   getTableData(selectedOwners: Owners) {
-
     this.apiService.postData('collection-accounts', selectedOwners).subscribe({
       next: (response) => {
         console.log('Data fetched successfully:', response);
@@ -270,7 +323,6 @@ export class InfoTableComponent implements AfterViewInit, OnDestroy {
                 item.fon_inscri !== undefined
                   ? item.fon_inscri.toString()
                   : '0',
-              PanaPass: '',
               Siniestro:
                 item.deu_sinies !== undefined
                   ? item.deu_sinies.toString()
@@ -281,22 +333,55 @@ export class InfoTableComponent implements AfterViewInit, OnDestroy {
               Empresa: item.nombre || '',
               Central: item.centrales_nombre || '',
               Estado: item.estado || '',
+              DiasSinPago: item.dias_sin_pago || 0,
+              CuotasPendientes: item.cuotas_pendientes || 0,
+              PanaPass: item.panapass || '',
+              MantenimientoFecha: item.mantenimiento_fecha,
+              MantenimientoDiasRestantes:
+                item.mantenimiento_dias_restantes,
             };
           }
         );
 
+        // Guardar datos originales y aplicar al dataSource
+        this.originalData = [...mappedData];
         this.dataSource.data = mappedData;
+        
         if (this.paginator) {
           this.dataSource.paginator = this.paginator;
         }
         if (this.sort) {
           this.dataSource.sort = this.sort;
         }
+
+        if (this.originalData.length === 0) {
+          this.dataIsZero = true;
+          this.openSnackbar('No hay datos disponibles para mostrar.');
+        } else {
+          this.dataIsZero = false;
+          this.openSnackbar('Datos cargados correctamente.');
+        }
       },
       error: (error) => {
         console.error('Error fetching data:', error);
+        this.dataIsZero = true;
+        this.openSnackbar('Error al cargar los datos. Por favor, inténtelo de nuevo más tarde.');
       },
     });
+  }
+
+  getMaintenanceColor(diasRestantes: number | null): string {
+    if (diasRestantes === null || diasRestantes === undefined) {
+      return 'transparent'; // Sin color si no hay datos
+    }
+    
+    if (diasRestantes <= 0) {
+      return '#FFCDD2'; // Fecha actual o más (vencido)
+    } else if (diasRestantes <= 5) {
+      return '#FFE0B2'; // 5 días o menos
+    } else {
+      return '#C8E6C9'; // Más de 5 días
+    }
   }
 
   applyFilter(event: Event) {
@@ -322,6 +407,43 @@ export class InfoTableComponent implements AfterViewInit, OnDestroy {
       'collection-accounts/download', 
       selectedOwners, 
       'reporte_cuentas_cobro.xlsx'
+    ).subscribe({
+      next: () => {
+        console.log('Download started successfully');
+      },
+      error: (error) => {
+        console.error('Download failed:', error);
+        this.openSnackbar('Error al descargar el reporte de cuentas de cobro.');
+      }
+    });
+  }
+
+  downloadCollectionAccountsPDF() {
+    const selectedOwners = this.globalStates.getSelectedOwners();
+    if (selectedOwners.owners.length === 0) {
+      console.error('No owners selected for PDF download');
+      this.openSnackbar('No hay propietarios seleccionados para descargar el reporte.');
+      return;
+    }
+
+    this.openSnackbar('En un momento se descargará el reporte de cuentas de cobro.');
+
+    // -- LÓGICA ESPECIAL PARA iOS --
+    if (this.isIOS) {
+      this.openSnackbar('Descargando reporte de cuentas de cobro en PDF iOS...');
+      // almacenamos endpoint y data para el PdfViewerComponent
+      localStorage.setItem('pdfEndpoint', 'collection-accounts/download-pdf');
+      localStorage.setItem('pdfData', JSON.stringify(selectedOwners));
+      // navegamos a la ruta donde tienes <app-pdf-viewer>
+      window.open(`/pdf`, '_blank');
+      return; 
+    }
+
+    // -- COMPORTAMIENTO POR DEFECTO para Android y demás --
+    this.documentsService.downloadDocument(
+      'collection-accounts/download-pdf',
+      selectedOwners,
+      'reporte_cuentas_cobro.pdf'
     ).subscribe({
       next: () => {
         console.log('Download started successfully');

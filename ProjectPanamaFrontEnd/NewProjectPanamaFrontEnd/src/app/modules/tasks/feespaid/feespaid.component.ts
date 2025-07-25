@@ -35,12 +35,18 @@ export class FeespaidComponent implements OnInit {
   }
 
   obtenerUsuario() {
-    let user = this.jwtService.decodeToken();
-    return user.user_data.nombre;
+    let user = this.jwtService.getUserData();
+    return user ? user.nombre : ''; // Si 'user' existe, devuelve 'user.nombre', si no, devuelve un string vacío.
+  }
+
+  getCompany() {
+    const userData = this.jwtService.getUserData();
+    return userData ? userData.empresa : '';
   }
 
   listOwners(): void {
-    this.apiService.getData("owners").subscribe(
+    let company = this.getCompany();
+    this.apiService.getData("owners/"+company).subscribe(
       (response) => {
         this.owners = response.filter((owner: any) => owner.id);
         this.owners.sort((a, b) => a.name.localeCompare(b.name));
@@ -52,7 +58,8 @@ export class FeespaidComponent implements OnInit {
   }
 
   listStates(): void {
-    this.apiService.getData("states").subscribe(
+    let company = this.getCompany();
+    this.apiService.getData("states/"+company).subscribe(
       (response) => {
         this.states = response.filter((state: any) => state.id);
         this.states.sort((a, b) => {

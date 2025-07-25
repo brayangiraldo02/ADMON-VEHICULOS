@@ -12,31 +12,31 @@
       </span>
       <p>Inicio</p>
     </button>
-    <button *ngIf="this.isHome && this.permisos.user_data.tarea01 && !this.ownerView" routerLink="/owners">
+    <button *ngIf="this.isHome && this.permisos.tarea01 && !this.ownerView" routerLink="/owners">
       <span class="material-symbols-outlined" translate="no">
         apartment
       </span>
       <p>Propietarios</p>
     </button>
-    <button *ngIf="this.isHome && this.permisos.user_data.tarea02 && !this.ownerView" routerLink="/drivers">
+    <button *ngIf="this.isHome && this.permisos.tarea02 && !this.ownerView" routerLink="/drivers">
       <span class="material-symbols-outlined" translate="no">
         badge
       </span>
       <p>Conductores</p>
     </button>
-    <button *ngIf="this.isHome && this.permisos.user_data.tarea03 && !this.ownerView" routerLink="/vehicles">
+    <button *ngIf="this.isHome && this.permisos.tarea03 && !this.ownerView" routerLink="/vehicles">
       <span class="material-symbols-outlined" translate="no">
         local_taxi
       </span>
       <p>Vehículos</p>
     </button>
-    <button *ngIf="this.isHome && this.permisos.user_data.tarea04 && !this.ownerView" routerLink="/statevehiclefleet">
+    <button *ngIf="this.isHome && this.permisos.tarea04 && !this.ownerView" routerLink="/statevehiclefleet">
       <span class="material-symbols-outlined" translate="no">
         garage
       </span>
       <p>Estado de flota</p>
     </button>
-    <button *ngIf="this.isHome && this.permisos.user_data.tarea05 && !this.ownerView" routerLink="/feespaid">
+    <button *ngIf="this.isHome && this.permisos.tarea05 && !this.ownerView" routerLink="/feespaid">
       <span class="material-symbols-outlined" translate="no">
         payments
       </span>
@@ -50,7 +50,7 @@
     </button>
   </nav>
   <div class="user-info">
-    <p>{{this.permisos.user_data.nombre}}</p>
+    <p>{{this.permisos.nombre}}</p>
     <img [src]="imgUser" alt="Foto de perfil">
   </div>
 </header>

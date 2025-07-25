@@ -25,8 +25,14 @@ export class DriversTableComponent implements OnInit{
     this.getUser();
   }
 
+  getCompany() {
+    const userData = this.jwtService.getUserData();
+    return userData ? userData.empresa : '';
+  }
+
   fetchData() {
-    this.apiService.getData('drivers/all').subscribe(
+    const company = this.getCompany();
+    this.apiService.getData('drivers/all/'+company).subscribe(
       (response) => {
         this.data = response.filter((data: any) => data.codigo);
         this.data.sort((a, b) => a.nombre.localeCompare(b.nombre));
@@ -42,8 +48,8 @@ export class DriversTableComponent implements OnInit{
   }
 
   getUser() {
-    this.user = this.jwtService.decodeToken();
-    this.user = this.user.user_data.nombre;
+    this.user = this.jwtService.getUserData();
+    this.user = this.user.nombre;
   }
 
   filterData() {
