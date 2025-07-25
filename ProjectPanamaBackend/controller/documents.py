@@ -176,7 +176,8 @@ async def vehicle_info(vehicle_number: str):
       "nombre_conductor": drivers.NOMBRE if drivers else '',
       "telefono_conductor": drivers.TELEFONO if drivers else '',
       "panapass": panapass_value if panapass_value else '',
-      "fecha_entrega": ''
+      "fecha_contrato": vehicles.FEC_CONTRA.strftime('%d/%m/%Y') if vehicles.FEC_CONTRA and hasattr(vehicles.FEC_CONTRA, 'strftime') else '',
+      "cuotas_pagas": drivers.NROENTPAGO if drivers else ''
     }
 
     return JSONResponse(content=jsonable_encoder(vehicle_data), status_code=200)
