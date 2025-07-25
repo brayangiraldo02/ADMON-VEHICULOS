@@ -167,7 +167,9 @@ export class InspectionsAddDialogComponent implements OnInit {
   }
 
   getVehicleInfo(vehicle: string){
-    this.apiService.getData('inspections/new_inspection_data/'+vehicle).subscribe(
+    const company = this.getCompany();
+
+    this.apiService.getData('inspections/new_inspection_data/' + company + '/' + vehicle).subscribe(
       (data: InspectionsVehicleData) => {
         this.vehicleInfo = data;
         this.loadingVehicleInfo = false;
