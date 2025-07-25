@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 from schemas.operations import DeliveryVehicleDriver
-from controller.operations import get_vehicle_operation, get_driver_operation, delivery_vehicle_driver, vehicle_delivery_info, generate_contract
+from controller.operations import get_vehicle_operation, get_driver_operation, delivery_vehicle_driver, vehicle_delivery_info, generate_contract, validation
 
 operations_router = APIRouter()
 
@@ -23,3 +23,7 @@ async def get_vehicle_delivery_info(vehicle_number: str):
 @operations_router.get("/operations/generate-contract/pdf/{vehicle_number}/", tags=["Operations"])
 async def get_generate_contract(vehicle_number: str):
   return await generate_contract(vehicle_number)
+
+@operations_router.get("/operations/validation/{company_code}/{vehicle_number}/", tags=["Operations"])
+async def get_validation(company_code: str, vehicle_number: str):
+  return await validation(company_code, vehicle_number)

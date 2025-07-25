@@ -7,6 +7,7 @@ from models.propietarios import Propietarios
 from models.estados import Estados
 from models.centrales import Centrales
 from models.estadocivil import EstadoCivil
+from models.cartera import Cartera
 from schemas.operations import *
 from fastapi.encoders import jsonable_encoder
 from utils.reports import *
@@ -585,6 +586,59 @@ async def generate_contract(vehicle_number: str):
         media_type="application/pdf",
         background=background_task
     )
+
+  except Exception as e:
+    return JSONResponse(content={"message": str(e)}, status_code=500)
+  
+  finally:
+    db.close()
+
+#-----------------------------------------------------------------------------------------------
+
+async def validation(company_code: str, vehicle_number: str):
+  db = session()
+  try:
+    vehicle_state = db.query(
+                Vehiculos
+                ).join(
+                  Estados, Vehiculos.ESTADO == Estados.CODIGO
+                ).filter(
+                  Vehiculos.NUMERO == vehicle_number,
+                  Vehiculos.EMPRESA == company_code,
+                  Estados.EMPRESA == company_code,
+                  Estados.ESTADO == 1
+                ).first()
+    
+    vehicle_driver = db.query(
+                Vehiculos.CONDUCTOR
+                ).filter(
+                  Vehiculos.NUMERO == vehicle_number,
+                  Vehiculos.EMPRESA == company_code
+                ).first()
+    
+    panama_timezone = pytz.timezone('America/Panama')
+    now_in_panama = datetime.now(panama_timezone)
+    year = now_in_panama.strftime("%Y")
+    month = now_in_panama.strftime("%m")
+    day = now_in_panama.strftime("%d")
+
+    bill_date = f"{str(year)[-2:]}{month}{day}-{vehicle_driver.CONDUCTOR}"
+
+    vehicle_bill = db.query(
+                Cartera
+                ).filter(
+                  Cartera.EMPRESA == company_code,
+                  Cartera.UNIDAD == vehicle_number,
+                  Cartera.FACTURA == bill_date
+                ).first()
+
+    response_data = {
+      "vehicle_state": 1 if vehicle_state else 0,
+      "vehicle_driver": 1 if vehicle_driver.CONDUCTOR not in [None, ''] else 0,
+      "vehicle_bill": 1 if vehicle_bill else 0,
+    }
+
+    return JSONResponse(content=jsonable_encoder(response_data), status_code=200)
 
   except Exception as e:
     return JSONResponse(content={"message": str(e)}, status_code=500)
