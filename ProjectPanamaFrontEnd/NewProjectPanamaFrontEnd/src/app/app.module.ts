@@ -49,6 +49,10 @@ import { OptionsDocumentsDialogComponent } from './modules/tasks/documents/optio
 import { FolioInfoDialogComponent } from './modules/tasks/documents/folio-info-dialog/folio-info-dialog.component';
 import { InspectionsAddDialogComponent } from './modules/tasks/inspections/inspections-add-dialog/inspections-add-dialog.component';
 import { InfoVehicleDialogComponent } from './modules/tasks/documents/info-vehicle-dialog/info-vehicle-dialog.component';
+import { OperacionesCrearCuentaDiarioConductorComponent } from './modules/options/users/operaciones/operaciones-crear-cuenta-diario-conductor/operaciones-crear-cuenta-diario-conductor.component';
+import { OperacionesCambiarEstadoVehiculoComponent } from './modules/options/users/operaciones/operaciones-cambiar-estado-vehiculo/operaciones-cambiar-estado-vehiculo.component';
+import { OperacionesCambiarPatioVehiculoComponent } from './modules/options/users/operaciones/operaciones-cambiar-patio-vehiculo/operaciones-cambiar-patio-vehiculo.component';
+import { OperacionesCorregirKilometrajeActualComponent } from './modules/options/users/operaciones/operaciones-corregir-kilometraje-actual/operaciones-corregir-kilometraje-actual.component';
 
 @NgModule({
   declarations: [
@@ -95,6 +99,10 @@ import { InfoVehicleDialogComponent } from './modules/tasks/documents/info-vehic
     FolioInfoDialogComponent,
     InspectionsAddDialogComponent,
     InfoVehicleDialogComponent,
+    OperacionesCrearCuentaDiarioConductorComponent,
+    OperacionesCambiarEstadoVehiculoComponent,
+    OperacionesCambiarPatioVehiculoComponent,
+    OperacionesCorregirKilometrajeActualComponent,
   ],
   imports: [
     BrowserModule,
