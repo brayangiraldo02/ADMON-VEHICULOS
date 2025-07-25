@@ -595,7 +595,7 @@ async def generate_contract(vehicle_number: str):
 
 #-----------------------------------------------------------------------------------------------
 
-async def validation(company_code: str, vehicle_number: str):
+async def validation(bill_data: BillValidation):
   db = session()
   try:
     vehicle_state = db.query(
@@ -603,32 +603,36 @@ async def validation(company_code: str, vehicle_number: str):
                 ).join(
                   Estados, Vehiculos.ESTADO == Estados.CODIGO
                 ).filter(
-                  Vehiculos.NUMERO == vehicle_number,
-                  Vehiculos.EMPRESA == company_code,
-                  Estados.EMPRESA == company_code,
+                  Vehiculos.NUMERO == bill_data.vehicle_number,
+                  Vehiculos.EMPRESA == bill_data.company_code,
+                  Estados.EMPRESA == bill_data.company_code,
                   Estados.ESTADO == 1
                 ).first()
     
     vehicle_driver = db.query(
                 Vehiculos.CONDUCTOR
                 ).filter(
-                  Vehiculos.NUMERO == vehicle_number,
-                  Vehiculos.EMPRESA == company_code
+                  Vehiculos.NUMERO == bill_data.vehicle_number,
+                  Vehiculos.EMPRESA == bill_data.company_code
                 ).first()
     
-    panama_timezone = pytz.timezone('America/Panama')
-    now_in_panama = datetime.now(panama_timezone)
-    year = now_in_panama.strftime("%Y")
-    month = now_in_panama.strftime("%m")
-    day = now_in_panama.strftime("%d")
+    # panama_timezone = pytz.timezone('America/Panama')
+    # now_in_panama = datetime.now(panama_timezone)
+    # year = now_in_panama.strftime("%Y")
+    # month = now_in_panama.strftime("%m")
+    # day = now_in_panama.strftime("%d")
+    # bill_date = f"{str(year)[-2:]}{month}{day}-{vehicle_driver.CONDUCTOR}"
 
-    bill_date = f"{str(year)[-2:]}{month}{day}-{vehicle_driver.CONDUCTOR}"
+    year = bill_data.bill_date.year
+    month = bill_data.bill_date.month
+    day = bill_data.bill_date.day
+    bill_date = f"{str(year)[-2:]}{month:02d}{day:02d}-{vehicle_driver.CONDUCTOR}"
 
     vehicle_bill = db.query(
                 Cartera
                 ).filter(
-                  Cartera.EMPRESA == company_code,
-                  Cartera.UNIDAD == vehicle_number,
+                  Cartera.EMPRESA == bill_data.company_code,
+                  Cartera.UNIDAD == bill_data.vehicle_number,
                   Cartera.FACTURA == bill_date
                 ).first()
 
@@ -643,5 +647,85 @@ async def validation(company_code: str, vehicle_number: str):
   except Exception as e:
     return JSONResponse(content={"message": str(e)}, status_code=500)
   
+  finally:
+    db.close()
+
+#-----------------------------------------------------------------------------------------------
+
+async def new_bill(bill_data: BillInfo):
+  db = session()
+  try:
+    vehicle = db.query(
+                Vehiculos
+                ).join(
+                  Estados, Vehiculos.ESTADO == Estados.CODIGO
+                ).filter(
+                  Vehiculos.NUMERO == bill_data.vehicle_number,
+                  Vehiculos.EMPRESA == bill_data.company_code,
+                  Estados.EMPRESA == bill_data.company_code,
+                  Estados.ESTADO == 1
+                ).first()
+    
+    if not vehicle:
+      return JSONResponse(content={"message": "Vehículo no encontrado o no está en estado activo"}, status_code=404)
+    
+    vehicle_driver = db.query(
+                Conductores
+                ).filter(
+                  Conductores.CODIGO == vehicle.CONDUCTOR,
+                  Conductores.EMPRESA == bill_data.company_code,
+                  Conductores.CODIGO == bill_data.driver_number
+                ).first()
+
+    if not vehicle_driver:
+      return JSONResponse(content={"message": "Conductor no encontrado o no está asignado al vehículo"}, status_code=404)
+
+    bill_date = f"{str(bill_data.bill_date.year)[-2:]}{bill_data.bill_date.month:02d}{bill_data.bill_date.day:02d}-{bill_data.driver_number}"
+
+    vehicle_bill = db.query(
+                Cartera
+                ).filter(
+                  Cartera.EMPRESA == bill_data.company_code,
+                  Cartera.UNIDAD == bill_data.vehicle_number,
+                  Cartera.FACTURA == bill_date
+                ).first()
+    
+    if vehicle_bill:
+      return JSONResponse(content={"message": "La cuenta ya existe para este vehículo"}, status_code=400)
+    
+    panama_timezone = pytz.timezone('America/Panama')
+    now_in_panama = datetime.now(panama_timezone)
+    
+    new_bill = Cartera(
+      EMPRESA=bill_data.company_code,
+      FACTURA=bill_date,
+      TIPO='10',
+      CLIENTE=bill_data.driver_number,
+      CEDULA=vehicle_driver.CEDULA,
+      ZONA=vehicle.PROPI_IDEN,
+      PLACA=vehicle.PLACA,
+      UNIDAD=bill_data.vehicle_number,
+      PROPI_IDEN=vehicle.PROPI_IDEN,
+      FEC_ENTREG=bill_data.bill_date,
+      VALOR=vehicle_driver.CUO_DIARIA,
+      FECHA=bill_data.bill_date,
+      FEC_FACTU= bill_data.bill_date,
+      DOC_FACTU=bill_date,
+      CAN_FACTU=1,
+      DETALLE='Cuenta creada ' + bill_data.bill_date.strftime('%d/%m/%Y') + ' ---> Unidad: ' + bill_data.vehicle_number + ' - Conductor: ' + bill_data.driver_number + ' ' + vehicle_driver.NOMBRE,
+      SALDO=vehicle_driver.CUO_DIARIA,
+      FEC_CUADRE=bill_data.bill_date,
+      FEC_DOC=bill_data.bill_date.strftime('%Y%m%d'),
+      FEC_DOCUM=bill_data.bill_date.strftime('%Y%m%d'),
+      FEC_CREADO=now_in_panama,
+      USU_CREADO=bill_data.user
+    )
+
+    db.add(new_bill)
+    db.commit()
+    return JSONResponse(content={"message": "Cuenta creada con éxito"}, status_code=200)
+  except Exception as e:
+    db.rollback()
+    return JSONResponse(content={"message": str(e)}, status_code=500)
   finally:
     db.close()
