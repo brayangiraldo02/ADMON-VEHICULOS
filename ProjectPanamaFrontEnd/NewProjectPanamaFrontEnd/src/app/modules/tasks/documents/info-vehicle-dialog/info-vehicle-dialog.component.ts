@@ -17,7 +17,7 @@ interface VehicleInfo {
   nombre_conductor: string;
   telefono_conductor: string;
   panapass: string;
-  fecha_entrega: string;
+  fecha_contrato: string;
 }
 
 @Component({
