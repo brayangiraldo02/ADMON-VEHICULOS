@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from schemas.operations import DeliveryVehicleDriver, BillInfo
+from schemas.operations import DeliveryVehicleDriver, BillInfo, BillValidation, ChangeYard
 from controller.operations import *
 
 operations_router = APIRouter()
@@ -31,3 +31,7 @@ async def post_validation(data: BillValidation):
 @operations_router.post("/operations/new-bill/", tags=["Operations"])
 async def post_new_bill(data: BillInfo):
   return await new_bill(data)
+
+@operations_router.post("/operations/change-yard/", tags=["Operations"])
+async def post_change_yard(data: ChangeYard):
+  return await change_yard(data)

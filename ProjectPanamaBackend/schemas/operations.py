@@ -19,3 +19,9 @@ class BillInfo(BaseModel):
   bill_date: date
   description: str
   user: Optional[str] = ''
+
+class ChangeYard(BaseModel):
+  company_code: str
+  vehicle_number: str
+  yard_code: str
+  description: str

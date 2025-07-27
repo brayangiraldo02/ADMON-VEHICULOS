@@ -192,6 +192,8 @@ class Vehiculos(Base):
     GASTOS = Column(DECIMAL(12, 2), default=0)
     NETO = Column(DECIMAL(12, 2), default=0)
     FEC_CREADO = Column(DateTime, default=None)
+    NOMPATIO = Column(CHAR(40), default="")
+    DETALPATIO = Column(VARCHAR(60), default="")
     NOMCENTRAL = Column(VARCHAR(50), default="")
     EMPRESA = Column(VARCHAR(50), default="")
     SEL = Column(CHAR(1), default="")

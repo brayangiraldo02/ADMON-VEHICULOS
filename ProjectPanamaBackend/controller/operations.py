@@ -8,6 +8,7 @@ from models.estados import Estados
 from models.centrales import Centrales
 from models.estadocivil import EstadoCivil
 from models.cartera import Cartera
+from models.patios import Patios
 from schemas.operations import *
 from fastapi.encoders import jsonable_encoder
 from utils.reports import *
@@ -735,6 +736,32 @@ async def new_bill(bill_data: BillInfo):
     db.add(new_bill)
     db.commit()
     return JSONResponse(content={"message": "Cuenta creada con éxito"}, status_code=200)
+  except Exception as e:
+    db.rollback()
+    return JSONResponse(content={"message": str(e)}, status_code=500)
+  finally:
+    db.close()
+
+#-----------------------------------------------------------------------------------------------
+
+async def change_yard(data: ChangeYard):
+  db = session()
+  try:
+    vehicle = db.query(Vehiculos).filter(Vehiculos.NUMERO == data.vehicle_number, Vehiculos.EMPRESA == data.company_code).first()
+    if not vehicle:
+      return JSONResponse(content={"message": "Vehicle not found"}, status_code=404)
+    
+    yard = db.query(Patios).filter(Patios.CODIGO == data.yard_code, Patios.EMPRESA == data.company_code).first()
+    if not yard:
+      return JSONResponse(content={"message": "Yard not found"}, status_code=404)
+
+    vehicle.PATIO = data.yard_code
+    vehicle.NOMPATIO = yard.NOMBRE
+
+    db.commit()
+
+    return JSONResponse(content={"message": "Vehículo cambiado de patio con éxito"}, status_code=200)
+
   except Exception as e:
     db.rollback()
     return JSONResponse(content={"message": str(e)}, status_code=500)
