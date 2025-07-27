@@ -25,3 +25,10 @@ class ChangeYard(BaseModel):
   vehicle_number: str
   yard_code: str
   description: str
+
+class ChangeVehicleState(BaseModel):
+  company_code: str
+  vehicle_number: str
+  state_code: str
+  yard_code: Optional[str] = None
+  change_reason: str

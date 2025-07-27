@@ -767,3 +767,37 @@ async def change_yard(data: ChangeYard):
     return JSONResponse(content={"message": str(e)}, status_code=500)
   finally:
     db.close()
+
+#-----------------------------------------------------------------------------------------------
+
+async def change_vehicle_state(data: ChangeVehicleState):
+  db = session()
+  try:
+    vehicle = db.query(Vehiculos).filter(Vehiculos.NUMERO == data.vehicle_number, Vehiculos.EMPRESA == data.company_code).first()
+    if not vehicle:
+      return JSONResponse(content={"message": "Vehicle not found"}, status_code=404)
+    
+    state = db.query(Estados).filter(Estados.CODIGO == data.state_code, Estados.EMPRESA == data.company_code).first()
+    if not state:
+      return JSONResponse(content={"message": "State not found"}, status_code=404)
+    
+    if data.yard_code:
+      yard = db.query(Patios).filter(Patios.CODIGO == data.yard_code, Patios.EMPRESA == data.company_code).first()
+      if not yard:
+        return JSONResponse(content={"message": "Yard not found"}, status_code=404)
+      vehicle.PATIO = yard.CODIGO
+      vehicle.NOMPATIO = yard.NOMBRE
+
+    vehicle.ESTADO = data.state_code
+    vehicle.ABREVIADO = state.ABREVIADO
+    vehicle.NOMESTADO = state.NOMBRE
+
+    db.commit()
+
+    return JSONResponse(content={"message": "Estado del vehículo cambiado con éxito"}, status_code=200)
+
+  except Exception as e:
+    db.rollback()
+    return JSONResponse(content={"message": str(e)}, status_code=500)
+  finally:
+    db.close()
