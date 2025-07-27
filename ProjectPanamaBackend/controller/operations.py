@@ -29,6 +29,7 @@ from fastapi.templating import Jinja2Templates
 from fastapi.responses import FileResponse
 import jinja2
 from utils.pdf import html2pdf
+from sqlalchemy import func
 
 async def get_vehicle_operation(vehicle_number: str):
   db = session()
@@ -38,7 +39,7 @@ async def get_vehicle_operation(vehicle_number: str):
       Vehiculos.NROENTREGA, Vehiculos.CUO_DIARIA, Vehiculos.ESTADO, 
       Estados.NOMBRE.label('NOMBRE_ESTADO'), Vehiculos.PROPI_IDEN, 
       Propietarios.NOMBRE.label('NOMBRE_PROPI'), Vehiculos.CONDUCTOR,
-      Vehiculos.CON_CUPO, Vehiculos.FEC_ESTADO
+      Vehiculos.CON_CUPO, Vehiculos.FEC_ESTADO, Vehiculos.EMPRESA
     ).join(
       Vehiculos, Vehiculos.MARCA == Marcas.CODIGO
     ).join(
@@ -51,7 +52,16 @@ async def get_vehicle_operation(vehicle_number: str):
 
     if not vehicle_operations:
       return JSONResponse(content={"message": "Vehicle not found"}, status_code=404)
-    
+
+    outstanding_balance = db.query(
+      func.sum(Cartera.SALDO).label('outstanding balance')
+    ).filter(
+      Cartera.EMPRESA == vehicle_operations.EMPRESA,
+      Cartera.UNIDAD == vehicle_number,
+      Cartera.CLIENTE == vehicle_operations.CONDUCTOR,
+      Cartera.TIPO == '11',
+    ).scalar()
+
     vehicle = {
       'numero': vehicle_number,
       'marca': vehicle_operations.MARCA,
@@ -63,7 +73,8 @@ async def get_vehicle_operation(vehicle_number: str):
       'propietario': vehicle_operations.PROPI_IDEN + ' - ' + vehicle_operations.NOMBRE_PROPI,
       'conductor': vehicle_operations.CONDUCTOR,
       'con_cupo': vehicle_operations.CON_CUPO,
-      'fecha_estado': vehicle_operations.FEC_ESTADO
+      'fecha_estado': vehicle_operations.FEC_ESTADO,
+      'outstanding_balance': outstanding_balance if outstanding_balance else 0
     }
 
     return JSONResponse(content=jsonable_encoder(vehicle), status_code=200)
