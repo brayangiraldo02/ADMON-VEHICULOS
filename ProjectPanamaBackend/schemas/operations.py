@@ -32,3 +32,8 @@ class ChangeVehicleState(BaseModel):
   state_code: str
   yard_code: Optional[str] = None
   change_reason: str
+
+class VehicleMileage(BaseModel):
+  company_code: str
+  vehicle_number: str
+  mileage: int

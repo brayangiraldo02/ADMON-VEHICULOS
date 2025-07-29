@@ -821,3 +821,24 @@ async def vehicle_mileage(company_code: str, vehicle_number: str):
     return JSONResponse(content={"message": str(e)}, status_code=500)
   finally:
     db.close()
+
+#-----------------------------------------------------------------------------------------------
+
+async def update_mileage(data: VehicleMileage):
+  db = session()
+  try:
+    vehicle = db.query(Vehiculos).filter(Vehiculos.NUMERO == data.vehicle_number, Vehiculos.EMPRESA == data.company_code).first()
+    if not vehicle:
+      return JSONResponse(content={"message": "Vehicle not found"}, status_code=404)
+    
+    vehicle.KILO_ANTES = vehicle.KILOMETRAJ
+    vehicle.KILOMETRAJ = data.mileage
+    db.commit()
+
+    return JSONResponse(content={"message": "Kilometraje actualizado con éxito"}, status_code=200)
+
+  except Exception as e:
+    db.rollback()
+    return JSONResponse(content={"message": str(e)}, status_code=500)
+  finally:
+    db.close()
