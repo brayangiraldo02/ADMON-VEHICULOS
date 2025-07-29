@@ -69,9 +69,10 @@ export class OperacionesCrearCuentaDiarioConductorComponent implements OnInit {
   authorizedVehicle: boolean = false;
   checkedValidations: boolean = false;
   reCheckedValidations: boolean = false;
+  isLoadingCreate: boolean = false;
 
   maxDate = new Date(); 
-  date!: DateCurrently
+  date!: DateCurrently;
 
   vehicleData: vehicleInfo = {
     numero: '',
@@ -346,6 +347,7 @@ export class OperacionesCrearCuentaDiarioConductorComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe((confirmation: boolean) => {
       if (confirmation) {
+        this.isLoadingCreate = true;
         this.createDailyAccount();
       } else {
         this.openSnackbar('Operación cancelada.');
@@ -373,6 +375,7 @@ export class OperacionesCrearCuentaDiarioConductorComponent implements OnInit {
       },
       error: (error: HttpErrorResponse) => {
         this.openSnackbar('Error al crear la cuenta diaria. Inténtalo de nuevo más tarde.');
+        this.isLoadingCreate = false;
       }
     });
   }

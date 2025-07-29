@@ -1,12 +1,11 @@
 <h2 mat-dialog-title>Crear Cuenta de Diario al Conductor</h2>
 <mat-divider></mat-divider>
-<mat-dialog-content *ngIf="isLoadingVehicles">
+<mat-dialog-content *ngIf="isLoadingVehicles || isLoadingCreate">
   <mat-progress-bar
     mode="indeterminate"
-    *ngIf="isLoadingVehicles"
   ></mat-progress-bar>
 </mat-dialog-content>
-<mat-dialog-content class="scrollable-content" *ngIf="!isLoadingVehicles">
+<mat-dialog-content class="scrollable-content" *ngIf="!isLoadingVehicles && !isLoadingCreate">
   <div class="vehicle-info">
     <mat-form-field class="form-field">
       <mat-label>Vehículo</mat-label>
@@ -167,5 +166,5 @@
 </mat-dialog-content>
 <mat-dialog-actions align="end">
   <button mat-button mat-dialog-close>Cancelar</button>
-  <button mat-button cdkFocusInitial [disabled]="!selectedVehicle || isLoadingVehicleInfo || !checkedValidations || !authorizedVehicle || selectedDate.invalid || reCheckedValidations" (click)="openConfirmationDialog()">Confirmar</button>
+  <button mat-button cdkFocusInitial [disabled]="!selectedVehicle || isLoadingVehicleInfo || !checkedValidations || !authorizedVehicle || selectedDate.invalid || reCheckedValidations || isLoadingCreate" (click)="openConfirmationDialog()">Confirmar</button>
 </mat-dialog-actions>
