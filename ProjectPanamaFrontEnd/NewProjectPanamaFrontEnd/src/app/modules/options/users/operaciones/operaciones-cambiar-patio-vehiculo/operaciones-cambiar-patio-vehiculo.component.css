@@ -85,16 +85,10 @@ h2 {
   text-align: left;
 }
 
-.date-message {
-  padding-top: 16px;
-}
-
-.message {
-  color: black;
-}
-
-.message-strong {
-  color: red;
+.info-select {
+  display: flex;
+  flex-direction: column;
+  padding-top: 14px;
 }
 
 
