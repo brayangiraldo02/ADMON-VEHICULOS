@@ -165,7 +165,6 @@ export class OperacionesCambiarEstadoVehiculoComponent {
   vehicleSearch(vehicleValue: string) {
     this.resetInfo();
     this.selectedVehicle = false;
-    console.log('Vehicle selected:', vehicleValue);
     if (vehicleValue !== '') {
       this.isLoadingVehicleInfo = true;
       this.apiService
@@ -386,8 +385,6 @@ export class OperacionesCambiarEstadoVehiculoComponent {
       
       return;
     }
-
-    console.log(this.infoChangeState.value);
 
     const isSmallScreen = this.breakpointObserver.isMatched(Breakpoints.Small);
     const isXsmallScreen = this.breakpointObserver.isMatched(Breakpoints.XSmall);
