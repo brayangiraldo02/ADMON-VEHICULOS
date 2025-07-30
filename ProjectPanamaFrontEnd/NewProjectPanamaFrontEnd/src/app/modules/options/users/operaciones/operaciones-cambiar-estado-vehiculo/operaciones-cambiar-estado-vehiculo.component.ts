@@ -173,6 +173,7 @@ export class OperacionesCambiarEstadoVehiculoComponent {
           next: (data: vehicleInfo) => {
             this.vehicleData = data;
             this.setStateVehicle();
+            this.getVehicleYard();
             this.drivers.setValue(this.vehicleData.conductor);
             this.driverSearch(this.vehicleData.conductor);
           },
@@ -243,9 +244,7 @@ export class OperacionesCambiarEstadoVehiculoComponent {
 
     this.apiService.getData(`yards/${company}`).subscribe(
       (response: objSelect[]) => {
-        this.yards = response.filter(
-          (yard) => yard.id && yard.id.trim() !== ''
-        );
+        this.yards = response;
 
         this.filteredYardsOptions = this.infoChangeState
           .get('yard')!
@@ -273,6 +272,33 @@ export class OperacionesCambiarEstadoVehiculoComponent {
         option.id.toLowerCase().includes(filterValue) ||
         option.name.toLowerCase().includes(filterValue)
     );
+  }
+
+  getVehicleYard() {
+    if (this.vehicleData.numero === '') {
+      this.openSnackbar('Por favor, selecciona un vehículo primero.');
+      return;
+    }
+
+    const company = this.getCompany();
+
+    this.apiService
+      .getData(`yards/${company}/vehicle/${this.vehicleData.numero}`)
+      .subscribe(
+        (response: any) => {
+          if (response && response.id && response.name) {
+            this.infoChangeState.get('yard')?.setValue({
+              id: response.id,
+              name: response.name,
+            });
+          }
+        },
+        (error) => {
+          this.openSnackbar(
+            'Error al obtener la información del patio de este vehículo. Inténtalo de nuevo más tarde.'
+          );
+        }
+      );
   }
 
   getStates() {
