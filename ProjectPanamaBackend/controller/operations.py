@@ -781,16 +781,15 @@ async def change_vehicle_state(data: ChangeVehicleState):
     if not state:
       return JSONResponse(content={"message": "State not found"}, status_code=404)
     
-    if data.yard_code:
-      yard = db.query(Patios).filter(Patios.CODIGO == data.yard_code, Patios.EMPRESA == data.company_code).first()
-      if not yard:
-        return JSONResponse(content={"message": "Yard not found"}, status_code=404)
-      vehicle.PATIO = yard.CODIGO
-      vehicle.NOMPATIO = yard.NOMBRE
+    yard = db.query(Patios).filter(Patios.CODIGO == data.yard_code, Patios.EMPRESA == data.company_code).first()
+    if not yard:
+      return JSONResponse(content={"message": "Yard not found"}, status_code=404)
 
     vehicle.ESTADO = data.state_code
     vehicle.ABREVIADO = state.ABREVIADO
     vehicle.NOMESTADO = state.NOMBRE
+    vehicle.PATIO = yard.CODIGO
+    vehicle.NOMPATIO = yard.NOMBRE
 
     db.commit()
 
