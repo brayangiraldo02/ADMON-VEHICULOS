@@ -125,22 +125,16 @@ export class OperacionesCambiarPatioVehiculoComponent {
     const oldYard = oldYardControl.value;
     const newYard = newYardControl.value;
   
-    // --- Regla 1: Validar que el patio nuevo no sea igual al antiguo ---
     if (oldYard?.id && newYard?.id && oldYard.id === newYard.id) {
-      // Si son iguales, establece el error 'sameAsCurrent' y termina.
       newYardControl.setErrors({ sameAsCurrent: true });
       return null;
     }
   
-    // --- Regla 2: Validar que el patio nuevo sea obligatorio si no hay uno antiguo ---
     if (!oldYard?.id && !newYard?.id) {
-      // Si no hay patio antiguo y tampoco se ha seleccionado uno nuevo, establece el error 'required'.
       newYardControl.setErrors({ required: true });
       return null;
     }
     
-    // --- Si ninguna de las condiciones de error se cumple, limpia los errores ---
-    // Esto es crucial para que los mensajes de error desaparezcan cuando el usuario corrige la selección.
     newYardControl.setErrors(null);
     return null;
   }
@@ -148,10 +142,9 @@ export class OperacionesCambiarPatioVehiculoComponent {
   formBuild() {
     this.infoChangeYard = this.formBuilder.group({
       oldYard: [''],
-      yard: [''], // Sin validadores aquí
+      yard: [''],
       description: ['', Validators.required],
     }, { 
-      // Aplicamos nuestro nuevo validador unificado al grupo
       validators: this.yardValidator 
     });
   }
@@ -173,7 +166,6 @@ export class OperacionesCambiarPatioVehiculoComponent {
         this.isLoadingVehicles = false;
       },
       (error) => {
-        console.error('Error fetching vehicles:', error);
         this.openSnackbar(
           'Error al obtener las unidades. Inténtalo de nuevo más tarde.'
         );
@@ -195,7 +187,6 @@ export class OperacionesCambiarPatioVehiculoComponent {
   vehicleSearch(vehicleValue: string) {
     this.resetInfo();
     this.selectedVehicle = false;
-    console.log('Vehicle selected:', vehicleValue);
     if (vehicleValue !== '') {
       this.isLoadingVehicleInfo = true;
       this.apiService
@@ -203,7 +194,6 @@ export class OperacionesCambiarPatioVehiculoComponent {
         .subscribe({
           next: (data: vehicleInfo) => {
             this.vehicleData = data;
-            console.log(this.vehicleData);
             this.drivers.setValue(this.vehicleData.conductor);
             this.getVehicleYard();
             this.driverSearch(this.vehicleData.conductor);
@@ -230,7 +220,6 @@ export class OperacionesCambiarPatioVehiculoComponent {
         .subscribe({
           next: (data: driverInfo) => {
             this.driverData = data;
-            console.log(this.driverData);
             this.isLoadingVehicleInfo = false;
             this.selectedVehicle = true;
           },
@@ -266,7 +255,6 @@ export class OperacionesCambiarPatioVehiculoComponent {
       .getData(`yards/${company}/vehicle/${this.vehicleData.numero}`)
       .subscribe(
         (response: any) => {
-          console.log('Yard data:', response);
           if (response && response.id && response.name) {
             this.infoChangeYard.get('oldYard')?.setValue({
               id: response.id,
@@ -279,7 +267,6 @@ export class OperacionesCambiarPatioVehiculoComponent {
           }
         },
         (error) => {
-          console.error('Error fetching yard data:', error);
           this.openSnackbar(
             'Error al obtener la información del patio de este vehículo. Inténtalo de nuevo más tarde.'
           );
