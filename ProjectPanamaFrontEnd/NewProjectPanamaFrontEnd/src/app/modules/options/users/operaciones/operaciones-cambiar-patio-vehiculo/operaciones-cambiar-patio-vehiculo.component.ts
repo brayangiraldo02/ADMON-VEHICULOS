@@ -369,8 +369,10 @@ export class OperacionesCambiarPatioVehiculoComponent {
     if(oldYard){
       var message = `¿Estás seguro de que deseas cambiar el patio del vehículo ${
           this.vehicleData.numero
-        } - ${this.vehicleData.placa} de ${this.vehicleData.estado} a ${
+        } - ${this.vehicleData.placa} de ${
           this.infoChangeYard.get('oldYard')?.value.id
+        } - ${this.infoChangeYard.get('oldYard')?.value.name} a ${
+          this.infoChangeYard.get('yard')?.value.id
         } - ${this.infoChangeYard.get('yard')?.value.name}?`
     } else {
       var message = `¿Estás seguro de que deseas cambiar el patio del vehículo ${
