@@ -151,4 +151,8 @@ h2 {
   .info-data {
     padding-left: 2px; /* Slight indent for the data */
   }
+
+  .info-select {
+    gap: 10px;
+  }
 }
