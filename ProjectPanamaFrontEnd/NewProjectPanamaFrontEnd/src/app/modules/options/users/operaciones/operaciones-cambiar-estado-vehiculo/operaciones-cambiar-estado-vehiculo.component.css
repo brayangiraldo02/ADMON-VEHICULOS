@@ -85,18 +85,11 @@ h2 {
   text-align: left;
 }
 
-.date-message {
-  padding-top: 16px;
+.info-select {
+  display: flex;
+  flex-direction: column;
+  padding-top: 14px;
 }
-
-.message {
-  color: black;
-}
-
-.message-strong {
-  color: red;
-}
-
 
 /* Responsive styles for screens smaller than 600px */
 @media (max-width: 599px) {
@@ -156,5 +149,9 @@ h2 {
 
   .info-data {
     padding-left: 2px; /* Slight indent for the data */
+  }
+
+  .info-select {
+    gap: 10px;
   }
 }

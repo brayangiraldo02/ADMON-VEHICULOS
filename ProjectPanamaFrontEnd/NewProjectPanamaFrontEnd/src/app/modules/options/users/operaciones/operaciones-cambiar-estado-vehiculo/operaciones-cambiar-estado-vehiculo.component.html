@@ -1,12 +1,12 @@
 <h2 mat-dialog-title>Cambiar de Estado a un Vehículo</h2>
 <mat-divider></mat-divider>
-<mat-dialog-content *ngIf="isLoadingVehicles">
-  <mat-progress-bar
-    mode="indeterminate"
-    *ngIf="isLoadingVehicles"
-  ></mat-progress-bar>
+<mat-dialog-content *ngIf="isLoadingVehicles || isLoadingChange">
+  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
 </mat-dialog-content>
-<mat-dialog-content class="scrollable-content" *ngIf="!isLoadingVehicles">
+<mat-dialog-content
+  class="scrollable-content"
+  *ngIf="!isLoadingVehicles && !isLoadingChange"
+>
   <div class="vehicle-info">
     <mat-form-field class="form-field">
       <mat-label>Vehículo</mat-label>
@@ -19,7 +19,7 @@
       />
       <mat-autocomplete
         #auto="matAutocomplete"
-        (opened)="resetAutocomplete()"
+        (opened)="resetAutocomplete(1)"
         (optionSelected)="vehicleSearch($event.option.value)"
       >
         <mat-option
@@ -31,7 +31,11 @@
       </mat-autocomplete>
     </mat-form-field>
 
-    <mat-progress-bar class="loading-bar" mode="indeterminate" *ngIf="isLoadingVehicleInfo"></mat-progress-bar>
+    <mat-progress-bar
+      class="loading-bar"
+      mode="indeterminate"
+      *ngIf="isLoadingVehicleInfo"
+    ></mat-progress-bar>
 
     <table class="info-table" *ngIf="!isLoadingVehicleInfo && selectedVehicle">
       <tbody>
@@ -49,7 +53,9 @@
         </tr>
         <tr>
           <td class="info-header">Cupo N°</td>
-          <td class="info-data">{{ vehicleData.cupo }} {{ vehicleData.con_cupo }}</td>
+          <td class="info-data">
+            {{ vehicleData.cupo }} {{ vehicleData.con_cupo }}
+          </td>
         </tr>
         <tr>
           <td class="info-header">N° de Cuotas</td>
@@ -57,7 +63,7 @@
         </tr>
         <tr>
           <td class="info-header">Valor Cuota</td>
-          <td class="info-data">{{ vehicleData.cuota_diaria}}</td>
+          <td class="info-data">{{ vehicleData.cuota_diaria }}</td>
         </tr>
         <tr>
           <td class="info-header">Estado</td>
@@ -65,7 +71,7 @@
         </tr>
         <tr>
           <td class="info-header">Propietario</td>
-          <td class="info-data"> {{ vehicleData.propietario }}</td>
+          <td class="info-data">{{ vehicleData.propietario }}</td>
         </tr>
       </tbody>
     </table>
@@ -76,10 +82,7 @@
   <div class="driver-info" *ngIf="!isLoadingVehicleInfo && selectedVehicle">
     <mat-form-field class="form-field">
       <mat-label>Conductor</mat-label>
-      <input type="text"
-             matInput
-             [formControl]="drivers"
-             >
+      <input type="text" matInput [formControl]="drivers" />
     </mat-form-field>
 
     <table class="info-table">
@@ -113,35 +116,85 @@
 
     <mat-divider></mat-divider>
 
-    <!-- <div class="date-message" *ngIf="contractInfo.permitido !== null && contractInfo.permitido !== undefined">
-      <p class="message" *ngIf="contractInfo.permitido === 1">
-        <strong class="message-strong">NO PERMITIDO:</strong> {{ contractInfo.mensaje }}.
-      </p>
-
-      <mat-form-field class="form-field date-form" (click)="datepicker.open()" *ngIf="contractInfo.permitido === 0">
-        <input
-          matInput
-          placeholder="Selecciona una fecha inicial"
-          [matDatepicker]="datepicker"
-          [formControl]="selectedDate"
-          [max]="maxDate"
-          required
-          readonly
-        />
-        <mat-hint>DD/MM/YYYY</mat-hint>
-        <mat-datepicker-toggle
-          matIconSuffix
-          [for]="datepicker"
-        ></mat-datepicker-toggle>
-        <mat-datepicker #datepicker></mat-datepicker>
-      </mat-form-field>
-      <mat-error *ngIf="selectedDate.invalid && selectedDate.touched">
-        Debes seleccionar una fecha.
+    <form class="info-select" [formGroup]="infoChangeState">
+      <mat-error *ngIf="infoChangeState.get('state')?.hasError('required') && infoChangeState.get('state')?.touched">
+        El estado es obligatorio
       </mat-error>
-    </div> -->
+      <mat-error *ngIf="infoChangeState.get('state')?.hasError('sameAsCurrent')">
+        No puedes seleccionar el mismo estado actual.
+      </mat-error>
+      <mat-form-field class="form-field">
+        <mat-label>Estados</mat-label>
+        <input
+          type="text"
+          placeholder="Selecciona un estado"
+          aria-label="Estados"
+          matInput
+          formControlName="state"
+          [matAutocomplete]="autoState"
+        />
+
+        <mat-autocomplete
+          #autoState="matAutocomplete"
+          (opened)="resetAutocomplete(2)"
+          [displayWith]="displayAutocomplete"
+        >
+          <mat-option
+            *ngFor="let option of filteredStatesOptions | async"
+            [value]="option"
+          >
+            {{ option.id }} - {{ option.name }}
+          </mat-option>
+        </mat-autocomplete>
+      </mat-form-field>
+
+      <mat-form-field class="form-field">
+        <mat-label>Patios</mat-label>
+        <input
+          type="text"
+          placeholder="Selecciona un patio"
+          aria-label="Patios"
+          matInput
+          formControlName="yard"
+          [matAutocomplete]="autoYard"
+        />
+
+        <mat-autocomplete
+          #autoYard="matAutocomplete"
+          (opened)="resetAutocomplete(3)"
+          [displayWith]="displayAutocomplete"
+        >
+          <mat-option
+            *ngFor="let option of filteredYardsOptions | async"
+            [value]="option"
+          >
+            {{ option.id }} - {{ option.name }}
+          </mat-option>
+        </mat-autocomplete>
+
+        <!-- <mat-error *ngIf="infoChangeState.get('yard')?.hasError('required') && infoChangeState.get('yard')?.touched">
+          El patio es obligatorio
+        </mat-error> -->
+      </mat-form-field>
+
+      <mat-error *ngIf="infoChangeState.get('description')?.hasError('required')  && infoChangeState.get('description')?.touched">
+        La descripción es obligatoria
+      </mat-error>
+      <mat-form-field class="text-area">
+        <mat-label>Descripción</mat-label>
+        <textarea matInput formControlName="description" required></textarea>
+      </mat-form-field>
+    </form>
   </div>
 </mat-dialog-content>
 <mat-dialog-actions align="end">
   <button mat-button mat-dialog-close>Cancelar</button>
-  <button mat-button cdkFocusInitial disabled>Confirmar</button>
+  <button
+    mat-button
+    cdkFocusInitial
+    [disabled]="!selectedVehicle || isLoadingVehicleInfo || isLoadingChange || infoChangeState.invalid"
+    (click)="openConfirmationDialog()"
+  >
+    Confirmar
+  </button>
 </mat-dialog-actions>
