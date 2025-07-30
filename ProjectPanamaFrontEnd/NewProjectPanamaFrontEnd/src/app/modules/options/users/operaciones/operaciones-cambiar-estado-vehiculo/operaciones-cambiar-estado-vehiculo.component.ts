@@ -356,6 +356,20 @@ export class OperacionesCambiarEstadoVehiculoComponent {
     }
   }
 
+  validateState(state: objSelect) {
+    if (!state || !state.id) {
+      this.infoChangeState.get('state')?.setErrors({ required: true });
+      return;
+    }
+
+    const newStateId = state.id;
+    if (newStateId === this.currentState) {
+      this.infoChangeState.get('state')?.setErrors({ sameAsCurrent: true });
+    } else {
+      this.infoChangeState.get('state')?.setErrors(null);
+    }
+  }
+
   openConfirmationDialog() {
     if (this.infoChangeState.invalid || !this.selectedVehicle) {
       this.openSnackbar('Por favor, completa todos los campos obligatorios.');

@@ -137,6 +137,7 @@
         <mat-autocomplete
           #autoState="matAutocomplete"
           (opened)="resetAutocomplete(2)"
+          (optionSelected)="validateState($event.option.value)"
           [displayWith]="displayAutocomplete"
         >
           <mat-option
