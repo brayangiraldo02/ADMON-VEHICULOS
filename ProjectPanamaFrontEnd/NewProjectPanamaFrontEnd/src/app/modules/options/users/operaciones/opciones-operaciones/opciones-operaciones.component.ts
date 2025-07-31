@@ -24,9 +24,6 @@ export class OpcionesOperacionesComponent {
     { name: 'Bajar Conductor del Vehículo (Culminación del Contrato)', icon: 'info', url: 'hoalalalal', disabled: true },
     { name: 'Corregir Kilometraje Actual al Vehículo', icon: 'info', url: 'CorregirKilometrajeActualVehiculo', disabled: false },
     { name: 'Apertura de Cuenta por Cobrar a un Conductor', icon: 'info', url: 'hoalalalal', disabled: true },
-    { name: 'Hoja de Inspección del Vehículo', icon: 'info', url: 'hoalalalal', disabled: true },
-    { name: 'Hoja de Vida del Vehículo', icon: 'info', url: 'hoalalalal', disabled: true },
-    { name: 'Hoja de Vida del Conductor', icon: 'info', url: 'hoalalalal', disabled: true }
   ];
 
   selectOptionModal: string = '';
