@@ -203,6 +203,8 @@ async def relationshiprevenues_report(data: RelationshipRevenuesReport):
 
     data_reporte = list(aggregated_data.values())
 
+    total_recibos = len(aggregated_data)
+
     # Filtrar registros que tengan campos string obligatorios vacíos.
     # Se consideran obligatorios: recibo, unidad, empresa y forma_pago.
     registros_filtrados = [
@@ -280,7 +282,8 @@ async def relationshiprevenues_report(data: RelationshipRevenuesReport):
         "yappy": total_yappy,
         "total": total_total,
         "total_admon": total_admon,
-        "total_resta_admon": total_total - total_admon
+        "total_resta_admon": total_total - total_admon,
+        "total_recibos": total_recibos
       },
       "fechas": {
         "primeraFecha": data.primeraFecha,
