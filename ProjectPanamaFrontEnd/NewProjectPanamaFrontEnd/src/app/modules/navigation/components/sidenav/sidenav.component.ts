@@ -7,6 +7,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { InfoCompanyComponent } from '../info-company/info-company.component';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { OptionsDocumentsDialogComponent } from 'src/app/modules/tasks/documents/options-documents-dialog/options-documents-dialog.component';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-sidenav',
@@ -30,7 +31,8 @@ export class SidenavComponent implements OnInit {
     private router: Router,
     private ownersGuard: OwnersGuard,
     private dialog: MatDialog,
-    private breakpointObserver: BreakpointObserver
+    private breakpointObserver: BreakpointObserver,
+    private snackBar: MatSnackBar
   ) {}
 
   ngOnInit() {
@@ -54,7 +56,7 @@ export class SidenavComponent implements OnInit {
         this.router.navigate(['/login']);
       },
       (error) => {
-        console.log(error);
+        this.openSnackbar('Hubo un error al cerrar sesión. Por favor, inténtalo de nuevo.');
       }
     );
   }
@@ -111,7 +113,6 @@ export class SidenavComponent implements OnInit {
     const idCompany = userData ? userData.empresa : null;
     this.apiService.getData('info-company/'+idCompany).subscribe(
       (response) => {
-        console.log('getInfoCompany: ', response);
         this.infoCompanyName = response.name;
       }
     );
@@ -159,13 +160,19 @@ export class SidenavComponent implements OnInit {
     const isSmallScreen = this.breakpointObserver.isMatched(Breakpoints.XSmall);
     const dialogWidth = isSmallScreen ? '90vw' : '60%';
 
-    console.log(isSmallScreen ? 'Pantalla pequeña' : 'Pantalla grande');
-
     const dialogRef = this.dialog.open(InfoCompanyComponent,
       {
         width: dialogWidth,
       }
     );
+  }
+
+  openSnackbar(message: string) {
+    this.snackBar.open(message, 'Cerrar', {
+      duration: 3000,
+      horizontalPosition: 'center',
+      verticalPosition: 'top',
+    })
   }
 
   onItemClick(): void {

@@ -24,9 +24,6 @@ export class OpcionesOperacionesComponent {
     { name: 'Bajar Conductor del Vehículo (Culminación del Contrato)', icon: 'info', url: 'hoalalalal', disabled: true },
     { name: 'Corregir Kilometraje Actual al Vehículo', icon: 'info', url: 'CorregirKilometrajeActualVehiculo', disabled: false },
     { name: 'Apertura de Cuenta por Cobrar a un Conductor', icon: 'info', url: 'hoalalalal', disabled: true },
-    { name: 'Hoja de Inspección del Vehículo', icon: 'info', url: 'hoalalalal', disabled: true },
-    { name: 'Hoja de Vida del Vehículo', icon: 'info', url: 'hoalalalal', disabled: true },
-    { name: 'Hoja de Vida del Conductor', icon: 'info', url: 'hoalalalal', disabled: true }
   ];
 
   selectOptionModal: string = '';
@@ -48,7 +45,6 @@ export class OpcionesOperacionesComponent {
 
     switch (option) {
       case 'EntregaVehiculoConductor':
-        console.log('Entrega de Vehículo al Conductor');
         this.entregaVehiculoConductor = true;
         this.selectOptionModal = option;
         document.documentElement.style.overflow = 'hidden';
@@ -83,13 +79,10 @@ export class OpcionesOperacionesComponent {
         );
         break;
       case 'Prestamo de Vehículo al Conductor':
-        console.log('Prestamo de Vehículo al Conductor');
         break;
       case 'Devolución de Vehículos Prestados':
-        console.log('Devolución de Vehículos Prestados');
         break;
       case 'Bajar Conductor del Vehículo (Culminación del Contrato)':
-        console.log('Bajar Conductor del Vehículo (Culminación del Contrato)');
         break;
       case 'CorregirKilometrajeActualVehiculo':
         this.dialog.open(OperacionesCorregirKilometrajeActualComponent,
@@ -99,16 +92,6 @@ export class OpcionesOperacionesComponent {
         );
         break;
       case 'Apertura de Cuenta por Cobrar a un Conductor':
-        console.log('Apertura de Cuenta por Cobrar a un Conductor');
-        break;
-      case 'Hoja de Inspección del Vehículo':
-        console.log('Hoja de Inspección del Vehículo');
-        break;
-      case 'Hoja de Vida del Vehículo':
-        console.log('Hoja de Vida del Vehículo');
-        break;
-      case 'Hoja de Vida del Conductor':
-        console.log('Hoja de Vida del Conductor');
         break;
     }
   }
