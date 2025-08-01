@@ -36,12 +36,12 @@
         <td class="info-data" (click)="copyToClipboard(vehicle.fecha_contrato)">{{ vehicle.fecha_contrato }}</td>
       </tr>
       <tr>
-        <td class="info-header">Valor Cuota / Número Coutas</td>
-        <td class="info-data" (click)="copyToClipboard(vehicle.valor_cuota + ' / ' + vehicle.numero_cuotas)">{{ vehicle.valor_cuota }} / {{ vehicle.numero_cuotas }}</td>
+        <td class="info-header">Valor Cuota</td>
+        <td class="info-data" (click)="copyToClipboard(vehicle.valor_cuota)">${{ vehicle.valor_cuota }}</td>
       </tr>
       <tr>
-        <td class="info-header">Cuotas Pagas / Cuotas Pendientes</td>
-        <td class="info-data" (click)="copyToClipboard(vehicle.cuotas_pagas + ' / ' + vehicle.cuotas_pendientes)">{{ vehicle.cuotas_pagas }} / {{ vehicle.cuotas_pendientes }}</td>
+        <td class="info-header">Número Coutas / Pagas / Pendientes</td>
+        <td class="info-data" (click)="copyToClipboard(vehicle.numero_cuotas + ' / ' + vehicle.cuotas_pagas + ' / ' + vehicle.cuotas_pendientes)">{{ vehicle.numero_cuotas }} / {{ vehicle.cuotas_pagas }} / {{ vehicle.cuotas_pendientes }}</td>
       </tr>
     </tbody>
   </table>

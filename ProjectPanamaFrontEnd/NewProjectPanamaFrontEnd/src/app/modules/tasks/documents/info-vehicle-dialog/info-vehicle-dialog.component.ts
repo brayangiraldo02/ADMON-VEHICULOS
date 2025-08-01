@@ -78,8 +78,8 @@ export class InfoVehicleDialogComponent implements OnInit {
     })
   }
 
-  copyToClipboard(text: string) {
-    this.clipboard.copy(text);
+  copyToClipboard(text: string | number) {
+    this.clipboard.copy(text.toString());
     this.openSnackbar('Copiado al portapapeles');
   }
 
