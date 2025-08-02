@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Relación Ingresos por Empresas</title>
+  <style type="text/css">
+    #logo {
+      position: absolute;
+      top: 0;
+      right: 0;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      text-align: center;
+    }
+
+    th,
+    td {
+      padding: 10px;
+      text-align: center;
+    }
+
+    th, tr:last-child td {
+      border: 1px solid black;
+    }
+
+    th {
+      background-color: #ddd;
+      border-right: none;
+    }
+
+    td.group {
+      border-right: none;
+      border-left: none;
+    }
+
+    td.right {
+      border-right: none;
+    }
+
+    .box-propietario {
+      text-align: left;
+      font-size: 17px;
+      margin-top: 10px;
+      padding: 5px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div style="font-weight: bold; display: flex;">
+    Desde: {{ data['fechas']['primeraFecha'] }} Hasta: {{ data['fechas']['ultimaFecha'] }}
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th rowspan="2">Cod.</th>
+        <th rowspan="3">Nombre Empresa</th>
+        <th colspan="4" style="border-bottom: none;">Detalles del Pago</th>
+        <th colspan="5" style="border-bottom: none; border-right: 1px solid black">Forma de Pago</th>
+        <th rowspan="2" style="border-left: none; border-right: 1px solid black">Total Empresa</th>
+        <!-- <th rowspan="2">Total Recibos</th>
+        <th rowspan="2" style="border-right: 1px solid black">Admon</th> -->
+      </tr>
+      <tr>
+        <th>Renta Día</th>
+        <th>Inscrip</th>
+        <th>Siniestro</th>
+        <th>Ahorro</th>
+        <th>Efectivo</th>
+        <th>ACH</th>
+        <th>ARP</th>
+        <th>Nequi</th>
+        <th style="border-right: 1px solid black">Yappy</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      {% for empresa in data.empresas %}
+      <tr>
+        <td class="right" style="border-left: 1px solid black">{{ empresa['codigo_empresa'] }}</td>
+        <td class="group" style="font-size: 12px;">{{ empresa['empresa'] }}</td>
+        <td class="group" style="border-left: 1px solid black">
+          {{ "" if empresa['deuda_renta'] == 0.00 else empresa['deuda_renta'] }}
+        </td>
+        <td class="group">
+          {{ "" if empresa['fondo_inscripcion'] == 0.00 else empresa['fondo_inscripcion'] }}
+        </td>
+        <td class="group">
+          {{ "" if empresa['deuda_siniestro'] == 0.00 else empresa['deuda_siniestro'] }}
+        </td>
+        <td class="group">
+          {{ "" if empresa['fondo_ahorro'] == 0.00 else empresa['fondo_ahorro'] }}
+        </td>
+        <td class="right" style="border-left: 1px solid black">
+          {{ "" if empresa['efectivo'] == 0.00 else empresa['efectivo'] }}
+        </td>
+        <td class="group">
+          {{ "" if empresa['ach'] == 0.00 else empresa['ach'] }}
+        </td>
+        <td class="group">
+          {{ "" if empresa['arp'] == 0.00 else empresa['arp'] }}
+        </td>
+        <td class="group">
+          {{ "" if empresa['nequi'] == 0.00 else empresa['nequi'] }}
+        </td>
+        <td class="group" style="border-right: 1px solid black;">
+          {{ "" if empresa['yappy'] == 0.00 else empresa['yappy'] }}
+        </td>
+        <td style="border-right: 1px solid black; border-left: 1px solid black;">
+          {{ "" if empresa['total'] == 0.00 else empresa['total'] }}
+        </td>
+        <!-- <td style="border-left: 1px solid black; border-right: none;">
+          {{ empresa['total_recibos'] }}
+        </td>
+        <td style="border-right: 1px solid black; border-left: 1px solid black;">
+          {{ "" if empresa['total_admon'] == 0.00 else empresa['total_admon'] }}
+        </td> -->
+      </tr>
+      {% endfor %}
+
+      <tr>
+        <td style="border: none;"></td>
+      </tr>
+      <tr>
+        <!-- Fila de totales generales -->
+        <td class="box-propietario" colspan="2" style="
+          border-top: 2px solid #000;
+          border-left: 2px solid #000;
+          border-bottom: 2px solid #000;
+          border-top-left-radius: 10px; 
+          border-bottom-left-radius: 10px; 
+          text-align: right; 
+          font-weight: bold;">
+          TOTAL CONTROL:
+        </td>
+
+        <!-- Columnas de totales alineadas con los valores -->
+        <td class="box-propietario"
+          style="font-weight: bold; text-align: center; border-top: 2px solid #000; border-bottom: 2px solid #000;">
+          {{ data['totales_generales']['deuda_renta'] }}
+        </td>
+        <td class="box-propietario"
+          style="font-weight: bold; text-align: center; border-top: 2px solid #000; border-bottom: 2px solid #000;">
+          {{ data['totales_generales']['fondo_inscripcion'] }}
+        </td>
+        <td class="box-propietario"
+          style="font-weight: bold; text-align: center; border-top: 2px solid #000; border-bottom: 2px solid #000;">
+          {{ data['totales_generales']['deuda_siniestro'] }}
+        </td>
+        <td class="box-propietario"
+          style="font-weight: bold; text-align: center; border-top: 2px solid #000; border-bottom: 2px solid #000;">
+          {{ data['totales_generales']['fondo_ahorro'] }}
+        </td>
+        <td class="box-propietario"
+          style="font-weight: bold; text-align: center; border-top: 2px solid #000; border-bottom: 2px solid #000;">
+          {{ data['totales_generales']['efectivo'] }}
+        </td>
+        <td class="box-propietario"
+          style="font-weight: bold; text-align: center; border-top: 2px solid #000; border-bottom: 2px solid #000;">
+          {{ data['totales_generales']['ach'] }}
+        </td>
+        <td class="box-propietario"
+          style="font-weight: bold; text-align: center; border-top: 2px solid #000; border-bottom: 2px solid #000;">
+          {{ data['totales_generales']['arp'] }}
+        </td>
+        <td class="box-propietario"
+          style="font-weight: bold; text-align: center; border-top: 2px solid #000; border-bottom: 2px solid #000;">
+          {{ data['totales_generales']['nequi'] }}
+        </td>
+        <td class="box-propietario"
+          style="font-weight: bold; text-align: center; border-top: 2px solid #000; border-bottom: 2px solid #000;">
+          {{ data['totales_generales']['yappy'] }}
+        </td>
+        <td class="box-propietario" style="
+          border-top: 2px solid #000;
+          border-right: 2px solid #000;
+          border-bottom: 2px solid #000;
+          border-top-right-radius: 10px;
+          border-bottom-right-radius: 10px;
+          text-align: center; 
+          font-weight: bold;">
+          {{ data['totales_generales']['total'] }}
+        </td>
+        <!-- <td class="box-propietario" style="font-weight: bold; text-align: center; border-top: 2px solid #000; border-bottom: 2px solid #000; background-color: #ddd;">
+          {{ data['totales_generales']['total_recibos'] }}
+        </td>
+        <td class="box-propietario" style="
+          border-top: 2px solid #000;
+          border-right: 2px solid #000;
+          border-bottom: 2px solid #000;
+          border-top-right-radius: 10px;
+          border-bottom-right-radius: 10px;
+          text-align: center; 
+          font-weight: bold;">
+          {{ data['totales_generales']['total_admon'] }}
+        </td> -->
+      </tr>
+    </table>
+  </tbody>
+
+</body>
+
+</html>
