@@ -344,7 +344,7 @@ async def relationshiprevenues_report(data: RelationshipRevenuesReport):
 #-----------------------------------------------------------------------------------------------
 
 @relationshiprevenuesReports_router.post("/general-relationshiprevenues/", tags=["Reports"])
-async def general_relationshiprevenues_report(data: GeneralRelationshipRevenuesReport):
+async def general_relationshiprevenues_report(data: GeneralRelationshipRevenuesReport, background_tasks: BackgroundTasks):
   db = session()
   try:
     if data.primeraFecha > data.ultimaFecha:
@@ -355,7 +355,6 @@ async def general_relationshiprevenues_report(data: GeneralRelationshipRevenuesR
 
     user_admin = os.getenv("USER_ADMIN")
     
-    # Obtener datos de todas las empresas proporcionadas
     conteo_reporte_ingresos = db.query(
       Propietarios.CODIGO.label('codigo_empresa'),
       CajaRecaudos.EMPRESA.label('num_empresa'),
@@ -377,79 +376,91 @@ async def general_relationshiprevenues_report(data: GeneralRelationshipRevenuesR
     .filter(
       CajaRecaudos.FEC_RECIBO >= data.primeraFecha,
       CajaRecaudos.FEC_RECIBO <= data.ultimaFecha,
-      Propietarios.CODIGO.in_(data.empresas),
+      CajaRecaudos.PROPI_IDEN.in_(data.empresas),
       CajaRecaudos.FORMAPAGO.in_(["1", "2", "3", "4", "5"]),
       CajaRecaudos.EMPRESA == Propietarios.EMPRESA
     ).all()
       
-    if len(conteo_reporte_ingresos) == 0:
-      return JSONResponse(content={"message": "No se encontraron registros"}, status_code=400)
+    if not conteo_reporte_ingresos:
+      return JSONResponse(content={"message": "No se encontraron registros"}, status_code=404)
 
-    empresas_data = {}
+    recibos_consolidados = {}
     for item in conteo_reporte_ingresos:
       forma_pago_valida = isinstance(item.forma_pago, str) and "1" <= item.forma_pago <= "5"
-      
-      todos_valores_monetarios_cero = (
-          item.deuda_renta == 0 and
-          item.fondo_inscripcion == 0 and
-          item.fondo_ahorro == 0 and
-          item.deuda_siniestro == 0 and
-          item.total == 0 
-      )
+      todos_valores_monetarios_cero = (item.deuda_renta == 0 and item.fondo_inscripcion == 0 and item.fondo_ahorro == 0 and item.deuda_siniestro == 0 and item.total == 0)
       
       if not forma_pago_valida or todos_valores_monetarios_cero:
         continue
 
-      empresa_codigo = item.codigo_empresa
-      empresa_nombre = item.empresa
-      
-      if empresa_codigo not in empresas_data:
-        empresas_data[empresa_codigo] = {
-          "codigo_empresa": empresa_codigo,
-          "empresa": empresa_nombre,
+      clave_recibo = (item.codigo_empresa, item.recibo)
+
+      if clave_recibo not in recibos_consolidados:
+        recibos_consolidados[clave_recibo] = {
+          "codigo_empresa": item.codigo_empresa,
+          "empresa": item.empresa,
+          "recibo": item.recibo,
           "deuda_renta": 0,
           "fondo_inscripcion": 0,
           "fondo_ahorro": 0,
           "deuda_siniestro": 0,
-          "efectivo": 0,
-          "ach": 0,
-          "arp": 0,
-          "nequi": 0,
-          "yappy": 0,
-          "total": 0,
-          "total_admon": 0,
-          "total_recibos": set()
+          "forma_pago": item.forma_pago,
+          "total": item.total,
+          "paga_admon": item.paga_admon,
+          "global_und": item.global_und,
+          "cuota_admon": item.cuota_admon,
+          "cuota_diaria": item.cuota_diaria,
+        }
+      
+      recibos_consolidados[clave_recibo]["deuda_renta"] += item.deuda_renta
+      recibos_consolidados[clave_recibo]["fondo_inscripcion"] += item.fondo_inscripcion
+      recibos_consolidados[clave_recibo]["fondo_ahorro"] += item.fondo_ahorro
+      recibos_consolidados[clave_recibo]["deuda_siniestro"] += item.deuda_siniestro
+
+    empresas_data = {}
+    for recibo in recibos_consolidados.values():
+      empresa_codigo = recibo["codigo_empresa"]
+      
+      if empresa_codigo not in empresas_data:
+        empresas_data[empresa_codigo] = {
+          "codigo_empresa": empresa_codigo,
+          "empresa": recibo["empresa"],
+          "deuda_renta": 0, "fondo_inscripcion": 0, "fondo_ahorro": 0,
+          "deuda_siniestro": 0, "efectivo": 0, "ach": 0, "arp": 0,
+          "nequi": 0, "yappy": 0, "total": 0, "total_admon": 0,
+          "total_recibos": 0 
         }
 
-      empresas_data[empresa_codigo]["deuda_renta"] += item.deuda_renta
-      empresas_data[empresa_codigo]["fondo_inscripcion"] += item.fondo_inscripcion
-      empresas_data[empresa_codigo]["fondo_ahorro"] += item.fondo_ahorro
-      empresas_data[empresa_codigo]["deuda_siniestro"] += item.deuda_siniestro
-      empresas_data[empresa_codigo]["total"] += item.total
-      empresas_data[empresa_codigo]["total_recibos"].add(item.recibo)
+      empresas_data[empresa_codigo]["deuda_renta"] += recibo["deuda_renta"]
+      empresas_data[empresa_codigo]["fondo_inscripcion"] += recibo["fondo_inscripcion"]
+      empresas_data[empresa_codigo]["fondo_ahorro"] += recibo["fondo_ahorro"]
+      empresas_data[empresa_codigo]["deuda_siniestro"] += recibo["deuda_siniestro"]
+      empresas_data[empresa_codigo]["total"] += recibo["total"]
+      empresas_data[empresa_codigo]["total_recibos"] += 1
 
       admon_fee_component = 0
-      if item.paga_admon == "1" and item.global_und == "2":
-        admon_fee_component = round((item.deuda_renta * item.cuota_admon) / item.cuota_diaria, 2)
+      if recibo["paga_admon"] == "1" and recibo["global_und"] == "2" and recibo["cuota_diaria"] and recibo["cuota_diaria"] > 0:
+        admon_fee_component = round((recibo["deuda_renta"] * recibo["cuota_admon"]) / recibo["cuota_diaria"], 2)
       
       empresas_data[empresa_codigo]["total_admon"] += admon_fee_component
 
-      if item.forma_pago == "1":
-        empresas_data[empresa_codigo]["efectivo"] += item.total
-      elif item.forma_pago == "2":
-        empresas_data[empresa_codigo]["ach"] += item.total
-      elif item.forma_pago == "3":
-        empresas_data[empresa_codigo]["arp"] += item.total
-      elif item.forma_pago == "4":
-        empresas_data[empresa_codigo]["nequi"] += item.total
-      elif item.forma_pago == "5":
-        empresas_data[empresa_codigo]["yappy"] += item.total
+      if recibo["forma_pago"] == "1":
+        empresas_data[empresa_codigo]["efectivo"] += recibo["total"]
+      elif recibo["forma_pago"] == "2":
+        empresas_data[empresa_codigo]["ach"] += recibo["total"]
+      elif recibo["forma_pago"] == "3":
+        empresas_data[empresa_codigo]["arp"] += recibo["total"]
+      elif recibo["forma_pago"] == "4":
+        empresas_data[empresa_codigo]["nequi"] += recibo["total"]
+      elif recibo["forma_pago"] == "5":
+        empresas_data[empresa_codigo]["yappy"] += recibo["total"]
 
-    empresas_resumen = []
-    for empresa_codigo, datos in empresas_data.items():
-      datos["total_recibos"] = len(datos["total_recibos"])
+    empresas_resumen = list(empresas_data.values())
+    
+    if not empresas_resumen:
+      return JSONResponse(content={"message": "No se encontraron datos para resumir tras aplicar los filtros"}, status_code=404)
+
+    for datos in empresas_resumen:
       datos["total_resta_admon"] = datos["total"] - datos["total_admon"]
-      empresas_resumen.append(datos)
 
     empresas_resumen = sorted(empresas_resumen, key=lambda x: x["empresa"])
 
@@ -478,22 +489,12 @@ async def general_relationshiprevenues_report(data: GeneralRelationshipRevenuesR
     if data.usuario == user_admin:
       usuario = "Administrador"
 
-    if not empresas_resumen:
-      return JSONResponse(content={"message": "No se encontraron empresas con los datos proporcionados"}, status_code=404)
-
-    info_empresa = db.query(
-      InfoEmpresas.NOMBRE,
-      InfoEmpresas.NIT,
-      InfoEmpresas.LOGO
-    ).filter(InfoEmpresas.ID == data.codigo_empresa).first()
+    info_empresa = db.query(InfoEmpresas.NOMBRE, InfoEmpresas.NIT, InfoEmpresas.LOGO).filter(InfoEmpresas.ID == data.codigo_empresa).first()
 
     data_response = {
       "empresas": empresas_resumen,
       "totales_generales": totales_generales,
-      "fechas": {
-        "primeraFecha": data.primeraFecha,
-        "ultimaFecha": data.ultimaFecha
-      },
+      "fechas": { "primeraFecha": data.primeraFecha, "ultimaFecha": data.ultimaFecha },
       "usuario": usuario,
       "fecha": fecha,
       "hora": hora_actual,
@@ -503,42 +504,37 @@ async def general_relationshiprevenues_report(data: GeneralRelationshipRevenuesR
       "logo_empresa": info_empresa.LOGO if info_empresa else ""
     }
 
-    headers = {
-      "Content-Disposition": "attachment; filename=relacion-ingresos-empresas.pdf"
-    }
+    headers = { "Content-Disposition": "attachment; filename=relacion-ingresos-empresas.pdf" }
 
     template_loader = jinja2.FileSystemLoader(searchpath="./templates")
     template_env = jinja2.Environment(loader=template_loader)
-    template_file = "RelacionIngresosGeneral.html"
-    header_file = "header.html"
-    footer_file = "footer1.html"
-    template = template_env.get_template(template_file)
-    header = template_env.get_template(header_file)
-    footer = template_env.get_template(footer_file)
+    template = template_env.get_template("RelacionIngresosGeneral.html")
+    header = template_env.get_template("header.html")
+    footer = template_env.get_template("footer1.html")
     output_text = template.render(data=data_response)
     output_header = header.render(data_view=data_response)
     output_footer = footer.render(data=data_response)
 
-    with tempfile.NamedTemporaryFile(delete=False, suffix=".html", mode="w") as html_file:
+    with tempfile.NamedTemporaryFile(delete=False, suffix=".html", mode="w", encoding="utf-8") as html_file:
       html_path = html_file.name
       html_file.write(output_text)
-    with tempfile.NamedTemporaryFile(delete=False, suffix=".html", mode="w") as header_file:
+    with tempfile.NamedTemporaryFile(delete=False, suffix=".html", mode="w", encoding="utf-8") as header_file:
       header_path = header_file.name
       header_file.write(output_header)
-    with tempfile.NamedTemporaryFile(delete=False, suffix=".html", mode="w") as footer_file:
+    with tempfile.NamedTemporaryFile(delete=False, suffix=".html", mode="w", encoding="utf-8") as footer_file:
       footer_path = footer_file.name
       footer_file.write(output_footer)
+    
     pdf_path = tempfile.NamedTemporaryFile(delete=False, suffix=".pdf").name
 
     html2pdf(data_response["titulo"], html_path, pdf_path, header_path=header_path, footer_path=footer_path)
 
-    background_tasks = BackgroundTasks()
     background_tasks.add_task(os.remove, html_path)
     background_tasks.add_task(os.remove, header_path)
     background_tasks.add_task(os.remove, footer_path)
     background_tasks.add_task(os.remove, pdf_path)
 
-    response = FileResponse(
+    return FileResponse(
         pdf_path, 
         media_type='application/pdf',
         headers=headers,
@@ -546,9 +542,7 @@ async def general_relationshiprevenues_report(data: GeneralRelationshipRevenuesR
         background=background_tasks
       )
 
-    return response
-
   except Exception as e:
-    return JSONResponse(content={"message": str(e)}, status_code=400)
+    return JSONResponse(content={"message": f"Ocurrió un error inesperado: {str(e)}"}, status_code=500)
   finally:
     db.close()
