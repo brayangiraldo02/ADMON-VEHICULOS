@@ -94,7 +94,7 @@ async def get_driver_operation(driver_number: str):
     driver_operations = db.query(
       Conductores.NOMBRE, Conductores.CEDULA, Conductores.TELEFONO, 
       Conductores.CELULAR, Conductores.DIRECCION, Conductores.LICEN_NRO, 
-      Conductores.LICEN_VCE, Conductores.UND_NRO, Conductores.ESTADO
+      Conductores.LICEN_VCE, Conductores.UND_NRO, Conductores.UND_PRE, Conductores.ESTADO
     ).filter(
       Conductores.CODIGO == driver_number
     ).first()
@@ -111,6 +111,7 @@ async def get_driver_operation(driver_number: str):
       'licencia_numero': driver_operations.LICEN_NRO,
       'licencia_vencimiento': driver_operations.LICEN_VCE,
       'vehiculo': driver_operations.UND_NRO,
+      'vehiculo_original': driver_operations.UND_PRE,
       'estado': driver_operations.ESTADO
     }
 
