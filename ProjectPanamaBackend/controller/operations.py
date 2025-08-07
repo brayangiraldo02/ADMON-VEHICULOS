@@ -933,7 +933,7 @@ async def loan_vehicle(data: LoanVehicle):
 
     db.commit()
 
-    return JSONResponse(content={"message": "Préstamo de vehículo creado con éxito"}, status_code=201)
+    return JSONResponse(content={"message": "Préstamo de vehículo realizado con éxito"}, status_code=201)
 
   except Exception as e:
     db.rollback()
@@ -962,6 +962,63 @@ async def return_validation(company_code: str, vehicle_number: str):
     return JSONResponse(content=response, status_code=200)
 
   except Exception as e:
+    return JSONResponse(content={"message": str(e)}, status_code=500)
+  finally:
+    db.close()
+
+#-----------------------------------------------------------------------------------------------
+
+async def return_vehicle(data: ReturnVehicle):
+  db = session()
+  try:
+    return_vehicle = db.query(Vehiculos).filter(Vehiculos.NUMERO == data.return_vehicle, Vehiculos.EMPRESA == data.company_code).first()
+    if not return_vehicle:
+      return JSONResponse(content={"message": "Vehículo de préstamo no encontrado"}, status_code=404)
+    
+    if return_vehicle.ESTADO != '19':
+      return JSONResponse(content={"message": "Vehículo no está en estado de préstamo"}, status_code=400)
+    
+    original_vehicle = db.query(Vehiculos).filter(Vehiculos.NUMERO == data.original_vehicle, Vehiculos.EMPRESA == data.company_code).first()
+    if not original_vehicle:
+      return JSONResponse(content={"message": "Vehículo original no encontrado"}, status_code=404)
+    
+    if data.reason == '':
+      return JSONResponse(content={"message": "Motivo de la devolución es requerido"}, status_code=400)
+    
+    return_vehicle_state = db.query(Estados).filter(Estados.CODIGO == '06', Estados.EMPRESA == data.company_code).first()
+    if not return_vehicle_state:
+      return JSONResponse(content={"message": "Estado no encontrado"}, status_code=404)
+    
+    original_vehicle_state = db.query(Estados).filter(Estados.CODIGO == '01', Estados.EMPRESA == data.company_code).first()
+    if not original_vehicle_state:
+      return JSONResponse(content={"message": "Estado no encontrado"}, status_code=404)
+    
+    driver = db.query(Conductores).filter(Conductores.CODIGO == return_vehicle.CONDUCTOR, Conductores.EMPRESA == data.company_code).first()
+    if not driver:
+      return JSONResponse(content={"message": "Conductor no encontrado"}, status_code=404)
+    
+    panama_timezone = pytz.timezone('America/Panama')
+    now_in_panama = datetime.now(panama_timezone)
+
+    return_vehicle.ESTADO = '06'
+    return_vehicle.ABREVIADO = return_vehicle_state.ABREVIADO
+    return_vehicle.NOMESTADO = return_vehicle_state.NOMBRE
+    return_vehicle.CONDUCTOR = ''
+
+    original_vehicle.ESTADO = '01'
+    original_vehicle.ABREVIADO = original_vehicle_state.ABREVIADO
+    original_vehicle.NOMESTADO = original_vehicle_state.NOMBRE
+
+    driver.UND_NRO = original_vehicle.NUMERO
+    driver.UND_PRE = ''
+    driver.FEC_PRESTA = None
+    driver.FEC_DEVOLU = now_in_panama
+
+    db.commit()
+
+    return JSONResponse(content={"message": "Devolución de vehículo realizada con éxito"}, status_code=201)
+  except Exception as e:
+    db.rollback()
     return JSONResponse(content={"message": str(e)}, status_code=500)
   finally:
     db.close()

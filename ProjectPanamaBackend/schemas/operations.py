@@ -43,3 +43,9 @@ class LoanVehicle(BaseModel):
   original_vehicle: str
   loan_vehicle: str
   reason: str
+
+class ReturnVehicle(BaseModel):
+  company_code: str
+  return_vehicle: str
+  original_vehicle: str
+  reason: str
