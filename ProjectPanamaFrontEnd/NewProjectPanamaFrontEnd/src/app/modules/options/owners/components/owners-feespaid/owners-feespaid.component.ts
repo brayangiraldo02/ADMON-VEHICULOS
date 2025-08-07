@@ -193,6 +193,7 @@ export class OwnersFeespaidComponent  implements OnInit {
   generarInforme() {
     this.isLoading = true;
     let user = this.obtenerUsuario();
+    const company = this.getCompany();
     if (this.empresasSeleccionadas.length === 0) {
       this.empresasSeleccionadas = this.obtenerIdsEmpresas();
     }
@@ -205,10 +206,12 @@ export class OwnersFeespaidComponent  implements OnInit {
       estados: this.estadosSeleccionados,
     };
 
+    const endpoint = 'informe-cuotas-pagas/' + company;
+
     console.log(this.estadosSeleccionados);
 
     // Guardar endpoint y data en LocalStorage
-    localStorage.setItem('pdfEndpoint', 'informe-cuotas-pagas');
+    localStorage.setItem('pdfEndpoint', endpoint);
     localStorage.setItem('pdfData', JSON.stringify(info));
 
     // Navegar al componente PdfViewerComponent
