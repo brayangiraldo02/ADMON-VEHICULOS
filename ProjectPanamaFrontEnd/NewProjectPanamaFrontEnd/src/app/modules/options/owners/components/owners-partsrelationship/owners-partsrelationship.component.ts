@@ -64,6 +64,11 @@ export class OwnersPartsrelationshipComponent implements OnInit {
     this.getUser();
   }
 
+  getCompany() {
+    const userData = this.jwtService.getUserData();
+    return userData ? userData.empresa : '';
+  }
+
   getDate(): void {
     this.apiService.getData('extras/time').subscribe(
       (response) => {
@@ -171,7 +176,8 @@ export class OwnersPartsrelationshipComponent implements OnInit {
   }
 
   openExternalLink(): void {
-    let endpoint = 'partsrelationship';
+    const company = this.getCompany();
+    let endpoint = 'partsrelationship/'+company;
     if (endpoint) {
       const companyValue = this.infoForm.value.companie;
       const companyId = companyValue.split(' - ').pop()?.trim() || companyValue;
