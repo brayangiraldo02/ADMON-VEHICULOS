@@ -6,6 +6,7 @@ import { OperacionesCrearCuentaDiarioConductorComponent } from '../operaciones-c
 import { OperacionesCambiarEstadoVehiculoComponent } from '../operaciones-cambiar-estado-vehiculo/operaciones-cambiar-estado-vehiculo.component';
 import { OperacionesCambiarPatioVehiculoComponent } from '../operaciones-cambiar-patio-vehiculo/operaciones-cambiar-patio-vehiculo.component';
 import { OperacionesCorregirKilometrajeActualComponent } from '../operaciones-corregir-kilometraje-actual/operaciones-corregir-kilometraje-actual.component';
+import { OperacionesPrestamoVehiculoConductorComponent } from '../operaciones-prestamo-vehiculo-conductor/operaciones-prestamo-vehiculo-conductor.component';
 
 @Component({
   selector: 'app-opciones-operaciones',
@@ -19,7 +20,7 @@ export class OpcionesOperacionesComponent {
     { name: 'Crear Cuenta de Diario al Conductor (Anticipo de Cuenta)', icon: 'info', url: 'CrearCuentaDiarioConductor', disabled: false },
     { name: 'Cambiar de Estado a un Vehículo', icon: 'info', url: 'CambiarEstadoVehiculo', disabled: false },
     { name: 'Cambiar de Patio a un Vehículo', icon: 'info', url: 'CambiarPatioVehiculo', disabled: false },
-    { name: 'Prestamo de Vehículo al Conductor', icon: 'info', url: 'hoalalalal', disabled: true },
+    { name: 'Prestamo de Vehículo al Conductor', icon: 'info', url: 'PrestamoVehiculoConductor', disabled: false },
     { name: 'Devolución de Vehículos Prestados', icon: 'info', url: 'hoalalalal', disabled: true },
     { name: 'Bajar Conductor del Vehículo (Culminación del Contrato)', icon: 'info', url: 'hoalalalal', disabled: true },
     { name: 'Corregir Kilometraje Actual al Vehículo', icon: 'info', url: 'CorregirKilometrajeActualVehiculo', disabled: false },
@@ -78,7 +79,12 @@ export class OpcionesOperacionesComponent {
           }
         );
         break;
-      case 'Prestamo de Vehículo al Conductor':
+      case 'PrestamoVehiculoConductor':
+        this.dialog.open(OperacionesPrestamoVehiculoConductorComponent,
+          {
+            width: dialogWidth
+          }
+        )
         break;
       case 'Devolución de Vehículos Prestados':
         break;
