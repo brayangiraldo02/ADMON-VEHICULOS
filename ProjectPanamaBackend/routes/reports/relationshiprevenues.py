@@ -387,7 +387,9 @@ async def general_relationshiprevenues_report(data: GeneralRelationshipRevenuesR
       CajaRecaudos.FEC_RECIBO <= data.ultimaFecha,
       CajaRecaudos.PROPI_IDEN.in_(data.empresas),
       CajaRecaudos.FORMAPAGO.in_(["1", "2", "3", "4", "5"]),
-      CajaRecaudos.EMPRESA == Propietarios.EMPRESA
+      CajaRecaudos.EMPRESA == data.codigo_empresa,
+      CajaRecaudos.EMPRESA == Propietarios.EMPRESA,
+      Propietarios.EMPRESA == Vehiculos.EMPRESA
     ).all()
       
     if not conteo_reporte_ingresos:
@@ -500,7 +502,7 @@ async def general_relationshiprevenues_report(data: GeneralRelationshipRevenuesR
 
     info_empresa = db.query(InfoEmpresas.NOMBRE, InfoEmpresas.NIT, InfoEmpresas.LOGO).filter(InfoEmpresas.ID == data.codigo_empresa).first()
 
-    data_response = {
+    info_view = {
       "empresas": empresas_resumen,
       "totales_generales": totales_generales,
       "fechas": { "primeraFecha": data.primeraFecha, "ultimaFecha": data.ultimaFecha },
@@ -518,11 +520,11 @@ async def general_relationshiprevenues_report(data: GeneralRelationshipRevenuesR
     template_loader = jinja2.FileSystemLoader(searchpath="./templates")
     template_env = jinja2.Environment(loader=template_loader)
     template = template_env.get_template("RelacionIngresosGeneral.html")
-    header = template_env.get_template("header.html")
+    header = template_env.get_template("header2.html")
     footer = template_env.get_template("footer1.html")
-    output_text = template.render(data=data_response)
-    output_header = header.render(data_view=data_response)
-    output_footer = footer.render(data=data_response)
+    output_text = template.render(data=info_view)
+    output_header = header.render(info_view)
+    output_footer = footer.render(info_view)
 
     with tempfile.NamedTemporaryFile(delete=False, suffix=".html", mode="w", encoding="utf-8") as html_file:
       html_path = html_file.name
@@ -536,7 +538,7 @@ async def general_relationshiprevenues_report(data: GeneralRelationshipRevenuesR
     
     pdf_path = tempfile.NamedTemporaryFile(delete=False, suffix=".pdf").name
 
-    html2pdf(data_response["titulo"], html_path, pdf_path, header_path=header_path, footer_path=footer_path)
+    html2pdf(info_view["titulo"], html_path, pdf_path, header_path=header_path, footer_path=footer_path)
 
     background_tasks.add_task(os.remove, html_path)
     background_tasks.add_task(os.remove, header_path)
