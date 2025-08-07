@@ -37,3 +37,9 @@ class VehicleMileage(BaseModel):
   company_code: str
   vehicle_number: str
   mileage: int
+
+class LoanVehicle(BaseModel):
+  company_code: str
+  original_vehicle: str
+  loan_vehicle: str
+  reason: str

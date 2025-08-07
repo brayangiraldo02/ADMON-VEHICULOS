@@ -873,3 +873,70 @@ async def loan_validation(company_code: str, vehicle_number: str):
     return JSONResponse(content={"message": str(e)}, status_code=500)
   finally:
     db.close()
+
+#-----------------------------------------------------------------------------------------------
+
+async def loan_vehicle(data: LoanVehicle):
+  db = session()
+  try:
+    original_vehicle = db.query(Vehiculos).filter(Vehiculos.NUMERO == data.original_vehicle, Vehiculos.EMPRESA == data.company_code).first()
+
+    if not original_vehicle:
+      return JSONResponse(content={"message": "Vehículo no encontrado"}, status_code=404)
+
+    if original_vehicle.ESTADO != '01' and original_vehicle.ESTADO != '11' and original_vehicle.ESTADO != '12':
+      return JSONResponse(content={"message": "Vehículo no está en estado disponible para préstamo"}, status_code=400)
+
+    if not original_vehicle.CONDUCTOR or original_vehicle.CONDUCTOR == '':
+      return JSONResponse(content={"message": "Vehículo debe tener un conductor asignado"}, status_code=400)
+    
+    loan_vehicle = db.query(Vehiculos).filter(Vehiculos.NUMERO == data.loan_vehicle, Vehiculos.EMPRESA == data.company_code).first()
+
+    if not loan_vehicle:
+      return JSONResponse(content={"message": "Vehículo para préstamo no encontrado"}, status_code=404)
+    
+    if loan_vehicle.ESTADO != '06':
+      return JSONResponse(content={"message": "Vehículo debe estar esperando operador"}, status_code=400)
+    
+    if data.reason == '':
+      return JSONResponse(content={"message": "Motivo del préstamo es requerido"}, status_code=400)
+    
+    loan_vehicle_state = db.query(Estados).filter(Estados.CODIGO == '19', Estados.EMPRESA == data.company_code).first()
+    if not loan_vehicle_state:
+      return JSONResponse(content={"message": "Estado no encontrado"}, status_code=404)
+
+    original_vehicle_state = db.query(Estados).filter(Estados.CODIGO == '11', Estados.EMPRESA == data.company_code).first()
+    if not original_vehicle_state:
+      return JSONResponse(content={"message": "Estado no encontrado"}, status_code=404)
+    
+    driver = db.query(Conductores).filter(Conductores.CODIGO == original_vehicle.CONDUCTOR, Conductores.EMPRESA == data.company_code).first()
+    if not driver:
+      return JSONResponse(content={"message": "Conductor no encontrado"}, status_code=404)
+
+    panama_timezone = pytz.timezone('America/Panama')
+    now_in_panama = datetime.now(panama_timezone)
+    
+    loan_vehicle.ESTADO = '19'
+    loan_vehicle.ABREVIADO = loan_vehicle_state.ABREVIADO
+    loan_vehicle.NOMESTADO = loan_vehicle_state.NOMBRE
+
+    if original_vehicle.ESTADO == '01':
+      original_vehicle.ESTADO = '11'
+      original_vehicle.ABREVIADO = original_vehicle_state.ABREVIADO
+      original_vehicle.NOMESTADO = original_vehicle_state.NOMBRE
+
+    driver.UND_NRO = loan_vehicle.NUMERO
+    driver.UND_PRE = original_vehicle.NUMERO
+    driver.FEC_PRESTA = now_in_panama
+
+    loan_vehicle.CONDUCTOR = driver.CODIGO
+
+    db.commit()
+
+    return JSONResponse(content={"message": "Préstamo de vehículo creado con éxito"}, status_code=201)
+
+  except Exception as e:
+    db.rollback()
+    return JSONResponse(content={"message": str(e)}, status_code=500)
+  finally:
+    db.close()
