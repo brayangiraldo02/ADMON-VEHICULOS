@@ -129,8 +129,8 @@ async def get_conteo_vehiculos_estados(info: userInfo):
 
 #-----------------------------------------------------------------------------------------
 
-@statevehiclefleetReports_router.post('/estado-vehiculos-resumen-empresa/{id}/', response_class=FileResponse)
-async def get_conteo_propietarios_vehiculos_estados(id: str, info: userInfo):
+@statevehiclefleetReports_router.post('/estado-vehiculos-resumen-empresa/{id}/{company_code}', response_class=FileResponse)
+async def get_conteo_propietarios_vehiculos_estados(id: str, company_code: str, info: userInfo):
     db = session()
     try:
         conteo_propietarios_vehiculos_estados = db.query(
@@ -144,6 +144,9 @@ async def get_conteo_propietarios_vehiculos_estados(id: str, info: userInfo):
         .join(Vehiculos, Estados.CODIGO == Vehiculos.ESTADO) \
         .join(Propietarios, Vehiculos.PROPI_IDEN == Propietarios.CODIGO) \
         .filter(Propietarios.CODIGO == id) \
+        .filter(Propietarios.EMPRESA == company_code) \
+        .filter(Vehiculos.EMPRESA == company_code) \
+        .filter(Estados.EMPRESA == company_code) \
         .distinct() \
         .all()
 
