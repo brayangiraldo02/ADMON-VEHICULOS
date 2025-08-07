@@ -129,7 +129,7 @@ async def get_conteo_vehiculos_estados(info: userInfo):
 
 #-----------------------------------------------------------------------------------------
 
-@statevehiclefleetReports_router.post('/estado-vehiculos-resumen-empresa/{id}/{company_code}', response_class=FileResponse)
+@statevehiclefleetReports_router.post('/estado-vehiculos-resumen-empresa/{id}/{company_code}/', response_class=FileResponse)
 async def get_conteo_propietarios_vehiculos_estados(id: str, company_code: str, info: userInfo):
     db = session()
     try:
