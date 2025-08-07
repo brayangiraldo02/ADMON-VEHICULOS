@@ -447,8 +447,8 @@ async def get_conteo_vehiculos_estados_numeros(info: userInfo):
 
 # -----------------------------------------------------------------------------------------
 
-@statevehiclefleetReports_router.post('/informe-estados-detallado-empresa/{id}/', response_class=FileResponse)
-async def get_conteo_propietarios_vehiculos_estados_numeros(id: str, info: userInfo):
+@statevehiclefleetReports_router.post('/informe-estados-detallado-empresa/{id}/{company_code}/', response_class=FileResponse)
+async def get_conteo_propietarios_vehiculos_estados_numeros(id: str, company_code: str, info: userInfo):
   db = session()
   try:
     conteo_propietarios_vehiculos_estados = db.query(
@@ -458,7 +458,10 @@ async def get_conteo_propietarios_vehiculos_estados_numeros(id: str, info: userI
         Estados.CODIGO.label('estado_codigo'),
         Estados.NOMBRE.label('estado_nombre'),
         Vehiculos.NUMERO.label('vehiculo_numero')
-    ).join(Vehiculos, Estados.CODIGO == Vehiculos.ESTADO).join(Propietarios, Vehiculos.PROPI_IDEN == Propietarios.CODIGO).filter(Propietarios.CODIGO == id).distinct().all()
+    ).join(Vehiculos, Estados.CODIGO == Vehiculos.ESTADO).join(Propietarios, Vehiculos.PROPI_IDEN == Propietarios.CODIGO).filter(Propietarios.CODIGO == id).filter(Propietarios.EMPRESA == company_code) \
+    .filter(Vehiculos.EMPRESA == company_code) \
+    .filter(Estados.EMPRESA == company_code) \
+    .distinct().all()
 
     id_empresa = conteo_propietarios_vehiculos_estados[0].empresa_codigo
 
