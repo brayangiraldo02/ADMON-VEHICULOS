@@ -23,8 +23,8 @@ templateJinja = Jinja2Templates(directory="templates")
 
 relationshiprevenuesReports_router = APIRouter()
 
-@relationshiprevenuesReports_router.post("/relationshiprevenues/", tags=["Reports"])
-async def relationshiprevenues_report(data: RelationshipRevenuesReport):
+@relationshiprevenuesReports_router.post("/relationshiprevenues/{company_code}", tags=["Reports"])
+async def relationshiprevenues_report(company_code: str, data: RelationshipRevenuesReport):
   db = session()
   try:
     if data.primeraFecha > data.ultimaFecha:
@@ -65,6 +65,9 @@ async def relationshiprevenues_report(data: RelationshipRevenuesReport):
           CajaRecaudos.FEC_RECIBO <= data.ultimaFecha,
           CajaRecaudos.PROPI_IDEN == empresa,
           CajaRecaudos.FORMAPAGO.in_(["1", "2", "3", "4", "5"]),
+          CajaRecaudos.EMPRESA == company_code,
+          Propietarios.EMPRESA == company_code,
+          Vehiculos.EMPRESA == company_code,
           CajaRecaudos.EMPRESA == Propietarios.EMPRESA
         ).all()
       else:
@@ -96,6 +99,9 @@ async def relationshiprevenues_report(data: RelationshipRevenuesReport):
           CajaRecaudos.FEC_RECIBO <= data.ultimaFecha,
           CajaRecaudos.FORMAPAGO.in_(["1", "2", "3", "4", "5"]),
           CajaRecaudos.PROPI_IDEN == empresa,
+          CajaRecaudos.EMPRESA == company_code,
+          Propietarios.EMPRESA == company_code,
+          Vehiculos.EMPRESA == company_code,
           CajaRecaudos.EMPRESA == Propietarios.EMPRESA
         ).all()
 
@@ -129,6 +135,9 @@ async def relationshiprevenues_report(data: RelationshipRevenuesReport):
           CajaRecaudos.NUMERO == data.unidad,
           CajaRecaudos.FORMAPAGO.in_(["1", "2", "3", "4", "5"]),
           CajaRecaudos.PROPI_IDEN == empresa,
+          CajaRecaudos.EMPRESA == company_code,
+          Propietarios.EMPRESA == company_code,
+          Vehiculos.EMPRESA == company_code,
           CajaRecaudos.EMPRESA == Propietarios.EMPRESA
         ).all()
       
