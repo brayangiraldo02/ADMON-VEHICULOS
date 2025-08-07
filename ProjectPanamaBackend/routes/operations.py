@@ -47,3 +47,7 @@ async def get_vehicle_mileage(company_code: str, vehicle_number: str):
 @operations_router.post("/operations/update-vehicle-mileage/", tags=["Operations"])
 async def post_update_vehicle_mileage(data: VehicleMileage):
   return await update_mileage(data)
+
+@operations_router.get("/operations/loan-vehicle/validation/{company_code}/{vehicle_number}/", tags=["Operations"])
+async def get_loan_vehicle_validation(company_code: str, vehicle_number: str):
+  return await loan_validation(company_code, vehicle_number)
