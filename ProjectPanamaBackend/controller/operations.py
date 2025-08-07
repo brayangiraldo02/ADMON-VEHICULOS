@@ -736,7 +736,7 @@ async def new_bill(bill_data: BillInfo):
 
     db.add(new_bill)
     db.commit()
-    return JSONResponse(content={"message": "Cuenta creada con éxito"}, status_code=200)
+    return JSONResponse(content={"message": "Cuenta creada con éxito"}, status_code=201)
   except Exception as e:
     db.rollback()
     return JSONResponse(content={"message": str(e)}, status_code=500)
@@ -933,7 +933,7 @@ async def loan_vehicle(data: LoanVehicle):
 
     db.commit()
 
-    return JSONResponse(content={"message": "Préstamo de vehículo realizado con éxito"}, status_code=201)
+    return JSONResponse(content={"message": "Préstamo de vehículo realizado con éxito"}, status_code=200)
 
   except Exception as e:
     db.rollback()
@@ -1016,7 +1016,7 @@ async def return_vehicle(data: ReturnVehicle):
 
     db.commit()
 
-    return JSONResponse(content={"message": "Devolución de vehículo realizada con éxito"}, status_code=201)
+    return JSONResponse(content={"message": "Devolución de vehículo realizada con éxito"}, status_code=200)
   except Exception as e:
     db.rollback()
     return JSONResponse(content={"message": str(e)}, status_code=500)
