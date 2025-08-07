@@ -132,8 +132,8 @@ async def get_propietarios_detalles():
 
 #--------------------------------------------------------------------------------
 
-@ownersReports_router.post('/valor-compra-vehiculos/', response_class=FileResponse)
-async def get_vehiculos_detalles(infoReports: infoReports):
+@ownersReports_router.post('/valor-compra-vehiculos/{company_code}/', response_class=FileResponse)
+async def get_vehiculos_detalles(company_code: str, infoReports: infoReports):
     db = session()
     try:
         if infoReports.estados == []:
@@ -159,7 +159,9 @@ async def get_vehiculos_detalles(infoReports: infoReports):
             Vehiculos.NOMPIQUERA.label('vehiculo_nompiquera'),
         ).filter(
             Vehiculos.PROPI_IDEN.in_(infoReports.empresas),
-            Vehiculos.ESTADO.in_(infoReports.estados)
+            Vehiculos.ESTADO.in_(infoReports.estados),
+            Propietarios.EMPRESA == company_code,
+            Vehiculos.EMPRESA == company_code,
         ).join(
             Propietarios, Propietarios.CODIGO == Vehiculos.PROPI_IDEN
         ).all()
