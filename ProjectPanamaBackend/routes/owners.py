@@ -536,9 +536,10 @@ async def get_companies_owners(owner: Owner):
         owners_list = [{'id': owner.CODIGO, 'name': owner.NOMBRE} for owner in owners]
 
       else:
+        company_code = db.query(PermisosUsuario.EMPRESA).filter(PermisosUsuario.CODIGO == owner.propietario).first()
         companies = db.query(PermisosUsuario.EMPRESAS).filter(PermisosUsuario.CODIGO == owner.propietario).first()
         companies_list = companies.EMPRESAS.strip('[]').split()
-        owners = db.query(Propietarios.CODIGO, Propietarios.NOMBRE).filter(Propietarios.CODIGO.in_(companies_list)).all()
+        owners = db.query(Propietarios.CODIGO, Propietarios.NOMBRE).filter(Propietarios.CODIGO.in_(companies_list)).filter(Propietarios.EMPRESA == company_code[0]).all()
         owners_list = [{'id': owner.CODIGO, 'name': owner.NOMBRE} for owner in owners]
 
       return JSONResponse(content=jsonable_encoder(owners_list), status_code=200)
