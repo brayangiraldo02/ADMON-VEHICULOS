@@ -22,8 +22,8 @@ templateJinja = Jinja2Templates(directory="templates")
 
 pandgstatus_router = APIRouter()
 
-@pandgstatus_router.post("/pandgstatus/", tags=["Reports"])
-async def pandgstatus_report(data: PandGStatusReport):
+@pandgstatus_router.post("/pandgstatus/{company_code}/", tags=["Reports"])
+async def pandgstatus_report(company_code: str, data: PandGStatusReport):
   db = session()
   try:
     if data.primeraFecha > data.ultimaFecha:
@@ -60,6 +60,8 @@ async def pandgstatus_report(data: PandGStatusReport):
           (CajaRecaudos.PROPI_IDEN.in_(empresa))
         ).filter(
           Vehiculos.PROPI_IDEN.in_(empresa),
+          Vehiculos.EMPRESA == company_code,
+          CajaRecaudos.EMPRESA == company_code,
         ).group_by(
           Vehiculos.NUMERO,
           Vehiculos.FEC_CREADO,
@@ -82,6 +84,7 @@ async def pandgstatus_report(data: PandGStatusReport):
           Movimien.FECHA <= data.ultimaFecha,
           Movimien.TIPO.in_(['024', '027', '026', '022', '016']),
           Movimien.PROPI_IDEN.in_(empresa),
+          Movimien.EMPRESA == company_code,
           # Movimien.FORMAPAGO.in_(['01', '02', '03', '04', '05'])
         ).group_by(
           Movimien.UNIDAD,
@@ -287,6 +290,8 @@ async def pandgstatus_report(data: PandGStatusReport):
         (CajaRecaudos.PROPI_IDEN.in_(empresa))
       ).filter(
         Vehiculos.NUMERO == data.unidad,
+        Vehiculos.EMPRESA == company_code,
+        CajaRecaudos.EMPRESA == company_code,
       ).group_by(
         Vehiculos.NUMERO,
         Vehiculos.FEC_CREADO,
@@ -308,6 +313,7 @@ async def pandgstatus_report(data: PandGStatusReport):
         Movimien.FECHA <= data.ultimaFecha,
         Movimien.TIPO.in_(['024', '027', '026', '022', '016']),
         Movimien.PROPI_IDEN.in_(empresa),
+        Movimien.EMPRESA == company_code,
         # Movimien.FORMAPAGO.in_(['01', '02', '03', '04', '05'])
       ).group_by(
         Movimien.TIPO
@@ -382,7 +388,9 @@ async def pandgstatus_report(data: PandGStatusReport):
         ).join(
             Vehiculos, Vehiculos.PROPI_IDEN == Propietarios.CODIGO
         ).filter(
-            Vehiculos.NUMERO == data.unidad
+            Vehiculos.NUMERO == data.unidad,
+            Propietarios.EMPRESA == company_code,
+            Vehiculos.EMPRESA == company_code,
         ).first()
         
         if empresa_info:
@@ -420,7 +428,9 @@ async def pandgstatus_report(data: PandGStatusReport):
         ).join(
             Propietarios, Vehiculos.PROPI_IDEN == Propietarios.CODIGO
         ).filter(
-            Vehiculos.NUMERO.in_([u["NUMERO"] for u in info_unidades])
+            Vehiculos.NUMERO.in_([u["NUMERO"] for u in info_unidades]),
+            Propietarios.EMPRESA == company_code,
+            Vehiculos.EMPRESA == company_code,
         ).all()
 
         id_empresa = empresas_info[0].codigo_empresa

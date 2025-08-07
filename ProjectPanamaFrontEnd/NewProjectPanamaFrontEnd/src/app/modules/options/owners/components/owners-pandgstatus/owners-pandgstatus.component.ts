@@ -49,6 +49,11 @@ export class OwnersPandgstatusComponent  implements OnInit {
     this.getUser();
   }
 
+  getCompany() {
+    const userData = this.jwtService.getUserData();
+    return userData ? userData.empresa : '';
+  }
+
   getDate(): void {
     this.apiService.getData('extras/time').subscribe(
       (response) => {
@@ -124,7 +129,8 @@ export class OwnersPandgstatusComponent  implements OnInit {
   }
 
   openExternalLink(): void {
-    let endpoint = 'pandgstatus';
+    const company = this.getCompany();
+    let endpoint = 'pandgstatus/'+company;
     if (endpoint) {
 
       const data = {
