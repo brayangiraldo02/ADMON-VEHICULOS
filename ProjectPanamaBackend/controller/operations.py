@@ -940,3 +940,28 @@ async def loan_vehicle(data: LoanVehicle):
     return JSONResponse(content={"message": str(e)}, status_code=500)
   finally:
     db.close()
+
+#-----------------------------------------------------------------------------------------------
+
+async def return_validation(company_code: str, vehicle_number: str):
+  db = session()
+  try:
+    vehicle = db.query(Vehiculos).filter(Vehiculos.NUMERO == vehicle_number, Vehiculos.EMPRESA == company_code).first()
+    if not vehicle:
+      return JSONResponse(content={"message": "Vehículo no encontrado"}, status_code=404)
+
+    state = 0
+
+    if vehicle.ESTADO == '19':
+      state = 1
+
+    response = {
+      "state": state,
+    }
+
+    return JSONResponse(content=response, status_code=200)
+
+  except Exception as e:
+    return JSONResponse(content={"message": str(e)}, status_code=500)
+  finally:
+    db.close()

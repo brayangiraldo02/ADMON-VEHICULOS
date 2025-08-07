@@ -55,3 +55,7 @@ async def get_loan_vehicle_validation(company_code: str, vehicle_number: str):
 @operations_router.post("/operations/loan-vehicle/", tags=["Operations"])
 async def post_loan_vehicle(data: LoanVehicle):
   return await loan_vehicle(data)
+
+@operations_router.get("/operations/return-vehicle/validation/{company_code}/{vehicle_number}/", tags=["Operations"])
+async def get_return_vehicle_validation(company_code: str, vehicle_number: str):
+  return await return_validation(company_code, vehicle_number)
