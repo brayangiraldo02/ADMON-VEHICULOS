@@ -657,14 +657,15 @@ async def get_vehiculos_detalles(infoReports: infoReports):
             Vehiculos.PROPI_IDEN
         ).filter(
             Vehiculos.ESTADO.in_(infoReports.estados),
-            Vehiculos.PROPI_IDEN.in_(infoReports.empresas)
+            Vehiculos.PROPI_IDEN.in_(infoReports.empresas),
+            Vehiculos.EMPRESA == infoReports.empresa
         ).all()
         
         estado_ids = list(set([v.ESTADO for v in vehiculos]))
         conductor_ids = list(set([v.CONDUCTOR for v in vehiculos]))
         propietario_ids = list(set([v.PROPI_IDEN for v in vehiculos]))
         
-        estados_dict = {e.CODIGO: e.NOMBRE for e in db.query(Estados.CODIGO, Estados.NOMBRE).filter(Estados.CODIGO.in_(estado_ids)).all()}
+        estados_dict = {e.CODIGO: e.NOMBRE for e in db.query(Estados.CODIGO, Estados.NOMBRE).filter(Estados.CODIGO.in_(estado_ids), Estados.EMPRESA == infoReports.empresa).all()}
         
         conductores_dict = {c.CODIGO: {
             'nombre': c.NOMBRE,
@@ -681,9 +682,9 @@ async def get_vehiculos_detalles(infoReports: infoReports):
             Conductores.NROENTREGA,
             Conductores.CUO_DIARIA,
             Conductores.NROENTSDO
-        ).filter(Conductores.CODIGO.in_(conductor_ids)).all()}
+        ).filter(Conductores.CODIGO.in_(conductor_ids), Conductores.EMPRESA == infoReports.empresa).all()}
         
-        propietarios_dict = {p.CODIGO: p.NOMBRE for p in db.query(Propietarios.CODIGO, Propietarios.NOMBRE).filter(Propietarios.CODIGO.in_(propietario_ids)).all()}
+        propietarios_dict = {p.CODIGO: p.NOMBRE for p in db.query(Propietarios.CODIGO, Propietarios.NOMBRE).filter(Propietarios.CODIGO.in_(propietario_ids), Propietarios.EMPRESA == infoReports.empresa).all()}
         
         vehiculos_detalles_list = []
         for vehiculo in vehiculos:
@@ -730,9 +731,14 @@ async def get_vehiculos_detalles(infoReports: infoReports):
         usuario = infoReports.usuario
         titulo = 'Relación Vehículos por Propietario'
 
+        info_empresa = db.query(InfoEmpresas.NOMBRE, InfoEmpresas.NIT, InfoEmpresas.LOGO).filter(InfoEmpresas.ID == infoReports.empresa).first()
+
         data_view = {
             "fecha": fecha,
-            "hora": hora_actual
+            "hora": hora_actual,
+            "nombre_empresa": info_empresa.NOMBRE,
+            "nit_empresa": info_empresa.NIT,
+            "logo_empresa": info_empresa.LOGO,
         }
 
         # Iterar sobre las empresas y vehículos
@@ -784,14 +790,14 @@ async def get_vehiculos_detalles(infoReports: infoReports):
         template_loader = jinja2.FileSystemLoader(searchpath="./templates")
         template_env = jinja2.Environment(loader=template_loader)
         template_file = "RelacionVehiculos.html"
-        header_file = "header.html"
-        footer_file = "footer.html"
+        header_file = "header2.html"
+        footer_file = "footer1.html"
         template = template_env.get_template(template_file)
         header = template_env.get_template(header_file)
         footer = template_env.get_template(footer_file)
         output_text = template.render(data_view=data_view)
-        output_header = header.render(data_view=data_view)
-        output_footer = footer.render(data_view=data_view)
+        output_header = header.render(data_view)
+        output_footer = footer.render(data_view)
 
         with tempfile.NamedTemporaryFile(delete=False, suffix='.html', mode='w') as html_file:
             html_path = html_file.name
