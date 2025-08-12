@@ -852,6 +852,8 @@ async def loan_validation(company_code: str, vehicle_number: str):
     if not vehicle:
       return JSONResponse(content={"message": "Vehículo no encontrado"}, status_code=404)
     
+    vehicle_driver = db.query(Conductores).filter(Conductores.CODIGO == vehicle.CONDUCTOR, Conductores.EMPRESA == company_code).first()
+    
     state = 0
 
     if vehicle.ESTADO == '01' or vehicle.ESTADO == '11' or vehicle.ESTADO == '12':
@@ -862,9 +864,14 @@ async def loan_validation(company_code: str, vehicle_number: str):
     if vehicle.CONDUCTOR and vehicle.CONDUCTOR != '':
       driver = 1
 
+    loaned = 0
+    if vehicle_driver.UND_PRE and vehicle_driver.UND_PRE != '':
+      loaned = 1
+
     response = {
       "state": state,
       "driver": driver,
+      "loaned_unit": loaned
     }
 
     return JSONResponse(content=response, status_code=200)
@@ -912,6 +919,9 @@ async def loan_vehicle(data: LoanVehicle):
     driver = db.query(Conductores).filter(Conductores.CODIGO == original_vehicle.CONDUCTOR, Conductores.EMPRESA == data.company_code).first()
     if not driver:
       return JSONResponse(content={"message": "Conductor no encontrado"}, status_code=404)
+    
+    if driver.UND_PRE and driver.UND_PRE != '':
+      return JSONResponse(content={"message": "Conductor ya tiene un vehículo prestado"}, status_code=400)
 
     panama_timezone = pytz.timezone('America/Panama')
     now_in_panama = datetime.now(panama_timezone)
