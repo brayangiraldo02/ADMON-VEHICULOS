@@ -139,6 +139,13 @@
         >
           El vehículo no tiene un conductor asociado.
         </p>
+
+        <p
+          class="message"
+          *ngIf="validationsVehicle.loaned_unit && unauthorizedVehicle"
+        >
+          El conductor ya tiene un vehículo prestado.
+        </p>
       </div>
     </div>
   </div>

@@ -58,11 +58,13 @@ interface objSelect {
 interface validationsVehicleResponse {
   state: 0 | 1;
   driver: 0 | 1;
+  loaned_unit: 0 | 1;
 }
 
 interface validationsVehicle {
   state: boolean;
   driver: boolean;
+  loaned_unit: boolean;
 }
 
 @Component({
@@ -132,6 +134,7 @@ export class OperacionesPrestamoVehiculoConductorComponent {
   validationsVehicle: validationsVehicle = {
     state: false,
     driver: false,
+    loaned_unit: false,
   };
 
   constructor(
@@ -291,10 +294,11 @@ export class OperacionesPrestamoVehiculoConductorComponent {
         next: (data: validationsVehicleResponse) => {
           this.validationsVehicle = {
             state: data.state === 0,  
-            driver: data.driver === 0 
+            driver: data.driver === 0,
+            loaned_unit: data.loaned_unit === 1, 
           };
   
-          if (this.validationsVehicle.state || this.validationsVehicle.driver) {
+          if (this.validationsVehicle.state || this.validationsVehicle.driver || this.validationsVehicle.loaned_unit) {
             this.unauthorizedVehicle = true;
             this.validationVehicle = false;
   
@@ -304,6 +308,10 @@ export class OperacionesPrestamoVehiculoConductorComponent {
               );
             } else if (this.validationsVehicle.driver) {
               this.openSnackbar('El vehículo no tiene un conductor asociado.');
+            } else if (this.validationsVehicle.loaned_unit) {
+              this.openSnackbar(
+                'El conductor ya tiene un vehículo prestado.'
+              );
             }
           } else {
             this.unauthorizedVehicle = false;
@@ -388,7 +396,8 @@ export class OperacionesPrestamoVehiculoConductorComponent {
     this.unauthorizedVehicle = false;
     this.validationsVehicle = {
       state: false,
-      driver: false
+      driver: false,
+      loaned_unit: false,
     }
     this.validationVehicle = false;
   }
