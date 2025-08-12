@@ -19,6 +19,11 @@ interface vehicle {
   placa: string;
 }
 
+interface vehicleLoan {
+  vehicle_number: string;
+  vehicle_plate: string;
+}
+
 interface vehicleInfo {
   numero: string;
   marca: string;
@@ -50,6 +55,16 @@ interface objSelect {
   name: string;
 }
 
+interface validationsVehicleResponse {
+  state: 0 | 1;
+  driver: 0 | 1;
+}
+
+interface validationsVehicle {
+  state: boolean;
+  driver: boolean;
+}
+
 @Component({
   selector: 'app-operaciones-prestamo-vehiculo-conductor',
   templateUrl: './operaciones-prestamo-vehiculo-conductor.component.html',
@@ -62,11 +77,17 @@ export class OperacionesPrestamoVehiculoConductorComponent {
   filteredOptions!: Observable<vehicle[]>;
 
   infoVehicleLoan!: FormGroup;
+  optionsVehicleLoan: vehicleLoan[] = [];
+  filteredOptionsVehicleLoan!: Observable<vehicleLoan[]>;
 
   isLoadingVehicles: boolean = true;
   isLoadingVehicleInfo: boolean = false;
   selectedVehicle: boolean = false;
   isLoadingChange: boolean = false;
+  unauthorizedVehicle: boolean = false;
+  isLoadingVehicleLoanInfo: boolean = false;
+  selectedVehicleLoan: boolean = false;
+  validationVehicle: boolean = false;
 
   vehicleData: vehicleInfo = {
     numero: '',
@@ -94,6 +115,25 @@ export class OperacionesPrestamoVehiculoConductorComponent {
     estado: '',
   };
 
+  vehicleLoanData: vehicleInfo = {
+    numero: '',
+    marca: '',
+    placa: '',
+    cupo: '',
+    nro_entrega: '',
+    cuota_diaria: '',
+    estado: '',
+    propietario: '',
+    conductor: '',
+    con_cupo: 0, //1 ES SÍ, 2 ES NO
+    fecha_estado: '',
+  };
+
+  validationsVehicle: validationsVehicle = {
+    state: false,
+    driver: false,
+  };
+
   constructor(
     private formBuilder: FormBuilder,
     private jwtService: JwtService,
@@ -106,6 +146,7 @@ export class OperacionesPrestamoVehiculoConductorComponent {
 
   ngOnInit() {
     this.getVehicles();
+    this.getVehiclesLoan();
     this.formBuild();
   }
 
@@ -119,6 +160,65 @@ export class OperacionesPrestamoVehiculoConductorComponent {
   getCompany() {
     const userData = this.jwtService.getUserData();
     return userData ? userData.empresa : '';
+  }
+
+  getVehiclesLoan() {
+    const company = this.getCompany();
+    const state_code = '06';
+
+    this.apiService.getData('vehicles-by-state/' + company + '/' + state_code).subscribe(
+      (response: vehicleLoan[]) => {
+        this.optionsVehicleLoan = response;
+        this.filteredOptionsVehicleLoan = this.infoVehicleLoan
+          .get('loanVehicle')!
+          .valueChanges.pipe(
+            startWith(''),
+            map((value) => this._filterVehicleLoan(value || ''))
+          );
+      },
+      (error) => {
+        this.openSnackbar(
+          'Error al obtener las unidades para préstamo. Inténtalo de nuevo más tarde.'
+        );
+        this.closeDialog();
+      }
+    );
+  }
+
+  private _filterVehicleLoan(value: string): vehicleLoan[] {
+    const filterValue = value.toLowerCase();
+
+    return this.optionsVehicleLoan.filter(
+      (option) =>
+        option.vehicle_plate.toLowerCase().includes(filterValue) ||
+        option.vehicle_number.toLowerCase().includes(filterValue)
+    );
+  }
+
+  vehicleLoanSearch(vehicleValue: string) {
+    if(vehicleValue !== '') {
+      this.selectedVehicleLoan = false;
+      this.isLoadingVehicleLoanInfo = true;
+      this.apiService
+        .getData(`operations/deliveryvehicledriver/vehicle/${vehicleValue}`)
+        .subscribe({
+          next: (data: vehicleInfo) => {
+            this.vehicleLoanData = data;
+            this.isLoadingVehicleLoanInfo = false;
+            this.selectedVehicleLoan = true;
+          },
+          error: (error: HttpErrorResponse) => {
+            if (error.status === 404) {
+              this.openSnackbar('Vehículo no encontrado. Intenta con otro.');
+            } else {
+              this.openSnackbar(
+                'Error al obtener la información del vehículo. Inténtalo de nuevo más tarde.'
+              );
+            }
+            this.isLoadingVehicleLoanInfo = false;
+          },
+        });
+    }
   }
 
   getVehicles() {
@@ -154,6 +254,7 @@ export class OperacionesPrestamoVehiculoConductorComponent {
   vehicleSearch(vehicleValue: string) {
     this.resetInfo();
     this.selectedVehicle = false;
+    this.validationVehicle = true;
     if (vehicleValue !== '') {
       this.isLoadingVehicleInfo = true;
       this.apiService
@@ -161,12 +262,14 @@ export class OperacionesPrestamoVehiculoConductorComponent {
         .subscribe({
           next: (data: vehicleInfo) => {
             this.vehicleData = data;
+            this.validateVehicleData(data.numero);
             this.drivers.setValue(this.vehicleData.conductor);
             this.driverSearch(this.vehicleData.conductor);
           },
           error: (error: HttpErrorResponse) => {
             this.isLoadingVehicleInfo = false;
             this.selectedVehicle = false;
+            this.validationVehicle = false; 
             if (error.status === 404) {
               this.openSnackbar('Vehículo no encontrado. Intenta con otro.');
             } else {
@@ -178,6 +281,46 @@ export class OperacionesPrestamoVehiculoConductorComponent {
         });
     }
   }
+
+  validateVehicleData(vehicle_number: string) {
+    const company = this.getCompany();
+  
+    this.apiService
+      .getData(`operations/loan-vehicle/validation/${company}/${vehicle_number}`)
+      .subscribe({
+        next: (data: validationsVehicleResponse) => {
+          this.validationsVehicle = {
+            state: data.state === 0,  
+            driver: data.driver === 0 
+          };
+  
+          if (this.validationsVehicle.state || this.validationsVehicle.driver) {
+            this.unauthorizedVehicle = true;
+            this.validationVehicle = false;
+  
+            if (this.validationsVehicle.state) {
+              this.openSnackbar(
+                'El vehículo no cumple con las condiciones de estado para pedir un préstamo de otro.'
+              );
+            } else if (this.validationsVehicle.driver) {
+              this.openSnackbar('El vehículo no tiene un conductor asociado.');
+            }
+          } else {
+            this.unauthorizedVehicle = false;
+            this.validationVehicle = false;
+          }
+        },
+        error: () => {
+          this.unauthorizedVehicle = true;
+          this.validationVehicle = false;
+          this.openSnackbar(
+            'Error al validar el vehículo. Inténtalo de nuevo más tarde.'
+          );
+        }
+      });
+  }
+  
+  
 
   driverSearch(driverValue: string) {
     if (driverValue !== '') {
@@ -241,12 +384,19 @@ export class OperacionesPrestamoVehiculoConductorComponent {
     };
     this.infoVehicleLoan.reset();
     this.drivers.setValue('');
+    this.selectedVehicleLoan = false;
+    this.unauthorizedVehicle = false;
+    this.validationsVehicle = {
+      state: false,
+      driver: false
+    }
+    this.validationVehicle = false;
   }
 
   resetAutocomplete(type: number) {
-    if (type === 1) {
+    if (type === 0) {
       this.vehicles.setValue('');
-    } else if (type === 2) {
+    } else if (type === 1) {
       this.infoVehicleLoan.get('loanVehicle')?.setValue('');
     } 
   }
@@ -266,8 +416,8 @@ export class OperacionesPrestamoVehiculoConductorComponent {
 
     const dialogRef = this.dialog.open(ConfirmActionDialogComponent, {
       data: {
-        documentName: 'Cambiar de Estado a un Vehículo',
-        message: `¿Estás seguro de que deseas cambiar el estado del vehículo ${this.vehicles.value} a "Prestado"?`,
+        documentName: 'Préstamo de Vehículo a Conductor',
+        message: `¿Estás seguro de que deseas prestar la unidad ${this.vehicleLoanData.numero} - ${this.vehicleLoanData.placa} al conductor ${this.driverData.codigo} - ${this.driverData.nombre} con unidad original ${this.vehicleData.numero} - ${this.vehicleData.placa}?`,
       },
       width: dialogWidth,
     });
@@ -284,25 +434,28 @@ export class OperacionesPrestamoVehiculoConductorComponent {
 
   lendVehicleDriver() {
     const company = this.getCompany();
-    const vehicle = this.vehicles.value;
+    const vehicleOriginal = this.vehicles.value;
+    const vehicleLoan = this.vehicleLoanData.numero;
+    const reason = this.infoVehicleLoan.get('reason')?.value;
 
     const valuesSave = {
       company_code: company,
-      vehicle_number: vehicle,
-      change_reason: this.infoVehicleLoan.get('description')?.value,
+      original_vehicle: vehicleOriginal,
+      loan_vehicle: vehicleLoan,
+      reason: reason,
     };
 
     this.apiService
-      .postData('operations/change-vehicle-state', valuesSave)
+      .postData('operations/loan-vehicle', valuesSave)
       .subscribe({
         next: (response) => {
-          this.openSnackbar('Estado del vehículo cambiado exitosamente.');
+          this.openSnackbar('Vehículo prestado exitosamente.');
           this.closeDialog();
         },
         error: (error: HttpErrorResponse) => {
           this.isLoadingChange = false;
           this.openSnackbar(
-            'Error al cambiar el estado del vehículo. Inténtalo de nuevo más tarde.'
+            'Error al prestar el vehículo. Inténtalo de nuevo más tarde.'
           );
         },
       });
