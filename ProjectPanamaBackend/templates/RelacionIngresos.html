@@ -71,7 +71,7 @@
         <th rowspan="2">Fecha</th>
         <th rowspan="2">Unidad</th>
         <th rowspan="2">Saldo Antes</th>
-        <th colspan="3" style="border-bottom: none;">Detalles del Pago</th>
+        <th colspan="4" style="border-bottom: none;">Detalles del Pago</th>
         <th colspan="5" style="border-bottom: none; border-right: 1px solid black">Forma de Pago</th>
         <th rowspan="2" style="border-left: none;">Total Empresa</th>
         <th rowspan="2">Nombre Empresa</th>
@@ -81,6 +81,7 @@
         <th>Renta Día</th>
         <th>Inscrip</th>
         <th>Siniestro</th>
+        <th>Ahorro</th>
         <th>Efectivo</th>
         <th>ACH</th>
         <th>ARP</th>
@@ -107,6 +108,9 @@
         <td class="group">
           {{ "" if item['deuda_siniestro'] == 0.00 else item['deuda_siniestro'] }}
         </td>
+        <td class="group">
+          {{ "" if item['fondo_ahorro'] == 0.00 else item['fondo_ahorro'] }}
+        </td>
         <td class="right" style="border-left: 1px solid black">{{ "" if item['forma_pago'] != "1" else item['total']}}</td>
         <td class="group">{{ "" if item['forma_pago'] != "2" else item['total']}}</td>
         <td class="group">{{ "" if item['forma_pago'] != "3" else item['total']}}</td>
@@ -129,11 +133,11 @@
       </tr>
       <tr>
         <!-- Dos columnas vacías para alinear el “TOTAL CONTROL” con Presentación -->
-        <td style="border: none;"></td>
+        <!-- <td style="border: none;"></td> -->
         <!-- <td style="border: none;"></td> -->
 
         <!-- Columna 3: TOTAL CONTROL -->
-        <td class="box-propietario" colspan="3" style="
+        <td class="box-propietario" colspan="4" style="
           border-top: 2px solid #000;
           border-left: 2px solid #000;
           border-bottom: 2px solid #000;
@@ -141,7 +145,7 @@
           border-bottom-left-radius: 10px; 
           text-align: right; 
           font-weight: bold;">
-          157 - TOTAL CONTROL:
+          TOTAL DE RECIBOS: {{ data['totales']['total_recibos'] }}
         </td>
 
         <!-- Columnas 4 a 8: valores alineados con Cantidad, Valor Parcial, etc. -->
@@ -156,6 +160,10 @@
         <td class="box-propietario"
           style="font-weight: bold; text-align: center; border-top: 2px solid #000; border-bottom: 2px solid #000;">
           {{ data['totales']['deuda_siniestro'] }}
+        </td>
+        <td class="box-propietario"
+          style="font-weight: bold; text-align: center; border-top: 2px solid #000; border-bottom: 2px solid #000;">
+          {{ data['totales']['fondo_ahorro'] }}
         </td>
         <td class="box-propietario"
           style="font-weight: bold; text-align: center; border-top: 2px solid #000; border-bottom: 2px solid #000;">{{ data['totales']['efectivo'] }}

@@ -53,6 +53,8 @@ import { OperacionesCrearCuentaDiarioConductorComponent } from './modules/option
 import { OperacionesCambiarEstadoVehiculoComponent } from './modules/options/users/operaciones/operaciones-cambiar-estado-vehiculo/operaciones-cambiar-estado-vehiculo.component';
 import { OperacionesCambiarPatioVehiculoComponent } from './modules/options/users/operaciones/operaciones-cambiar-patio-vehiculo/operaciones-cambiar-patio-vehiculo.component';
 import { OperacionesCorregirKilometrajeActualComponent } from './modules/options/users/operaciones/operaciones-corregir-kilometraje-actual/operaciones-corregir-kilometraje-actual.component';
+import { OperacionesPrestamoVehiculoConductorComponent } from './modules/options/users/operaciones/operaciones-prestamo-vehiculo-conductor/operaciones-prestamo-vehiculo-conductor.component';
+import { OperacionesDevolucionVehiculoPrestadoComponent } from './modules/options/users/operaciones/operaciones-devolucion-vehiculo-prestado/operaciones-devolucion-vehiculo-prestado.component';
 
 @NgModule({
   declarations: [
@@ -103,6 +105,8 @@ import { OperacionesCorregirKilometrajeActualComponent } from './modules/options
     OperacionesCambiarEstadoVehiculoComponent,
     OperacionesCambiarPatioVehiculoComponent,
     OperacionesCorregirKilometrajeActualComponent,
+    OperacionesPrestamoVehiculoConductorComponent,
+    OperacionesDevolucionVehiculoPrestadoComponent,
   ],
   imports: [
     BrowserModule,

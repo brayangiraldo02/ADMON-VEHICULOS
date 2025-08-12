@@ -35,6 +35,14 @@
         <td class="info-header">Fecha de Entrega</td>
         <td class="info-data" (click)="copyToClipboard(vehicle.fecha_contrato)">{{ vehicle.fecha_contrato }}</td>
       </tr>
+      <tr>
+        <td class="info-header">Valor Cuota</td>
+        <td class="info-data" (click)="copyToClipboard(vehicle.valor_cuota)">${{ vehicle.valor_cuota }}</td>
+      </tr>
+      <tr>
+        <td class="info-header">Número Coutas / Pagas / Pendientes</td>
+        <td class="info-data" (click)="copyToClipboard(vehicle.numero_cuotas + ' / ' + vehicle.cuotas_pagas + ' / ' + vehicle.cuotas_pendientes)">{{ vehicle.numero_cuotas }} / {{ vehicle.cuotas_pagas }} / {{ vehicle.cuotas_pendientes }}</td>
+      </tr>
     </tbody>
   </table>
   <mat-progress-bar

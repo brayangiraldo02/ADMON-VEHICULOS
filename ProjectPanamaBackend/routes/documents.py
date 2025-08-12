@@ -11,6 +11,6 @@ async def get_vehicle_documents(company_code: str, vehicle_number: str):
 async def get_send_vehicle_documents(company_code: str, vehicle_number: str, base_doc: str):
   return await send_vehicle_documents(company_code, vehicle_number, base_doc)
 
-@documents_router.get("/documents/vehicle-info/{vehicle_number}/", tags=["Documents"])
-async def get_vehicle_info(vehicle_number: str):
-  return await vehicle_info(vehicle_number)
+@documents_router.get("/documents/vehicle-info/{company_code}/{vehicle_number}/", tags=["Documents"])
+async def get_vehicle_info(company_code: str, vehicle_number: str):
+  return await vehicle_info(company_code, vehicle_number)

@@ -818,3 +818,23 @@ async def get_vehicle_codes():
         db.close()
 
 #-------------------------------------------------------------------------------------------
+
+@vehicles_router.get("/vehicles-by-state/{company_code}/{state_code}/", tags=["Vehicles"])
+async def get_vehicles_by_state(company_code: str, state_code: str):
+    db = session()
+    try:
+        vehicles = db.query(Vehiculos).filter(
+            Vehiculos.EMPRESA == company_code,
+            Vehiculos.ESTADO == state_code
+        ).all()
+
+        if not vehicles:
+            return JSONResponse(content={"message": "No hay vehículos disponibles para la empresa y estado dados"}, status_code=404)
+
+        response = [{'vehicle_number': vehicle.NUMERO, 'vehicle_plate': vehicle.PLACA} for vehicle in vehicles]
+
+        return JSONResponse(content=jsonable_encoder(response), status_code=200)
+    except Exception as e:
+        return JSONResponse(content={"error": str(e)}, status_code=500)
+    finally:
+        db.close()

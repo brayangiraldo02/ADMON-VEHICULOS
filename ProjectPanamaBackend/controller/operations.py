@@ -7,6 +7,8 @@ from models.propietarios import Propietarios
 from models.estados import Estados
 from models.centrales import Centrales
 from models.estadocivil import EstadoCivil
+from models.cartera import Cartera
+from models.patios import Patios
 from schemas.operations import *
 from fastapi.encoders import jsonable_encoder
 from utils.reports import *
@@ -28,6 +30,7 @@ from fastapi.templating import Jinja2Templates
 from fastapi.responses import FileResponse
 import jinja2
 from utils.pdf import html2pdf
+from sqlalchemy import func
 
 async def get_vehicle_operation(vehicle_number: str):
   db = session()
@@ -37,7 +40,7 @@ async def get_vehicle_operation(vehicle_number: str):
       Vehiculos.NROENTREGA, Vehiculos.CUO_DIARIA, Vehiculos.ESTADO, 
       Estados.NOMBRE.label('NOMBRE_ESTADO'), Vehiculos.PROPI_IDEN, 
       Propietarios.NOMBRE.label('NOMBRE_PROPI'), Vehiculos.CONDUCTOR,
-      Vehiculos.CON_CUPO, Vehiculos.FEC_ESTADO
+      Vehiculos.CON_CUPO, Vehiculos.FEC_ESTADO, Vehiculos.EMPRESA
     ).join(
       Vehiculos, Vehiculos.MARCA == Marcas.CODIGO
     ).join(
@@ -50,7 +53,16 @@ async def get_vehicle_operation(vehicle_number: str):
 
     if not vehicle_operations:
       return JSONResponse(content={"message": "Vehicle not found"}, status_code=404)
-    
+
+    outstanding_balance = db.query(
+      func.sum(Cartera.SALDO).label('outstanding balance')
+    ).filter(
+      Cartera.EMPRESA == vehicle_operations.EMPRESA,
+      Cartera.UNIDAD == vehicle_number,
+      Cartera.CLIENTE == vehicle_operations.CONDUCTOR,
+      Cartera.TIPO == '11',
+    ).scalar()
+
     vehicle = {
       'numero': vehicle_number,
       'marca': vehicle_operations.MARCA,
@@ -62,7 +74,8 @@ async def get_vehicle_operation(vehicle_number: str):
       'propietario': vehicle_operations.PROPI_IDEN + ' - ' + vehicle_operations.NOMBRE_PROPI,
       'conductor': vehicle_operations.CONDUCTOR,
       'con_cupo': vehicle_operations.CON_CUPO,
-      'fecha_estado': vehicle_operations.FEC_ESTADO
+      'fecha_estado': vehicle_operations.FEC_ESTADO,
+      'outstanding_balance': outstanding_balance if outstanding_balance else 0
     }
 
     return JSONResponse(content=jsonable_encoder(vehicle), status_code=200)
@@ -81,7 +94,7 @@ async def get_driver_operation(driver_number: str):
     driver_operations = db.query(
       Conductores.NOMBRE, Conductores.CEDULA, Conductores.TELEFONO, 
       Conductores.CELULAR, Conductores.DIRECCION, Conductores.LICEN_NRO, 
-      Conductores.LICEN_VCE, Conductores.UND_NRO, Conductores.ESTADO
+      Conductores.LICEN_VCE, Conductores.UND_NRO, Conductores.UND_PRE, Conductores.ESTADO
     ).filter(
       Conductores.CODIGO == driver_number
     ).first()
@@ -98,6 +111,7 @@ async def get_driver_operation(driver_number: str):
       'licencia_numero': driver_operations.LICEN_NRO,
       'licencia_vencimiento': driver_operations.LICEN_VCE,
       'vehiculo': driver_operations.UND_NRO,
+      'vehiculo_original': driver_operations.UND_PRE,
       'estado': driver_operations.ESTADO
     }
 
@@ -589,5 +603,422 @@ async def generate_contract(vehicle_number: str):
   except Exception as e:
     return JSONResponse(content={"message": str(e)}, status_code=500)
   
+  finally:
+    db.close()
+
+#-----------------------------------------------------------------------------------------------
+
+async def validation(bill_data: BillValidation):
+  db = session()
+  try:
+    vehicle_state = db.query(
+                Vehiculos
+                ).join(
+                  Estados, Vehiculos.ESTADO == Estados.CODIGO
+                ).filter(
+                  Vehiculos.NUMERO == bill_data.vehicle_number,
+                  Vehiculos.EMPRESA == bill_data.company_code,
+                  Estados.EMPRESA == bill_data.company_code,
+                  Estados.ESTADO == 1
+                ).first()
+    
+    vehicle_driver = db.query(
+                Vehiculos.CONDUCTOR
+                ).filter(
+                  Vehiculos.NUMERO == bill_data.vehicle_number,
+                  Vehiculos.EMPRESA == bill_data.company_code
+                ).first()
+    
+    # panama_timezone = pytz.timezone('America/Panama')
+    # now_in_panama = datetime.now(panama_timezone)
+    # year = now_in_panama.strftime("%Y")
+    # month = now_in_panama.strftime("%m")
+    # day = now_in_panama.strftime("%d")
+    # bill_date = f"{str(year)[-2:]}{month}{day}-{vehicle_driver.CONDUCTOR}"
+
+    year = bill_data.bill_date.year
+    month = bill_data.bill_date.month
+    day = bill_data.bill_date.day
+    bill_date = f"{str(year)[-2:]}{month:02d}{day:02d}-{vehicle_driver.CONDUCTOR}"
+
+    vehicle_bill = db.query(
+                Cartera
+                ).filter(
+                  Cartera.EMPRESA == bill_data.company_code,
+                  Cartera.UNIDAD == bill_data.vehicle_number,
+                  Cartera.FACTURA == bill_date
+                ).first()
+
+    response_data = {
+      "vehicle_state": 1 if vehicle_state else 0,
+      "vehicle_driver": 1 if vehicle_driver.CONDUCTOR not in [None, ''] else 0,
+      "vehicle_bill": 1 if vehicle_bill else 0,
+    }
+
+    return JSONResponse(content=jsonable_encoder(response_data), status_code=200)
+
+  except Exception as e:
+    return JSONResponse(content={"message": str(e)}, status_code=500)
+  
+  finally:
+    db.close()
+
+#-----------------------------------------------------------------------------------------------
+
+async def new_bill(bill_data: BillInfo):
+  db = session()
+  try:
+    vehicle = db.query(
+                Vehiculos
+                ).join(
+                  Estados, Vehiculos.ESTADO == Estados.CODIGO
+                ).filter(
+                  Vehiculos.NUMERO == bill_data.vehicle_number,
+                  Vehiculos.EMPRESA == bill_data.company_code,
+                  Estados.EMPRESA == bill_data.company_code,
+                  Estados.ESTADO == 1
+                ).first()
+    
+    if not vehicle:
+      return JSONResponse(content={"message": "Vehículo no encontrado o no está en estado activo"}, status_code=404)
+    
+    vehicle_driver = db.query(
+                Conductores
+                ).filter(
+                  Conductores.CODIGO == vehicle.CONDUCTOR,
+                  Conductores.EMPRESA == bill_data.company_code,
+                  Conductores.CODIGO == bill_data.driver_number
+                ).first()
+
+    if not vehicle_driver:
+      return JSONResponse(content={"message": "Conductor no encontrado o no está asignado al vehículo"}, status_code=404)
+
+    bill_date = f"{str(bill_data.bill_date.year)[-2:]}{bill_data.bill_date.month:02d}{bill_data.bill_date.day:02d}-{bill_data.driver_number}"
+
+    vehicle_bill = db.query(
+                Cartera
+                ).filter(
+                  Cartera.EMPRESA == bill_data.company_code,
+                  Cartera.UNIDAD == bill_data.vehicle_number,
+                  Cartera.FACTURA == bill_date
+                ).first()
+    
+    if vehicle_bill:
+      return JSONResponse(content={"message": "La cuenta ya existe para este vehículo"}, status_code=400)
+    
+    panama_timezone = pytz.timezone('America/Panama')
+    now_in_panama = datetime.now(panama_timezone)
+    
+    new_bill = Cartera(
+      EMPRESA=bill_data.company_code,
+      FACTURA=bill_date,
+      TIPO='10',
+      CLIENTE=bill_data.driver_number,
+      CEDULA=vehicle_driver.CEDULA,
+      ZONA=vehicle.PROPI_IDEN,
+      PLACA=vehicle.PLACA,
+      UNIDAD=bill_data.vehicle_number,
+      PROPI_IDEN=vehicle.PROPI_IDEN,
+      FEC_ENTREG=bill_data.bill_date,
+      VALOR=vehicle_driver.CUO_DIARIA,
+      FECHA=bill_data.bill_date,
+      FEC_FACTU= bill_data.bill_date,
+      DOC_FACTU=bill_date,
+      CAN_FACTU=1,
+      DETALLE='Cuenta creada ' + bill_data.bill_date.strftime('%d/%m/%Y') + ' ---> Unidad: ' + bill_data.vehicle_number + ' - Conductor: ' + bill_data.driver_number + ' ' + vehicle_driver.NOMBRE,
+      SALDO=vehicle_driver.CUO_DIARIA,
+      FEC_CUADRE=bill_data.bill_date,
+      FEC_DOC=bill_data.bill_date.strftime('%Y%m%d'),
+      FEC_DOCUM=bill_data.bill_date.strftime('%Y%m%d'),
+      FEC_CREADO=now_in_panama,
+      USU_CREADO=bill_data.user
+    )
+
+    db.add(new_bill)
+    db.commit()
+    return JSONResponse(content={"message": "Cuenta creada con éxito"}, status_code=201)
+  except Exception as e:
+    db.rollback()
+    return JSONResponse(content={"message": str(e)}, status_code=500)
+  finally:
+    db.close()
+
+#-----------------------------------------------------------------------------------------------
+
+async def change_yard(data: ChangeYard):
+  db = session()
+  try:
+    vehicle = db.query(Vehiculos).filter(Vehiculos.NUMERO == data.vehicle_number, Vehiculos.EMPRESA == data.company_code).first()
+    if not vehicle:
+      return JSONResponse(content={"message": "Vehicle not found"}, status_code=404)
+    
+    yard = db.query(Patios).filter(Patios.CODIGO == data.yard_code, Patios.EMPRESA == data.company_code).first()
+    if not yard:
+      return JSONResponse(content={"message": "Yard not found"}, status_code=404)
+
+    vehicle.PATIO = data.yard_code
+    vehicle.NOMPATIO = yard.NOMBRE
+
+    db.commit()
+
+    return JSONResponse(content={"message": "Vehículo cambiado de patio con éxito"}, status_code=200)
+
+  except Exception as e:
+    db.rollback()
+    return JSONResponse(content={"message": str(e)}, status_code=500)
+  finally:
+    db.close()
+
+#-----------------------------------------------------------------------------------------------
+
+async def change_vehicle_state(data: ChangeVehicleState):
+  db = session()
+  try:
+    vehicle = db.query(Vehiculos).filter(Vehiculos.NUMERO == data.vehicle_number, Vehiculos.EMPRESA == data.company_code).first()
+    if not vehicle:
+      return JSONResponse(content={"message": "Vehicle not found"}, status_code=404)
+    
+    state = db.query(Estados).filter(Estados.CODIGO == data.state_code, Estados.EMPRESA == data.company_code).first()
+    if not state:
+      return JSONResponse(content={"message": "State not found"}, status_code=404)
+    
+    yard = db.query(Patios).filter(Patios.CODIGO == data.yard_code, Patios.EMPRESA == data.company_code).first()
+    if not yard:
+      return JSONResponse(content={"message": "Yard not found"}, status_code=404)
+
+    vehicle.ESTADO = data.state_code
+    vehicle.ABREVIADO = state.ABREVIADO
+    vehicle.NOMESTADO = state.NOMBRE
+    vehicle.PATIO = yard.CODIGO
+    vehicle.NOMPATIO = yard.NOMBRE
+
+    db.commit()
+
+    return JSONResponse(content={"message": "Estado del vehículo cambiado con éxito"}, status_code=200)
+
+  except Exception as e:
+    db.rollback()
+    return JSONResponse(content={"message": str(e)}, status_code=500)
+  finally:
+    db.close()
+
+#-----------------------------------------------------------------------------------------------
+
+async def vehicle_mileage(company_code: str, vehicle_number: str):
+  db = session()
+  try:
+    vehicle = db.query(Vehiculos).filter(Vehiculos.NUMERO == vehicle_number, Vehiculos.EMPRESA == company_code).first()
+    if not vehicle:
+      return JSONResponse(content={"message": "Vehicle not found"}, status_code=404)
+    
+    mileage = {
+      'mileage': vehicle.KILOMETRAJ
+    }
+
+    return JSONResponse(content=jsonable_encoder(mileage), status_code=200)
+
+  except Exception as e:
+    return JSONResponse(content={"message": str(e)}, status_code=500)
+  finally:
+    db.close()
+
+#-----------------------------------------------------------------------------------------------
+
+async def update_mileage(data: VehicleMileage):
+  db = session()
+  try:
+    vehicle = db.query(Vehiculos).filter(Vehiculos.NUMERO == data.vehicle_number, Vehiculos.EMPRESA == data.company_code).first()
+    if not vehicle:
+      return JSONResponse(content={"message": "Vehicle not found"}, status_code=404)
+    
+    vehicle.KILO_ANTES = vehicle.KILOMETRAJ
+    vehicle.KILOMETRAJ = data.mileage
+    db.commit()
+
+    return JSONResponse(content={"message": "Kilometraje actualizado con éxito"}, status_code=200)
+
+  except Exception as e:
+    db.rollback()
+    return JSONResponse(content={"message": str(e)}, status_code=500)
+  finally:
+    db.close()
+
+#-----------------------------------------------------------------------------------------------
+
+async def loan_validation(company_code: str, vehicle_number: str):
+  db = session()
+  try:
+    vehicle = db.query(Vehiculos).filter(Vehiculos.NUMERO == vehicle_number, Vehiculos.EMPRESA == company_code).first()
+    if not vehicle:
+      return JSONResponse(content={"message": "Vehículo no encontrado"}, status_code=404)
+    
+    state = 0
+
+    if vehicle.ESTADO == '01' or vehicle.ESTADO == '11' or vehicle.ESTADO == '12':
+      state = 1
+
+    driver = 0
+
+    if vehicle.CONDUCTOR and vehicle.CONDUCTOR != '':
+      driver = 1
+
+    response = {
+      "state": state,
+      "driver": driver,
+    }
+
+    return JSONResponse(content=response, status_code=200)
+
+  except Exception as e:
+    return JSONResponse(content={"message": str(e)}, status_code=500)
+  finally:
+    db.close()
+
+#-----------------------------------------------------------------------------------------------
+
+async def loan_vehicle(data: LoanVehicle):
+  db = session()
+  try:
+    original_vehicle = db.query(Vehiculos).filter(Vehiculos.NUMERO == data.original_vehicle, Vehiculos.EMPRESA == data.company_code).first()
+
+    if not original_vehicle:
+      return JSONResponse(content={"message": "Vehículo no encontrado"}, status_code=404)
+
+    if original_vehicle.ESTADO != '01' and original_vehicle.ESTADO != '11' and original_vehicle.ESTADO != '12':
+      return JSONResponse(content={"message": "Vehículo no está en estado disponible para préstamo"}, status_code=400)
+
+    if not original_vehicle.CONDUCTOR or original_vehicle.CONDUCTOR == '':
+      return JSONResponse(content={"message": "Vehículo debe tener un conductor asignado"}, status_code=400)
+    
+    loan_vehicle = db.query(Vehiculos).filter(Vehiculos.NUMERO == data.loan_vehicle, Vehiculos.EMPRESA == data.company_code).first()
+
+    if not loan_vehicle:
+      return JSONResponse(content={"message": "Vehículo para préstamo no encontrado"}, status_code=404)
+    
+    if loan_vehicle.ESTADO != '06':
+      return JSONResponse(content={"message": "Vehículo debe estar esperando operador"}, status_code=400)
+    
+    if data.reason == '':
+      return JSONResponse(content={"message": "Motivo del préstamo es requerido"}, status_code=400)
+    
+    loan_vehicle_state = db.query(Estados).filter(Estados.CODIGO == '19', Estados.EMPRESA == data.company_code).first()
+    if not loan_vehicle_state:
+      return JSONResponse(content={"message": "Estado no encontrado"}, status_code=404)
+
+    original_vehicle_state = db.query(Estados).filter(Estados.CODIGO == '11', Estados.EMPRESA == data.company_code).first()
+    if not original_vehicle_state:
+      return JSONResponse(content={"message": "Estado no encontrado"}, status_code=404)
+    
+    driver = db.query(Conductores).filter(Conductores.CODIGO == original_vehicle.CONDUCTOR, Conductores.EMPRESA == data.company_code).first()
+    if not driver:
+      return JSONResponse(content={"message": "Conductor no encontrado"}, status_code=404)
+
+    panama_timezone = pytz.timezone('America/Panama')
+    now_in_panama = datetime.now(panama_timezone)
+    
+    loan_vehicle.ESTADO = '19'
+    loan_vehicle.ABREVIADO = loan_vehicle_state.ABREVIADO
+    loan_vehicle.NOMESTADO = loan_vehicle_state.NOMBRE
+
+    if original_vehicle.ESTADO == '01':
+      original_vehicle.ESTADO = '11'
+      original_vehicle.ABREVIADO = original_vehicle_state.ABREVIADO
+      original_vehicle.NOMESTADO = original_vehicle_state.NOMBRE
+
+    driver.UND_NRO = loan_vehicle.NUMERO
+    driver.UND_PRE = original_vehicle.NUMERO
+    driver.FEC_PRESTA = now_in_panama
+
+    loan_vehicle.CONDUCTOR = driver.CODIGO
+
+    db.commit()
+
+    return JSONResponse(content={"message": "Préstamo de vehículo realizado con éxito"}, status_code=200)
+
+  except Exception as e:
+    db.rollback()
+    return JSONResponse(content={"message": str(e)}, status_code=500)
+  finally:
+    db.close()
+
+#-----------------------------------------------------------------------------------------------
+
+async def return_validation(company_code: str, vehicle_number: str):
+  db = session()
+  try:
+    vehicle = db.query(Vehiculos).filter(Vehiculos.NUMERO == vehicle_number, Vehiculos.EMPRESA == company_code).first()
+    if not vehicle:
+      return JSONResponse(content={"message": "Vehículo no encontrado"}, status_code=404)
+
+    state = 0
+
+    if vehicle.ESTADO == '19':
+      state = 1
+
+    response = {
+      "state": state,
+    }
+
+    return JSONResponse(content=response, status_code=200)
+
+  except Exception as e:
+    return JSONResponse(content={"message": str(e)}, status_code=500)
+  finally:
+    db.close()
+
+#-----------------------------------------------------------------------------------------------
+
+async def return_vehicle(data: ReturnVehicle):
+  db = session()
+  try:
+    return_vehicle = db.query(Vehiculos).filter(Vehiculos.NUMERO == data.return_vehicle, Vehiculos.EMPRESA == data.company_code).first()
+    if not return_vehicle:
+      return JSONResponse(content={"message": "Vehículo de préstamo no encontrado"}, status_code=404)
+    
+    if return_vehicle.ESTADO != '19':
+      return JSONResponse(content={"message": "Vehículo no está en estado de préstamo"}, status_code=400)
+    
+    original_vehicle = db.query(Vehiculos).filter(Vehiculos.NUMERO == data.original_vehicle, Vehiculos.EMPRESA == data.company_code).first()
+    if not original_vehicle:
+      return JSONResponse(content={"message": "Vehículo original no encontrado"}, status_code=404)
+    
+    if data.reason == '':
+      return JSONResponse(content={"message": "Motivo de la devolución es requerido"}, status_code=400)
+    
+    return_vehicle_state = db.query(Estados).filter(Estados.CODIGO == '06', Estados.EMPRESA == data.company_code).first()
+    if not return_vehicle_state:
+      return JSONResponse(content={"message": "Estado no encontrado"}, status_code=404)
+    
+    original_vehicle_state = db.query(Estados).filter(Estados.CODIGO == '01', Estados.EMPRESA == data.company_code).first()
+    if not original_vehicle_state:
+      return JSONResponse(content={"message": "Estado no encontrado"}, status_code=404)
+    
+    driver = db.query(Conductores).filter(Conductores.CODIGO == return_vehicle.CONDUCTOR, Conductores.EMPRESA == data.company_code).first()
+    if not driver:
+      return JSONResponse(content={"message": "Conductor no encontrado"}, status_code=404)
+    
+    panama_timezone = pytz.timezone('America/Panama')
+    now_in_panama = datetime.now(panama_timezone)
+
+    return_vehicle.ESTADO = '06'
+    return_vehicle.ABREVIADO = return_vehicle_state.ABREVIADO
+    return_vehicle.NOMESTADO = return_vehicle_state.NOMBRE
+    return_vehicle.CONDUCTOR = ''
+
+    original_vehicle.ESTADO = '01'
+    original_vehicle.ABREVIADO = original_vehicle_state.ABREVIADO
+    original_vehicle.NOMESTADO = original_vehicle_state.NOMBRE
+
+    driver.UND_NRO = original_vehicle.NUMERO
+    driver.UND_PRE = ''
+    driver.FEC_PRESTA = None
+    driver.FEC_DEVOLU = now_in_panama
+
+    db.commit()
+
+    return JSONResponse(content={"message": "Devolución de vehículo realizada con éxito"}, status_code=200)
+  except Exception as e:
+    db.rollback()
+    return JSONResponse(content={"message": str(e)}, status_code=500)
   finally:
     db.close()
