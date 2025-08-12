@@ -1,4 +1,4 @@
-<h2 mat-dialog-title>Cambiar de Estado a un Vehículo</h2>
+<h2 mat-dialog-title>Préstamo de Vehículo a Conductor</h2>
 <mat-divider></mat-divider>
 <mat-dialog-content *ngIf="isLoadingVehicles || isLoadingChange">
   <mat-progress-bar mode="indeterminate"></mat-progress-bar>
@@ -20,7 +20,7 @@
         />
         <mat-autocomplete
           #auto="matAutocomplete"
-          (opened)="resetAutocomplete(1)"
+          (opened)="resetAutocomplete(0)"
           (optionSelected)="vehicleSearch($event.option.value)"
         >
           <mat-option
@@ -117,70 +117,131 @@
           </tr>
         </tbody>
       </table>
+
+      <mat-divider class="mobile"></mat-divider>
+
+      <div class="date-message">
+        <p class="message" *ngIf="unauthorizedVehicle">
+          <strong class="message-strong">NO PERMITIDO:</strong>
+        </p>
+
+        <p
+          class="message"
+          *ngIf="validationsVehicle.state && unauthorizedVehicle"
+        >
+          El vehículo no cumple con un estado válido para pedir un préstamo de
+          otro.
+        </p>
+
+        <p
+          class="message"
+          *ngIf="validationsVehicle.driver && unauthorizedVehicle"
+        >
+          El vehículo no tiene un conductor asociado.
+        </p>
+      </div>
     </div>
   </div>
   <mat-divider></mat-divider>
-  <div class="info-container" *ngIf="!isLoadingVehicleInfo && selectedVehicle">
+  <form
+    class="info-container"
+    [formGroup]="infoVehicleLoan"
+    *ngIf="
+      !isLoadingVehicleInfo &&
+      selectedVehicle &&
+      !unauthorizedVehicle &&
+      !validationVehicle
+    "
+  >
     <div class="vehicle-info">
+      <mat-form-field class="form-field">
+        <mat-label>Vehículo Préstamo</mat-label>
+        <input
+          type="text"
+          placeholder="Selecciona uno"
+          matInput
+          formControlName="loanVehicle"
+          [matAutocomplete]="auto1"
+        />
+        <mat-autocomplete
+          #auto1="matAutocomplete"
+          (opened)="resetAutocomplete(1)"
+          (optionSelected)="vehicleLoanSearch($event.option.value)"
+        >
+          <mat-option
+            *ngFor="let option of filteredOptionsVehicleLoan | async"
+            [value]="option.vehicle_number"
+          >
+            {{ option.vehicle_number }} - {{ option.vehicle_plate }}
+          </mat-option>
+        </mat-autocomplete>
+      </mat-form-field>
+
+      <mat-progress-bar
+        class="loading-bar"
+        mode="indeterminate"
+        *ngIf="isLoadingVehicleLoanInfo"
+      ></mat-progress-bar>
       <table
         class="info-table"
-        *ngIf="!isLoadingVehicleInfo && selectedVehicle"
+        *ngIf="!isLoadingVehicleInfo && selectedVehicle && selectedVehicleLoan"
       >
         <tbody>
           <tr>
             <td class="info-header">Unidad</td>
-            <td class="info-data">{{ vehicleData.numero }}</td>
+            <td class="info-data">{{ vehicleLoanData.numero }}</td>
           </tr>
           <tr>
             <td class="info-header">Marca</td>
-            <td class="info-data">{{ vehicleData.marca }}</td>
+            <td class="info-data">{{ vehicleLoanData.marca }}</td>
           </tr>
           <tr>
             <td class="info-header">Placa</td>
-            <td class="info-data">{{ vehicleData.placa }}</td>
+            <td class="info-data">{{ vehicleLoanData.placa }}</td>
           </tr>
           <tr>
             <td class="info-header">Cupo N°</td>
             <td class="info-data">
-              {{ vehicleData.cupo }} {{ vehicleData.con_cupo }}
+              {{ vehicleLoanData.cupo }} {{ vehicleLoanData.con_cupo }}
             </td>
           </tr>
           <tr>
             <td class="info-header">N° de Cuotas</td>
-            <td class="info-data">{{ vehicleData.nro_entrega }}</td>
+            <td class="info-data">{{ vehicleLoanData.nro_entrega }}</td>
           </tr>
           <tr>
             <td class="info-header">Valor Cuota</td>
-            <td class="info-data">{{ vehicleData.cuota_diaria }}</td>
+            <td class="info-data">{{ vehicleLoanData.cuota_diaria }}</td>
           </tr>
           <tr>
             <td class="info-header">Estado</td>
-            <td class="info-data">{{ vehicleData.estado }}</td>
+            <td class="info-data">{{ vehicleLoanData.estado }}</td>
           </tr>
           <tr>
             <td class="info-header">Propietario</td>
-            <td class="info-data">{{ vehicleData.propietario }}</td>
+            <td class="info-data">{{ vehicleLoanData.propietario }}</td>
           </tr>
         </tbody>
       </table>
     </div>
-    <div class="driver-info">
-      <form class="info-select" [formGroup]="infoVehicleLoan">
-        <mat-error
-          *ngIf="
-            infoVehicleLoan.get('reason')?.hasError('required') &&
-            infoVehicleLoan.get('reason')?.touched
-          "
-        >
-          El motivo del préstamo es obligatorio
-        </mat-error>
-        <mat-form-field class="text-area">
-          <mat-label>Motivo del préstamo</mat-label>
-          <textarea matInput formControlName="reason" required></textarea>
-        </mat-form-field>
-      </form>
+    <div
+      class="driver-info"
+      *ngIf="!isLoadingVehicleInfo && selectedVehicle && selectedVehicleLoan"
+    >
+      <mat-error
+        *ngIf="
+          infoVehicleLoan.get('reason')?.hasError('required') &&
+          infoVehicleLoan.get('reason')?.touched
+        "
+      >
+        El motivo del préstamo es obligatorio
+      </mat-error>
+      <mat-form-field class="text-area">
+        <mat-label>Motivo del préstamo</mat-label>
+        <textarea matInput formControlName="reason" required></textarea>
+      </mat-form-field>
     </div>
-  </div>
+  </form>
 </mat-dialog-content>
 <mat-dialog-actions align="end">
   <button mat-button mat-dialog-close>Cancelar</button>
@@ -191,7 +252,10 @@
       !selectedVehicle ||
       isLoadingVehicleInfo ||
       isLoadingChange ||
-      infoVehicleLoan.invalid
+      infoVehicleLoan.invalid ||
+      !selectedVehicleLoan ||
+      unauthorizedVehicle ||
+      validationVehicle
     "
     (click)="openConfirmationDialog()"
   >
