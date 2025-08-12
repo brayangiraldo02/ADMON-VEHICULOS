@@ -38,6 +38,11 @@ export class OwnersPurchasevalueandpiqueraComponent implements OnInit {
     this.listOwners();
   }
 
+  getCompany() {
+    const userData = this.jwtService.getUserData();
+    return userData ? userData.empresa : '';
+  }
+
   listOwners(): void {
     const userData = this.jwtService.getUserData();
     console.log(userData);
@@ -73,7 +78,8 @@ export class OwnersPurchasevalueandpiqueraComponent implements OnInit {
   }
 
   openExternalLink(): void {
-    let endpoint = 'valor-compra-vehiculos';
+    const company = this.getCompany();
+    let endpoint = 'valor-compra-vehiculos/'+company;
     if (endpoint) {
       const data = {
         usuario: this.user,

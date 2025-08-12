@@ -129,8 +129,8 @@ async def get_conteo_vehiculos_estados(info: userInfo):
 
 #-----------------------------------------------------------------------------------------
 
-@statevehiclefleetReports_router.post('/estado-vehiculos-resumen-empresa/{id}/', response_class=FileResponse)
-async def get_conteo_propietarios_vehiculos_estados(id: str, info: userInfo):
+@statevehiclefleetReports_router.post('/estado-vehiculos-resumen-empresa/{id}/{company_code}/', response_class=FileResponse)
+async def get_conteo_propietarios_vehiculos_estados(id: str, company_code: str, info: userInfo):
     db = session()
     try:
         conteo_propietarios_vehiculos_estados = db.query(
@@ -144,6 +144,9 @@ async def get_conteo_propietarios_vehiculos_estados(id: str, info: userInfo):
         .join(Vehiculos, Estados.CODIGO == Vehiculos.ESTADO) \
         .join(Propietarios, Vehiculos.PROPI_IDEN == Propietarios.CODIGO) \
         .filter(Propietarios.CODIGO == id) \
+        .filter(Propietarios.EMPRESA == company_code) \
+        .filter(Vehiculos.EMPRESA == company_code) \
+        .filter(Estados.EMPRESA == company_code) \
         .distinct() \
         .all()
 
@@ -444,8 +447,8 @@ async def get_conteo_vehiculos_estados_numeros(info: userInfo):
 
 # -----------------------------------------------------------------------------------------
 
-@statevehiclefleetReports_router.post('/informe-estados-detallado-empresa/{id}/', response_class=FileResponse)
-async def get_conteo_propietarios_vehiculos_estados_numeros(id: str, info: userInfo):
+@statevehiclefleetReports_router.post('/informe-estados-detallado-empresa/{id}/{company_code}/', response_class=FileResponse)
+async def get_conteo_propietarios_vehiculos_estados_numeros(id: str, company_code: str, info: userInfo):
   db = session()
   try:
     conteo_propietarios_vehiculos_estados = db.query(
@@ -455,7 +458,10 @@ async def get_conteo_propietarios_vehiculos_estados_numeros(id: str, info: userI
         Estados.CODIGO.label('estado_codigo'),
         Estados.NOMBRE.label('estado_nombre'),
         Vehiculos.NUMERO.label('vehiculo_numero')
-    ).join(Vehiculos, Estados.CODIGO == Vehiculos.ESTADO).join(Propietarios, Vehiculos.PROPI_IDEN == Propietarios.CODIGO).filter(Propietarios.CODIGO == id).distinct().all()
+    ).join(Vehiculos, Estados.CODIGO == Vehiculos.ESTADO).join(Propietarios, Vehiculos.PROPI_IDEN == Propietarios.CODIGO).filter(Propietarios.CODIGO == id).filter(Propietarios.EMPRESA == company_code) \
+    .filter(Vehiculos.EMPRESA == company_code) \
+    .filter(Estados.EMPRESA == company_code) \
+    .distinct().all()
 
     id_empresa = conteo_propietarios_vehiculos_estados[0].empresa_codigo
 
@@ -651,14 +657,15 @@ async def get_vehiculos_detalles(infoReports: infoReports):
             Vehiculos.PROPI_IDEN
         ).filter(
             Vehiculos.ESTADO.in_(infoReports.estados),
-            Vehiculos.PROPI_IDEN.in_(infoReports.empresas)
+            Vehiculos.PROPI_IDEN.in_(infoReports.empresas),
+            Vehiculos.EMPRESA == infoReports.empresa
         ).all()
         
         estado_ids = list(set([v.ESTADO for v in vehiculos]))
         conductor_ids = list(set([v.CONDUCTOR for v in vehiculos]))
         propietario_ids = list(set([v.PROPI_IDEN for v in vehiculos]))
         
-        estados_dict = {e.CODIGO: e.NOMBRE for e in db.query(Estados.CODIGO, Estados.NOMBRE).filter(Estados.CODIGO.in_(estado_ids)).all()}
+        estados_dict = {e.CODIGO: e.NOMBRE for e in db.query(Estados.CODIGO, Estados.NOMBRE).filter(Estados.CODIGO.in_(estado_ids), Estados.EMPRESA == infoReports.empresa).all()}
         
         conductores_dict = {c.CODIGO: {
             'nombre': c.NOMBRE,
@@ -675,9 +682,9 @@ async def get_vehiculos_detalles(infoReports: infoReports):
             Conductores.NROENTREGA,
             Conductores.CUO_DIARIA,
             Conductores.NROENTSDO
-        ).filter(Conductores.CODIGO.in_(conductor_ids)).all()}
+        ).filter(Conductores.CODIGO.in_(conductor_ids), Conductores.EMPRESA == infoReports.empresa).all()}
         
-        propietarios_dict = {p.CODIGO: p.NOMBRE for p in db.query(Propietarios.CODIGO, Propietarios.NOMBRE).filter(Propietarios.CODIGO.in_(propietario_ids)).all()}
+        propietarios_dict = {p.CODIGO: p.NOMBRE for p in db.query(Propietarios.CODIGO, Propietarios.NOMBRE).filter(Propietarios.CODIGO.in_(propietario_ids), Propietarios.EMPRESA == infoReports.empresa).all()}
         
         vehiculos_detalles_list = []
         for vehiculo in vehiculos:
@@ -724,9 +731,14 @@ async def get_vehiculos_detalles(infoReports: infoReports):
         usuario = infoReports.usuario
         titulo = 'Relación Vehículos por Propietario'
 
+        info_empresa = db.query(InfoEmpresas.NOMBRE, InfoEmpresas.NIT, InfoEmpresas.LOGO).filter(InfoEmpresas.ID == infoReports.empresa).first()
+
         data_view = {
             "fecha": fecha,
-            "hora": hora_actual
+            "hora": hora_actual,
+            "nombre_empresa": info_empresa.NOMBRE,
+            "nit_empresa": info_empresa.NIT,
+            "logo_empresa": info_empresa.LOGO,
         }
 
         # Iterar sobre las empresas y vehículos
@@ -778,14 +790,14 @@ async def get_vehiculos_detalles(infoReports: infoReports):
         template_loader = jinja2.FileSystemLoader(searchpath="./templates")
         template_env = jinja2.Environment(loader=template_loader)
         template_file = "RelacionVehiculos.html"
-        header_file = "header.html"
-        footer_file = "footer.html"
+        header_file = "header2.html"
+        footer_file = "footer1.html"
         template = template_env.get_template(template_file)
         header = template_env.get_template(header_file)
         footer = template_env.get_template(footer_file)
         output_text = template.render(data_view=data_view)
-        output_header = header.render(data_view=data_view)
-        output_footer = footer.render(data_view=data_view)
+        output_header = header.render(data_view)
+        output_footer = footer.render(data_view)
 
         with tempfile.NamedTemporaryFile(delete=False, suffix='.html', mode='w') as html_file:
             html_path = html_file.name

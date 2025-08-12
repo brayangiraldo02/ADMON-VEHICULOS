@@ -22,8 +22,8 @@ templateJinja = Jinja2Templates(directory="templates")
 feespaidReports_router = APIRouter()
 
 
-@feespaidReports_router.post('/informe-cuotas-pagas/', response_class=FileResponse)
-async def get_vehiculos_detalles(infoReports: infoReports):
+@feespaidReports_router.post('/informe-cuotas-pagas/{company_code}/', response_class=FileResponse)
+async def get_vehiculos_detalles(company_code: str, infoReports: infoReports):
     db = session()
     try:
         vehiculos_detalles = db.query(
@@ -48,6 +48,11 @@ async def get_vehiculos_detalles(infoReports: infoReports):
          .join(Propietarios, Vehiculos.PROPI_IDEN == Propietarios.CODIGO) \
          .filter(Propietarios.CODIGO.in_(infoReports.empresas)) \
          .filter(Estados.CODIGO.in_(infoReports.estados)) \
+         .filter(Propietarios.EMPRESA == company_code,
+                 Conductores.EMPRESA == company_code,
+                 Vehiculos.EMPRESA == company_code,
+                 Estados.EMPRESA == company_code
+                 ) \
          .order_by(Propietarios.NOMBRE, Vehiculos.NUMERO) \
          .all()            
         
@@ -104,7 +109,7 @@ async def get_vehiculos_detalles(infoReports: infoReports):
             InfoEmpresas.NIT,
             InfoEmpresas.LOGO
         ) \
-        .filter(InfoEmpresas.ID == info_owner.codigo_empresa).first()
+        .filter(InfoEmpresas.ID == company_code).first()
         
         # Datos de la fecha y hora actual
         # Define la zona horaria de Ciudad de Panamá

@@ -1,9 +1,16 @@
+import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
-import { FormControl } from '@angular/forms';
-import { MatDialogRef } from '@angular/material/dialog';
+import {
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { map, Observable, startWith } from 'rxjs';
+import { ConfirmActionDialogComponent } from 'src/app/modules/shared/components/confirm-action-dialog/confirm-action-dialog.component';
 import { ApiService } from 'src/app/services/api.service';
 import { JwtService } from 'src/app/services/jwt.service';
 
@@ -38,6 +45,11 @@ interface driverInfo {
   estado: string;
 }
 
+interface objSelect {
+  id: string;
+  name: string;
+}
+
 @Component({
   selector: 'app-operaciones-cambiar-patio-vehiculo',
   templateUrl: './operaciones-cambiar-patio-vehiculo.component.html',
@@ -49,9 +61,15 @@ export class OperacionesCambiarPatioVehiculoComponent {
   options: vehicle[] = [];
   filteredOptions!: Observable<vehicle[]>;
 
+  yards: objSelect[] = [];
+  filteredYardsOptions!: Observable<objSelect[]>;
+
   isLoadingVehicles: boolean = true;
   isLoadingVehicleInfo: boolean = false;
   selectedVehicle: boolean = false;
+  isLoadingChange: boolean = false;
+
+  infoChangeYard!: FormGroup;
 
   vehicleData: vehicleInfo = {
     numero: '',
@@ -80,14 +98,55 @@ export class OperacionesCambiarPatioVehiculoComponent {
   };
 
   constructor(
+    private formBuilder: FormBuilder,
     private jwtService: JwtService,
     private apiService: ApiService,
     private snackBar: MatSnackBar,
-    private dialogRef: MatDialogRef<OperacionesCambiarPatioVehiculoComponent>
+    private dialogRef: MatDialogRef<OperacionesCambiarPatioVehiculoComponent>,
+    private dialog: MatDialog,
+    private breakpointObserver: BreakpointObserver
   ) {}
 
   ngOnInit() {
     this.getVehicles();
+    this.getYards();
+    this.formBuild();
+  }
+
+  private yardValidator(group: FormGroup): null {
+    const oldYardControl = group.controls['oldYard'];
+    const newYardControl = group.controls['yard'];
+  
+    // Si los controles no existen, no hagas nada.
+    if (!oldYardControl || !newYardControl) {
+      return null;
+    }
+  
+    const oldYard = oldYardControl.value;
+    const newYard = newYardControl.value;
+  
+    if (oldYard?.id && newYard?.id && oldYard.id === newYard.id) {
+      newYardControl.setErrors({ sameAsCurrent: true });
+      return null;
+    }
+  
+    if (!oldYard?.id && !newYard?.id) {
+      newYardControl.setErrors({ required: true });
+      return null;
+    }
+    
+    newYardControl.setErrors(null);
+    return null;
+  }
+
+  formBuild() {
+    this.infoChangeYard = this.formBuilder.group({
+      oldYard: [''],
+      yard: [''],
+      description: ['', Validators.required],
+    }, { 
+      validators: this.yardValidator 
+    });
   }
 
   getCompany() {
@@ -107,7 +166,6 @@ export class OperacionesCambiarPatioVehiculoComponent {
         this.isLoadingVehicles = false;
       },
       (error) => {
-        console.error('Error fetching vehicles:', error);
         this.openSnackbar(
           'Error al obtener las unidades. Inténtalo de nuevo más tarde.'
         );
@@ -129,7 +187,6 @@ export class OperacionesCambiarPatioVehiculoComponent {
   vehicleSearch(vehicleValue: string) {
     this.resetInfo();
     this.selectedVehicle = false;
-    console.log('Vehicle selected:', vehicleValue);
     if (vehicleValue !== '') {
       this.isLoadingVehicleInfo = true;
       this.apiService
@@ -137,8 +194,8 @@ export class OperacionesCambiarPatioVehiculoComponent {
         .subscribe({
           next: (data: vehicleInfo) => {
             this.vehicleData = data;
-            console.log(this.vehicleData);
             this.drivers.setValue(this.vehicleData.conductor);
+            this.getVehicleYard();
             this.driverSearch(this.vehicleData.conductor);
           },
           error: (error: HttpErrorResponse) => {
@@ -163,7 +220,6 @@ export class OperacionesCambiarPatioVehiculoComponent {
         .subscribe({
           next: (data: driverInfo) => {
             this.driverData = data;
-            console.log(this.driverData);
             this.isLoadingVehicleInfo = false;
             this.selectedVehicle = true;
           },
@@ -185,6 +241,37 @@ export class OperacionesCambiarPatioVehiculoComponent {
     }
     this.isLoadingVehicleInfo = false;
     this.selectedVehicle = true;
+  }
+
+  getVehicleYard() {
+    if (this.vehicleData.numero === '') {
+      this.openSnackbar('Por favor, selecciona un vehículo primero.');
+      return;
+    }
+
+    const company = this.getCompany();
+
+    this.apiService
+      .getData(`yards/${company}/vehicle/${this.vehicleData.numero}`)
+      .subscribe(
+        (response: any) => {
+          if (response && response.id && response.name) {
+            this.infoChangeYard.get('oldYard')?.setValue({
+              id: response.id,
+              name: response.name,
+            });
+          } else {
+            this.openSnackbar(
+              'No se encontró información de un patio para este vehículo.'
+            );
+          }
+        },
+        (error) => {
+          this.openSnackbar(
+            'Error al obtener la información del patio de este vehículo. Inténtalo de nuevo más tarde.'
+          );
+        }
+      );
   }
 
   resetInfo() {
@@ -213,10 +300,138 @@ export class OperacionesCambiarPatioVehiculoComponent {
       vehiculo: '',
       estado: '',
     };
+    this.drivers.setValue('');
+    this.infoChangeYard.reset();
+    this.infoChangeYard.get('yard')?.setValue('');
+    this.infoChangeYard.get('oldYard')?.setValue('');
+    this.infoChangeYard.get('description')?.setValue('');
   }
 
-  resetAutocomplete() {
-    this.vehicles.setValue('');
+  resetAutocomplete(type: number) {
+    if (type === 1) {
+      this.vehicles.setValue('');
+    } else if (type === 2) {
+      this.infoChangeYard.get('yard')?.setValue('');
+    }
+  }
+
+  getYards() {
+    const company = this.getCompany();
+
+    this.apiService.getData(`yards/${company}`).subscribe(
+      (response: objSelect[]) => {
+        this.yards = response;
+
+        this.filteredYardsOptions = this.infoChangeYard
+          .get('yard')!
+          .valueChanges.pipe(
+            startWith(''),
+            map((value) => {
+              const name = typeof value === 'string' ? value : value?.name;
+              return name ? this._filterYards(name) : this.yards.slice();
+            })
+          );
+      },
+      (error) => {
+        this.openSnackbar(
+          'Error al obtener los patios. Inténtalo de nuevo más tarde.'
+        );
+      }
+    );
+  }
+
+  private _filterYards(value: string): objSelect[] {
+    const filterValue = value.toLowerCase();
+
+    return this.yards.filter(
+      (option) =>
+        option.id.toLowerCase().includes(filterValue) ||
+        option.name.toLowerCase().includes(filterValue)
+    );
+  }
+
+  displayAutocomplete(obj: objSelect): string {
+    return obj && obj.name ? obj.name : '';
+  }
+
+  openConfirmationDialog() {
+    if (this.infoChangeYard.invalid || !this.selectedVehicle) {
+      this.openSnackbar('Por favor, completa todos los campos obligatorios.');
+      this.infoChangeYard.markAllAsTouched();
+      return;
+    }
+
+    const oldYard = this.infoChangeYard.get('oldYard')?.value;
+    if (oldYard && oldYard.id === this.infoChangeYard.get('yard')?.value.id) {
+      return;
+    }
+
+    if(oldYard){
+      var message = `¿Estás seguro de que deseas cambiar el patio del vehículo ${
+          this.vehicleData.numero
+        } - ${this.vehicleData.placa} de ${
+          this.infoChangeYard.get('oldYard')?.value.id
+        } - ${this.infoChangeYard.get('oldYard')?.value.name} a ${
+          this.infoChangeYard.get('yard')?.value.id
+        } - ${this.infoChangeYard.get('yard')?.value.name}?`
+    } else {
+      var message = `¿Estás seguro de que deseas cambiar el patio del vehículo ${
+          this.vehicleData.numero
+        } - ${this.vehicleData.placa} a ${
+          this.infoChangeYard.get('yard')?.value.id
+        } - ${this.infoChangeYard.get('yard')?.value.name}?`
+    }
+
+    const isSmallScreen = this.breakpointObserver.isMatched(Breakpoints.Small);
+    const isXsmallScreen = this.breakpointObserver.isMatched(
+      Breakpoints.XSmall
+    );
+    const dialogWidth = isSmallScreen || isXsmallScreen ? '90vw' : '60%';
+
+    const dialogRef = this.dialog.open(ConfirmActionDialogComponent, {
+      data: {
+        documentName: 'Cambiar de Patio a un Vehículo',
+        message: message,
+      },
+      width: dialogWidth,
+    });
+
+    dialogRef.afterClosed().subscribe((confirmation: boolean) => {
+      if (confirmation) {
+        this.isLoadingChange = true;
+        this.changeYardVehicle();
+      } else {
+        this.openSnackbar('Operación cancelada.');
+      }
+    });
+  }
+
+  changeYardVehicle() {
+    const company = this.getCompany();
+
+    const valuesSave = {
+      company_code: company,
+      vehicle_number: this.vehicleData.numero,
+      yard_code: this.infoChangeYard.get('yard')?.value.id,
+      description: this.infoChangeYard.get('description')?.value,
+    }
+
+    this.apiService
+      .postData('operations/change-yard', valuesSave)
+      .subscribe({
+        next: (response) => {
+          this.openSnackbar(
+            'El patio del vehículo ha sido cambiado exitosamente.'
+          );
+          this.closeDialog();
+        },
+        error: (error: HttpErrorResponse) => {
+          this.isLoadingChange = false;
+          this.openSnackbar(
+            'Error al cambiar el patio del vehículo. Inténtalo de nuevo más tarde.'
+          );
+        },
+      });
   }
 
   openSnackbar(message: string) {

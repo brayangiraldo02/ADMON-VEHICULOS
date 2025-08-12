@@ -21,8 +21,8 @@ templateJinja = Jinja2Templates(directory="templates")
 
 partsrelationshipReports_router = APIRouter()
 
-@partsrelationshipReports_router.post("/partsrelationship/", response_class=FileResponse, tags=["Reports"])
-async def partsrelationship_report(data: PartsRelationshipReport):
+@partsrelationshipReports_router.post("/partsrelationship/{company_code}/", response_class=FileResponse, tags=["Reports"])
+async def partsrelationship_report(company_code: str, data: PartsRelationshipReport):
   db = session()
   try:
     if data.primeraFecha > data.ultimaFecha:
@@ -61,7 +61,9 @@ async def partsrelationship_report(data: PartsRelationshipReport):
           Movimien.FECHA >= data.primeraFecha,
           Movimien.FECHA <= data.ultimaFecha,
           Movimien.PROPI_IDEN == empresa,
-          Movimien.TIPO == '022'
+          Movimien.TIPO == '022',
+          Movimien.EMPRESA == company_code,
+          Propietarios.EMPRESA == company_code
         ) \
         .group_by(
           Movimien.FACTURA,
@@ -106,7 +108,9 @@ async def partsrelationship_report(data: PartsRelationshipReport):
           Movimien.FECHA >= data.primeraFecha,
           Movimien.FECHA <= data.ultimaFecha,
           Movimien.PROPI_IDEN == empresa,
-          Movimien.TIPO == '022'
+          Movimien.TIPO == '022',
+          Movimien.EMPRESA == company_code,
+          Propietarios.EMPRESA == company_code
         ) \
         .group_by(
           Movimien.FACTURA,
@@ -153,7 +157,9 @@ async def partsrelationship_report(data: PartsRelationshipReport):
         Movimien.FECHA <= data.ultimaFecha,
         Movimien.UNIDAD == data.unidad,
         Movimien.PROPI_IDEN == empresa,
-        Movimien.TIPO == '022'
+        Movimien.TIPO == '022',
+        Movimien.EMPRESA == company_code,
+        Propietarios.EMPRESA == company_code
       ) \
       .group_by(
         Movimien.FACTURA,

@@ -85,16 +85,10 @@ h2 {
   text-align: left;
 }
 
-.date-message {
-  padding-top: 16px;
-}
-
-.message {
-  color: black;
-}
-
-.message-strong {
-  color: red;
+.info-select {
+  display: flex;
+  flex-direction: column;
+  padding-top: 14px;
 }
 
 
@@ -156,5 +150,9 @@ h2 {
 
   .info-data {
     padding-left: 2px; /* Slight indent for the data */
+  }
+
+  .info-select {
+    gap: 10px;
   }
 }

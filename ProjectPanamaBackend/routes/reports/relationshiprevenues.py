@@ -1,5 +1,4 @@
-from fastapi import APIRouter
-from fastapi import APIRouter
+from fastapi import APIRouter, BackgroundTasks
 from fastapi.responses import JSONResponse
 from models.infoempresas import InfoEmpresas
 from config.dbconnection import session
@@ -17,17 +16,19 @@ from fastapi.templating import Jinja2Templates
 from fastapi.responses import FileResponse
 import jinja2
 from utils.pdf import html2pdf
+from collections import defaultdict
+import tempfile
 
 templateJinja = Jinja2Templates(directory="templates")
 
 relationshiprevenuesReports_router = APIRouter()
 
-@relationshiprevenuesReports_router.post("/relationshiprevenues/", tags=["Reports"])
-async def relationshiprevenues_report(data: RelationshipRevenuesReport):
+@relationshiprevenuesReports_router.post("/relationshiprevenues/{company_code}", tags=["Reports"])
+async def relationshiprevenues_report(company_code: str, data: RelationshipRevenuesReport):
   db = session()
   try:
     if data.primeraFecha > data.ultimaFecha:
-      return JSONResponse(content={"error": "La primera fecha no puede ser mayor a la última fecha"}, status_code=400)
+      return JSONResponse(content={"message": "La primera fecha no puede ser mayor a la última fecha"}, status_code=400)
 
     user_admin = os.getenv("USER_ADMIN")
     
@@ -35,7 +36,7 @@ async def relationshiprevenues_report(data: RelationshipRevenuesReport):
       if data.usuario != user_admin:
         # empresa = db.query(Propietarios.CODIGO).filter(Propietarios.NOMBRE == data.empresa).all()
         # if len(empresa) == 0:
-        #   return JSONResponse(content={"error": "No se encontró la empresa"}, status_code=400)
+        #   return JSONResponse(content={"message": "No se encontró la empresa"}, status_code=400)
         empresa = data.empresa
 
         conteo_reporte_ingresos = db.query(
@@ -64,6 +65,9 @@ async def relationshiprevenues_report(data: RelationshipRevenuesReport):
           CajaRecaudos.FEC_RECIBO <= data.ultimaFecha,
           CajaRecaudos.PROPI_IDEN == empresa,
           CajaRecaudos.FORMAPAGO.in_(["1", "2", "3", "4", "5"]),
+          CajaRecaudos.EMPRESA == company_code,
+          Propietarios.EMPRESA == company_code,
+          Vehiculos.EMPRESA == company_code,
           CajaRecaudos.EMPRESA == Propietarios.EMPRESA
         ).all()
       else:
@@ -95,6 +99,9 @@ async def relationshiprevenues_report(data: RelationshipRevenuesReport):
           CajaRecaudos.FEC_RECIBO <= data.ultimaFecha,
           CajaRecaudos.FORMAPAGO.in_(["1", "2", "3", "4", "5"]),
           CajaRecaudos.PROPI_IDEN == empresa,
+          CajaRecaudos.EMPRESA == company_code,
+          Propietarios.EMPRESA == company_code,
+          Vehiculos.EMPRESA == company_code,
           CajaRecaudos.EMPRESA == Propietarios.EMPRESA
         ).all()
 
@@ -128,11 +135,14 @@ async def relationshiprevenues_report(data: RelationshipRevenuesReport):
           CajaRecaudos.NUMERO == data.unidad,
           CajaRecaudos.FORMAPAGO.in_(["1", "2", "3", "4", "5"]),
           CajaRecaudos.PROPI_IDEN == empresa,
+          CajaRecaudos.EMPRESA == company_code,
+          Propietarios.EMPRESA == company_code,
+          Vehiculos.EMPRESA == company_code,
           CajaRecaudos.EMPRESA == Propietarios.EMPRESA
         ).all()
       
     if len(conteo_reporte_ingresos) == 0:
-      return JSONResponse(content={"error": "No se encontraron registros"}, status_code=400)
+      return JSONResponse(content={"message": "No se encontraron registros"}, status_code=400)
     
     id_empresa = conteo_reporte_ingresos[0].codigo_empresa
 
@@ -202,6 +212,8 @@ async def relationshiprevenues_report(data: RelationshipRevenuesReport):
         aggregated_data[key]["paga_admon"] = admon_fee_component
 
     data_reporte = list(aggregated_data.values())
+
+    total_recibos = len(aggregated_data)
 
     # Filtrar registros que tengan campos string obligatorios vacíos.
     # Se consideran obligatorios: recibo, unidad, empresa y forma_pago.
@@ -280,7 +292,8 @@ async def relationshiprevenues_report(data: RelationshipRevenuesReport):
         "yappy": total_yappy,
         "total": total_total,
         "total_admon": total_admon,
-        "total_resta_admon": total_total - total_admon
+        "total_resta_admon": total_total - total_admon,
+        "total_recibos": total_recibos
       },
       "fechas": {
         "primeraFecha": data.primeraFecha,
@@ -333,6 +346,214 @@ async def relationshiprevenues_report(data: RelationshipRevenuesReport):
 
     return response
   except Exception as e:
-    return JSONResponse(content={"error": str(e)}, status_code=400)
+    return JSONResponse(content={"message": str(e)}, status_code=400)
+  finally:
+    db.close()
+
+#-----------------------------------------------------------------------------------------------
+
+@relationshiprevenuesReports_router.post("/general-relationshiprevenues/", tags=["Reports"])
+async def general_relationshiprevenues_report(data: GeneralRelationshipRevenuesReport, background_tasks: BackgroundTasks):
+  db = session()
+  try:
+    if data.primeraFecha > data.ultimaFecha:
+      return JSONResponse(content={"message": "La primera fecha no puede ser mayor a la última fecha"}, status_code=400)
+
+    if not data.empresas or len(data.empresas) == 0:
+      return JSONResponse(content={"message": "Debe proporcionar al menos una empresa"}, status_code=400)
+
+    user_admin = os.getenv("USER_ADMIN")
+    
+    conteo_reporte_ingresos = db.query(
+      Propietarios.CODIGO.label('codigo_empresa'),
+      CajaRecaudos.EMPRESA.label('num_empresa'),
+      CajaRecaudos.RECIBO.label('recibo'),
+      CajaRecaudos.DEU_RENTA.label('deuda_renta'),
+      CajaRecaudos.FON_INSCRI.label('fondo_inscripcion'),
+      CajaRecaudos.FON_AHORRO.label('fondo_ahorro'),
+      CajaRecaudos.DEU_SINIES.label('deuda_siniestro'),
+      CajaRecaudos.FORMAPAGO.label('forma_pago'),
+      CajaRecaudos.TOTAL.label('total'),
+      Propietarios.NOMBRE.label('empresa'),
+      Vehiculos.PAGA_ADMON.label('paga_admon'),
+      Vehiculos.GLOBAL_UND.label('global_und'),
+      Vehiculos.CUO_ADMON.label('cuota_admon'),
+      Vehiculos.CUO_DIARIA.label('cuota_diaria'),
+    ) \
+    .join(Propietarios, Propietarios.CODIGO == CajaRecaudos.PROPI_IDEN) \
+    .join(Vehiculos, Vehiculos.NUMERO == CajaRecaudos.NUMERO) \
+    .filter(
+      CajaRecaudos.FEC_RECIBO >= data.primeraFecha,
+      CajaRecaudos.FEC_RECIBO <= data.ultimaFecha,
+      CajaRecaudos.PROPI_IDEN.in_(data.empresas),
+      CajaRecaudos.FORMAPAGO.in_(["1", "2", "3", "4", "5"]),
+      CajaRecaudos.EMPRESA == data.codigo_empresa,
+      CajaRecaudos.EMPRESA == Propietarios.EMPRESA,
+      Propietarios.EMPRESA == Vehiculos.EMPRESA
+    ).all()
+      
+    if not conteo_reporte_ingresos:
+      return JSONResponse(content={"message": "No se encontraron registros"}, status_code=404)
+
+    recibos_consolidados = {}
+    for item in conteo_reporte_ingresos:
+      forma_pago_valida = isinstance(item.forma_pago, str) and "1" <= item.forma_pago <= "5"
+      todos_valores_monetarios_cero = (item.deuda_renta == 0 and item.fondo_inscripcion == 0 and item.fondo_ahorro == 0 and item.deuda_siniestro == 0 and item.total == 0)
+      
+      if not forma_pago_valida or todos_valores_monetarios_cero:
+        continue
+
+      clave_recibo = (item.codigo_empresa, item.recibo)
+
+      if clave_recibo not in recibos_consolidados:
+        recibos_consolidados[clave_recibo] = {
+          "codigo_empresa": item.codigo_empresa,
+          "empresa": item.empresa,
+          "recibo": item.recibo,
+          "deuda_renta": 0,
+          "fondo_inscripcion": 0,
+          "fondo_ahorro": 0,
+          "deuda_siniestro": 0,
+          "forma_pago": item.forma_pago,
+          "total": item.total,
+          "paga_admon": item.paga_admon,
+          "global_und": item.global_und,
+          "cuota_admon": item.cuota_admon,
+          "cuota_diaria": item.cuota_diaria,
+        }
+      
+      recibos_consolidados[clave_recibo]["deuda_renta"] += item.deuda_renta
+      recibos_consolidados[clave_recibo]["fondo_inscripcion"] += item.fondo_inscripcion
+      recibos_consolidados[clave_recibo]["fondo_ahorro"] += item.fondo_ahorro
+      recibos_consolidados[clave_recibo]["deuda_siniestro"] += item.deuda_siniestro
+
+    empresas_data = {}
+    for recibo in recibos_consolidados.values():
+      empresa_codigo = recibo["codigo_empresa"]
+      
+      if empresa_codigo not in empresas_data:
+        empresas_data[empresa_codigo] = {
+          "codigo_empresa": empresa_codigo,
+          "empresa": recibo["empresa"],
+          "deuda_renta": 0, "fondo_inscripcion": 0, "fondo_ahorro": 0,
+          "deuda_siniestro": 0, "efectivo": 0, "ach": 0, "arp": 0,
+          "nequi": 0, "yappy": 0, "total": 0, "total_admon": 0,
+          "total_recibos": 0 
+        }
+
+      empresas_data[empresa_codigo]["deuda_renta"] += recibo["deuda_renta"]
+      empresas_data[empresa_codigo]["fondo_inscripcion"] += recibo["fondo_inscripcion"]
+      empresas_data[empresa_codigo]["fondo_ahorro"] += recibo["fondo_ahorro"]
+      empresas_data[empresa_codigo]["deuda_siniestro"] += recibo["deuda_siniestro"]
+      empresas_data[empresa_codigo]["total"] += recibo["total"]
+      empresas_data[empresa_codigo]["total_recibos"] += 1
+
+      admon_fee_component = 0
+      if recibo["paga_admon"] == "1" and recibo["global_und"] == "2" and recibo["cuota_diaria"] and recibo["cuota_diaria"] > 0:
+        admon_fee_component = round((recibo["deuda_renta"] * recibo["cuota_admon"]) / recibo["cuota_diaria"], 2)
+      
+      empresas_data[empresa_codigo]["total_admon"] += admon_fee_component
+
+      if recibo["forma_pago"] == "1":
+        empresas_data[empresa_codigo]["efectivo"] += recibo["total"]
+      elif recibo["forma_pago"] == "2":
+        empresas_data[empresa_codigo]["ach"] += recibo["total"]
+      elif recibo["forma_pago"] == "3":
+        empresas_data[empresa_codigo]["arp"] += recibo["total"]
+      elif recibo["forma_pago"] == "4":
+        empresas_data[empresa_codigo]["nequi"] += recibo["total"]
+      elif recibo["forma_pago"] == "5":
+        empresas_data[empresa_codigo]["yappy"] += recibo["total"]
+
+    empresas_resumen = list(empresas_data.values())
+    
+    if not empresas_resumen:
+      return JSONResponse(content={"message": "No se encontraron datos para resumir tras aplicar los filtros"}, status_code=404)
+
+    for datos in empresas_resumen:
+      datos["total_resta_admon"] = datos["total"] - datos["total_admon"]
+
+    empresas_resumen = sorted(empresas_resumen, key=lambda x: x["empresa"])
+
+    totales_generales = {
+      "deuda_renta": sum(emp["deuda_renta"] for emp in empresas_resumen),
+      "fondo_inscripcion": sum(emp["fondo_inscripcion"] for emp in empresas_resumen),
+      "fondo_ahorro": sum(emp["fondo_ahorro"] for emp in empresas_resumen),
+      "deuda_siniestro": sum(emp["deuda_siniestro"] for emp in empresas_resumen),
+      "efectivo": sum(emp["efectivo"] for emp in empresas_resumen),
+      "ach": sum(emp["ach"] for emp in empresas_resumen),
+      "arp": sum(emp["arp"] for emp in empresas_resumen),
+      "nequi": sum(emp["nequi"] for emp in empresas_resumen),
+      "yappy": sum(emp["yappy"] for emp in empresas_resumen),
+      "total": sum(emp["total"] for emp in empresas_resumen),
+      "total_admon": sum(emp["total_admon"] for emp in empresas_resumen),
+      "total_recibos": sum(emp["total_recibos"] for emp in empresas_resumen),
+    }
+    totales_generales["total_resta_admon"] = totales_generales["total"] - totales_generales["total_admon"]
+
+    panama_timezone = pytz.timezone('America/Panama')
+    now_in_panama = datetime.now(panama_timezone)
+    fecha = now_in_panama.strftime("%d/%m/%Y")
+    hora_actual = now_in_panama.strftime("%I:%M:%S %p")
+    
+    usuario = data.usuario
+    if data.usuario == user_admin:
+      usuario = "Administrador"
+
+    info_empresa = db.query(InfoEmpresas.NOMBRE, InfoEmpresas.NIT, InfoEmpresas.LOGO).filter(InfoEmpresas.ID == data.codigo_empresa).first()
+
+    info_view = {
+      "empresas": empresas_resumen,
+      "totales_generales": totales_generales,
+      "fechas": { "primeraFecha": data.primeraFecha, "ultimaFecha": data.ultimaFecha },
+      "usuario": usuario,
+      "fecha": fecha,
+      "hora": hora_actual,
+      "titulo": "Resumen de Ingresos por Empresas",
+      "nombre_empresa": info_empresa.NOMBRE if info_empresa else "",
+      "nit_empresa": info_empresa.NIT if info_empresa else "",
+      "logo_empresa": info_empresa.LOGO if info_empresa else ""
+    }
+
+    headers = { "Content-Disposition": "attachment; filename=relacion-ingresos-empresas.pdf" }
+
+    template_loader = jinja2.FileSystemLoader(searchpath="./templates")
+    template_env = jinja2.Environment(loader=template_loader)
+    template = template_env.get_template("RelacionIngresosGeneral.html")
+    header = template_env.get_template("header2.html")
+    footer = template_env.get_template("footer1.html")
+    output_text = template.render(data=info_view)
+    output_header = header.render(info_view)
+    output_footer = footer.render(info_view)
+
+    with tempfile.NamedTemporaryFile(delete=False, suffix=".html", mode="w", encoding="utf-8") as html_file:
+      html_path = html_file.name
+      html_file.write(output_text)
+    with tempfile.NamedTemporaryFile(delete=False, suffix=".html", mode="w", encoding="utf-8") as header_file:
+      header_path = header_file.name
+      header_file.write(output_header)
+    with tempfile.NamedTemporaryFile(delete=False, suffix=".html", mode="w", encoding="utf-8") as footer_file:
+      footer_path = footer_file.name
+      footer_file.write(output_footer)
+    
+    pdf_path = tempfile.NamedTemporaryFile(delete=False, suffix=".pdf").name
+
+    html2pdf(info_view["titulo"], html_path, pdf_path, header_path=header_path, footer_path=footer_path)
+
+    background_tasks.add_task(os.remove, html_path)
+    background_tasks.add_task(os.remove, header_path)
+    background_tasks.add_task(os.remove, footer_path)
+    background_tasks.add_task(os.remove, pdf_path)
+
+    return FileResponse(
+        pdf_path, 
+        media_type='application/pdf',
+        headers=headers,
+        filename='relacion-ingresos-empresas.pdf',
+        background=background_tasks
+      )
+
+  except Exception as e:
+    return JSONResponse(content={"message": f"Ocurrió un error inesperado: {str(e)}"}, status_code=500)
   finally:
     db.close()

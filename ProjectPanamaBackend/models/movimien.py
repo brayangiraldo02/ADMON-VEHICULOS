@@ -4,6 +4,7 @@ from config.dbconnection import Base
 class Movimien(Base):
   __tablename__ = 'MOVIMIEN'
 
+  EMPRESA = Column(CHAR(2))
   ORIGEN = Column(CHAR(3))
   CODIGO = Column(CHAR(18), primary_key=True)
   PEDIDA = Column(DECIMAL(10, 2))

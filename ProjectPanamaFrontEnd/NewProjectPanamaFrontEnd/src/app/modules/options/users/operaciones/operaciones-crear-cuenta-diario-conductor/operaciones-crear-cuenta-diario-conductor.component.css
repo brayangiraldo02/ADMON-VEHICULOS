@@ -86,7 +86,14 @@ h2 {
 }
 
 .date-message {
-  padding-top: 16px;
+  display: flex;
+  flex-direction: column;
+  padding-top: 14px;
+  gap: 10px;
+}
+
+.text-area {
+  width: 100%;
 }
 
 .message {

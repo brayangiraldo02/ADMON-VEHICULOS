@@ -536,9 +536,10 @@ async def get_companies_owners(owner: Owner):
         owners_list = [{'id': owner.CODIGO, 'name': owner.NOMBRE} for owner in owners]
 
       else:
+        company_code = db.query(PermisosUsuario.EMPRESA).filter(PermisosUsuario.CODIGO == owner.propietario).first()
         companies = db.query(PermisosUsuario.EMPRESAS).filter(PermisosUsuario.CODIGO == owner.propietario).first()
         companies_list = companies.EMPRESAS.strip('[]').split()
-        owners = db.query(Propietarios.CODIGO, Propietarios.NOMBRE).filter(Propietarios.CODIGO.in_(companies_list)).all()
+        owners = db.query(Propietarios.CODIGO, Propietarios.NOMBRE).filter(Propietarios.CODIGO.in_(companies_list)).filter(Propietarios.EMPRESA == company_code[0]).all()
         owners_list = [{'id': owner.CODIGO, 'name': owner.NOMBRE} for owner in owners]
 
       return JSONResponse(content=jsonable_encoder(owners_list), status_code=200)
@@ -563,8 +564,9 @@ async def get_companies_per_owners(owner: Owner):
         owners_list = [{'id': owner.CODIGO, 'name': owner.NOMBRE} for owner in owners]
 
       else:
+        company_code = db.query(PermisosUsuario.EMPRESA).filter(PermisosUsuario.CODIGO == owner.propietario).first()
         companies = db.query(PermisosUsuario.EMPRESA).filter(PermisosUsuario.CODIGO == owner.propietario).first()
-        owners = db.query(Propietarios.CODIGO, Propietarios.NOMBRE).filter(Propietarios.EMPRESA == companies[0]).all()
+        owners = db.query(Propietarios.CODIGO, Propietarios.NOMBRE).filter(Propietarios.EMPRESA == companies[0]).filter(Propietarios.EMPRESA == company_code[0]).all()
         owners_list = [{'id': owner.CODIGO, 'name': owner.NOMBRE} for owner in owners]
   
       return JSONResponse(content=jsonable_encoder(owners_list), status_code=200)
@@ -625,6 +627,7 @@ async def get_vehicles_owners(owner: Owner):
           Propietarios.NOMBRE.label('empresa')
         ).join(Propietarios, Propietarios.CODIGO == Vehiculos.PROPI_IDEN).all()
       else:
+        company_code = db.query(PermisosUsuario.EMPRESA).filter(PermisosUsuario.CODIGO == owner.propietario).first()
         # Para un usuario no admin, se filtran las empresas asignadas
         companies = db.query(PermisosUsuario.EMPRESAS)\
                       .filter(PermisosUsuario.CODIGO == owner.propietario)\
@@ -639,7 +642,7 @@ async def get_vehicles_owners(owner: Owner):
           Vehiculos.PROPI_IDEN,
           Propietarios.NOMBRE.label('empresa')
         ).join(Propietarios, Propietarios.CODIGO == Vehiculos.PROPI_IDEN)\
-         .filter(Vehiculos.PROPI_IDEN.in_(companies_list)).all()
+         .filter(Vehiculos.PROPI_IDEN.in_(companies_list), Vehiculos.EMPRESA == company_code[0], Propietarios.EMPRESA == company_code[0]).all()
       
       # Agrupar vehículos por el nombre (empresa)
       for vehicle in vehicles:

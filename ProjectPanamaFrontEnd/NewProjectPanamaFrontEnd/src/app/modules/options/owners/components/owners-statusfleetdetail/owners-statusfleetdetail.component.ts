@@ -39,6 +39,11 @@ export class OwnersStatusfleetdetailComponent implements OnInit {
     this.getUser();
   }
 
+  getCompany() {
+    const userData = this.jwtService.getUserData();
+    return userData ? userData.empresa : '';
+  }
+
   listOwners(): void {
     const userData = this.jwtService.getUserData();
     console.log(userData);
@@ -77,8 +82,10 @@ export class OwnersStatusfleetdetailComponent implements OnInit {
   }
 
   openExternalLink(): void {
+    const company = this.getCompany();
     let endpoint = 'informe-estados-detallado-empresa/';
     endpoint += this.infoForm.value.companie;
+    endpoint += `/${company}`;
     if (endpoint) {
       const data = { user: this.user };
       console.log(data);

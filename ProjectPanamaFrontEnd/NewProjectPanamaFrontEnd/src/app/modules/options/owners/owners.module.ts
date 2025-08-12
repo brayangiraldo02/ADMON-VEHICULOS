@@ -8,6 +8,7 @@ import { OwnersRelationshiprevenuesComponent } from './components/owners-relatio
 import { OwnersStatusfleetdetailComponent } from './components/owners-statusfleetdetail/owners-statusfleetdetail.component';
 import { OwnersStatusfleetsummaryComponent } from './components/owners-statusfleetsummary/owners-statusfleetsummary.component';
 import { ReactiveFormsModule } from '@angular/forms';
+import { OwnersRelationshiprevenuesgeneralComponent } from './components/owners-relationshiprevenuesgeneral/owners-relationshiprevenuesgeneral.component';
 
 
 
@@ -19,7 +20,8 @@ import { ReactiveFormsModule } from '@angular/forms';
     OwnersPurchasevalueandpiqueraComponent,
     OwnersRelationshiprevenuesComponent,
     OwnersStatusfleetdetailComponent,
-    OwnersStatusfleetsummaryComponent
+    OwnersStatusfleetsummaryComponent,
+    OwnersRelationshiprevenuesgeneralComponent
   ],
   imports: [
     CommonModule,
@@ -31,6 +33,7 @@ import { ReactiveFormsModule } from '@angular/forms';
     OwnersPartsrelationshipComponent,
     OwnersPurchasevalueandpiqueraComponent,
     OwnersRelationshiprevenuesComponent,
+    OwnersRelationshiprevenuesgeneralComponent,
     OwnersStatusfleetdetailComponent,
     OwnersStatusfleetsummaryComponent
   ]

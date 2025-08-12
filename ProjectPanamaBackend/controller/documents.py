@@ -151,15 +151,15 @@ async def send_vehicle_documents(company_code: str, vehicle_number: str, doc_id:
   
 #-----------------------------------------------------------------------------------------------
 
-async def vehicle_info(vehicle_number: str):
+async def vehicle_info(company_code: str, vehicle_number: str):
   db = session()
   try:
-    vehicles = db.query(Vehiculos).filter(Vehiculos.NUMERO == vehicle_number).first()
+    vehicles = db.query(Vehiculos).filter(Vehiculos.NUMERO == vehicle_number, Vehiculos.EMPRESA == company_code).first()
     if not vehicles:
       return JSONResponse(content={"message": "Vehículo no encontrado."}, status_code=404)
 
-    owners = db.query(Propietarios).filter(Propietarios.CODIGO == vehicles.PROPI_IDEN).first()
-    drivers = db.query(Conductores).filter(Conductores.CODIGO == vehicles.CONDUCTOR).first()
+    owners = db.query(Propietarios).filter(Propietarios.CODIGO == vehicles.PROPI_IDEN, Propietarios.EMPRESA == company_code).first()
+    drivers = db.query(Conductores).filter(Conductores.CODIGO == vehicles.CONDUCTOR, Conductores.EMPRESA == company_code).first()
 
     txt_file_path = get_txt_file(vehicles.EMPRESA)
     if txt_file_path:
@@ -177,7 +177,10 @@ async def vehicle_info(vehicle_number: str):
       "telefono_conductor": drivers.TELEFONO if drivers else '',
       "panapass": panapass_value if panapass_value else '',
       "fecha_contrato": vehicles.FEC_CONTRA.strftime('%d/%m/%Y') if vehicles.FEC_CONTRA and hasattr(vehicles.FEC_CONTRA, 'strftime') else '',
-      "cuotas_pagas": drivers.NROENTPAGO if drivers else ''
+      "valor_cuota": drivers.CUO_DIARIA if drivers else '',
+      "numero_cuotas": drivers.NROENTREGA if drivers else '',
+      "cuotas_pagas": drivers.NROENTPAGO if drivers else '',
+      "cuotas_pendientes": drivers.NROENTSDO if drivers else ''
     }
 
     return JSONResponse(content=jsonable_encoder(vehicle_data), status_code=200)

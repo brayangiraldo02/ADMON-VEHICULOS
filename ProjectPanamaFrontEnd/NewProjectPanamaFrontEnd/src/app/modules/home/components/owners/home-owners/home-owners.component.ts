@@ -39,6 +39,7 @@ export class HomeOwnersComponent {
   ownersStatusfleetdetailVisible: boolean = false;
   ownersPurchasevalueandpiqueraVisible: boolean = false;
   ownersRelationshiprevenuesVisible: boolean = false;
+  ownersRelationshiprevenuesGeneralVisible: boolean = false;
   ownersPartsrelationshipVisible: boolean = false;
   ownersPandgstatusVisible: boolean = false;
   ownersFeespaidVisible: boolean = false;
@@ -89,10 +90,16 @@ export class HomeOwnersComponent {
         click: () => this.showModalOwnersPurchasevalueandpiquera(),
       },
       {
-        name: 'Relación Ingresos',
+        name: 'Relación Ingresos Unidades',
         url: 'hoalalalal',
         disabled: false,
         click: () => this.showModalOwnersRelationshipprevenues(),
+      },
+      {
+        name: 'Relación Ingresos Generales',
+        url: 'hoalalalal',
+        disabled: false,
+        click: () => this.showModalOwnersRelationshiprevenuesGeneral(),
       },
       {
         name: 'Relación Piezas',
@@ -181,6 +188,13 @@ export class HomeOwnersComponent {
     document.body.style.overflow = 'hidden';
   }
 
+  showModalOwnersRelationshiprevenuesGeneral() {
+    this.ownersRelationshiprevenuesGeneralVisible =
+      !this.ownersRelationshiprevenuesGeneralVisible;
+    document.documentElement.style.overflow = 'hidden';
+    document.body.style.overflow = 'hidden';
+  }
+
   showModalOwnersPartsRelationship() {
     this.ownersPartsrelationshipVisible = !this.ownersPartsrelationshipVisible;
     document.documentElement.style.overflow = 'hidden';
@@ -218,6 +232,11 @@ export class HomeOwnersComponent {
     if (this.ownersRelationshiprevenuesVisible) {
       this.ownersRelationshiprevenuesVisible =
         !this.ownersRelationshiprevenuesVisible;
+    }
+
+    if (this.ownersRelationshiprevenuesGeneralVisible) {
+      this.ownersRelationshiprevenuesGeneralVisible =
+        !this.ownersRelationshiprevenuesGeneralVisible;
     }
 
     if (this.ownersPartsrelationshipVisible) {

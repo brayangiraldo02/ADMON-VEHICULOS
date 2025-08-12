@@ -1,6 +1,7 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ApiService } from 'src/app/services/api.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 interface vehicleInfo {
   numero: string;
@@ -83,7 +84,8 @@ export class OperacionesEntregaVehiculoConductorComponent {
   }
 
   constructor(
-    private apiService: ApiService
+    private apiService: ApiService,
+    private snackBar: MatSnackBar
   ) { }
 
   ngOnInit(): void {
@@ -203,13 +205,32 @@ export class OperacionesEntregaVehiculoConductorComponent {
   }
 
   deliveryVehicleDriverValidations() {
-    if (this.driverData.estado === '1' && 
-        this.driverData.vehiculo === '' &&
-        this.vehicleData.estado.substring(0, 2) === '06' &&
-        this.vehicleData.con_cupo === 1 &&
-        this.vehicleData.conductor === '') {
-      this.deliveryVehicleDriverDisabled = false;
+    if (this.driverData.estado !== '1') {
+      this.openSnackbar('El conductor seleccionado no se encuentra activo.');
+      return;
     }
+  
+    if (this.driverData.vehiculo !== '') {
+      this.openSnackbar('El conductor ya tiene un vehículo asignado.');
+      return;
+    }
+  
+    if (this.vehicleData.estado.substring(0, 2) !== '06') {
+      this.openSnackbar('El vehículo seleccionado no está esperando operador.');
+      return;
+    }
+
+    if (this.vehicleData.con_cupo !== 1) {
+      this.openSnackbar('El vehículo no tiene cupo disponible.');
+      return;
+    }
+    
+    if (this.vehicleData.conductor !== '') {
+      this.openSnackbar('El vehículo ya se encuentra ocupado por otro conductor.');
+      return;
+    }
+
+    this.deliveryVehicleDriverDisabled = false;
   }
 
   confirmationChange(){
@@ -240,6 +261,14 @@ export class OperacionesEntregaVehiculoConductorComponent {
         }
       }
     });
+  }
+
+  openSnackbar(message: string) {
+    this.snackBar.open(message, 'Cerrar', {
+      duration: 3000,
+      horizontalPosition: 'center',
+      verticalPosition: 'top',
+    })
   }
 
   closeModal() {

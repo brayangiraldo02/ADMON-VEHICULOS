@@ -1,12 +1,11 @@
 <h2 mat-dialog-title>Crear Cuenta de Diario al Conductor</h2>
 <mat-divider></mat-divider>
-<mat-dialog-content *ngIf="isLoadingVehicles">
+<mat-dialog-content *ngIf="isLoadingVehicles || isLoadingCreate">
   <mat-progress-bar
     mode="indeterminate"
-    *ngIf="isLoadingVehicles"
   ></mat-progress-bar>
 </mat-dialog-content>
-<mat-dialog-content class="scrollable-content" *ngIf="!isLoadingVehicles">
+<mat-dialog-content class="scrollable-content" *ngIf="!isLoadingVehicles && !isLoadingCreate">
   <div class="vehicle-info">
     <mat-form-field class="form-field">
       <mat-label>Vehículo</mat-label>
@@ -113,18 +112,18 @@
 
     <mat-divider></mat-divider>
 
-    <!-- <div class="date-message" *ngIf="contractInfo.permitido !== null && contractInfo.permitido !== undefined">
-      <p class="message" *ngIf="contractInfo.permitido === 1">
-        <strong class="message-strong">NO PERMITIDO:</strong> {{ contractInfo.mensaje }}.
-      </p>
-
-      <mat-form-field class="form-field date-form" (click)="datepicker.open()" *ngIf="contractInfo.permitido === 0">
+    <div class="loading-validations" *ngIf="reCheckedValidations">
+      <mat-progress-bar class="loading-bar" mode="indeterminate" *ngIf="reCheckedValidations"></mat-progress-bar>
+    </div>
+    <div class="date-message" *ngIf="checkedValidations && !reCheckedValidations">
+      <mat-form-field class="form-field date-form" (click)="datepicker.open()" *ngIf="authorizedVehicle || (validations.vehicle_bill && validations.vehicle_driver && validations.vehicle_state)">
         <input
           matInput
           placeholder="Selecciona una fecha inicial"
           [matDatepicker]="datepicker"
           [formControl]="selectedDate"
           [max]="maxDate"
+          (dateChange)="validationDateChange($event)"
           required
           readonly
         />
@@ -138,10 +137,34 @@
       <mat-error *ngIf="selectedDate.invalid && selectedDate.touched">
         Debes seleccionar una fecha.
       </mat-error>
-    </div> -->
+
+      <mat-form-field class="text-area" *ngIf="authorizedVehicle">
+        <mat-label>Descripción</mat-label>
+        <textarea matInput [formControl]="description" required></textarea>
+      </mat-form-field>
+      <!-- <mat-error *ngIf="description.invalid && description.touched">
+        Debes ingresar una descripción.
+      </mat-error> -->
+
+      <p class="message" *ngIf="!authorizedVehicle">
+        <strong class="message-strong">NO PERMITIDO:</strong>
+      </p>
+
+      <p class="message" *ngIf="validations.vehicle_bill && !authorizedVehicle">
+        El vehículo ya tiene una cuenta de cobro para la fecha ingresada.
+      </p>
+
+      <p class="message" *ngIf="!validations.vehicle_driver && !authorizedVehicle">
+        El vehículo no tiene un conductor asignado.
+      </p>
+
+      <p class="message" *ngIf="!validations.vehicle_state && !authorizedVehicle">
+        El vehículo no está activo.
+      </p>
+    </div>
   </div>
 </mat-dialog-content>
 <mat-dialog-actions align="end">
   <button mat-button mat-dialog-close>Cancelar</button>
-  <button mat-button cdkFocusInitial disabled>Confirmar</button>
+  <button mat-button cdkFocusInitial [disabled]="!selectedVehicle || isLoadingVehicleInfo || !checkedValidations || !authorizedVehicle || selectedDate.invalid || reCheckedValidations || isLoadingCreate" (click)="openConfirmationDialog()">Confirmar</button>
 </mat-dialog-actions>

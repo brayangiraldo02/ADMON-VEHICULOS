@@ -3,6 +3,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ApiService } from 'src/app/services/api.service';
 import { Clipboard } from '@angular/cdk/clipboard';
+import { JwtService } from 'src/app/services/jwt.service';
 
 interface DialogData {
   vehicleNumber: string;
@@ -18,6 +19,10 @@ interface VehicleInfo {
   telefono_conductor: string;
   panapass: string;
   fecha_contrato: string;
+  valor_cuota: number;
+  numero_cuotas: number;
+  cuotas_pagas: number;
+  cuotas_pendientes: number;
 }
 
 @Component({
@@ -35,16 +40,23 @@ export class InfoVehicleDialogComponent implements OnInit {
     private dialogRef: MatDialogRef<InfoVehicleDialogComponent>,
     private apiService: ApiService,
     private snackBar: MatSnackBar,
-    private clipboard: Clipboard
+    private clipboard: Clipboard,
+    private jwtService: JwtService
   ) {}
 
   ngOnInit(): void {
     this.getVehicleInfo();
   }
 
+  getCompany() {
+    const userData = this.jwtService.getUserData();
+    return userData ? userData.empresa : '';
+  }
+
   getVehicleInfo(): void {
+    const company = this.getCompany();
     this.apiService
-      .getData('documents/vehicle-info/' + this.data.vehicleNumber)
+      .getData('documents/vehicle-info/' + company + '/' + this.data.vehicleNumber)
       .subscribe((data: VehicleInfo) => {
         this.vehicle = data;
         console.log('Vehicle Info:', this.vehicle);
@@ -66,8 +78,8 @@ export class InfoVehicleDialogComponent implements OnInit {
     })
   }
 
-  copyToClipboard(text: string) {
-    this.clipboard.copy(text);
+  copyToClipboard(text: string | number) {
+    this.clipboard.copy(text.toString());
     this.openSnackbar('Copiado al portapapeles');
   }
 
