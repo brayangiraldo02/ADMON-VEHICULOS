@@ -6,6 +6,7 @@ from models.conductores import Conductores
 from models.vehiculos import Vehiculos
 from models.inspecciones import Inspecciones
 from models.tiposinspeccion import TiposInspeccion
+from schemas.inspections import *
 from fastapi.encoders import jsonable_encoder
 from fastapi import UploadFile, File, BackgroundTasks
 import os
@@ -406,3 +407,92 @@ async def new_inspection_data(company_code: str, vehicle_number: str):
     db.close()
     
 #-----------------------------------------------------------------------------------------------
+
+async def create_inspection(data: NewInspection):
+  db = session()
+  try:
+    vehicle = db.query(Vehiculos).filter(Vehiculos.NUMERO == data.vehicle_number, Vehiculos.EMPRESA == data.company_code).first()
+    if not vehicle:
+      return JSONResponse(content={"message": "Vehiculo no encontrado"}, status_code=404)
+
+    driver = db.query(Conductores).filter(Conductores.CODIGO == vehicle.CONDUCTOR).first()
+    if not driver:
+      return JSONResponse(content={"message": "Conductor no encontrado"}, status_code=404)
+
+    owner = db.query(Propietarios).filter(Propietarios.CODIGO == vehicle.PROPI_IDEN, Propietarios.EMPRESA == data.company_code).first()
+    if not owner:
+      return JSONResponse(content={"message": "Propietario no encontrado"}, status_code=404)
+    
+    inspection_type = db.query(TiposInspeccion).filter(TiposInspeccion.CODIGO == data.inspection_type, TiposInspeccion.EMPRESA == data.company_code).first()
+    if not inspection_type:
+      return JSONResponse(content={"message": "Tipo de inspección no encontrado"}, status_code=404)
+    
+    panama_timezone = pytz.timezone('America/Panama')
+    now_in_panama = datetime.now(panama_timezone)
+
+    new_inspection = Inspecciones(
+      EMPRESA=data.company_code,
+      UNIDAD=vehicle.NUMERO,
+      PLACA=vehicle.PLACA,
+      PROPI_IDEN=vehicle.PROPI_IDEN,
+      NOMPROPI=owner.NOMBRE,
+      CONDUCTOR=vehicle.CONDUCTOR,
+      CEDULA=driver.CEDULA,
+      NOMCONDU=driver.NOMBRE,
+      TIPO_INSPEC=inspection_type.CODIGO,
+      KILOMETRAJ=data.mileage,
+      DESCRIPCION=data.description,
+      FECHA=data.inspection_date,
+      HORA=data.inspection_time,
+      ALFOMBRA=data.alfombra,
+      ANTENA=data.antena,
+      CARATRADIO=data.caratula_radio,
+      COMBUSTIBLE=data.combustible,
+      COPASRINES=data.copas_rines,
+      EXTINGUIDOR=data.extintor,
+      FORMACOLIS=data.formato_colisiones_menores,
+      GATO=data.gato,
+      GPS=data.gps,
+      LAMPARAS=data.lamparas,
+      LLANTAREPU=data.llanta_repuesto,
+      LUZDELANTE=data.luces_delanteras,
+      LUZTRACERA=data.luces_traseras,
+      PAGOMUNICI=data.pago_mnicipio,
+      PANAPASS=data.panapass,
+      PIPA=data.pipa,
+      PLACAMUNIC=data.placa_municipal,
+      POLISEGURO=data.poliza_seguros,
+      REGISVEHIC=data.registro_vehiculo,
+      RETROVISOR=data.retrovisor,
+      REVISADO=data.revisado,
+      TAPICERIA=data.tapiceria,
+      TRIANGULO=data.triangulo,
+      VIDRIOS=data.vidrios,
+      FOTO01= '', #data.photo1,
+      FOTO02= '', #data.photo2,
+      FOTO03= '', #data.photo3,
+      FOTO04= '', #data.photo4,
+      FOTO05= '', #data.photo5,
+      FOTO06= '', #data.photo6,
+      FOTO07= '', #data.photo7,
+      FOTO08= '', #data.photo8,
+      FOTO09= '', #data.photo9,
+      FOTO10= '', #data.photo10,
+      FOTO11= '', #data.photo11,
+      FOTO12= '', #data.photo12,
+      FOTO13= '', #data.photo13,
+      FOTO14= '', #data.photo14,
+      FOTO15= '', #data.photo15,
+      FOTO16= '', #data.photo16,
+      USUARIO=data.user if data.user else "",
+      FEC_CREADO=now_in_panama.strftime("%Y-%m-%d %H:%M:%S")
+    )
+
+    db.add(new_inspection)
+    db.commit()
+
+    return JSONResponse(content={"message": "Inspección creada con éxito"}, status_code=201)
+  except Exception as e:
+    return JSONResponse(content={"message": str(e)}, status_code=500)
+  finally:
+    db.close()

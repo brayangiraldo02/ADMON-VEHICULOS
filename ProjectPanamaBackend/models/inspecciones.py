@@ -3,6 +3,7 @@ from config.dbconnection import Base
 
 class Inspecciones(Base):
     __tablename__ = 'INSPECCIONES'
+    EMPRESA = Column(CHAR(2), nullable=False)
     ID = Column(Integer, primary_key=True, autoincrement=True, nullable=False)
     UNIDAD = Column(CHAR(8), default="")
     PLACA = Column(CHAR(8), default="")
