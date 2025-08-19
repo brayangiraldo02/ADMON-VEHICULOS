@@ -63,7 +63,8 @@ async def partsrelationship_report(company_code: str, data: PartsRelationshipRep
           Movimien.PROPI_IDEN == empresa,
           Movimien.TIPO == '022',
           Movimien.EMPRESA == company_code,
-          Propietarios.EMPRESA == company_code
+          Propietarios.EMPRESA == company_code,
+          Movienca.EMPRESA == company_code
         ) \
         .group_by(
           Movimien.FACTURA,
@@ -110,7 +111,8 @@ async def partsrelationship_report(company_code: str, data: PartsRelationshipRep
           Movimien.PROPI_IDEN == empresa,
           Movimien.TIPO == '022',
           Movimien.EMPRESA == company_code,
-          Propietarios.EMPRESA == company_code
+          Propietarios.EMPRESA == company_code,
+          Movienca.EMPRESA == company_code
         ) \
         .group_by(
           Movimien.FACTURA,
@@ -159,7 +161,8 @@ async def partsrelationship_report(company_code: str, data: PartsRelationshipRep
         Movimien.PROPI_IDEN == empresa,
         Movimien.TIPO == '022',
         Movimien.EMPRESA == company_code,
-        Propietarios.EMPRESA == company_code
+        Propietarios.EMPRESA == company_code,
+        Movienca.EMPRESA == company_code
       ) \
       .group_by(
         Movimien.FACTURA,
