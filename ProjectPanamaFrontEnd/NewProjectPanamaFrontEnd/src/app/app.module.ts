@@ -39,7 +39,6 @@ import { VehiclesDocumentationComponent } from './modules/tasks/vehicles/vehicle
 import { DriversDocumentationComponent } from './modules/tasks/drivers/drivers-documentation/drivers-documentation.component';
 import { OperacionesEntregaVehiculoConductorComponent } from './modules/options/users/operaciones/operaciones-entrega-vehiculo-conductor/operaciones-entrega-vehiculo-conductor.component';
 import { SharedModule } from './modules/shared/shared.module';
-import { DevPreviewComponent } from './modules/others/dev-preview/dev-preview.component';
 import { MaterialModule } from './modules/shared/material/material.module';
 import { InspectionsTableComponent } from './modules/tasks/inspections/inspections-table/inspections-table.component';
 import { OperacionesContratoDeclaracionJuradaComponent } from './modules/options/users/operaciones/operaciones-contrato-declaracion-jurada/operaciones-contrato-declaracion-jurada.component';
@@ -92,7 +91,6 @@ import { OperacionesDevolucionVehiculoPrestadoComponent } from './modules/option
     VehiclesDocumentationComponent,
     DriversDocumentationComponent,
     OperacionesEntregaVehiculoConductorComponent,
-    DevPreviewComponent,
     InspectionsTableComponent,
     OperacionesContratoDeclaracionJuradaComponent,
     VehiclesDocumentsComponent,
