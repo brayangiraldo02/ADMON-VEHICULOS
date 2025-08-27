@@ -33,7 +33,7 @@ from utils.pdf import html2pdf
 from utils.text import clean_text
 from sqlalchemy import func
 
-path_10  = "C:/Users/Ximena/Desktop/dropbox-alfasoft/Integracion"
+path_10  = "/home/admin/dropbox-alfasoft/Integracion"
 path_58  = "/home/admin/dropbox-alfasoft/Integracion (1)"
 
 async def get_vehicle_operation(vehicle_number: str):
