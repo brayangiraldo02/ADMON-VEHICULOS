@@ -90,8 +90,6 @@ export class JwtService {
     const userData = this.decodedToken!.user_data;
     const userPermissions = this.convertBooleanValues(userData);
 
-    console.log('userPermissions:', userPermissions); 
-
     return userPermissions[permission] === true;
   }
 

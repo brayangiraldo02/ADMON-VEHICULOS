@@ -352,7 +352,7 @@ async def inspection_types(company_code: str):
     if not inspection_types:
       return JSONResponse(content={"message": "Inspection types not found"}, status_code=404)
 
-    result = [{"id": inspection_type.CODIGO, "nombre": inspection_type.NOMBRE} for inspection_type in inspection_types]
+    result = [{"id": inspection_type.CODIGO, "nombre": inspection_type.NOMBRE, "tipo": inspection_type.TIPO} for inspection_type in inspection_types]
 
     return JSONResponse(content=jsonable_encoder(result), status_code=200)
   except Exception as e:
