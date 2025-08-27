@@ -488,6 +488,8 @@ async def create_inspection(data: NewInspection):
       FEC_CREADO=now_in_panama.strftime("%Y-%m-%d %H:%M:%S")
     )
 
+    vehicle.KILOMETRAJ = data.mileage
+
     db.add(new_inspection)
     db.commit()
 
