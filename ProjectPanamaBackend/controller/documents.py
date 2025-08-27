@@ -41,7 +41,7 @@ async def vehicle_documents(company_code: str, vehicle_number: str):
           classified_docs[doc_id]["folios"].append(filename)
 
     response_documents = []
-    for i in range(1, 16):
+    for i in range(0, 16):
       doc_id = f"docu{str(i).zfill(2)}"
       existe = 0
       folios = 0
