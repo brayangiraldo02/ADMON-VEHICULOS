@@ -1,3 +1,28 @@
+h2 {
+  margin: 0;
+}
+
+.main-content-container {
+  display: flex;
+  gap: 20px;
+}
+
+.info-container {
+  width: 100%;
+}
+
+.info-container h3 {
+  margin: 0;
+}
+
+/* --- ESTE ES EL NUEVO BLOQUE --- */
+.inspections-inputs-form {
+  max-height: 450px; /* Puedes ajustar este valor */
+  overflow-y: auto;
+  padding-right: 10px;
+}
+/* ------------------------------- */
+
 .inputs-container {
   display: flex;
   gap: 10px;
@@ -8,6 +33,11 @@
 }
 
 @media (max-width: 950px) {
+  /* Añadimos esto para que en móvil el layout se apile correctamente */
+  .main-content-container {
+    flex-direction: column;
+  }
+  
   .inputs-container {
     flex-direction: column;
     gap: 0;

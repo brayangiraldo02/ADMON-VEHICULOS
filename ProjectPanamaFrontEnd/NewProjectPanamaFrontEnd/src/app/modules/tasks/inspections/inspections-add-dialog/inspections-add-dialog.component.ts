@@ -21,6 +21,7 @@ interface Vehicles {
 interface InspectionTypes {
   id: string;
   nombre: string;
+  tipo: string;
 }
 
 interface InspectionsVehicleData {
@@ -54,6 +55,8 @@ export class InspectionsAddDialogComponent implements OnInit {
 
   loadingVehicleInfo: boolean = false;
   selectedVehicle: boolean = false;
+
+  inspectionType: string = '';
 
   vehicleInfo!: InspectionsVehicleData;
 
@@ -149,6 +152,8 @@ export class InspectionsAddDialogComponent implements OnInit {
       hora_inspeccion: '',
       panapass: 0
     };
+
+    this.inspectionType = '';
   }
 
   selectedOptionVehicle(event: MatAutocompleteSelectedEvent): void {
@@ -162,6 +167,7 @@ export class InspectionsAddDialogComponent implements OnInit {
       this.getVehicleInfo(selectedVehicle);
     } else {
       this.vehiclesForm.get('vehiculo')?.reset('');
+      this.inspectionType = '';
       this.openSnackbar('No se ha encontrado información del vehículo seleccionado. Prueba con otro.');
     }
   }
@@ -190,5 +196,9 @@ export class InspectionsAddDialogComponent implements OnInit {
       this.vehiclesForm.markAllAsTouched();
       return;
     }
+
+    const InspectionsSelectedType = this.vehiclesForm.get('tipo_inspeccion')!.value;
+
+    this.inspectionType = InspectionsSelectedType.tipo;
   }
 }

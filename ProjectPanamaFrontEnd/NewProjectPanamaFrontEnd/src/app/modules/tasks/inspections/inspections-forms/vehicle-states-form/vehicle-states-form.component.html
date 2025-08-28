@@ -1,0 +1,27 @@
+<div class="main-container">
+  <h3>Situación del vehículo TT232</h3>
+
+  <form>
+    <div class="checklist-header">
+      <span class="checklist-label">ÍTEM</span> 
+      
+      <div class="checklist-options-container">
+        <span class="options-title">OPCIONES</span>
+        <div class="checklist-options-header">
+          <mat-icon class="icon-green" matTooltip="Sí">check_circle</mat-icon>
+          <mat-icon class="icon-red" matTooltip="No">cancel</mat-icon>
+        </div>
+      </div>
+    </div>
+    
+    <div class="checklist">
+      <div class="checklist-row" *ngFor="let item of checklistItems">
+        <span class="checklist-label">{{ item.label }}:</span>
+        <mat-radio-group class="checklist-options" [(ngModel)]="item.value" [name]="item.id">
+          <mat-radio-button [value]="true" color="primary"></mat-radio-button>
+          <mat-radio-button [value]="false" color="warn"></mat-radio-button>
+        </mat-radio-group>
+      </div>
+    </div>
+  </form>
+</div>

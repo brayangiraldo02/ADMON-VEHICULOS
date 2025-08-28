@@ -54,6 +54,7 @@ import { OperacionesCambiarPatioVehiculoComponent } from './modules/options/user
 import { OperacionesCorregirKilometrajeActualComponent } from './modules/options/users/operaciones/operaciones-corregir-kilometraje-actual/operaciones-corregir-kilometraje-actual.component';
 import { OperacionesPrestamoVehiculoConductorComponent } from './modules/options/users/operaciones/operaciones-prestamo-vehiculo-conductor/operaciones-prestamo-vehiculo-conductor.component';
 import { OperacionesDevolucionVehiculoPrestadoComponent } from './modules/options/users/operaciones/operaciones-devolucion-vehiculo-prestado/operaciones-devolucion-vehiculo-prestado.component';
+import { VehicleStatesFormComponent } from './modules/tasks/inspections/inspections-forms/vehicle-states-form/vehicle-states-form.component';
 
 @NgModule({
   declarations: [
@@ -105,6 +106,7 @@ import { OperacionesDevolucionVehiculoPrestadoComponent } from './modules/option
     OperacionesCorregirKilometrajeActualComponent,
     OperacionesPrestamoVehiculoConductorComponent,
     OperacionesDevolucionVehiculoPrestadoComponent,
+    VehicleStatesFormComponent,
   ],
   imports: [
     BrowserModule,
