@@ -13,14 +13,15 @@ import shutil
 from utils.panapass import get_txt_file, search_value_in_txt
 
 # PATH DE PRODUCCIÓN PARA XIMENA
-documents_path  = "C:/Users/Ximena/Desktop/vehiculos"
+vehicle_documents_path  = "C:/Users/Ximena/Desktop/vehiculos"
+driver_documents_path = "C:/Users/Ximena/Desktop/conductores"
 
 #PATH DE DESARROLLO PARA BRAYAN
-# documents_path  = "/home/giraldo/Personal/Proyectos Externos/AlfaSoft/temp/vehiculos"
+# vehicle_documents_path  = "/home/giraldo/Personal/Proyectos Externos/AlfaSoft/temp/vehiculos"
 
 async def vehicle_documents(company_code: str, vehicle_number: str):
   try:
-    base_path = os.path.join(documents_path, company_code, vehicle_number)
+    base_path = os.path.join(vehicle_documents_path, company_code, vehicle_number)
 
     if not os.path.isdir(base_path):
       return JSONResponse(content={"message": "Directorio del vehículo no encontrado."}, status_code=404)
@@ -72,7 +73,7 @@ async def vehicle_documents(company_code: str, vehicle_number: str):
 
 # async def vehicle_documents(company_code: str, vehicle_number: str):
 #   try:
-#     base_path = os.path.join(documents_path, company_code, vehicle_number)
+#     base_path = os.path.join(vehicle_documents_path, company_code, vehicle_number)
 #     documents = []
 
 #     if not os.path.exists(base_path):
@@ -113,7 +114,7 @@ async def vehicle_documents(company_code: str, vehicle_number: str):
 
 async def send_vehicle_documents(company_code: str, vehicle_number: str, doc_id: str):
   try:
-    base_path = os.path.join(documents_path, company_code, vehicle_number)
+    base_path = os.path.join(vehicle_documents_path, company_code, vehicle_number)
 
     if not os.path.isdir(base_path): 
       return JSONResponse(content={"message": "Directorio del vehículo no encontrado."}, status_code=404)
@@ -184,5 +185,99 @@ async def vehicle_info(company_code: str, vehicle_number: str):
     }
 
     return JSONResponse(content=jsonable_encoder(vehicle_data), status_code=200)
+  except Exception as e:
+    return JSONResponse(content={"message": str(e)}, status_code=500)
+  
+#-----------------------------------------------------------------------------------------------
+
+async def driver_documents(company_code: str, driver_number: str):
+  try:
+    base_path = os.path.join(driver_documents_path, company_code, driver_number)
+
+    if not os.path.isdir(base_path):
+      return JSONResponse(content={"message": "Directorio del conductor no encontrado."}, status_code=404)
+
+    classified_docs = {} 
+    
+    for filename in os.listdir(base_path):
+      match = re.match(r'^(docu(\d{2}))', filename, re.IGNORECASE)
+      if match and filename.lower().endswith('.pdf'):
+        doc_id = f"docu{match.group(2)}"
+        
+        if doc_id not in classified_docs:
+          classified_docs[doc_id] = {"main": None, "folios": []}
+          
+        if filename.lower() == f"{doc_id}.pdf":
+          classified_docs[doc_id]["main"] = filename
+        else:
+          classified_docs[doc_id]["folios"].append(filename)
+
+    response_documents = []
+    for i in range(0, 10):
+      doc_id = f"docu{str(i).zfill(2)}"
+      existe = 0
+      folios = 0
+      mensaje = ""
+      nombre_archivo = None
+      
+      if doc_id in classified_docs and classified_docs[doc_id]["main"]:
+        existe = 1
+        nombre_archivo = classified_docs[doc_id]["main"]
+        
+        num_folios = len(classified_docs[doc_id]["folios"])
+        if num_folios > 0:
+          folios = 1
+          total_docs = num_folios + 1
+          mensaje = f"Tiene {total_docs} documentos."
+
+      response_documents.append({
+        "nombre_documento": doc_id,
+        "nombre_archivo": nombre_archivo, 
+        "existe": existe,
+        "folios": folios,
+        "mensaje": mensaje
+      })
+      
+    return JSONResponse(content=jsonable_encoder(response_documents), status_code=200)
+  except Exception as e:
+    return JSONResponse(content={"message": str(e)}, status_code=500)
+
+#-----------------------------------------------------------------------------------------------
+
+async def send_driver_documents(company_code: str, driver_number: str, doc_id: str):
+  try:
+    base_path = os.path.join(driver_documents_path, company_code, driver_number)
+
+    if not os.path.isdir(base_path):
+      return JSONResponse(content={"message": "Directorio del conductor no encontrado."}, status_code=404)
+
+    base_id = doc_id.lower().replace(".pdf", "")
+
+    folios = [
+        os.path.join(base_path, f) for f in sorted(os.listdir(base_path))
+        if f.lower().startswith(base_id) and f.lower().endswith(".pdf")
+    ]
+
+    if not folios:
+      return JSONResponse(content={"message": "No hay documentos disponibles para enviar."}, status_code=404)
+    
+    if len(folios) == 1:
+      return FileResponse(
+        path=folios[0],
+        filename=f"{doc_id}",
+        media_type='application/pdf'
+      )
+    
+    merged_pdf_path = merge_pdfs(folios)
+    background_tasks = BackgroundTasks()
+    background_tasks.add_task(os.remove, merged_pdf_path)
+
+    return FileResponse(
+      path=merged_pdf_path,
+      filename=f"{base_id}_unido.pdf",
+      media_type='application/pdf',
+      background=background_tasks
+    )
+
   except Exception as e:
     return JSONResponse(content={"message": str(e)}, status_code=500)
