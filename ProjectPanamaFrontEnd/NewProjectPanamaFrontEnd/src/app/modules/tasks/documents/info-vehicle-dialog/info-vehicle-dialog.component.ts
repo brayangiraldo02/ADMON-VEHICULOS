@@ -59,11 +59,9 @@ export class InfoVehicleDialogComponent implements OnInit {
       .getData('documents/vehicle-info/' + company + '/' + this.data.vehicleNumber)
       .subscribe((data: VehicleInfo) => {
         this.vehicle = data;
-        console.log('Vehicle Info:', this.vehicle);
         this.isLoading = false;
       },
       (error) => {
-        console.error('Error fetching vehicle info:', error);
         this.openSnackbar('Error al obtener la información del vehículo, vuelve a intentarlo más tarde.');
         this.isLoading = false;
         this.closeModal();

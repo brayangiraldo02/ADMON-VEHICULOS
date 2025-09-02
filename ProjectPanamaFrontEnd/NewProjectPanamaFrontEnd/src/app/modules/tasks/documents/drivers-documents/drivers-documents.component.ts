@@ -109,13 +109,11 @@ export class DriversDocumentsComponent implements OnInit {
       .getData('documents/driver-documents/' + company + '/' + driver_number)
       .subscribe({
         next: (data: existDocumentsDrivers[]) => {
-          console.log('Información de documentos del conductor:', data);
           this.loadingDocumentsInfoDrivers = false;
           this.selectedDriver = true;
           this.documentsInfo = data; // Asignamos los datos a la propiedad
         },
         error: (err: HttpErrorResponse) => {
-          console.error('Error HTTP:', err);
           let snackbarMessage = '';
 
           if (err.status === 404) {
@@ -149,7 +147,6 @@ export class DriversDocumentsComponent implements OnInit {
     this.documentsInfo = []; // Limpiamos al cambiar de conductor
 
     if (selectedDriver) {
-      console.log('Conductor seleccionado:', selectedDriver);
       this.displayInfoDriver = true;
       this.getDocumentsInfoDriver(selectedDriver.codigo_conductor);
     } else {
@@ -161,12 +158,6 @@ export class DriversDocumentsComponent implements OnInit {
     if (!driver || !document) return;
 
     const company = this.getCompany();
-
-    console.log('Solicitando documento del conductor:', {
-      empresa: company,
-      conductor: driver,
-      documento: document,
-    });
 
     const endpoint =
       'documents/send-driver-documents/' +
@@ -185,12 +176,6 @@ export class DriversDocumentsComponent implements OnInit {
     nombreHtml: string
   ): void {
     if (!document) return;
-
-    console.log('Documento solicitado:', {
-      nombre: document.nombre_documento,
-      folios: document.folios,
-      mensaje: document.mensaje,
-    });
 
     if (!document.folios) {
       this.getDocumentDriver(
@@ -213,8 +198,6 @@ export class DriversDocumentsComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe((result) => {
-      console.log('El diálogo se cerró con el resultado:', result);
-
       if (result === true) {
         this.getDocumentDriver(
           this.driversForm.get('conductor')?.value.codigo_conductor,
