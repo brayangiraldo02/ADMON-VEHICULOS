@@ -63,7 +63,8 @@ async def partsrelationship_report(company_code: str, data: PartsRelationshipRep
           Movimien.PROPI_IDEN == empresa,
           Movimien.TIPO == '022',
           Movimien.EMPRESA == company_code,
-          Propietarios.EMPRESA == company_code
+          Propietarios.EMPRESA == company_code,
+          Movienca.EMPRESA == company_code
         ) \
         .group_by(
           Movimien.FACTURA,
@@ -110,7 +111,8 @@ async def partsrelationship_report(company_code: str, data: PartsRelationshipRep
           Movimien.PROPI_IDEN == empresa,
           Movimien.TIPO == '022',
           Movimien.EMPRESA == company_code,
-          Propietarios.EMPRESA == company_code
+          Propietarios.EMPRESA == company_code,
+          Movienca.EMPRESA == company_code
         ) \
         .group_by(
           Movimien.FACTURA,
@@ -159,7 +161,8 @@ async def partsrelationship_report(company_code: str, data: PartsRelationshipRep
         Movimien.PROPI_IDEN == empresa,
         Movimien.TIPO == '022',
         Movimien.EMPRESA == company_code,
-        Propietarios.EMPRESA == company_code
+        Propietarios.EMPRESA == company_code,
+        Movienca.EMPRESA == company_code
       ) \
       .group_by(
         Movimien.FACTURA,
@@ -206,6 +209,7 @@ async def partsrelationship_report(company_code: str, data: PartsRelationshipRep
           'NOMBRE': item.nombre,
           'PRESENTA': item.presenta,
           'PEDIDA': item.pedida,
+          'VALOR_UNIDAD': round(item.valor, 2),
           'VALOR': round(item.valor * item.pedida, 2),
           'DCTO_VALOR': item.dcto_valor,
           'IVA_VALOR': item.iva_valor,

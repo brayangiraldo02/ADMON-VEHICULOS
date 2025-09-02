@@ -35,3 +35,7 @@ async def get_inspection_types(company_code: str):
 @inspections_router.get("/inspections/new_inspection_data/{company_code}/{vehicle_number}/", tags=["Inspections"])
 async def get_new_inspection_data(company_code: str, vehicle_number: str):
     return await new_inspection_data(company_code, vehicle_number)
+
+@inspections_router.post("/inspections/create_inspection/", tags=["Inspections"])
+async def post_create_inspection(data: NewInspection):
+    return await create_inspection(data)

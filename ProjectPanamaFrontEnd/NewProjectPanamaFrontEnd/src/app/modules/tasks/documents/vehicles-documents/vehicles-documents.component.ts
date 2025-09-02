@@ -107,13 +107,11 @@ export class VehiclesDocumentsComponent implements OnInit {
     const company = this.getCompany();
     this.apiService.getData('documents/vehicle-documents/' + company + '/' + vehicle_number).subscribe({
       next: (data: existDocumentsVehicles[]) => {
-        console.log('Información de documentos del vehículo:', data);
         this.loadingDocumentsInfoVehicles = false;
         this.selectedVehicle = true;
         this.documentsInfo = data; // Asignamos los datos a la propiedad
       },
       error: (err: HttpErrorResponse) => {
-        console.error('Error HTTP:', err);
         let snackbarMessage = '';
   
         if (err.status === 404) {
@@ -146,7 +144,6 @@ export class VehiclesDocumentsComponent implements OnInit {
     this.documentsInfo = []; // Limpiamos al cambiar de vehículo
 
     if (selectedVehicle) {
-      console.log('Vehículo seleccionado:', selectedVehicle);
       this.displayInfoVehicle = true; 
       this.getDocumentsInfoVehicle(selectedVehicle.numero_unidad);
     } else {
@@ -159,12 +156,6 @@ export class VehiclesDocumentsComponent implements OnInit {
 
     const company = this.getCompany();
 
-    console.log('Solicitando documento del vehículo:', {
-      empresa: company,
-      vehiculo: vehicle,
-      documento: document
-    });
-
     const endpoint = 'documents/send-vehicle-documents/' + company + '/' + vehicle + '/' + document;
 
     localStorage.setItem('pdfEndpoint', endpoint);
@@ -173,12 +164,6 @@ export class VehiclesDocumentsComponent implements OnInit {
 
   validateDocumentVehicle(document: existDocumentsVehicles, nombreHtml: string): void {
     if (!document) return;
-
-    console.log('Documento solicitado:', {
-      nombre: document.nombre_documento,
-      folios: document.folios,
-      mensaje: document.mensaje
-    });
 
     if(!document.folios){
       this.getDocumentVehicle(this.vehiclesForm.get('vehiculo')?.value.numero_unidad, document.nombre_archivo);
@@ -198,8 +183,6 @@ export class VehiclesDocumentsComponent implements OnInit {
     })
 
     dialogRef.afterClosed().subscribe(result => {
-      console.log('El diálogo se cerró con el resultado:', result);
-  
       if (result === true) {
         this.getDocumentVehicle(this.vehiclesForm.get('vehiculo')?.value.numero_unidad, document.nombre_archivo);
       }

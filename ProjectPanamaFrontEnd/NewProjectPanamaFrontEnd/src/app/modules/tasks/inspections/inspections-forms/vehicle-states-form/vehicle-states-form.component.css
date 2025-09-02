@@ -1,0 +1,73 @@
+.main-container h3 {
+  margin: 0;
+  padding-bottom: 10px;
+}
+
+/* --- MODIFICADO: Cabecera Fija (Sticky) --- */
+.checklist-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end; /* Alinea los items en la parte inferior */
+  padding: 8px 8px;
+  border-bottom: 2px solid #c0c0c0;
+  
+  /* --- Propiedades para la cabecera fija --- */
+  position: sticky;
+  top: 0;
+  background: white; /* MUY IMPORTANTE: Evita que el texto de abajo se vea */
+  z-index: 1; /* Asegura que la cabecera esté por encima del contenido */
+}
+/* ------------------------------------------- */
+
+/* --- NUEVO: Contenedor para Opciones y su Título --- */
+.checklist-options-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.options-title {
+  font-size: 0.7rem;
+  font-weight: bold;
+  color: #555;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+/* ----------------------------------------------- */
+
+.checklist-options-header {
+  display: flex;
+  justify-content: space-around;
+  width: 90px;
+}
+
+.checklist-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 8px; /* Ajustamos padding para alinear con la cabecera */
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.checklist-label {
+  font-weight: 500;
+  color: #333;
+}
+
+.checklist-options {
+  display: flex;
+  justify-content: space-around;
+  width: 90px;
+}
+
+.icon-green {
+  color: #28a745;
+}
+
+.icon-red {
+  color: #dc3545;
+}
+
+button {
+  margin-top: 20px;
+}

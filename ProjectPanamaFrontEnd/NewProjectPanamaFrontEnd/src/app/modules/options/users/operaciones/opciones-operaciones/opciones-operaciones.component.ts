@@ -7,6 +7,7 @@ import { OperacionesCambiarEstadoVehiculoComponent } from '../operaciones-cambia
 import { OperacionesCambiarPatioVehiculoComponent } from '../operaciones-cambiar-patio-vehiculo/operaciones-cambiar-patio-vehiculo.component';
 import { OperacionesCorregirKilometrajeActualComponent } from '../operaciones-corregir-kilometraje-actual/operaciones-corregir-kilometraje-actual.component';
 import { OperacionesPrestamoVehiculoConductorComponent } from '../operaciones-prestamo-vehiculo-conductor/operaciones-prestamo-vehiculo-conductor.component';
+import { OperacionesDevolucionVehiculoPrestadoComponent } from '../operaciones-devolucion-vehiculo-prestado/operaciones-devolucion-vehiculo-prestado.component';
 
 @Component({
   selector: 'app-opciones-operaciones',
@@ -21,7 +22,7 @@ export class OpcionesOperacionesComponent {
     { name: 'Cambiar de Estado a un Vehículo', icon: 'info', url: 'CambiarEstadoVehiculo', disabled: false },
     { name: 'Cambiar de Patio a un Vehículo', icon: 'info', url: 'CambiarPatioVehiculo', disabled: false },
     { name: 'Prestamo de Vehículo al Conductor', icon: 'info', url: 'PrestamoVehiculoConductor', disabled: false },
-    { name: 'Devolución de Vehículos Prestados', icon: 'info', url: 'hoalalalal', disabled: true },
+    { name: 'Devolución de Vehículos Prestados', icon: 'info', url: 'DevolucionVehiculoPrestado', disabled: false },
     { name: 'Bajar Conductor del Vehículo (Culminación del Contrato)', icon: 'info', url: 'hoalalalal', disabled: true },
     { name: 'Corregir Kilometraje Actual al Vehículo', icon: 'info', url: 'CorregirKilometrajeActualVehiculo', disabled: false },
     { name: 'Apertura de Cuenta por Cobrar a un Conductor', icon: 'info', url: 'hoalalalal', disabled: true },
@@ -86,7 +87,12 @@ export class OpcionesOperacionesComponent {
           }
         )
         break;
-      case 'Devolución de Vehículos Prestados':
+      case 'DevolucionVehiculoPrestado':
+        this.dialog.open(OperacionesDevolucionVehiculoPrestadoComponent,
+          {
+            width: dialogWidth,
+          }
+        )
         break;
       case 'Bajar Conductor del Vehículo (Culminación del Contrato)':
         break;

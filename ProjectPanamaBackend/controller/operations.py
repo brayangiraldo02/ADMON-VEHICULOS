@@ -30,7 +30,11 @@ from fastapi.templating import Jinja2Templates
 from fastapi.responses import FileResponse
 import jinja2
 from utils.pdf import html2pdf
+from utils.text import clean_text
 from sqlalchemy import func
+
+path_10  = "/home/admin/dropbox-alfasoft/Integracion"
+path_58  = "/home/admin/dropbox-alfasoft/Integracion (1)"
 
 async def get_vehicle_operation(vehicle_number: str):
   db = session()
@@ -150,6 +154,21 @@ async def delivery_vehicle_driver(data: DeliveryVehicleDriver):
     driver.CUO_DIARIA = vehicle.CUO_DIARIA
 
     db.commit()
+
+    base_path = None
+
+    if vehicle.EMPRESA == '10':
+      base_path = path_10
+    elif vehicle.EMPRESA == '58':
+      base_path = path_58
+
+    if base_path:
+      panama_timezone = pytz.timezone('America/Panama')
+      now_in_panama = datetime.now(panama_timezone)
+
+      text_file = os.path.join(base_path, f"entregavehiculo_{vehicle.NUMERO}.txt")
+      with open(text_file, 'w') as file:
+        file.write(f"{vehicle.NUMERO},,{driver.CODIGO},,,,,,{now_in_panama.strftime('%Y-%m-%d')},{clean_text(data.user)}")
 
     return JSONResponse(content={"message": "Vehicle delivered successfully"}, status_code=200)
   
@@ -736,6 +755,19 @@ async def new_bill(bill_data: BillInfo):
 
     db.add(new_bill)
     db.commit()
+
+    base_path = None
+
+    if bill_data.company_code == '10':
+      base_path = path_10
+    elif bill_data.company_code == '58':
+      base_path = path_58
+
+    if base_path:
+      text_file = os.path.join(base_path, f"crearcuenta_{vehicle.NUMERO}.txt")
+      with open(text_file, 'w') as file:
+        file.write(f"{vehicle.NUMERO},,,,,,,{now_in_panama.strftime('%d%m%Y')},{now_in_panama.strftime('%Y-%m-%d')},{clean_text(bill_data.user)}")
+
     return JSONResponse(content={"message": "Cuenta creada con éxito"}, status_code=201)
   except Exception as e:
     db.rollback()
@@ -760,6 +792,21 @@ async def change_yard(data: ChangeYard):
     vehicle.NOMPATIO = yard.NOMBRE
 
     db.commit()
+
+    base_path = None
+
+    if data.company_code == '10':
+      base_path = path_10
+    elif data.company_code == '58':
+      base_path = path_58
+
+    if base_path:
+      panama_timezone = pytz.timezone('America/Panama')
+      now_in_panama = datetime.now(panama_timezone)
+
+      text_file = os.path.join(base_path, f"cambiopatio_{vehicle.NUMERO}.txt")
+      with open(text_file, 'w') as file:
+        file.write(f"{vehicle.NUMERO},,,,{vehicle.PATIO},,{clean_text(data.description)},,{now_in_panama.strftime('%Y-%m-%d')},{clean_text(data.user)}")
 
     return JSONResponse(content={"message": "Vehículo cambiado de patio con éxito"}, status_code=200)
 
@@ -793,6 +840,21 @@ async def change_vehicle_state(data: ChangeVehicleState):
     vehicle.NOMPATIO = yard.NOMBRE
 
     db.commit()
+
+    base_path = None
+
+    if data.company_code == '10':
+      base_path = path_10
+    elif data.company_code == '58':
+      base_path = path_58
+
+    if base_path:
+      panama_timezone = pytz.timezone('America/Panama')
+      now_in_panama = datetime.now(panama_timezone)
+
+      text_file = os.path.join(base_path, f"cambiarestado_{vehicle.NUMERO}.txt")
+      with open(text_file, 'w') as file:
+        file.write(f"{vehicle.NUMERO},,,{vehicle.ESTADO},{vehicle.PATIO},,{clean_text(data.change_reason)},,{now_in_panama.strftime('%Y-%m-%d')},{clean_text(data.user)}")
 
     return JSONResponse(content={"message": "Estado del vehículo cambiado con éxito"}, status_code=200)
 
@@ -835,6 +897,21 @@ async def update_mileage(data: VehicleMileage):
     vehicle.KILOMETRAJ = data.mileage
     db.commit()
 
+    base_path = None
+
+    if data.company_code == '10':
+      base_path = path_10
+    elif data.company_code == '58':
+      base_path = path_58
+
+    if base_path:
+      panama_timezone = pytz.timezone('America/Panama')
+      now_in_panama = datetime.now(panama_timezone)
+
+      text_file = os.path.join(base_path, f"corregirkilometraje_{vehicle.NUMERO}.txt")
+      with open(text_file, 'w') as file:
+        file.write(f"{vehicle.NUMERO},,,,,{vehicle.KILOMETRAJ},,,{now_in_panama.strftime('%Y-%m-%d')},{clean_text(data.user)}")
+
     return JSONResponse(content={"message": "Kilometraje actualizado con éxito"}, status_code=200)
 
   except Exception as e:
@@ -852,6 +929,8 @@ async def loan_validation(company_code: str, vehicle_number: str):
     if not vehicle:
       return JSONResponse(content={"message": "Vehículo no encontrado"}, status_code=404)
     
+    vehicle_driver = db.query(Conductores).filter(Conductores.CODIGO == vehicle.CONDUCTOR, Conductores.EMPRESA == company_code).first()
+    
     state = 0
 
     if vehicle.ESTADO == '01' or vehicle.ESTADO == '11' or vehicle.ESTADO == '12':
@@ -862,9 +941,14 @@ async def loan_validation(company_code: str, vehicle_number: str):
     if vehicle.CONDUCTOR and vehicle.CONDUCTOR != '':
       driver = 1
 
+    loaned = 0
+    if vehicle_driver.UND_PRE and vehicle_driver.UND_PRE != '':
+      loaned = 1
+
     response = {
       "state": state,
       "driver": driver,
+      "loaned_unit": loaned
     }
 
     return JSONResponse(content=response, status_code=200)
@@ -912,6 +996,9 @@ async def loan_vehicle(data: LoanVehicle):
     driver = db.query(Conductores).filter(Conductores.CODIGO == original_vehicle.CONDUCTOR, Conductores.EMPRESA == data.company_code).first()
     if not driver:
       return JSONResponse(content={"message": "Conductor no encontrado"}, status_code=404)
+    
+    if driver.UND_PRE and driver.UND_PRE != '':
+      return JSONResponse(content={"message": "Conductor ya tiene un vehículo prestado"}, status_code=400)
 
     panama_timezone = pytz.timezone('America/Panama')
     now_in_panama = datetime.now(panama_timezone)
@@ -932,6 +1019,18 @@ async def loan_vehicle(data: LoanVehicle):
     loan_vehicle.CONDUCTOR = driver.CODIGO
 
     db.commit()
+
+    base_path = None
+
+    if data.company_code == '10':
+      base_path = path_10
+    elif data.company_code == '58':
+      base_path = path_58
+
+    if base_path:
+      text_file = os.path.join(base_path, f"prestamovehiculo_{original_vehicle.NUMERO}.txt")
+      with open(text_file, 'w') as file:
+        file.write(f"{original_vehicle.NUMERO},{loan_vehicle.NUMERO},,,,,{clean_text(data.reason)},,{now_in_panama.strftime('%Y-%m-%d')},{clean_text(data.user)}")
 
     return JSONResponse(content={"message": "Préstamo de vehículo realizado con éxito"}, status_code=200)
 
@@ -1015,6 +1114,18 @@ async def return_vehicle(data: ReturnVehicle):
     driver.FEC_DEVOLU = now_in_panama
 
     db.commit()
+
+    base_path = None
+
+    if data.company_code == '10':
+      base_path = path_10
+    elif data.company_code == '58':
+      base_path = path_58
+
+    if base_path:
+      text_file = os.path.join(base_path, f"devolucion_{return_vehicle.NUMERO}.txt")
+      with open(text_file, 'w') as file:
+        file.write(f"{original_vehicle.NUMERO},{return_vehicle.NUMERO},,,,,{clean_text(data.reason)},,{now_in_panama.strftime('%Y-%m-%d')},{clean_text(data.user)}")
 
     return JSONResponse(content={"message": "Devolución de vehículo realizada con éxito"}, status_code=200)
   except Exception as e:
