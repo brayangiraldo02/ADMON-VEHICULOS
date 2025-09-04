@@ -18,6 +18,7 @@ driver_documents_path = "C:/Users/Ximena/Desktop/conductores"
 
 #PATH DE DESARROLLO PARA BRAYAN
 # vehicle_documents_path  = "/home/giraldo/Personal/Proyectos Externos/AlfaSoft/temp/vehiculos"
+# driver_documents_path  = "/home/giraldo/Personal/Proyectos Externos/AlfaSoft/temp/conductores"
 
 async def vehicle_documents(company_code: str, vehicle_number: str):
   try:
