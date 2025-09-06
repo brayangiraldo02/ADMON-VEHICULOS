@@ -9,7 +9,7 @@ import { map, Observable, startWith } from 'rxjs';
 import { ApiService } from 'src/app/services/api.service';
 import { JwtService } from 'src/app/services/jwt.service';
 import { FolioInfoDialogComponent } from '../folio-info-dialog/folio-info-dialog.component';
-import { InfoVehicleDialogComponent } from '../info-vehicle-dialog/info-vehicle-dialog.component';
+import { InfoDocumentsDialogComponent } from '../info-documents-dialog/info-documents-dialog.component';
 
 export interface drivers {
   codigo_conductor: string;
@@ -223,7 +223,7 @@ export class DriversDocumentsComponent implements OnInit {
     const isSmallScreen = this.breakpointObserver.isMatched(Breakpoints.XSmall);
     const dialogWidth = isSmallScreen ? '90vw' : '40%';
 
-    const dialogRef = this.dialog.open(InfoVehicleDialogComponent, {
+    const dialogRef = this.dialog.open(InfoDocumentsDialogComponent, {
       width: dialogWidth,
       data: data,
     });

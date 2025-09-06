@@ -27,18 +27,18 @@ interface VehicleInfo {
 }
 
 @Component({
-  selector: 'app-info-vehicle-dialog',
-  templateUrl: './info-vehicle-dialog.component.html',
-  styleUrls: ['./info-vehicle-dialog.component.css'],
+  selector: 'app-info-documents-dialog',
+  templateUrl: './info-documents-dialog.component.html',
+  styleUrls: ['./info-documents-dialog.component.css'],
 })
-export class InfoVehicleDialogComponent implements OnInit {
+export class InfoDocumentsDialogComponent implements OnInit {
   isLoading: boolean = true;
 
   vehicle!: VehicleInfo;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: DialogData,
-    private dialogRef: MatDialogRef<InfoVehicleDialogComponent>,
+    private dialogRef: MatDialogRef<InfoDocumentsDialogComponent>,
     private apiService: ApiService,
     private snackBar: MatSnackBar,
     private clipboard: Clipboard,
@@ -67,8 +67,9 @@ export class InfoVehicleDialogComponent implements OnInit {
       },
       (error) => {
         this.openSnackbar(
-          'Error al obtener la información del vehículo, vuelve a intentarlo más tarde.'
+          'Error al obtener la información, vuelve a intentarlo más tarde.'
         );
+        this.closeModal();
       }
     );
   }

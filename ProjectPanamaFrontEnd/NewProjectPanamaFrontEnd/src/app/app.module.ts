@@ -47,7 +47,7 @@ import { DriversDocumentsComponent } from './modules/tasks/documents/drivers-doc
 import { OptionsDocumentsDialogComponent } from './modules/tasks/documents/options-documents-dialog/options-documents-dialog.component';
 import { FolioInfoDialogComponent } from './modules/tasks/documents/folio-info-dialog/folio-info-dialog.component';
 import { InspectionsAddDialogComponent } from './modules/tasks/inspections/inspections-add-dialog/inspections-add-dialog.component';
-import { InfoVehicleDialogComponent } from './modules/tasks/documents/info-vehicle-dialog/info-vehicle-dialog.component';
+import { InfoDocumentsDialogComponent } from './modules/tasks/documents/info-documents-dialog/info-documents-dialog.component';
 import { OperacionesCrearCuentaDiarioConductorComponent } from './modules/options/users/operaciones/operaciones-crear-cuenta-diario-conductor/operaciones-crear-cuenta-diario-conductor.component';
 import { OperacionesCambiarEstadoVehiculoComponent } from './modules/options/users/operaciones/operaciones-cambiar-estado-vehiculo/operaciones-cambiar-estado-vehiculo.component';
 import { OperacionesCambiarPatioVehiculoComponent } from './modules/options/users/operaciones/operaciones-cambiar-patio-vehiculo/operaciones-cambiar-patio-vehiculo.component';
@@ -101,7 +101,7 @@ import { ImagePreviewDialogComponent } from './modules/tasks/inspections/image-p
     OptionsDocumentsDialogComponent,
     FolioInfoDialogComponent,
     InspectionsAddDialogComponent,
-    InfoVehicleDialogComponent,
+    InfoDocumentsDialogComponent,
     OperacionesCrearCuentaDiarioConductorComponent,
     OperacionesCambiarEstadoVehiculoComponent,
     OperacionesCambiarPatioVehiculoComponent,
