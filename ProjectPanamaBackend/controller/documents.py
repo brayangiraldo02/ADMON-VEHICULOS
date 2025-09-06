@@ -4,6 +4,7 @@ from config.dbconnection import session
 from models.propietarios import Propietarios
 from models.conductores import Conductores
 from models.vehiculos import Vehiculos
+from schemas.documents import Info
 from fastapi import BackgroundTasks
 from typing import List
 from utils.pdf import merge_pdfs
@@ -153,39 +154,42 @@ async def send_vehicle_documents(company_code: str, vehicle_number: str, doc_id:
   
 #-----------------------------------------------------------------------------------------------
 
-async def vehicle_info(company_code: str, vehicle_number: str):
+async def info(company_code: str, data: Info):
   db = session()
   try:
-    vehicles = db.query(Vehiculos).filter(Vehiculos.NUMERO == vehicle_number, Vehiculos.EMPRESA == company_code).first()
-    if not vehicles:
-      return JSONResponse(content={"message": "Vehículo no encontrado."}, status_code=404)
+    if data.driver_number == '':
+      vehicle = db.query(Vehiculos).filter(Vehiculos.NUMERO == data.vehicle_number, Vehiculos.EMPRESA == company_code).first()
+      driver = db.query(Conductores).filter(Conductores.CODIGO == vehicle.CONDUCTOR, Conductores.EMPRESA == company_code).first()
+    else:
+      driver = db.query(Conductores).filter(Conductores.CODIGO == data.driver_number, Conductores.EMPRESA == company_code).first()
+      vehicle = db.query(Vehiculos).filter(Vehiculos.NUMERO == driver.UND_NRO, Vehiculos.EMPRESA == company_code).first()
 
-    owners = db.query(Propietarios).filter(Propietarios.CODIGO == vehicles.PROPI_IDEN, Propietarios.EMPRESA == company_code).first()
-    drivers = db.query(Conductores).filter(Conductores.CODIGO == vehicles.CONDUCTOR, Conductores.EMPRESA == company_code).first()
+    owner = db.query(Propietarios).filter(Propietarios.CODIGO == vehicle.PROPI_IDEN, Propietarios.EMPRESA == company_code).first()
 
-    txt_file_path = get_txt_file(vehicles.EMPRESA)
+    txt_file_path = get_txt_file(vehicle.EMPRESA)
     if txt_file_path:
-      panapass_value = search_value_in_txt('Unidad', vehicle_number, 'Saldo Cuenta PanaPass', txt_file_path)
+      panapass_value = search_value_in_txt('Unidad', data.vehicle_number, 'Saldo Cuenta PanaPass', txt_file_path)
     else:
       panapass_value = ''
 
-    vehicle_data = {
-      "numero_unidad": vehicles.NUMERO,
-      "placa_vehiculo": vehicles.PLACA,
-      "nro_cupo": vehicles.NRO_CUPO,
-      "propietario": owners.NOMBRE + ' - ' + owners.CODIGO if owners else '',
-      "codigo_conductor": vehicles.CONDUCTOR,
-      "nombre_conductor": drivers.NOMBRE if drivers else '',
-      "telefono_conductor": drivers.TELEFONO if drivers else '',
+    response = {
+      "numero_unidad": vehicle.NUMERO if vehicle else '',
+      "unidad_prestada": driver.UND_PRE if driver else '',
+      "placa_vehiculo": vehicle.PLACA if vehicle else '',
+      "nro_cupo": vehicle.NRO_CUPO if vehicle else '',
+      "propietario": owner.NOMBRE + ' - ' + owner.CODIGO if owner else '',
+      "codigo_conductor": driver.CODIGO if driver else '',
+      "nombre_conductor": driver.NOMBRE if driver else '',
+      "telefono_conductor": driver.TELEFONO if driver else '',
       "panapass": panapass_value if panapass_value else '',
-      "fecha_contrato": vehicles.FEC_CONTRA.strftime('%d/%m/%Y') if vehicles.FEC_CONTRA and hasattr(vehicles.FEC_CONTRA, 'strftime') else '',
-      "valor_cuota": drivers.CUO_DIARIA if drivers else '',
-      "numero_cuotas": drivers.NROENTREGA if drivers else '',
-      "cuotas_pagas": drivers.NROENTPAGO if drivers else '',
-      "cuotas_pendientes": drivers.NROENTSDO if drivers else ''
+      "fecha_contrato": vehicle.FEC_CONTRA.strftime('%d/%m/%Y') if vehicle.FEC_CONTRA and hasattr(vehicle.FEC_CONTRA, 'strftime') and vehicle else '',
+      "valor_cuota": driver.CUO_DIARIA if driver else '',
+      "numero_cuotas": driver.NROENTREGA if driver else '',
+      "cuotas_pagas": driver.NROENTPAGO if driver else '',
+      "cuotas_pendientes": driver.NROENTSDO if driver else ''
     }
 
-    return JSONResponse(content=jsonable_encoder(vehicle_data), status_code=200)
+    return JSONResponse(content=jsonable_encoder(response), status_code=200)
   except Exception as e:
     return JSONResponse(content={"message": str(e)}, status_code=500)
   
