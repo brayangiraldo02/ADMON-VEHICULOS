@@ -55,6 +55,8 @@ import { OperacionesCorregirKilometrajeActualComponent } from './modules/options
 import { OperacionesPrestamoVehiculoConductorComponent } from './modules/options/users/operaciones/operaciones-prestamo-vehiculo-conductor/operaciones-prestamo-vehiculo-conductor.component';
 import { OperacionesDevolucionVehiculoPrestadoComponent } from './modules/options/users/operaciones/operaciones-devolucion-vehiculo-prestado/operaciones-devolucion-vehiculo-prestado.component';
 import { VehicleStatesFormComponent } from './modules/tasks/inspections/inspections-forms/vehicle-states-form/vehicle-states-form.component';
+import { TakePhotosVehicleComponent } from './modules/tasks/inspections/take-photos-vehicle/take-photos-vehicle.component';
+import { ImagePreviewDialogComponent } from './modules/tasks/inspections/image-preview-dialog/image-preview-dialog.component';
 
 @NgModule({
   declarations: [
@@ -107,6 +109,8 @@ import { VehicleStatesFormComponent } from './modules/tasks/inspections/inspecti
     OperacionesPrestamoVehiculoConductorComponent,
     OperacionesDevolucionVehiculoPrestadoComponent,
     VehicleStatesFormComponent,
+    TakePhotosVehicleComponent,
+    ImagePreviewDialogComponent,
   ],
   imports: [
     BrowserModule,
