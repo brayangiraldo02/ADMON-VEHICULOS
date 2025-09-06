@@ -208,11 +208,16 @@ export class DriversDocumentsComponent implements OnInit {
   }
 
   openInfoDriverDialog() {
-    const vehicleNumber =
-      this.driversForm.get('conductor')?.value.numero_unidad;
-    if (!vehicleNumber) {
+    const driverCode =
+      this.driversForm.get('conductor')?.value.codigo_conductor;
+    if (!driverCode) {
       this.openSnackbar('Por favor, selecciona un conductor primero.');
       return;
+    }
+
+    const data = {
+      driverCode: driverCode,
+      vehicleNumber: ''
     }
 
     const isSmallScreen = this.breakpointObserver.isMatched(Breakpoints.XSmall);
@@ -220,7 +225,7 @@ export class DriversDocumentsComponent implements OnInit {
 
     const dialogRef = this.dialog.open(InfoVehicleDialogComponent, {
       width: dialogWidth,
-      data: { vehicleNumber },
+      data: data,
     });
   }
 

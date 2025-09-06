@@ -1,4 +1,5 @@
-<h2 mat-dialog-title>Vehículo {{ data.vehicleNumber }}</h2>
+<h2 mat-dialog-title *ngIf="data.vehicleNumber != ''">Vehículo {{ data.vehicleNumber }}</h2>
+<h2 mat-dialog-title *ngIf="data.driverCode != ''">Conductor {{ data.driverCode }}</h2>
 
 <mat-dialog-content>
   <table class="info-table" *ngIf="!isLoading">

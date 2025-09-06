@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit} from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ApiService } from 'src/app/services/api.service';
@@ -7,6 +7,7 @@ import { JwtService } from 'src/app/services/jwt.service';
 
 interface DialogData {
   vehicleNumber: string;
+  driverCode: string;
 }
 
 interface VehicleInfo {
@@ -55,17 +56,21 @@ export class InfoVehicleDialogComponent implements OnInit {
 
   getVehicleInfo(): void {
     const company = this.getCompany();
-    this.apiService
-      .getData('documents/vehicle-info/' + company + '/' + this.data.vehicleNumber)
-      .subscribe((data: VehicleInfo) => {
+    const postData = {
+      driver_number: this.data.driverCode || '',
+      vehicle_number: this.data.vehicleNumber || '',
+    };
+    this.apiService.postData('documents/info/' + company, postData).subscribe(
+      (data) => {
         this.vehicle = data;
         this.isLoading = false;
       },
       (error) => {
-        this.openSnackbar('Error al obtener la información del vehículo, vuelve a intentarlo más tarde.');
-        this.isLoading = false;
-        this.closeModal();
-      });
+        this.openSnackbar(
+          'Error al obtener la información del vehículo, vuelve a intentarlo más tarde.'
+        );
+      }
+    );
   }
 
   openSnackbar(message: string) {
@@ -73,7 +78,7 @@ export class InfoVehicleDialogComponent implements OnInit {
       duration: 3000,
       horizontalPosition: 'center',
       verticalPosition: 'top',
-    })
+    });
   }
 
   copyToClipboard(text: string | number) {

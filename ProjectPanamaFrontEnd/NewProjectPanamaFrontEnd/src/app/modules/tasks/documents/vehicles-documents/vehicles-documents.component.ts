@@ -196,12 +196,17 @@ export class VehiclesDocumentsComponent implements OnInit {
       return;
     }
 
+    const data = {
+      driverCode: '',
+      vehicleNumber: vehicleNumber
+    }
+
     const isSmallScreen = this.breakpointObserver.isMatched(Breakpoints.XSmall);
     const dialogWidth = isSmallScreen ? '90vw' : '40%';
 
     const dialogRef = this.dialog.open(InfoVehicleDialogComponent, {
       width: dialogWidth,
-      data: { vehicleNumber }
+      data: data
     });
   }
 
