@@ -191,22 +191,23 @@ export class InspectionsTableComponent implements OnInit {
   }
 
   setupDriverListener() {
-    this.inspectionForm.get('conductor')?.valueChanges.subscribe(selectedDriver => {
-      // Limpiar selección de vehículo cuando cambie el conductor
+    // Configurar listener para vehículo (ahora el vehículo filtra los conductores)
+    this.inspectionForm.get('vehiculo')?.valueChanges.subscribe(selectedVehicle => {
+      // Limpiar selección de conductor cuando cambie el vehículo
       this.inspectionForm.patchValue({
-        vehiculo: ''
+        conductor: ''
       });
 
-      if (selectedDriver && selectedDriver.numero_unidad) {
-        // Filtrar vehículos por conductor seleccionado
-        this.filterVehiclesByDriver(selectedDriver.numero_unidad);
+      if (selectedVehicle && selectedVehicle.numero_unidad) {
+        // Filtrar conductores por vehículo seleccionado
+        this.filterDriversByVehicle(selectedVehicle.numero_unidad);
       } else {
-        // Si no hay conductor seleccionado, filtrar por propietario (si hay uno seleccionado)
+        // Si no hay vehículo seleccionado, filtrar por propietario (si hay uno seleccionado)
         const selectedOwner = this.inspectionForm.get('propietario')?.value;
         if (selectedOwner && selectedOwner.id) {
-          this.filterVehiclesByOwner(selectedOwner.id);
+          this.filterDriversByOwner(selectedOwner.id);
         } else {
-          this.resetVehicleFilter();
+          this.resetDriverFilter();
         }
       }
     });
@@ -228,11 +229,26 @@ export class InspectionsTableComponent implements OnInit {
     );
   }
 
-  filterVehiclesByDriver(numeroUnidad: string) {
-    this.vehicles = this.allVehicles.filter(vehicle => vehicle.numero_unidad === numeroUnidad);
-    this.optionsVehicles = this.inspectionForm.get('vehiculo')!.valueChanges.pipe(
+  filterDriversByVehicle(numeroUnidad: string) {
+    // Encontrar el vehículo seleccionado para obtener su código de conductor
+    const selectedVehicle = this.allVehicles.find(vehicle => vehicle.numero_unidad === numeroUnidad);
+    if (selectedVehicle) {
+      // Filtrar conductores que puedan manejar este vehículo (mismo numero_unidad)
+      this.drivers = this.allDrivers.filter(driver => driver.numero_unidad === numeroUnidad);
+    } else {
+      this.drivers = [];
+    }
+    this.optionsDrivers = this.inspectionForm.get('conductor')!.valueChanges.pipe(
       startWith(''),
-      map(value => this._filterVehicles(value || '')),
+      map(value => this._filterDrivers(value || '')),
+    );
+  }
+
+  resetDriverFilter() {
+    this.drivers = [...this.allDrivers];
+    this.optionsDrivers = this.inspectionForm.get('conductor')!.valueChanges.pipe(
+      startWith(''),
+      map(value => this._filterDrivers(value || '')),
     );
   }
 

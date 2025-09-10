@@ -1,10 +1,10 @@
 <div class="main-container">
   <h3>Situación del vehículo TT232</h3>
 
-  <form>
+  <form [formGroup]="vehicleForm">
     <div class="checklist-header">
-      <span class="checklist-label">ÍTEM</span> 
-      
+      <span class="checklist-label">ÍTEM</span>
+
       <div class="checklist-options-container">
         <span class="options-title">OPCIONES</span>
         <div class="checklist-options-header">
@@ -13,15 +13,51 @@
         </div>
       </div>
     </div>
-    
-    <div class="checklist">
-      <div class="checklist-row" *ngFor="let item of checklistItems">
-        <span class="checklist-label">{{ item.label }}:</span>
-        <mat-radio-group class="checklist-options" [(ngModel)]="item.value" [name]="item.id">
+
+    <div class="checklist" formArrayName="checklistItems">
+      <div
+        class="checklist-row"
+        *ngFor="let itemGroup of checklistItemsArray.controls; let i = index"
+        [formGroupName]="i"
+      >
+        <span class="checklist-label"
+          >{{ itemGroup.get("label")?.value }}:</span
+        >
+
+        <mat-radio-group class="checklist-options" formControlName="value">
           <mat-radio-button [value]="true" color="primary"></mat-radio-button>
           <mat-radio-button [value]="false" color="warn"></mat-radio-button>
         </mat-radio-group>
       </div>
     </div>
+
+    <mat-divider></mat-divider>
+
+    <div class="additional-fields">
+
+      <mat-form-field class="full-width">
+        <mat-label>Combustible</mat-label>
+        <input matInput formControlName="combustible" />
+      </mat-form-field>
+
+      <mat-form-field class="full-width">
+        <mat-label>Kilometraje</mat-label>
+        <input matInput formControlName="kilometraje" />
+      </mat-form-field>
+
+      <mat-form-field class="full-width">
+        <mat-label>Panapass</mat-label>
+        <input matInput formControlName="panapass" />
+      </mat-form-field>
+
+      <mat-form-field class="full-width">
+        <mat-label>Descripción</mat-label>
+        <textarea matInput formControlName="descripcion"></textarea>
+      </mat-form-field>
+    </div>
+
+    <button type="button" (click)="mostrarValores()">
+      Mostrar Valores en Consola
+    </button>
   </form>
 </div>

@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit} from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ApiService } from 'src/app/services/api.service';
@@ -7,6 +7,7 @@ import { JwtService } from 'src/app/services/jwt.service';
 
 interface DialogData {
   vehicleNumber: string;
+  driverCode: string;
 }
 
 interface VehicleInfo {
@@ -26,18 +27,18 @@ interface VehicleInfo {
 }
 
 @Component({
-  selector: 'app-info-vehicle-dialog',
-  templateUrl: './info-vehicle-dialog.component.html',
-  styleUrls: ['./info-vehicle-dialog.component.css'],
+  selector: 'app-info-documents-dialog',
+  templateUrl: './info-documents-dialog.component.html',
+  styleUrls: ['./info-documents-dialog.component.css'],
 })
-export class InfoVehicleDialogComponent implements OnInit {
+export class InfoDocumentsDialogComponent implements OnInit {
   isLoading: boolean = true;
 
   vehicle!: VehicleInfo;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: DialogData,
-    private dialogRef: MatDialogRef<InfoVehicleDialogComponent>,
+    private dialogRef: MatDialogRef<InfoDocumentsDialogComponent>,
     private apiService: ApiService,
     private snackBar: MatSnackBar,
     private clipboard: Clipboard,
@@ -55,17 +56,22 @@ export class InfoVehicleDialogComponent implements OnInit {
 
   getVehicleInfo(): void {
     const company = this.getCompany();
-    this.apiService
-      .getData('documents/vehicle-info/' + company + '/' + this.data.vehicleNumber)
-      .subscribe((data: VehicleInfo) => {
+    const postData = {
+      driver_number: this.data.driverCode || '',
+      vehicle_number: this.data.vehicleNumber || '',
+    };
+    this.apiService.postData('documents/info/' + company, postData).subscribe(
+      (data) => {
         this.vehicle = data;
         this.isLoading = false;
       },
       (error) => {
-        this.openSnackbar('Error al obtener la información del vehículo, vuelve a intentarlo más tarde.');
-        this.isLoading = false;
+        this.openSnackbar(
+          'Error al obtener la información, vuelve a intentarlo más tarde.'
+        );
         this.closeModal();
-      });
+      }
+    );
   }
 
   openSnackbar(message: string) {
@@ -73,7 +79,7 @@ export class InfoVehicleDialogComponent implements OnInit {
       duration: 3000,
       horizontalPosition: 'center',
       verticalPosition: 'top',
-    })
+    });
   }
 
   copyToClipboard(text: string | number) {

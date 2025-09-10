@@ -47,7 +47,7 @@ import { DriversDocumentsComponent } from './modules/tasks/documents/drivers-doc
 import { OptionsDocumentsDialogComponent } from './modules/tasks/documents/options-documents-dialog/options-documents-dialog.component';
 import { FolioInfoDialogComponent } from './modules/tasks/documents/folio-info-dialog/folio-info-dialog.component';
 import { InspectionsAddDialogComponent } from './modules/tasks/inspections/inspections-add-dialog/inspections-add-dialog.component';
-import { InfoVehicleDialogComponent } from './modules/tasks/documents/info-vehicle-dialog/info-vehicle-dialog.component';
+import { InfoDocumentsDialogComponent } from './modules/tasks/documents/info-documents-dialog/info-documents-dialog.component';
 import { OperacionesCrearCuentaDiarioConductorComponent } from './modules/options/users/operaciones/operaciones-crear-cuenta-diario-conductor/operaciones-crear-cuenta-diario-conductor.component';
 import { OperacionesCambiarEstadoVehiculoComponent } from './modules/options/users/operaciones/operaciones-cambiar-estado-vehiculo/operaciones-cambiar-estado-vehiculo.component';
 import { OperacionesCambiarPatioVehiculoComponent } from './modules/options/users/operaciones/operaciones-cambiar-patio-vehiculo/operaciones-cambiar-patio-vehiculo.component';
@@ -55,6 +55,8 @@ import { OperacionesCorregirKilometrajeActualComponent } from './modules/options
 import { OperacionesPrestamoVehiculoConductorComponent } from './modules/options/users/operaciones/operaciones-prestamo-vehiculo-conductor/operaciones-prestamo-vehiculo-conductor.component';
 import { OperacionesDevolucionVehiculoPrestadoComponent } from './modules/options/users/operaciones/operaciones-devolucion-vehiculo-prestado/operaciones-devolucion-vehiculo-prestado.component';
 import { VehicleStatesFormComponent } from './modules/tasks/inspections/inspections-forms/vehicle-states-form/vehicle-states-form.component';
+import { TakePhotosVehicleComponent } from './modules/tasks/inspections/take-photos-vehicle/take-photos-vehicle.component';
+import { ImagePreviewDialogComponent } from './modules/tasks/inspections/image-preview-dialog/image-preview-dialog.component';
 
 @NgModule({
   declarations: [
@@ -99,7 +101,7 @@ import { VehicleStatesFormComponent } from './modules/tasks/inspections/inspecti
     OptionsDocumentsDialogComponent,
     FolioInfoDialogComponent,
     InspectionsAddDialogComponent,
-    InfoVehicleDialogComponent,
+    InfoDocumentsDialogComponent,
     OperacionesCrearCuentaDiarioConductorComponent,
     OperacionesCambiarEstadoVehiculoComponent,
     OperacionesCambiarPatioVehiculoComponent,
@@ -107,6 +109,8 @@ import { VehicleStatesFormComponent } from './modules/tasks/inspections/inspecti
     OperacionesPrestamoVehiculoConductorComponent,
     OperacionesDevolucionVehiculoPrestadoComponent,
     VehicleStatesFormComponent,
+    TakePhotosVehicleComponent,
+    ImagePreviewDialogComponent,
   ],
   imports: [
     BrowserModule,

@@ -96,4 +96,13 @@ export class ApiService {
       catchError(this.errorHandlerService.handleError)
     );
   }
+
+
+  uploadPhoto(endpoint: string, formData: FormData): Observable<any> {
+    return this.http.post<any>(`${this.baseURL}/${endpoint}/`, formData, { withCredentials: true }).pipe(
+      catchError(this.errorHandlerService.handleError)
+    );
+  }
+
+
 }

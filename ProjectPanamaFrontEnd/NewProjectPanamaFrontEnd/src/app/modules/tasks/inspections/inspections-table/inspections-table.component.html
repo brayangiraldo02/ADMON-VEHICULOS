@@ -28,28 +28,6 @@
       </mat-form-field>
 
       <mat-form-field class="field-input">
-        <mat-label>Conductor</mat-label>
-        <input
-          type="text"
-          placeholder="Selecciona un conductor"
-          matInput
-          formControlName="conductor"
-          [matAutocomplete]="auto2"
-        />
-        <mat-autocomplete #auto2="matAutocomplete" [displayWith]="displayDriverName">
-          <mat-option [value]="">
-            -
-          </mat-option>
-          <mat-option
-            *ngFor="let option of optionsDrivers | async"
-            [value]="option"
-          >
-            {{ option.nombre_conductor }} - {{ option.cedula }}
-          </mat-option>
-        </mat-autocomplete>
-      </mat-form-field>
-
-      <mat-form-field class="field-input">
         <mat-label>Vehículos</mat-label>
         <input
           type="text"
@@ -67,6 +45,28 @@
             [value]="option"
           >
             {{ option.numero_unidad }} - {{ option.placa_vehiculo }} - {{ option.marca }} {{ option.linea }} {{ option.modelo }}
+          </mat-option>
+        </mat-autocomplete>
+      </mat-form-field>
+
+      <mat-form-field class="field-input">
+        <mat-label>Conductor</mat-label>
+        <input
+          type="text"
+          placeholder="Selecciona un conductor"
+          matInput
+          formControlName="conductor"
+          [matAutocomplete]="auto2"
+        />
+        <mat-autocomplete #auto2="matAutocomplete" [displayWith]="displayDriverName">
+          <mat-option [value]="">
+            -
+          </mat-option>
+          <mat-option
+            *ngFor="let option of optionsDrivers | async"
+            [value]="option"
+          >
+            {{ option.nombre_conductor }} - {{ option.cedula }}
           </mat-option>
         </mat-autocomplete>
       </mat-form-field>
