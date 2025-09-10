@@ -140,13 +140,14 @@
         </button>
       </div>
     </div>
-    <div class="info-container inspections-inputs-form" *ngIf="inspectionType !== '' && (inspectionType === '01')">
-      <!-- <app-vehicle-states-form *ngIf="inspectionType === '01'"></app-vehicle-states-form> -->
-      <app-take-photos-vehicle [companyCode]="getCompany()" [vehicleNumber]="vehicleInfo.numero"></app-take-photos-vehicle>
+    <div class="info-container inspections-inputs-form" *ngIf="inspectionType !== ''">
+      <app-vehicle-states-form></app-vehicle-states-form>
+      <!-- <app-take-photos-vehicle [companyCode]="getCompany()" [vehicleNumber]="vehicleInfo.numero"></app-take-photos-vehicle> -->
     </div>
   </div>
 </mat-dialog-content>
 
 <mat-dialog-actions align="end">
   <button mat-button mat-dialog-close cdkFocusInitial>Cancelar</button>
+  <button mat-button>Siguiente</button>
 </mat-dialog-actions>
