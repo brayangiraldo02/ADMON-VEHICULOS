@@ -59,9 +59,10 @@ async def pandgstatus_report(company_code: str, data: PandGStatusReport):
           (CajaRecaudos.FEC_RECIBO <= data.ultimaFecha) &
           (CajaRecaudos.PROPI_IDEN.in_(empresa))
         ).filter(
-          Vehiculos.PROPI_IDEN.in_(empresa),
+          #Vehiculos.PROPI_IDEN.in_(empresa),
           Vehiculos.EMPRESA == company_code,
           CajaRecaudos.EMPRESA == company_code,
+          CajaRecaudos.PROPI_IDEN.in_(empresa)
         ).group_by(
           Vehiculos.NUMERO,
           Vehiculos.FEC_CREADO,
@@ -90,6 +91,22 @@ async def pandgstatus_report(company_code: str, data: PandGStatusReport):
           Movimien.UNIDAD,
           Movimien.TIPO
         ).all()
+
+        insurances = db.query(
+          ReclamosColisiones.NUMERO,
+          ReclamosColisiones.CERRADO,
+          func.sum(ReclamosColisiones.BCO_VALOR).label('valor_seguros')
+        ).filter(
+          ReclamosColisiones.NUMERO.in_(numeros_unidades),
+          ReclamosColisiones.FECHA >= data.primeraFecha,
+          ReclamosColisiones.FECHA <= data.ultimaFecha,
+          ReclamosColisiones.PROPI_IDEN.in_(empresa),
+          ReclamosColisiones.EMPRESA == company_code
+        ).group_by(
+          ReclamosColisiones.NUMERO
+        ).all()
+
+        insurances_dict = {ins.NUMERO: {"CERRADO": ins.CERRADO, "SEGUROS": ins.valor_seguros} for ins in insurances}
 
         # Organizar los totales por unidad y tipo
         totales_movimientos = {}
@@ -131,6 +148,7 @@ async def pandgstatus_report(company_code: str, data: PandGStatusReport):
           
           # Solo agregar unidades con movimientos
           if tiene_movimientos:
+              insurances_data = insurances_dict.get(vehiculo.NUMERO, None)
               # Crear el diccionario con la información procesada
               info_unidad_dict = {
                   "NUMERO": vehiculo.NUMERO,
@@ -140,7 +158,8 @@ async def pandgstatus_report(company_code: str, data: PandGStatusReport):
                   "NOMESTADO": vehiculo.NOMESTADO,
                   "INGRESOS": {
                       "INGRESOS": recaudos,
-                      "SEGUROS": 0  # !PENDIENTE, REALIZAR LA RECOLECCIÓN DE LA INFORMACIÓN DE LA TABLA RECLAMOSCOLISIONES
+                      "CERRADO": "Pen" if insurances_data and insurances_data["CERRADO"] == "F" else 0,
+                      "SEGUROS": insurances_data["SEGUROS"] if insurances_data else 0
                   },
                   "GASTOS": {
                       "GASTO_CAJA": total_024,
@@ -319,6 +338,22 @@ async def pandgstatus_report(company_code: str, data: PandGStatusReport):
         Movimien.TIPO
       ).all()
 
+      insurances = db.query(
+        ReclamosColisiones.CERRADO,
+        func.sum(ReclamosColisiones.BCO_VALOR).label('valor_seguros')
+      ).filter(
+        ReclamosColisiones.NUMERO == data.unidad,
+        ReclamosColisiones.FECHA >= data.primeraFecha,
+        ReclamosColisiones.FECHA <= data.ultimaFecha,
+        ReclamosColisiones.PROPI_IDEN.in_(empresa),
+        ReclamosColisiones.EMPRESA == company_code
+      ).group_by(
+        ReclamosColisiones.CERRADO
+      ).first()
+
+      seguros_estado = "Pen" if insurances and insurances.CERRADO == "F" else 0
+      seguros_valor = insurances.valor_seguros if insurances else 0
+
       # Crear un diccionario para los totales de cada tipo
       totales = {'024': 0, '027': 0, '026': 0, '022': 0, '016': 0}
       for mov in movimientos_por_tipo:
@@ -346,7 +381,8 @@ async def pandgstatus_report(company_code: str, data: PandGStatusReport):
         "NOMESTADO": info_unidad.NOMESTADO,
         "INGRESOS": {
           "INGRESOS": recaudos,
-          "SEGUROS": 0  # !PENDIENTE, REALIZAR LA RECOLECCIÓN DE LA INFORMACIÓN DE LA TABLA RECLAMOSCOLISIONES
+          "CERRADO": seguros_estado,
+          "SEGUROS": seguros_valor
         },
         "GASTOS": {
           "GASTO_CAJA": total_024,
