@@ -2,19 +2,18 @@
   <h3>Situación del vehículo TT232</h3>
 
   <form [formGroup]="vehicleForm">
-    <div class="checklist-header">
-      <span class="checklist-label">ÍTEM</span>
+    <div class="checklist" formArrayName="checklistItems">
+      <div class="checklist-header">
+        <span class="checklist-label">ÍTEM</span>
 
-      <div class="checklist-options-container">
-        <span class="options-title">OPCIONES</span>
-        <div class="checklist-options-header">
-          <mat-icon class="icon-green" matTooltip="Sí">check_circle</mat-icon>
-          <mat-icon class="icon-red" matTooltip="No">cancel</mat-icon>
+        <div class="checklist-options-container">
+          <span class="options-title">OPCIONES</span>
+          <div class="checklist-options-header">
+            <mat-icon class="icon-green" matTooltip="Sí">check_circle</mat-icon>
+            <mat-icon class="icon-red" matTooltip="No">cancel</mat-icon>
+          </div>
         </div>
       </div>
-    </div>
-
-    <div class="checklist" formArrayName="checklistItems">
       <div
         class="checklist-row"
         *ngFor="let itemGroup of checklistItemsArray.controls; let i = index"
@@ -34,7 +33,6 @@
     <mat-divider></mat-divider>
 
     <div class="additional-fields">
-
       <mat-form-field class="full-width">
         <mat-label>Combustible</mat-label>
         <input matInput formControlName="combustible" />
