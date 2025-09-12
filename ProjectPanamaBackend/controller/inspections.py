@@ -428,6 +428,8 @@ async def create_inspection(data: NewInspection):
     panama_timezone = pytz.timezone('America/Panama')
     now_in_panama = datetime.now(panama_timezone)
 
+    fecha_obj = datetime.strptime(data.inspection_date, "%d/%m/%Y").date()
+
     new_inspection = Inspecciones(
       EMPRESA=data.company_code,
       UNIDAD=vehicle.NUMERO,
@@ -440,14 +442,14 @@ async def create_inspection(data: NewInspection):
       TIPO_INSPEC=inspection_type.CODIGO,
       KILOMETRAJ=data.mileage,
       DESCRIPCION=data.description,
-      FECHA=data.inspection_date,
+      FECHA=fecha_obj,
       HORA=data.inspection_time,
       ALFOMBRA=data.alfombra,
       ANTENA=data.antena,
       CARATRADIO=data.caratula_radio,
       COMBUSTIBLE=data.combustible,
       COPASRINES=data.copas_rines,
-      EXTINGUIDOR=data.extintor,
+      EXTINGUIDOR=data.extinguidor,
       FORMACOLIS=data.formato_colisiones_menores,
       GATO=data.gato,
       GPS=data.gps,
@@ -455,7 +457,7 @@ async def create_inspection(data: NewInspection):
       LLANTAREPU=data.llanta_repuesto,
       LUZDELANTE=data.luces_delanteras,
       LUZTRACERA=data.luces_traseras,
-      PAGOMUNICI=data.pago_mnicipio,
+      PAGOMUNICI=data.pago_municipio,
       PANAPASS=data.panapass,
       PIPA=data.pipa,
       PLACAMUNIC=data.placa_municipal,

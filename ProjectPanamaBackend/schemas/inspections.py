@@ -17,29 +17,29 @@ class NewInspection(BaseModel):
   inspection_type: str
   inspection_date: str
   inspection_time: str
-  alfombra: bool
-  copas_rines: bool
-  extinguidor: bool
-  antena: bool
-  lamparas: bool
-  triangulo: bool
-  gato: bool
-  pipa: bool
-  copas: bool
-  llanta_repuesto: bool
-  placa_municipal: bool
-  caratula_radio: bool
-  registro_vehiculo: bool
-  revisado: bool
-  pago_municipio: bool
-  formato_colisiones_menores: bool
-  poliza_seguros: bool
-  luces_delanteras: bool
-  luces_traseras: bool
-  vidrios: bool
-  retrovisor: bool
-  tapiceria: bool
-  gps: bool
+  alfombra: int
+  copas_rines: int
+  extinguidor: int
+  antena: int
+  lamparas: int
+  triangulo: int
+  gato: int
+  pipa: int
+  copas: int
+  llanta_repuesto: int
+  placa_municipal: int
+  caratula_radio: int
+  registro_vehiculo: int
+  revisado: int
+  pago_municipio: int
+  formato_colisiones_menores: int
+  poliza_seguros: int
+  luces_delanteras: int
+  luces_traseras: int
+  vidrios: int
+  retrovisor: int
+  tapiceria: int
+  gps: int
   combustible: str #! En el formulario aparece como cuadro de texto, en la base de datos como booleano
-  panapass: str #! En el formulario aparece como cuadro de texto, en la base de datos como booleano
+  panapass: int #! En el formulario aparece como cuadro de texto, en la base de datos como booleano
   description: str

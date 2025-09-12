@@ -25,7 +25,7 @@ class Inspecciones(Base):
     ALFOMBRA = Column(Boolean, default=False)
     ANTENA = Column(Boolean, default=False)
     CARATRADIO = Column(Boolean, default=False)
-    COMBUSTIBLE = Column(Boolean, default=False)
+    COMBUSTIBLE = Column(Integer, default=0) # TODO: Preguntar por esto, el tipo de dato y lo que se desea guardar
     COPASRINES = Column(Boolean, default=False)
     EXTINGUIDOR = Column(Boolean, default=False)
     FORMACOLIS = Column(Boolean, default=False)
@@ -36,7 +36,7 @@ class Inspecciones(Base):
     LUZDELANTE = Column(Boolean, default=False)
     LUZTRACERA = Column(Boolean, default=False)
     PAGOMUNICI = Column(Boolean, default=False)
-    PANAPASS = Column(Boolean, default=False)
+    PANAPASS = Column(Boolean, default=False) # TODO: Preguntar por esto, el tipo de dato y lo que se desea guardar
     PIPA = Column(Boolean, default=False)
     PLACAMUNIC = Column(Boolean, default=False)
     POLISEGURO = Column(Boolean, default=False)
