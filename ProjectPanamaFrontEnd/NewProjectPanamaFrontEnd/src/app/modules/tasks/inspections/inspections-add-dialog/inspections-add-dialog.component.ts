@@ -55,8 +55,11 @@ export class InspectionsAddDialogComponent implements OnInit {
   set vehicleStatesFormComponent(component: VehicleStatesFormComponent) {
     if (component) {
       setTimeout(() => {
-        this.mainInspectionForm.addControl('vehicleState', component.vehicleForm);
-      }, 0); 
+        this.mainInspectionForm.addControl(
+          'vehicleState',
+          component.vehicleForm
+        );
+      }, 0);
     }
   }
 
@@ -255,5 +258,22 @@ export class InspectionsAddDialogComponent implements OnInit {
 
     const inspectionInfoData = this.mainInspectionForm.value.inspectionInfo;
     const vehicleStateData = this.mainInspectionForm.value.vehicleState;
+
+    // Agregar acceso a fecha y hora de la inspección
+    const fechaInspeccion = this.vehicleInfo.fecha_inspeccion;
+    const horaInspeccion = this.vehicleInfo.hora_inspeccion;
+
+    console.log('Fecha de Inspección:', fechaInspeccion);
+    console.log('Hora de Inspección:', horaInspeccion);
+
+    // Si necesitas combinar estos valores con los datos del formulario para enviarlos, puedes hacer algo como:
+    const combinedData = {
+      ...inspectionInfoData,
+      ...vehicleStateData,
+      fecha_inspeccion: fechaInspeccion,
+      hora_inspeccion: horaInspeccion,
+    };
+
+    console.log('Datos combinados con fecha y hora:', combinedData);
   }
 }

@@ -19,6 +19,9 @@ from utils.pdf import html2pdf
 import tempfile
 from utils.panapass import get_txt_file, search_value_in_txt
 
+#! Cambiar por el directorio que es
+upload_directory = "uploads"
+
 async def owners_data(company_code: str):
   db = session()
   try:
@@ -190,11 +193,6 @@ async def inspections_info(data, company_code: str):
     db.close()
 
 #-----------------------------------------------------------------------------------------------
-
-#! Cambiar por el directorio que es
-upload_directory = "uploads"
-
-
 async def upload_image(company_code: str, vehicle_number: str, image: UploadFile = File(...)):
   try:
     vehicle_number_path = os.path.join(upload_directory, company_code, vehicle_number, "fotos")
@@ -468,22 +466,6 @@ async def create_inspection(data: NewInspection):
       TAPICERIA=data.tapiceria,
       TRIANGULO=data.triangulo,
       VIDRIOS=data.vidrios,
-      FOTO01= '', #data.photo1,
-      FOTO02= '', #data.photo2,
-      FOTO03= '', #data.photo3,
-      FOTO04= '', #data.photo4,
-      FOTO05= '', #data.photo5,
-      FOTO06= '', #data.photo6,
-      FOTO07= '', #data.photo7,
-      FOTO08= '', #data.photo8,
-      FOTO09= '', #data.photo9,
-      FOTO10= '', #data.photo10,
-      FOTO11= '', #data.photo11,
-      FOTO12= '', #data.photo12,
-      FOTO13= '', #data.photo13,
-      FOTO14= '', #data.photo14,
-      FOTO15= '', #data.photo15,
-      FOTO16= '', #data.photo16,
       USUARIO=data.user if data.user else "",
       FEC_CREADO=now_in_panama.strftime("%Y-%m-%d %H:%M:%S")
     )

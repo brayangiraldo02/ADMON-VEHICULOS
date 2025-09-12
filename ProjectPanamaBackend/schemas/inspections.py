@@ -19,7 +19,7 @@ class NewInspection(BaseModel):
   inspection_time: str
   alfombra: bool
   copas_rines: bool
-  extintor: bool
+  extinguidor: bool
   antena: bool
   lamparas: bool
   triangulo: bool
@@ -31,7 +31,7 @@ class NewInspection(BaseModel):
   caratula_radio: bool
   registro_vehiculo: bool
   revisado: bool
-  pago_mnicipio: bool
+  pago_municipio: bool
   formato_colisiones_menores: bool
   poliza_seguros: bool
   luces_delanteras: bool
@@ -40,22 +40,6 @@ class NewInspection(BaseModel):
   retrovisor: bool
   tapiceria: bool
   gps: bool
-  combustible: bool #! En el formulario aparece como cuadro de texto, en la base de datos como booleano
-  panapass: bool #! En el formulario aparece como cuadro de texto, en la base de datos como booleano
+  combustible: str #! En el formulario aparece como cuadro de texto, en la base de datos como booleano
+  panapass: str #! En el formulario aparece como cuadro de texto, en la base de datos como booleano
   description: str
-  photo1: str
-  photo2: str
-  photo3: str
-  photo4: str
-  photo5: str
-  photo6: str
-  photo7: str
-  photo8: str
-  photo9: str
-  photo10: str
-  photo11: str
-  photo12: str
-  photo13: str
-  photo14: str
-  photo15: str
-  photo16: str
