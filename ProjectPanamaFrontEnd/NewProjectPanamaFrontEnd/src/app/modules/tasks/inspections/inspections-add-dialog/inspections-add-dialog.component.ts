@@ -54,7 +54,9 @@ export class InspectionsAddDialogComponent implements OnInit {
   @ViewChild(VehicleStatesFormComponent)
   set vehicleStatesFormComponent(component: VehicleStatesFormComponent) {
     if (component) {
-      this.mainInspectionForm.addControl('vehicleState', component.vehicleForm);
+      setTimeout(() => {
+        this.mainInspectionForm.addControl('vehicleState', component.vehicleForm);
+      }, 0); 
     }
   }
 
@@ -242,6 +244,7 @@ export class InspectionsAddDialogComponent implements OnInit {
   onSaveOrNext() {
     if (this.mainInspectionForm.invalid) {
       console.log('El formulario completo es inválido.');
+      this.openSnackbar('Por favor, completa los campos requeridos.');
 
       this.mainInspectionForm.markAllAsTouched();
       return;

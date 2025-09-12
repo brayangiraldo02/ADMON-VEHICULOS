@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
+import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-vehicle-states-form',
@@ -41,35 +41,24 @@ export class VehicleStatesFormComponent {
 
   ngOnInit(): void {
     this.vehicleForm = this.fb.group({
-      // Controles para los textareas
-      combustible: [''], // Valor inicial: string vacío
-      kilometraje: [''],
-      panapass: [''],
-      descripcion: [''],
+      combustible: ['', Validators.required],
+      kilometraje: ['', Validators.required],
+      panapass: ['', Validators.required],
+      descripcion: ['', Validators.required],
 
-      // Un FormArray para la lista dinámica de checklist
       checklistItems: this.fb.array(
         this.checklistItems.map((item) =>
           this.fb.group({
             id: [item.id],
             label: [item.label],
-            value: [null], // Valor inicial para cada radio button
+            value: [null, Validators.required],
           })
         )
       ),
     });
   }
 
-  // Getter para acceder fácilmente al FormArray en la plantilla HTML
   get checklistItemsArray(): FormArray {
     return this.vehicleForm.get('checklistItems') as FormArray;
-  }
-
-  mostrarValores() {
-    console.log('--- Objeto completo del FormGroup ---');
-    console.log(this.vehicleForm.value);
-
-    // Si necesitas el valor RAW (incluyendo controles deshabilitados, etc.)
-    // console.log(this.vehicleForm.getRawValue());
   }
 }

@@ -3,10 +3,9 @@
 <mat-dialog-content>
   <form [formGroup]="mainInspectionForm">
     <div class="main-content-container">
-      
       <div class="info-container" formGroupName="inspectionInfo">
         <h3 *ngIf="!isLoading">Información del vehículo</h3>
-        
+
         <div class="inputs-container">
           <mat-progress-bar
             mode="indeterminate"
@@ -57,7 +56,9 @@
               </mat-option>
             </mat-select>
             <mat-error
-              *ngIf="inspectionInfoForm.get('tipo_inspeccion')?.hasError('required')"
+              *ngIf="
+                inspectionInfoForm.get('tipo_inspeccion')?.hasError('required')
+              "
             >
               El tipo de inspección es obligatorio.
             </mat-error>
@@ -103,7 +104,11 @@
           <div class="inputs-container">
             <mat-form-field class="field-input">
               <mat-label>Teléfono</mat-label>
-              <input matInput readonly [value]="vehicleInfo.conductor_celular" />
+              <input
+                matInput
+                readonly
+                [value]="vehicleInfo.conductor_celular"
+              />
             </mat-form-field>
             <mat-form-field class="field-input">
               <mat-label>Fecha y Hora</mat-label>
@@ -120,7 +125,7 @@
           </div>
         </ng-container>
 
-        <div
+        <!-- <div
           class="inputs-container"
           *ngIf="!loadingVehicleInfo && selectedVehicle"
         >
@@ -141,18 +146,35 @@
           >
             Siguiente
           </button>
-        </div>
+        </div> -->
       </div>
 
-      <div class="info-container inspections-inputs-form" *ngIf="inspectionType !== ''">
+      <div
+        class="info-container inspections-inputs-form"
+        *ngIf="inspectionType !== ''"
+      >
         <app-vehicle-states-form></app-vehicle-states-form>
       </div>
     </div>
-  </form> </mat-dialog-content>
+  </form>
+</mat-dialog-content>
 
 <mat-dialog-actions align="end">
   <button mat-button mat-dialog-close cdkFocusInitial>Cancelar</button>
-  <button mat-button (click)="onSaveOrNext()" [disabled]="mainInspectionForm.invalid">
+  <button
+    mat-button
+    [disabled]="mainInspectionForm.invalid || loadingVehicleInfo"
+    (click)="startInspection()"
+    *ngIf="!inspectionType"
+  >
+    Empezar
+  </button>
+  <button
+    mat-button
+    [disabled]="loadingVehicleInfo"
+    (click)="onSaveOrNext()"
+    *ngIf="inspectionType"
+  >
     Siguiente
   </button>
 </mat-dialog-actions>

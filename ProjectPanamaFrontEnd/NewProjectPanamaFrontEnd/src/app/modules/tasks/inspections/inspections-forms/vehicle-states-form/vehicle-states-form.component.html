@@ -19,9 +19,12 @@
         *ngFor="let itemGroup of checklistItemsArray.controls; let i = index"
         [formGroupName]="i"
       >
-        <span class="checklist-label"
-          >{{ itemGroup.get("label")?.value }}:</span
-        >
+        <div class="item-label-container">
+          <span class="checklist-label">{{ itemGroup.get("label")?.value }}:</span>
+          <mat-error *ngIf="itemGroup.get('value')?.invalid && itemGroup.get('value')?.touched">
+            Selecciona una opción para este ítem.
+          </mat-error>
+        </div>
 
         <mat-radio-group class="checklist-options" formControlName="value">
           <mat-radio-button [value]="true" color="primary"></mat-radio-button>
@@ -36,26 +39,34 @@
       <mat-form-field class="full-width">
         <mat-label>Combustible</mat-label>
         <input matInput formControlName="combustible" />
+        <mat-error *ngIf="vehicleForm.get('combustible')?.invalid && vehicleForm.get('combustible')?.touched">
+          Este campo es obligatorio.
+        </mat-error>
       </mat-form-field>
 
       <mat-form-field class="full-width">
         <mat-label>Kilometraje</mat-label>
         <input matInput formControlName="kilometraje" />
+        <mat-error *ngIf="vehicleForm.get('kilometraje')?.invalid && vehicleForm.get('kilometraje')?.touched">
+          Este campo es obligatorio.
+        </mat-error>
       </mat-form-field>
 
       <mat-form-field class="full-width">
         <mat-label>Panapass</mat-label>
         <input matInput formControlName="panapass" />
+        <mat-error *ngIf="vehicleForm.get('panapass')?.invalid && vehicleForm.get('panapass')?.touched">
+          Este campo es obligatorio.
+        </mat-error>
       </mat-form-field>
 
       <mat-form-field class="full-width">
         <mat-label>Descripción</mat-label>
         <textarea matInput formControlName="descripcion"></textarea>
+        <mat-error *ngIf="vehicleForm.get('descripcion')?.invalid && vehicleForm.get('descripcion')?.touched">
+          Este campo es obligatorio.
+        </mat-error>
       </mat-form-field>
     </div>
-
-    <button type="button" (click)="mostrarValores()">
-      Mostrar Valores en Consola
-    </button>
   </form>
 </div>
