@@ -32,6 +32,7 @@ export class VehicleStatesFormComponent {
     { id: 'luces_traseras', label: 'Luces Traseras' },
     { id: 'vidrios', label: 'Vidrios' },
     { id: 'retrovisor', label: 'Retrovisor' },
+    { id: 'tapiceria', label: 'Tapicería' },
     { id: 'gps', label: 'GPS' },
   ];
 

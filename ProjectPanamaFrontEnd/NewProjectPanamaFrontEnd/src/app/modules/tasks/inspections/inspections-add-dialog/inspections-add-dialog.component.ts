@@ -351,7 +351,7 @@ export class InspectionsAddDialogComponent implements OnInit {
         : 0,
       tapiceria: checklistItems.find((item) => item.id === 'tapiceria')?.value
         ? 1
-        : 0, // Nota: Este no está en el array, asumiendo que es 'gps' o similar; ajusta si es necesario
+        : 0, 
       gps: checklistItems.find((item) => item.id === 'gps')?.value ? 1 : 0,
       combustible: this.mainInspectionForm.value.vehicleState.combustible || '',
       // panapass: this.mainInspectionForm.value.vehicleState.panapass || '',
