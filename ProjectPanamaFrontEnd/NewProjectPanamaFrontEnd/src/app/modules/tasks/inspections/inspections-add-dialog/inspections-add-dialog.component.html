@@ -1,7 +1,7 @@
 <h2 mat-dialog-title>Nueva Inspección</h2>
 
 <mat-dialog-content>
-  <form [formGroup]="mainInspectionForm">
+  <form [formGroup]="mainInspectionForm" *ngIf="inspectionCreateID === ''">
     <div class="main-content-container">
       <div class="info-container" formGroupName="inspectionInfo">
         <h3 *ngIf="!isLoading">Información del vehículo</h3>
@@ -153,10 +153,16 @@
         class="info-container inspections-inputs-form"
         *ngIf="inspectionType !== ''"
       >
-        <app-vehicle-states-form [vehicleNumber]="vehicleInfo.numero"></app-vehicle-states-form>
+        <app-vehicle-states-form
+          [vehicleNumber]="vehicleInfo.numero"
+        ></app-vehicle-states-form>
       </div>
     </div>
   </form>
+  <app-take-photos-vehicle
+    *ngIf="inspectionCreateID !== ''"
+    [inspectionId]="inspectionCreateID"
+  ></app-take-photos-vehicle>
 </mat-dialog-content>
 
 <mat-dialog-actions align="end">
@@ -173,8 +179,16 @@
     mat-button
     [disabled]="loadingVehicleInfo"
     (click)="onSaveOrNext()"
-    *ngIf="inspectionType"
+    *ngIf="inspectionType && inspectionCreateID === ''"
   >
     Siguiente
+  </button>
+  <button
+    mat-button
+    [disabled]="loadingVehicleInfo"
+    (click)="uploadImages()"
+    *ngIf="inspectionType && inspectionCreateID !== ''"
+  >
+    Subir Fotos
   </button>
 </mat-dialog-actions>

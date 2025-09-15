@@ -13,6 +13,7 @@ import { map, Observable, startWith } from 'rxjs';
 import { ApiService } from 'src/app/services/api.service';
 import { JwtService } from 'src/app/services/jwt.service';
 import { VehicleStatesFormComponent } from '../inspections-forms/vehicle-states-form/vehicle-states-form.component';
+import { TakePhotosVehicleComponent } from '../take-photos-vehicle/take-photos-vehicle.component';
 
 interface Vehicles {
   placa_vehiculo: string;
@@ -72,6 +73,8 @@ export class InspectionsAddDialogComponent implements OnInit {
       }, 0);
     }
   }
+
+  @ViewChild(TakePhotosVehicleComponent) takePhotosVehicleComponent!: TakePhotosVehicleComponent;
 
   inspectionInfoForm!: FormGroup;
 
@@ -374,11 +377,16 @@ export class InspectionsAddDialogComponent implements OnInit {
           console.log('Inspección creada con éxito:', response);
           this.inspectionCreateID = response.id;   
           this.openSnackbar('Inspección creada con éxito.');
-          this.dialogRef.close();
         },
         (error) => {
           console.error('Error al crear la inspección:', error);
         }
       );
+  }
+
+  uploadImages() {
+    if(this.takePhotosVehicleComponent) {
+      this.takePhotosVehicleComponent.sendAllPhotos();
+    }
   }
 }
