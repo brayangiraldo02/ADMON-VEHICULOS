@@ -8,6 +8,7 @@ from models.vehiculos import Vehiculos
 from models.cajarecaudos import CajaRecaudos
 from models.reclamoscolisiones import ReclamosColisiones
 from models.movimien import Movimien
+from models.chapisteriamanoobra import ChapisteriaManoObra
 from schemas.reports import PandGStatusReport
 from fastapi.encoders import jsonable_encoder
 from datetime import datetime
@@ -108,6 +109,21 @@ async def pandgstatus_report(company_code: str, data: PandGStatusReport):
 
         insurances_dict = {ins.NUMERO: {"CERRADO": ins.CERRADO, "SEGUROS": ins.valor_seguros} for ins in insurances}
 
+        labor = db.query(
+          ChapisteriaManoObra.NUMERO,
+          func.sum(ChapisteriaManoObra.VLR_MANOBR).label('total_labor')
+        ).filter(
+          ChapisteriaManoObra.NUMERO.in_(numeros_unidades),
+          ChapisteriaManoObra.FECHA >= data.primeraFecha,
+          ChapisteriaManoObra.FECHA <= data.ultimaFecha,
+          ChapisteriaManoObra.EMPRESA == company_code,
+          ChapisteriaManoObra.PROPI_IDEN.in_(empresa)
+        ).group_by(
+          ChapisteriaManoObra.NUMERO
+        ).all()
+
+        labor_dict = {lab.NUMERO: lab.total_labor for lab in labor}
+
         # Organizar los totales por unidad y tipo
         totales_movimientos = {}
         for mov in movimientos_por_tipo:
@@ -149,6 +165,7 @@ async def pandgstatus_report(company_code: str, data: PandGStatusReport):
           # Solo agregar unidades con movimientos
           if tiene_movimientos:
               insurances_data = insurances_dict.get(vehiculo.NUMERO, None)
+              total_labor = labor_dict.get(vehiculo.NUMERO, 0)
               # Crear el diccionario con la información procesada
               info_unidad_dict = {
                   "NUMERO": vehiculo.NUMERO,
@@ -167,7 +184,8 @@ async def pandgstatus_report(company_code: str, data: PandGStatusReport):
                       "OTRO_GASTO": 0
                   },
                   "PIEZAS_MOBRA": {
-                      "CHAPISTERIA": total_026,
+                      #"CHAPISTERIA": total_026,
+                      "CHAPISTERIA": total_labor,
                       "ALMACEN": total_almacen
                   },
                   "ESTADOPyG": estado_pyg,  # Utilidad si es valor positivo, pérdida si es valor negativo
@@ -354,6 +372,21 @@ async def pandgstatus_report(company_code: str, data: PandGStatusReport):
       seguros_estado = "Pen" if insurances and insurances.CERRADO == "F" else 0
       seguros_valor = insurances.valor_seguros if insurances else 0
 
+      labor =  db.query(
+        ChapisteriaManoObra.NUMERO,
+        func.sum(ChapisteriaManoObra.VLR_MANOBR).label('total_labor')
+      ).filter(
+        ChapisteriaManoObra.NUMERO == data.unidad,
+        ChapisteriaManoObra.FECHA >= data.primeraFecha,
+        ChapisteriaManoObra.FECHA <= data.ultimaFecha,
+        ChapisteriaManoObra.EMPRESA == company_code,
+        ChapisteriaManoObra.PROPI_IDEN.in_(empresa)
+      ).group_by(
+        ChapisteriaManoObra.NUMERO
+      ).first()
+
+      total_labor = labor.total_labor if labor else 0
+
       # Crear un diccionario para los totales de cada tipo
       totales = {'024': 0, '027': 0, '026': 0, '022': 0, '016': 0}
       for mov in movimientos_por_tipo:
@@ -390,7 +423,8 @@ async def pandgstatus_report(company_code: str, data: PandGStatusReport):
           "OTRO_GASTO": 0
         },
         "PIEZAS_MOBRA": {
-          "CHAPISTERIA": total_026,
+          # "CHAPISTERIA": total_026,
+          "CHAPISTERIA": total_labor,
           "ALMACEN": total_almacen
         },
         "ESTADOPyG": estado_pyg,  # Utilidad si es valor positivo, pérdida si es valor negativo
