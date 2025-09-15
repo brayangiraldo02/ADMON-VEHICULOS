@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 @Component({
@@ -7,6 +7,8 @@ import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
   styleUrls: ['./vehicle-states-form.component.css'],
 })
 export class VehicleStatesFormComponent {
+  @Input() vehicleNumber: string = '';
+
   checklistItems = [
     { id: 'alfombra', label: 'Alfombra' },
     { id: 'copas_rines', label: 'Copas/Rines' },
