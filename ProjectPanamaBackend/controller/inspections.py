@@ -193,21 +193,61 @@ async def inspections_info(data, company_code: str):
     db.close()
 
 #-----------------------------------------------------------------------------------------------
-async def upload_image(company_code: str, vehicle_number: str, image: UploadFile = File(...)):
+async def upload_images(inspection_id: int, images: List[UploadFile] = File(...)):
+  db = session()
   try:
-    vehicle_number_path = os.path.join(upload_directory, company_code, vehicle_number, "fotos")
-    os.makedirs(vehicle_number_path, exist_ok=True)
+    inspection = db.query(Inspecciones).filter(Inspecciones.ID == inspection_id).first()
+    if not inspection:
+      raise HTTPException(status_code=404, detail=f"Inspección con ID {inspection_id} no encontrada.")
 
-    file_path = os.path.join(vehicle_number_path, image.filename)
-    
-    with open(file_path, "wb") as buffer:
-      shutil.copyfileobj(image.file, buffer)
+    vehicle_number = inspection.UNIDAD
+    company_code = inspection.EMPRESA
 
-    file_path = file_path.replace("\\", "/")  # Normalize path for JSON response
+    available_slots = []
+    for i in range(1, 17):
+        column_name = f"FOTO{i:02d}"
+        if not getattr(inspection, column_name):
+            available_slots.append(column_name)
 
-    return JSONResponse(content={ "file_path": file_path}, status_code=200)
+    if not available_slots:
+        return JSONResponse(
+            content={"message": "No hay espacios disponibles para guardar más fotos."},
+            status_code=400
+        )
+        
+    full_inspection_path = os.path.join(upload_directory, company_code, vehicle_number, "inspecciones", str(inspection_id))
+    os.makedirs(full_inspection_path, exist_ok=True)
+
+    saved_count = 0
+    for slot_name, image in zip(available_slots, images):
+        
+        _, ext = os.path.splitext(image.filename)
+        new_filename = f"{slot_name.lower()}{ext}"
+        
+        full_file_path = os.path.join(full_inspection_path, new_filename)
+        with open(full_file_path, "wb") as buffer:
+            shutil.copyfileobj(image.file, buffer)
+        
+        relative_db_path = os.path.join(company_code, vehicle_number, "inspecciones", str(inspection_id), new_filename)
+        normalized_path = relative_db_path.replace("\\", "/") 
+        setattr(inspection, slot_name, normalized_path) 
+        saved_count += 1
+
+    inspection.ESTADO = "FIN"
+
+    db.commit()
+
+    message = f"{saved_count} de {len(images)} imágenes fueron guardadas."
+    if len(images) > saved_count:
+        message += f" {len(images) - saved_count} fueron descartadas por falta de espacio."
+
+    return JSONResponse(content={"message": message}, status_code=201)
+
   except Exception as e:
+    db.rollback()
     return JSONResponse(content={"message": str(e)}, status_code=500)
+  finally:
+    db.close()
 
 #-----------------------------------------------------------------------------------------------
 async def report_inspections(data, company_code: str):
