@@ -51,6 +51,10 @@ interface ChecklistItem {
   value: boolean | null;
 }
 
+interface InspectionCreateResponse {
+  id: string;
+}
+
 @Component({
   selector: 'app-inspections-add-dialog',
   templateUrl: './inspections-add-dialog.component.html',
@@ -86,6 +90,8 @@ export class InspectionsAddDialogComponent implements OnInit {
   inspectionType: string = '';
 
   vehicleInfo!: InspectionsVehicleData;
+
+  inspectionCreateID: string = '';
 
   constructor(
     private apiService: ApiService,
@@ -364,8 +370,9 @@ export class InspectionsAddDialogComponent implements OnInit {
     this.apiService
       .postData('inspections/create_inspection', newInspectionData)
       .subscribe(
-        (response) => {
+        (response: InspectionCreateResponse) => {
           console.log('Inspección creada con éxito:', response);
+          this.inspectionCreateID = response.id;   
           this.openSnackbar('Inspección creada con éxito.');
           this.dialogRef.close();
         },

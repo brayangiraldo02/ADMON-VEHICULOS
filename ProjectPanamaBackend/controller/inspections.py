@@ -478,7 +478,7 @@ async def create_inspection(data: NewInspection):
     db.add(new_inspection)
     db.commit()
 
-    return JSONResponse(content={"message": "Inspección creada con éxito"}, status_code=201)
+    return JSONResponse(content={"id": new_inspection.ID}, status_code=201)
   except Exception as e:
     return JSONResponse(content={"message": str(e)}, status_code=500)
   finally:
