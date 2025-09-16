@@ -8,12 +8,12 @@ import {
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
-import { forkJoin, of } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { forkJoin, Observable, of, throwError } from 'rxjs';
+import { catchError, finalize, tap } from 'rxjs/operators';
 import { ApiService } from 'src/app/services/api.service';
 import { ImagePreviewDialogComponent } from '../image-preview-dialog/image-preview-dialog.component';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
-// Definimos una interfaz para el objeto de foto
 interface Photo {
   previewUrl: SafeUrl;
   blob: Blob;
@@ -25,14 +25,11 @@ interface Photo {
   styleUrls: ['./take-photos-vehicle.component.css'],
 })
 export class TakePhotosVehicleComponent implements OnInit, OnDestroy {
-  // Entradas para hacer el componente reutilizable
   @Input() inspectionId!: string;
 
-  // Referencias al DOM
   @ViewChild('videoElement') videoElement!: ElementRef<HTMLVideoElement>;
   @ViewChild('canvasElement') canvasElement!: ElementRef<HTMLCanvasElement>;
 
-  // Constantes y estado
   readonly MAX_PHOTOS = 16;
   photos: Photo[] = [];
   isUploading = false;
@@ -42,7 +39,8 @@ export class TakePhotosVehicleComponent implements OnInit, OnDestroy {
   constructor(
     private sanitizer: DomSanitizer,
     private apiService: ApiService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private snackBar: MatSnackBar
   ) {}
 
   ngOnInit(): void {
@@ -62,7 +60,6 @@ export class TakePhotosVehicleComponent implements OnInit, OnDestroy {
       this.videoElement.nativeElement.srcObject = this.stream;
     } catch (err) {
       console.error('Error al acceder a la cámara:', err);
-      // Aquí podrías mostrar un mensaje al usuario
     }
   }
 
@@ -101,19 +98,16 @@ export class TakePhotosVehicleComponent implements OnInit, OnDestroy {
     const dialogRef = this.dialog.open(ImagePreviewDialogComponent, {
       data: { imageUrl: this.photos[index].previewUrl },
       width: 'auto',
-      panelClass: 'custom-dialog-container', // Clase opcional para más estilos
+      panelClass: 'custom-dialog-container',
     });
 
-    // Nos suscribimos para saber qué pasó cuando se cerró el diálogo
     dialogRef.afterClosed().subscribe((result) => {
-      // Si el resultado tiene la propiedad 'delete' en true, eliminamos la foto
       if (result && result.delete) {
         this.deletePhoto(index);
       }
     });
   }
 
-  // El método deletePhoto se mantiene igual, no necesita cambios
   deletePhoto(index: number): void {
     this.photos.splice(index, 1);
     if (this.photos.length < this.MAX_PHOTOS && !this.stream) {
@@ -121,46 +115,51 @@ export class TakePhotosVehicleComponent implements OnInit, OnDestroy {
     }
   }
 
-  sendAllPhotos(): void {
-    // 1. Validaciones iniciales (están correctas)
-    if (
-      this.photos.length === 0 ||
-      !this.inspectionId
-    ) {
+  sendAllPhotos(): Observable<any> {
+    if (this.photos.length === 0 || !this.inspectionId) {
       this.uploadStatus =
         'Error: Faltan datos para la subida (código, vehículo o ID de inspección).';
       console.error(this.uploadStatus);
-      return;
+      this.openSnackbar(
+        'Realiza la captura de las fotos para guardar la inspección'
+      );
+      return throwError(this.uploadStatus);
     }
 
     this.isUploading = true;
     this.uploadStatus = `Subiendo ${this.photos.length} fotos...`;
 
-    // 2. Creamos UN SOLO objeto FormData
     const formData = new FormData();
-
     this.photos.forEach((photo, index) => {
       formData.append('images', photo.blob, `photo_${index + 1}.jpg`);
     });
 
-    this.apiService.uploadPhoto('inspections/upload_images/'+this.inspectionId,formData).subscribe({
-      next: (response) => {
-        console.log(response);
-        this.uploadStatus =
-          response.message || '¡Todas las fotos se han subido con éxito!';
-        console.log('Respuesta del servidor:', response);
-        this.photos = []; // Limpiamos la galería al terminar
-      },
-      error: (err) => {
-        this.uploadStatus =
-          err.error?.detail || 'Error al enviar las fotos. Inténtalo de nuevo.';
-        console.error('Error en la subida:', err);
-      },
-      complete: () => {
-        this.isUploading = false;
-        this.dialog.closeAll()
-      },
-    });
+    return this.apiService
+      .uploadPhoto('inspections/upload_images/' + this.inspectionId, formData)
+      .pipe(
+        tap((response) => {
+          console.log(response);
+          this.uploadStatus =
+            response.message || '¡Todas las fotos se han subido con éxito!';
+          console.log('Respuesta del servidor:', response);
+          return true;
+        }),
+        catchError((err) => {
+          this.uploadStatus =
+            err.error?.detail ||
+            'Error al enviar las fotos. Inténtalo de nuevo.';
+          console.error('Error en la subida:', err);
+          this.openSnackbar('Error al subir las fotos. Inténtalo de nuevo.');
+          return throwError(err);
+        }),
+        finalize(() => {
+          this.isUploading = false;
+        })
+      );
+  }
+
+  clearPhotos(): void {
+    this.photos = [];
   }
 
   private stopCamera(): void {
@@ -168,5 +167,13 @@ export class TakePhotosVehicleComponent implements OnInit, OnDestroy {
       this.stream.getTracks().forEach((track) => track.stop());
       this.stream = null;
     }
+  }
+
+  openSnackbar(message: string) {
+    this.snackBar.open(message, 'Cerrar', {
+      duration: 3000,
+      horizontalPosition: 'center',
+      verticalPosition: 'top',
+    });
   }
 }

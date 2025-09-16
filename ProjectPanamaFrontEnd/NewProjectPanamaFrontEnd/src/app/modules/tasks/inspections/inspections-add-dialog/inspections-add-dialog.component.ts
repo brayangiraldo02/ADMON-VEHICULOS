@@ -74,7 +74,8 @@ export class InspectionsAddDialogComponent implements OnInit {
     }
   }
 
-  @ViewChild(TakePhotosVehicleComponent) takePhotosVehicleComponent!: TakePhotosVehicleComponent;
+  @ViewChild(TakePhotosVehicleComponent)
+  takePhotosVehicleComponent!: TakePhotosVehicleComponent;
 
   inspectionInfoForm!: FormGroup;
 
@@ -341,7 +342,7 @@ export class InspectionsAddDialogComponent implements OnInit {
       poliza_seguros: checklistItems.find((item) => item.id === 'poliza_seguro')
         ?.value
         ? 1
-        : 0, 
+        : 0,
       luces_delanteras: checklistItems.find(
         (item) => item.id === 'luces_delanteras'
       )?.value
@@ -360,13 +361,15 @@ export class InspectionsAddDialogComponent implements OnInit {
         : 0,
       tapiceria: checklistItems.find((item) => item.id === 'tapiceria')?.value
         ? 1
-        : 0, 
+        : 0,
       gps: checklistItems.find((item) => item.id === 'gps')?.value ? 1 : 0,
       combustible: this.mainInspectionForm.value.vehicleState.combustible || '',
       panapass: this.mainInspectionForm.value.vehicleState.panapass || '',
       description: this.mainInspectionForm.value.vehicleState.descripcion || '',
       nota: this.mainInspectionForm.value.vehicleState.nota || '',
     };
+
+    this.isLoading = true;
 
     console.log('Datos a enviar:', newInspectionData);
 
@@ -375,18 +378,36 @@ export class InspectionsAddDialogComponent implements OnInit {
       .subscribe(
         (response: InspectionCreateResponse) => {
           console.log('Inspección creada con éxito:', response);
-          this.inspectionCreateID = response.id;   
+          this.inspectionCreateID = response.id;
+          this.isLoading = false;
           this.openSnackbar('Inspección creada con éxito.');
         },
         (error) => {
           console.error('Error al crear la inspección:', error);
+          this.openSnackbar(
+            'Error al crear la inspección. Vuelve a intentarlo más tarde.'
+          );
+          this.dialogRef.close();
         }
       );
   }
 
   uploadImages() {
-    if(this.takePhotosVehicleComponent) {
-      this.takePhotosVehicleComponent.sendAllPhotos();
+    if (this.takePhotosVehicleComponent) {
+      this.isLoading = true;
+      this.takePhotosVehicleComponent.sendAllPhotos().subscribe({
+        next: (response) => {
+          this.openSnackbar('Todas las fotos se han subido con éxito.');
+          this.takePhotosVehicleComponent.clearPhotos();
+          this.dialogRef.close();
+        },
+        error: (err) => {
+          this.isLoading = false;
+        },
+        complete: () => {
+          this.isLoading = false;
+        },
+      });
     }
   }
 }
