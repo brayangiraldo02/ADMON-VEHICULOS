@@ -341,7 +341,7 @@ export class InspectionsAddDialogComponent implements OnInit {
       poliza_seguros: checklistItems.find((item) => item.id === 'poliza_seguro')
         ?.value
         ? 1
-        : 0, // Nota: En el array es 'poliza_seguro', ajustado aquí
+        : 0, 
       luces_delanteras: checklistItems.find(
         (item) => item.id === 'luces_delanteras'
       )?.value
@@ -363,9 +363,9 @@ export class InspectionsAddDialogComponent implements OnInit {
         : 0, 
       gps: checklistItems.find((item) => item.id === 'gps')?.value ? 1 : 0,
       combustible: this.mainInspectionForm.value.vehicleState.combustible || '',
-      // panapass: this.mainInspectionForm.value.vehicleState.panapass || '',
-      panapass: 1, // TODO: CORREGIR
+      panapass: this.mainInspectionForm.value.vehicleState.panapass || '',
       description: this.mainInspectionForm.value.vehicleState.descripcion || '',
+      nota: this.mainInspectionForm.value.vehicleState.nota || '',
     };
 
     console.log('Datos a enviar:', newInspectionData);

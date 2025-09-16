@@ -48,6 +48,7 @@ export class VehicleStatesFormComponent {
       kilometraje: ['', Validators.required],
       panapass: ['', Validators.required],
       descripcion: ['', Validators.required],
+      nota: [''],
 
       checklistItems: this.fb.array(
         this.checklistItems.map((item) =>
