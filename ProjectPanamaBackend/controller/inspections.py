@@ -482,6 +482,7 @@ async def create_inspection(data: NewInspection):
       TIPO_INSPEC=inspection_type.CODIGO,
       KILOMETRAJ=data.mileage,
       DESCRIPCION=data.description,
+      OBSERVA=data.nota,
       FECHA=fecha_obj,
       HORA=data.inspection_time,
       ALFOMBRA=data.alfombra,

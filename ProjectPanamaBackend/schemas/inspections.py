@@ -40,6 +40,7 @@ class NewInspection(BaseModel):
   retrovisor: int
   tapiceria: int
   gps: int
-  combustible: str #! En el formulario aparece como cuadro de texto, en la base de datos como booleano
-  panapass: int #! En el formulario aparece como cuadro de texto, en la base de datos como booleano
+  combustible: str 
+  panapass: str 
   description: str
+  nota: str
