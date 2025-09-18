@@ -50,6 +50,7 @@ async def pandgstatus_report(company_code: str, data: PandGStatusReport):
           Vehiculos.MODELO,
           Vehiculos.VLR_COMPRA,
           Vehiculos.NOMESTADO,
+          Vehiculos.PROPI_IDEN,
           func.coalesce(func.sum(CajaRecaudos.DEU_RENTA), 0).label('total_recaudos'),
           func.coalesce(func.sum(CajaRecaudos.FON_INSCRI), 0).label('total_fondo_inscripcion'),
           func.coalesce(func.sum(CajaRecaudos.DEU_SINIES), 0).label('total_deuda_siniestro'),
@@ -75,6 +76,21 @@ async def pandgstatus_report(company_code: str, data: PandGStatusReport):
         # Obtener los números de unidades para usarlos en la siguiente consulta
         numeros_unidades = [v.NUMERO for v in vehiculos_con_recaudos]
 
+        register_without_units = db.query(
+          CajaRecaudos.PROPI_IDEN,
+          func.coalesce(func.sum(CajaRecaudos.DEU_RENTA), 0).label('total_recaudos'),
+          func.coalesce(func.sum(CajaRecaudos.FON_INSCRI), 0).label('total_fondo_inscripcion'),
+          func.coalesce(func.sum(CajaRecaudos.DEU_SINIES), 0).label('total_deuda_siniestro'),
+        ).filter(
+          (CajaRecaudos.NUMERO == None) | (CajaRecaudos.NUMERO == ""),
+          CajaRecaudos.FEC_RECIBO >= data.primeraFecha,
+          CajaRecaudos.FEC_RECIBO <= data.ultimaFecha,
+          CajaRecaudos.PROPI_IDEN.in_(empresa),
+          CajaRecaudos.EMPRESA == company_code,
+        ).group_by(
+          CajaRecaudos.PROPI_IDEN
+        ).all()
+
         # Obtener totales de movimientos por tipo y unidad en una sola consulta
         movimientos_por_tipo = db.query(
           Movimien.UNIDAD,
@@ -93,6 +109,23 @@ async def pandgstatus_report(company_code: str, data: PandGStatusReport):
           Movimien.TIPO
         ).all()
 
+        movements_without_units = db.query(
+          Movimien.PROPI_IDEN,
+          Movimien.TIPO,
+          func.sum(Movimien.TOTAL).label('total_tipo')
+        ).filter(
+          (Movimien.UNIDAD == None) | (Movimien.UNIDAD == ""),
+          Movimien.FECHA >= data.primeraFecha,
+          Movimien.FECHA <= data.ultimaFecha,
+          Movimien.TIPO.in_(['024', '027', '026', '022', '016']),
+          Movimien.PROPI_IDEN.in_(empresa),
+          Movimien.EMPRESA == company_code,
+          # Movimien.FORMAPAGO.in_(['01', '02', '03', '04', '05'])
+        ).group_by(
+          Movimien.PROPI_IDEN,
+          Movimien.TIPO
+        ).all()
+
         insurances = db.query(
           ReclamosColisiones.NUMERO,
           ReclamosColisiones.CERRADO,
@@ -107,7 +140,19 @@ async def pandgstatus_report(company_code: str, data: PandGStatusReport):
           ReclamosColisiones.NUMERO
         ).all()
 
-        insurances_dict = {ins.NUMERO: {"CERRADO": ins.CERRADO, "SEGUROS": ins.valor_seguros} for ins in insurances}
+        insurances_without_units = db.query(
+          ReclamosColisiones.PROPI_IDEN,
+          ReclamosColisiones.CERRADO,
+          func.sum(ReclamosColisiones.BCO_VALOR).label('valor_seguros')
+        ).filter(
+          (ReclamosColisiones.NUMERO == None) | (ReclamosColisiones.NUMERO == ""),
+          ReclamosColisiones.FECHA >= data.primeraFecha,
+          ReclamosColisiones.FECHA <= data.ultimaFecha,
+          ReclamosColisiones.PROPI_IDEN.in_(empresa),
+          ReclamosColisiones.EMPRESA == company_code
+        ).group_by(
+          ReclamosColisiones.PROPI_IDEN
+        ).all()
 
         labor = db.query(
           ChapisteriaManoObra.NUMERO,
@@ -122,7 +167,33 @@ async def pandgstatus_report(company_code: str, data: PandGStatusReport):
           ChapisteriaManoObra.NUMERO
         ).all()
 
-        labor_dict = {lab.NUMERO: lab.total_labor for lab in labor}
+        labor_without_units = db.query(
+          ChapisteriaManoObra.PROPI_IDEN,
+          func.sum(ChapisteriaManoObra.VLR_MANOBR).label('total_labor')
+        ).filter(
+          (ChapisteriaManoObra.NUMERO == None) | (ChapisteriaManoObra.NUMERO == ""),
+          ChapisteriaManoObra.FECHA >= data.primeraFecha,
+          ChapisteriaManoObra.FECHA <= data.ultimaFecha,
+          ChapisteriaManoObra.EMPRESA == company_code,
+          ChapisteriaManoObra.PROPI_IDEN.in_(empresa)
+        ).group_by(
+          ChapisteriaManoObra.PROPI_IDEN
+        ).all()
+
+        register_without_units_dict = {r.PROPI_IDEN: r for r in register_without_units} if register_without_units else {}
+        movements_without_units_dict = {}
+        for m in movements_without_units:
+          if m.PROPI_IDEN not in movements_without_units_dict:
+            movements_without_units_dict[m.PROPI_IDEN] = {}
+          movements_without_units_dict[m.PROPI_IDEN][m.TIPO] = m.total_tipo
+
+        insurances_without_units_dict = {}
+        for ins in insurances_without_units:
+          if ins.PROPI_IDEN not in insurances_without_units_dict:
+            insurances_without_units_dict[ins.PROPI_IDEN] = []
+          insurances_without_units_dict[ins.PROPI_IDEN].append(ins)
+
+        labor_without_units_dict = {l.PROPI_IDEN: l.total_labor for l in labor_without_units} if labor_without_units else {}
 
         # Organizar los totales por unidad y tipo
         totales_movimientos = {}
@@ -135,7 +206,67 @@ async def pandgstatus_report(company_code: str, data: PandGStatusReport):
 
         # Construir la respuesta final
         info_unidades = []
+
+        for prop_iden in empresa:
+          register_prop = register_without_units_dict.get(prop_iden)
+          if register_prop:
+            total_recaudos = ( register_prop.total_recaudos +
+                                register_prop.total_fondo_inscripcion +
+                                register_prop.total_deuda_siniestro)
+          else:
+            total_recaudos = 0
+
+          movs_prop = movements_without_units_dict.get(prop_iden, {})
+          total_024 = movs_prop.get('024', 0)
+          total_027 = movs_prop.get('027', 0)
+          total_026 = movs_prop.get('026', 0)
+          total_022 = movs_prop.get('022', 0)
+          total_016 = movs_prop.get('016', 0)
+          total_almacen = total_022 - total_016
+
+          insurances_prop = insurances_without_units_dict.get(prop_iden, [])
+          insurances_value = sum(ins.valor_seguros for ins in insurances_prop)
+          insurances_status = "Pen" if any(ins.CERRADO == "F" for ins in insurances_prop) else 0
+          
+          labor_prop = labor_without_units_dict.get(prop_iden, 0)
+          chapisteria = labor_prop + total_026
+
+          estado_pyg = total_recaudos - total_024 - total_027 - chapisteria - total_almacen
+
+          if (total_recaudos != 0 or
+              total_024 != 0 or
+              total_027 != 0 or
+              labor_prop != 0 or
+              total_almacen != 0 or
+              estado_pyg != 0):
+            
+            info_unidades.append({
+                "NUMERO": "",
+                "FEC_CREADO": None,
+                "MODELO": None,
+                "VLR_COMPRA": None,
+                "NOMESTADO": None,
+                "PROPI_IDEN": prop_iden,
+                "INGRESOS": {
+                    "INGRESOS": total_recaudos,
+                    "CERRADO": insurances_status,
+                    "SEGUROS": insurances_value
+                },
+                "GASTOS": {
+                    "GASTO_CAJA": total_024,
+                    "GENERALES": total_027,
+                    "OTRO_GASTO": 0
+                },
+                "PIEZAS_MOBRA": {
+                    "CHAPISTERIA": chapisteria,
+                    "ALMACEN": total_almacen
+                },
+                "ESTADOPyG": estado_pyg
+            })
+
         for vehiculo in vehiculos_con_recaudos:
+          insurances_unit = next((ins for ins in insurances if ins.NUMERO == vehiculo.NUMERO), None)
+          labor_unit = next((lab for lab in labor if lab.NUMERO == vehiculo.NUMERO), None)
           # Obtener los totales de movimiento para esta unidad (o valores predeterminados)
           movs = totales_movimientos.get(vehiculo.NUMERO, {'024': 0, '027': 0, '026': 0, '022': 0, '016': 0})
           
@@ -146,10 +277,13 @@ async def pandgstatus_report(company_code: str, data: PandGStatusReport):
           total_016 = movs.get('016', 0)
           total_almacen = total_022 - total_016
 
+          total_labor = labor_unit.total_labor if labor_unit else 0
+          chapisteria = total_labor + total_026
+
           recaudos = vehiculo.total_recaudos + vehiculo.total_fondo_inscripcion + vehiculo.total_deuda_siniestro
           
           # Calcular el balance de pérdidas y ganancias
-          estado_pyg = recaudos - total_024 - total_027 - total_026 - total_almacen
+          estado_pyg = recaudos - total_024 - total_027 - chapisteria - total_almacen
           
           # Verificar si la unidad tiene algún movimiento
           tiene_movimientos = (
@@ -164,8 +298,6 @@ async def pandgstatus_report(company_code: str, data: PandGStatusReport):
           
           # Solo agregar unidades con movimientos
           if tiene_movimientos:
-              insurances_data = insurances_dict.get(vehiculo.NUMERO, None)
-              total_labor = labor_dict.get(vehiculo.NUMERO, 0)
               # Crear el diccionario con la información procesada
               info_unidad_dict = {
                   "NUMERO": vehiculo.NUMERO,
@@ -173,10 +305,11 @@ async def pandgstatus_report(company_code: str, data: PandGStatusReport):
                   "MODELO": vehiculo.MODELO,
                   "VLR_COMPRA": vehiculo.VLR_COMPRA,
                   "NOMESTADO": vehiculo.NOMESTADO,
+                  "PROPI_IDEN": vehiculo.PROPI_IDEN,
                   "INGRESOS": {
                       "INGRESOS": recaudos,
-                      "CERRADO": "Pen" if insurances_data and insurances_data["CERRADO"] == "F" else 0,
-                      "SEGUROS": insurances_data["SEGUROS"] if insurances_data else 0
+                      "CERRADO": "Pen" if insurances_unit and insurances_unit.CERRADO == "F" else 0,
+                      "SEGUROS": insurances_unit.SEGUROS if insurances_unit else 0
                   },
                   "GASTOS": {
                       "GASTO_CAJA": total_024,
@@ -185,7 +318,7 @@ async def pandgstatus_report(company_code: str, data: PandGStatusReport):
                   },
                   "PIEZAS_MOBRA": {
                       #"CHAPISTERIA": total_026,
-                      "CHAPISTERIA": total_labor,
+                      "CHAPISTERIA": chapisteria,
                       "ALMACEN": total_almacen
                   },
                   "ESTADOPyG": estado_pyg,  # Utilidad si es valor positivo, pérdida si es valor negativo
@@ -412,6 +545,7 @@ async def pandgstatus_report(company_code: str, data: PandGStatusReport):
         "MODELO": info_unidad.MODELO,
         "VLR_COMPRA": info_unidad.VLR_COMPRA,
         "NOMESTADO": info_unidad.NOMESTADO,
+        "PROPI_IDEN": info_unidad.PROPI_IDEN,
         "INGRESOS": {
           "INGRESOS": recaudos,
           "CERRADO": seguros_estado,
@@ -490,48 +624,49 @@ async def pandgstatus_report(company_code: str, data: PandGStatusReport):
     else:
         # Caso de múltiples unidades - obtener empresa para cada unidad
         # Obtener información de todas las empresas y sus vehículos
+        owners_ids = list(set(u["PROPI_IDEN"] for u in info_unidades))
         empresas_info = db.query(
-            Propietarios.EMPRESA.label('codigo_empresa'),
-            Vehiculos.NUMERO,
             Propietarios.CODIGO,
             Propietarios.NOMBRE
-        ).join(
-            Propietarios, Vehiculos.PROPI_IDEN == Propietarios.CODIGO
         ).filter(
-            Vehiculos.NUMERO.in_([u["NUMERO"] for u in info_unidades]),
+            Propietarios.CODIGO.in_(owners_ids),
             Propietarios.EMPRESA == company_code,
-            Vehiculos.EMPRESA == company_code,
         ).all()
 
-        id_empresa = empresas_info[0].codigo_empresa
-        
-        # Crear un diccionario para mapear unidades a empresas
-        unidad_a_empresa = {e.NUMERO: {"codigo": e.CODIGO, "nombre": e.NOMBRE} for e in empresas_info}
+        # Crear un diccionario para mapear código de propietario a nombre
+        owner_to_company = {e.CODIGO: e.NOMBRE for e in empresas_info}
         
         # Crear un diccionario para almacenar unidades temporalmente por empresa
         unidades_por_empresa = {}
         
         # Agrupar unidades por empresa
         for unidad in info_unidades:
-            empresa_info = unidad_a_empresa.get(unidad["NUMERO"])
-            if empresa_info:
-                nombre_empresa = empresa_info["nombre"]
-                
-                # Si la empresa no existe en el diccionario temporal, crearla
-                if nombre_empresa not in unidades_por_empresa:
-                    unidades_por_empresa[nombre_empresa] = {
-                        "codigo": empresa_info["codigo"],
+            empresa_info = owner_to_company.get(unidad["PROPI_IDEN"])
+            if not empresa_info:
+                continue
+
+            # Si la empresa no existe en el diccionario temporal, crearla
+            if empresa_info not in unidades_por_empresa:
+                unidades_por_empresa[empresa_info] = {
+                        "codigo": unidad["PROPI_IDEN"],
                         "unidades": []
                     }
                 
-                # Añadir la unidad al diccionario temporal
-                unidades_por_empresa[nombre_empresa]["unidades"].append(unidad)
-        
+            # Añadir la unidad al diccionario temporal
+            unidades_por_empresa[empresa_info]["unidades"].append(unidad)
+
         # Procesar cada empresa, ordenando sus unidades
         for nombre_empresa, info in unidades_por_empresa.items():
-            # Ordenar las unidades por número alfabéticamente
-            unidades_ordenadas = sorted(info["unidades"], key=lambda u: u["NUMERO"])
-            
+            # Separar unidades con número vacío y no vacío
+            unidades_con_numero = [u for u in info["unidades"] if u["NUMERO"]]
+            unidades_sin_numero = [u for u in info["unidades"] if not u["NUMERO"]]
+
+            # Ordenar las unidades con número alfabéticamente
+            unidades_ordenadas = sorted(unidades_con_numero, key=lambda u: u["NUMERO"])
+
+            # Añadir las unidades sin número al inicio de la lista
+            unidades_ordenadas = unidades_sin_numero + unidades_ordenadas
+
             # Inicializar totales de la empresa
             totales_empresa = {
                 "cantidad_unidades": len(unidades_ordenadas),
@@ -619,7 +754,7 @@ async def pandgstatus_report(company_code: str, data: PandGStatusReport):
         InfoEmpresas.NOMBRE,
         InfoEmpresas.NIT,
         InfoEmpresas.LOGO
-    ).filter(InfoEmpresas.ID == id_empresa).first()
+    ).filter(InfoEmpresas.ID == company_code).first()
 
     # Convertir 0 a cadenas vacías para la presentación final
     def format_for_display(value):
