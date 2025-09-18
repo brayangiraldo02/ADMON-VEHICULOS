@@ -1,5 +1,5 @@
 <div class="main-container">
-  <h3>Situación del vehículo TT232</h3>
+  <h3>Situación del vehículo {{vehicleNumber}}</h3>
 
   <form [formGroup]="vehicleForm">
     <div class="checklist" formArrayName="checklistItems">
@@ -66,6 +66,14 @@
         <mat-error *ngIf="vehicleForm.get('descripcion')?.invalid && vehicleForm.get('descripcion')?.touched">
           Este campo es obligatorio.
         </mat-error>
+      </mat-form-field>
+
+      <mat-form-field class="full-width">
+        <mat-label>Notas</mat-label>
+        <textarea matInput formControlName="nota"></textarea>
+        <!-- <mat-error *ngIf="vehicleForm.get('nota')?.invalid && vehicleForm.get('nota')?.touched">
+          Este campo es obligatorio.
+        </mat-error> -->
       </mat-form-field>
     </div>
   </form>

@@ -28,15 +28,6 @@
       >
         <mat-icon>camera_alt</mat-icon>
       </button>
-      <button
-        (click)="sendAllPhotos()"
-        [disabled]="photos.length === 0 || isUploading"
-        mat-fab
-        color="accent"
-        matTooltip="Enviar Todas las Fotos"
-      >
-        <mat-icon>send</mat-icon>
-      </button>
     </div>
     <div *ngIf="photos.length > 0" class="photo-gallery">
       <div
