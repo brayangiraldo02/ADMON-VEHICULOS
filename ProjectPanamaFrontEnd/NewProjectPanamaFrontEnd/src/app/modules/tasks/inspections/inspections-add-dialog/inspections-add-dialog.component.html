@@ -79,8 +79,18 @@
               <input matInput readonly [value]="vehicleInfo.placa" />
             </mat-form-field>
             <mat-form-field class="field-input">
+              <mat-label>Estado</mat-label>
+              <input matInput readonly [value]="vehicleInfo.estado_vehiculo" />
+            </mat-form-field>
+          </div>
+          <div class="inputs-container">
+            <mat-form-field class="field-input">
               <mat-label>Kilometraje</mat-label>
               <input matInput readonly [value]="vehicleInfo.kilometraje" />
+            </mat-form-field>
+            <mat-form-field class="field-input">
+              <mat-label>Cupo</mat-label>
+              <input matInput readonly [value]="vehicleInfo.cupo" />
             </mat-form-field>
           </div>
           <div class="inputs-container">
@@ -142,7 +152,10 @@
   ></app-take-photos-vehicle>
 
   <div class="inputs-container">
-    <mat-progress-bar mode="indeterminate" *ngIf="inspectionCreateID !== '' && isLoading"></mat-progress-bar>
+    <mat-progress-bar
+      mode="indeterminate"
+      *ngIf="inspectionCreateID !== '' && isLoading"
+    ></mat-progress-bar>
   </div>
 </mat-dialog-content>
 

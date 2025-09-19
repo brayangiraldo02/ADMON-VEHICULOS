@@ -6,6 +6,7 @@ from models.conductores import Conductores
 from models.vehiculos import Vehiculos
 from models.inspecciones import Inspecciones
 from models.tiposinspeccion import TiposInspeccion
+from models.estados import Estados
 from schemas.inspections import *
 from fastapi.encoders import jsonable_encoder
 from fastapi import UploadFile, File, BackgroundTasks
@@ -408,6 +409,9 @@ async def new_inspection_data(company_code: str, vehicle_number: str):
       return JSONResponse(content={"message": "Vehicle not found"}, status_code=404)
     
     driver = db.query(Conductores).filter(Conductores.CODIGO == vehicle.CONDUCTOR).first()
+
+    states = db.query(Estados).filter(Estados.EMPRESA == company_code).all()
+    state_vehicle = next((state.NOMBRE for state in states if state.CODIGO == vehicle.ESTADO), '')
     
     panama_timezone = pytz.timezone('America/Panama')
     # Obtén la hora actual en la zona horaria de Ciudad de Panamá
@@ -428,6 +432,8 @@ async def new_inspection_data(company_code: str, vehicle_number: str):
       'marca': vehicle.NOMMARCA + ' ' + vehicle.LINEA,
       'modelo': vehicle.MODELO,
       'placa': vehicle.PLACA,
+      'estado_vehiculo': state_vehicle,
+      'cupo': vehicle.NRO_CUPO if vehicle.NRO_CUPO else '',
       'conductor_nombre': driver.NOMBRE if driver else '',
       'conductor_codigo': vehicle.CONDUCTOR if vehicle.CONDUCTOR else '',
       'conductor_celular': driver.TELEFONO if driver else '',
