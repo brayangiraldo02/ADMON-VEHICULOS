@@ -1,5 +1,8 @@
 import { Component, Input } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { PanapassDialogComponent } from '../../panapass-dialog/panapass-dialog.component';
+import { MatDialog } from '@angular/material/dialog';
+import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 
 @Component({
   selector: 'app-vehicle-states-form',
@@ -40,7 +43,11 @@ export class VehicleStatesFormComponent {
 
   vehicleForm!: FormGroup;
 
-  constructor(private fb: FormBuilder) {}
+  constructor(
+    private fb: FormBuilder,
+    private dialog: MatDialog,
+    private breakpointObserver: BreakpointObserver
+  ) {}
 
   ngOnInit(): void {
     this.vehicleForm = this.fb.group({
@@ -64,5 +71,14 @@ export class VehicleStatesFormComponent {
 
   get checklistItemsArray(): FormArray {
     return this.vehicleForm.get('checklistItems') as FormArray;
+  }
+
+  openGetPanapassDialog() {
+    const isSmallScreen = this.breakpointObserver.isMatched(Breakpoints.XSmall);
+    const dialogWidth = isSmallScreen ? '90vw' : '60%';
+
+    const dialogRef = this.dialog.open(PanapassDialogComponent, {
+      width: dialogWidth,
+    });
   }
 }
