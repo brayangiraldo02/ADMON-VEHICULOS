@@ -1,5 +1,8 @@
-import { Component } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
+import { Component, Input } from '@angular/core';
+import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { PanapassDialogComponent } from '../../panapass-dialog/panapass-dialog.component';
+import { MatDialog } from '@angular/material/dialog';
+import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 
 @Component({
   selector: 'app-vehicle-states-form',
@@ -7,69 +10,75 @@ import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
   styleUrls: ['./vehicle-states-form.component.css'],
 })
 export class VehicleStatesFormComponent {
+  @Input() vehicleNumber: string = '';
+
   checklistItems = [
     { id: 'alfombra', label: 'Alfombra' },
-    { id: 'copas', label: 'Copas/Rines' },
-    { id: 'extinguidor', label: 'Extinguidor' },
     { id: 'antena', label: 'Antena' },
-    { id: 'lamparas', label: 'Lámparas' },
-    { id: 'triangulo', label: 'Triángulo' },
-    { id: 'gato', label: 'Gato' },
-    { id: 'pipa', label: 'Pipa' },
+    { id: 'caratula_radio', label: 'Carátula de Radio' },
     { id: 'copas', label: 'Copas' },
-    { id: 'llanta-repuestos', label: 'Llanta de Repuestos' },
-    { id: 'placa-municipal', label: 'Placa Municipal' },
-    { id: 'caratula-radio', label: 'Carátula de Radio' },
-    { id: 'registro-vehiculo', label: 'Registro Vehículo' },
-    { id: 'revisado', label: 'Revisado' },
-    { id: 'pago-municipio', label: 'Pago Municipio' },
+    { id: 'copas_rines', label: 'Copas/Rines' },
+    { id: 'extinguidor', label: 'Extinguidor' },
     {
-      id: 'formato-colisiones-menores',
+      id: 'formato_colisiones_menores',
       label: 'Formato de Colisiones Menores',
     },
-    { id: 'poliza-seguros', label: 'Póliza de Seguros' },
-    { id: 'luces-delanteras', label: 'Luces Delanteras' },
-    { id: 'luces-traseras', label: 'Luces Traseras' },
-    { id: 'vidrios', label: 'Vidrios' },
-    { id: 'retrovisor', label: 'Retrovisor' },
+    { id: 'gato', label: 'Gato' },
     { id: 'gps', label: 'GPS' },
+    { id: 'lamparas', label: 'Lámparas' },
+    { id: 'llanta_repuesto', label: 'Llanta de Repuestos' },
+    { id: 'luces_delanteras', label: 'Luces Delanteras' },
+    { id: 'luces_traseras', label: 'Luces Traseras' },
+    { id: 'pago_municipio', label: 'Pago Municipio' },
+    { id: 'pipa', label: 'Pipa' },
+    { id: 'placa_municipal', label: 'Placa Municipal' },
+    { id: 'poliza_seguro', label: 'Póliza de Seguros' },
+    { id: 'registro_vehiculo', label: 'Registro Vehículo' },
+    { id: 'retrovisor', label: 'Retrovisor' },
+    { id: 'revisado', label: 'Revisado' },
+    { id: 'tapiceria', label: 'Tapicería' },
+    { id: 'triangulo', label: 'Triángulo' },
+    { id: 'vidrios', label: 'Vidrios' },
   ];
 
   vehicleForm!: FormGroup;
 
-  constructor(private fb: FormBuilder) {}
+  constructor(
+    private fb: FormBuilder,
+    private dialog: MatDialog,
+    private breakpointObserver: BreakpointObserver
+  ) {}
 
   ngOnInit(): void {
     this.vehicleForm = this.fb.group({
-      // Controles para los textareas
-      combustible: [''], // Valor inicial: string vacío
-      kilometraje: [''],
-      panapass: [''],
-      descripcion: [''],
+      combustible: ['', Validators.required],
+      kilometraje: ['', Validators.required],
+      panapass: ['', Validators.required],
+      descripcion: ['', Validators.required],
+      nota: [''],
 
-      // Un FormArray para la lista dinámica de checklist
       checklistItems: this.fb.array(
         this.checklistItems.map((item) =>
           this.fb.group({
             id: [item.id],
             label: [item.label],
-            value: [null], // Valor inicial para cada radio button
+            value: [null, Validators.required],
           })
         )
       ),
     });
   }
 
-  // Getter para acceder fácilmente al FormArray en la plantilla HTML
   get checklistItemsArray(): FormArray {
     return this.vehicleForm.get('checklistItems') as FormArray;
   }
 
-  mostrarValores() {
-    console.log('--- Objeto completo del FormGroup ---');
-    console.log(this.vehicleForm.value);
+  openGetPanapassDialog() {
+    const isSmallScreen = this.breakpointObserver.isMatched(Breakpoints.XSmall);
+    const dialogWidth = isSmallScreen ? '90vw' : '60%';
 
-    // Si necesitas el valor RAW (incluyendo controles deshabilitados, etc.)
-    // console.log(this.vehicleForm.getRawValue());
+    const dialogRef = this.dialog.open(PanapassDialogComponent, {
+      width: dialogWidth,
+    });
   }
 }

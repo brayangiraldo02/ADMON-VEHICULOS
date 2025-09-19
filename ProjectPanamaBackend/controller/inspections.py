@@ -6,6 +6,7 @@ from models.conductores import Conductores
 from models.vehiculos import Vehiculos
 from models.inspecciones import Inspecciones
 from models.tiposinspeccion import TiposInspeccion
+from models.estados import Estados
 from schemas.inspections import *
 from fastapi.encoders import jsonable_encoder
 from fastapi import UploadFile, File, BackgroundTasks
@@ -18,6 +19,9 @@ import pytz
 from utils.pdf import html2pdf
 import tempfile
 from utils.panapass import get_txt_file, search_value_in_txt
+
+#! Cambiar por el directorio que es
+upload_directory = "uploads"
 
 async def owners_data(company_code: str):
   db = session()
@@ -190,26 +194,61 @@ async def inspections_info(data, company_code: str):
     db.close()
 
 #-----------------------------------------------------------------------------------------------
-
-#! Cambiar por el directorio que es
-upload_directory = "uploads"
-
-
-async def upload_image(company_code: str, vehicle_number: str, image: UploadFile = File(...)):
+async def upload_images(inspection_id: int, images: List[UploadFile] = File(...)):
+  db = session()
   try:
-    vehicle_number_path = os.path.join(upload_directory, company_code, vehicle_number, "fotos")
-    os.makedirs(vehicle_number_path, exist_ok=True)
+    inspection = db.query(Inspecciones).filter(Inspecciones.ID == inspection_id).first()
+    if not inspection:
+      raise HTTPException(status_code=404, detail=f"Inspección con ID {inspection_id} no encontrada.")
 
-    file_path = os.path.join(vehicle_number_path, image.filename)
-    
-    with open(file_path, "wb") as buffer:
-      shutil.copyfileobj(image.file, buffer)
+    vehicle_number = inspection.UNIDAD
+    company_code = inspection.EMPRESA
 
-    file_path = file_path.replace("\\", "/")  # Normalize path for JSON response
+    available_slots = []
+    for i in range(1, 17):
+        column_name = f"FOTO{i:02d}"
+        if not getattr(inspection, column_name):
+            available_slots.append(column_name)
 
-    return JSONResponse(content={ "file_path": file_path}, status_code=200)
+    if not available_slots:
+        return JSONResponse(
+            content={"message": "No hay espacios disponibles para guardar más fotos."},
+            status_code=400
+        )
+        
+    full_inspection_path = os.path.join(upload_directory, company_code, vehicle_number, "inspecciones", str(inspection_id))
+    os.makedirs(full_inspection_path, exist_ok=True)
+
+    saved_count = 0
+    for slot_name, image in zip(available_slots, images):
+        
+        _, ext = os.path.splitext(image.filename)
+        new_filename = f"{slot_name.lower()}{ext}"
+        
+        full_file_path = os.path.join(full_inspection_path, new_filename)
+        with open(full_file_path, "wb") as buffer:
+            shutil.copyfileobj(image.file, buffer)
+        
+        relative_db_path = os.path.join(company_code, vehicle_number, "inspecciones", str(inspection_id), new_filename)
+        normalized_path = relative_db_path.replace("\\", "/") 
+        setattr(inspection, slot_name, normalized_path) 
+        saved_count += 1
+
+    inspection.ESTADO = "FIN"
+
+    db.commit()
+
+    message = f"{saved_count} de {len(images)} imágenes fueron guardadas."
+    if len(images) > saved_count:
+        message += f" {len(images) - saved_count} fueron descartadas por falta de espacio."
+
+    return JSONResponse(content={"message": message}, status_code=201)
+
   except Exception as e:
+    db.rollback()
     return JSONResponse(content={"message": str(e)}, status_code=500)
+  finally:
+    db.close()
 
 #-----------------------------------------------------------------------------------------------
 async def report_inspections(data, company_code: str):
@@ -370,6 +409,9 @@ async def new_inspection_data(company_code: str, vehicle_number: str):
       return JSONResponse(content={"message": "Vehicle not found"}, status_code=404)
     
     driver = db.query(Conductores).filter(Conductores.CODIGO == vehicle.CONDUCTOR).first()
+
+    states = db.query(Estados).filter(Estados.EMPRESA == company_code).all()
+    state_vehicle = next((state.NOMBRE for state in states if state.CODIGO == vehicle.ESTADO), '')
     
     panama_timezone = pytz.timezone('America/Panama')
     # Obtén la hora actual en la zona horaria de Ciudad de Panamá
@@ -390,6 +432,8 @@ async def new_inspection_data(company_code: str, vehicle_number: str):
       'marca': vehicle.NOMMARCA + ' ' + vehicle.LINEA,
       'modelo': vehicle.MODELO,
       'placa': vehicle.PLACA,
+      'estado_vehiculo': state_vehicle,
+      'cupo': vehicle.NRO_CUPO if vehicle.NRO_CUPO else '',
       'conductor_nombre': driver.NOMBRE if driver else '',
       'conductor_codigo': vehicle.CONDUCTOR if vehicle.CONDUCTOR else '',
       'conductor_celular': driver.TELEFONO if driver else '',
@@ -430,6 +474,8 @@ async def create_inspection(data: NewInspection):
     panama_timezone = pytz.timezone('America/Panama')
     now_in_panama = datetime.now(panama_timezone)
 
+    fecha_obj = datetime.strptime(data.inspection_date, "%d/%m/%Y").date()
+
     new_inspection = Inspecciones(
       EMPRESA=data.company_code,
       UNIDAD=vehicle.NUMERO,
@@ -442,14 +488,15 @@ async def create_inspection(data: NewInspection):
       TIPO_INSPEC=inspection_type.CODIGO,
       KILOMETRAJ=data.mileage,
       DESCRIPCION=data.description,
-      FECHA=data.inspection_date,
+      OBSERVA=data.nota,
+      FECHA=fecha_obj,
       HORA=data.inspection_time,
       ALFOMBRA=data.alfombra,
       ANTENA=data.antena,
       CARATRADIO=data.caratula_radio,
       COMBUSTIBLE=data.combustible,
       COPASRINES=data.copas_rines,
-      EXTINGUIDOR=data.extintor,
+      EXTINGUIDOR=data.extinguidor,
       FORMACOLIS=data.formato_colisiones_menores,
       GATO=data.gato,
       GPS=data.gps,
@@ -457,7 +504,7 @@ async def create_inspection(data: NewInspection):
       LLANTAREPU=data.llanta_repuesto,
       LUZDELANTE=data.luces_delanteras,
       LUZTRACERA=data.luces_traseras,
-      PAGOMUNICI=data.pago_mnicipio,
+      PAGOMUNICI=data.pago_municipio,
       PANAPASS=data.panapass,
       PIPA=data.pipa,
       PLACAMUNIC=data.placa_municipal,
@@ -468,33 +515,19 @@ async def create_inspection(data: NewInspection):
       TAPICERIA=data.tapiceria,
       TRIANGULO=data.triangulo,
       VIDRIOS=data.vidrios,
-      FOTO01= '', #data.photo1,
-      FOTO02= '', #data.photo2,
-      FOTO03= '', #data.photo3,
-      FOTO04= '', #data.photo4,
-      FOTO05= '', #data.photo5,
-      FOTO06= '', #data.photo6,
-      FOTO07= '', #data.photo7,
-      FOTO08= '', #data.photo8,
-      FOTO09= '', #data.photo9,
-      FOTO10= '', #data.photo10,
-      FOTO11= '', #data.photo11,
-      FOTO12= '', #data.photo12,
-      FOTO13= '', #data.photo13,
-      FOTO14= '', #data.photo14,
-      FOTO15= '', #data.photo15,
-      FOTO16= '', #data.photo16,
       USUARIO=data.user if data.user else "",
       FEC_CREADO=now_in_panama.strftime("%Y-%m-%d %H:%M:%S")
     )
 
-    vehicle.KILO_ANTES = vehicle.KILOMETRAJ
-    vehicle.KILOMETRAJ = data.mileage
+    if data.mileage and (vehicle.KILOMETRAJ is None or data.mileage > vehicle.KILOMETRAJ):
+        vehicle.KILO_ANTES = vehicle.KILOMETRAJ
+        vehicle.KILOMETRAJ = data.mileage
+        db.add(vehicle)
 
     db.add(new_inspection)
     db.commit()
 
-    return JSONResponse(content={"message": "Inspección creada con éxito"}, status_code=201)
+    return JSONResponse(content={"id": new_inspection.ID}, status_code=201)
   except Exception as e:
     return JSONResponse(content={"message": str(e)}, status_code=500)
   finally:

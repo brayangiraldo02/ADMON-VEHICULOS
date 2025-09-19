@@ -7,12 +7,13 @@ import {
 } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
-import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { map, Observable, startWith } from 'rxjs';
 import { ApiService } from 'src/app/services/api.service';
 import { JwtService } from 'src/app/services/jwt.service';
 import { VehicleStatesFormComponent } from '../inspections-forms/vehicle-states-form/vehicle-states-form.component';
+import { TakePhotosVehicleComponent } from '../take-photos-vehicle/take-photos-vehicle.component';
 
 interface Vehicles {
   placa_vehiculo: string;
@@ -36,6 +37,8 @@ interface InspectionsVehicleData {
   marca: string;
   modelo: string;
   placa: string;
+  estado_vehiculo: string;
+  cupo: string;
   conductor_nombre: string;
   conductor_codigo: string;
   conductor_celular: string;
@@ -43,6 +46,16 @@ interface InspectionsVehicleData {
   fecha_inspeccion: string;
   hora_inspeccion: string;
   panapass: number;
+}
+
+interface ChecklistItem {
+  id: string;
+  label: string;
+  value: boolean | null;
+}
+
+interface InspectionCreateResponse {
+  id: string;
 }
 
 @Component({
@@ -54,9 +67,17 @@ export class InspectionsAddDialogComponent implements OnInit {
   @ViewChild(VehicleStatesFormComponent)
   set vehicleStatesFormComponent(component: VehicleStatesFormComponent) {
     if (component) {
-      this.mainInspectionForm.addControl('vehicleState', component.vehicleForm);
+      setTimeout(() => {
+        this.mainInspectionForm.addControl(
+          'vehicleState',
+          component.vehicleForm
+        );
+      }, 0);
     }
   }
+
+  @ViewChild(TakePhotosVehicleComponent)
+  takePhotosVehicleComponent!: TakePhotosVehicleComponent;
 
   inspectionInfoForm!: FormGroup;
 
@@ -76,11 +97,14 @@ export class InspectionsAddDialogComponent implements OnInit {
 
   vehicleInfo!: InspectionsVehicleData;
 
+  inspectionCreateID: string = '';
+
   constructor(
     private apiService: ApiService,
     private jwtService: JwtService,
     private formBuilder: FormBuilder,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private dialogRef: MatDialogRef<InspectionsAddDialogComponent>
   ) {}
 
   ngOnInit(): void {
@@ -174,6 +198,8 @@ export class InspectionsAddDialogComponent implements OnInit {
       marca: '',
       modelo: '',
       placa: '',
+      estado_vehiculo: '',
+      cupo: '',
       conductor_nombre: '',
       conductor_codigo: '',
       conductor_celular: '',
@@ -242,15 +268,150 @@ export class InspectionsAddDialogComponent implements OnInit {
   onSaveOrNext() {
     if (this.mainInspectionForm.invalid) {
       console.log('El formulario completo es inválido.');
+      this.openSnackbar('Por favor, completa los campos requeridos.');
 
       this.mainInspectionForm.markAllAsTouched();
       return;
     }
 
-    console.log('🚀 Formulario completo es válido!');
-    console.log('Valores combinados:', this.mainInspectionForm.value);
+    console.log(this.mainInspectionForm.value.vehicleState);
+    const checklistItems: ChecklistItem[] =
+      this.mainInspectionForm.value.vehicleState.checklistItems;
 
-    const inspectionInfoData = this.mainInspectionForm.value.inspectionInfo;
-    const vehicleStateData = this.mainInspectionForm.value.vehicleState;
+    const newInspectionData = {
+      user: this.jwtService.getUserData()?.id,
+      company_code: this.getCompany(),
+      vehicle_number: this.vehicleInfo.numero,
+      mileage: this.mainInspectionForm.value.vehicleState.kilometraje || 0,
+      inspection_type:
+        this.mainInspectionForm.value.inspectionInfo.tipo_inspeccion.id,
+      inspection_date: this.vehicleInfo.fecha_inspeccion,
+      inspection_time: this.vehicleInfo.hora_inspeccion,
+      alfombra: checklistItems.find((item) => item.id === 'alfombra')?.value
+        ? 1
+        : 0,
+      copas_rines: checklistItems.find((item) => item.id === 'copas_rines')
+        ?.value
+        ? 1
+        : 0,
+      extinguidor: checklistItems.find((item) => item.id === 'extinguidor')
+        ?.value
+        ? 1
+        : 0,
+      antena: checklistItems.find((item) => item.id === 'antena')?.value
+        ? 1
+        : 0,
+      lamparas: checklistItems.find((item) => item.id === 'lamparas')?.value
+        ? 1
+        : 0,
+      triangulo: checklistItems.find((item) => item.id === 'triangulo')?.value
+        ? 1
+        : 0,
+      gato: checklistItems.find((item) => item.id === 'gato')?.value ? 1 : 0,
+      pipa: checklistItems.find((item) => item.id === 'pipa')?.value ? 1 : 0,
+      copas: checklistItems.find((item) => item.id === 'copas')?.value ? 1 : 0,
+      llanta_repuesto: checklistItems.find(
+        (item) => item.id === 'llanta_repuesto'
+      )?.value
+        ? 1
+        : 0,
+      placa_municipal: checklistItems.find(
+        (item) => item.id === 'placa_municipal'
+      )?.value
+        ? 1
+        : 0,
+      caratula_radio: checklistItems.find(
+        (item) => item.id === 'caratula_radio'
+      )?.value
+        ? 1
+        : 0,
+      registro_vehiculo: checklistItems.find(
+        (item) => item.id === 'registro_vehiculo'
+      )?.value
+        ? 1
+        : 0,
+      revisado: checklistItems.find((item) => item.id === 'revisado')?.value
+        ? 1
+        : 0,
+      pago_municipio: checklistItems.find(
+        (item) => item.id === 'pago_municipio'
+      )?.value
+        ? 1
+        : 0,
+      formato_colisiones_menores: checklistItems.find(
+        (item) => item.id === 'formato_colisiones_menores'
+      )?.value
+        ? 1
+        : 0,
+      poliza_seguros: checklistItems.find((item) => item.id === 'poliza_seguro')
+        ?.value
+        ? 1
+        : 0,
+      luces_delanteras: checklistItems.find(
+        (item) => item.id === 'luces_delanteras'
+      )?.value
+        ? 1
+        : 0,
+      luces_traseras: checklistItems.find(
+        (item) => item.id === 'luces_traseras'
+      )?.value
+        ? 1
+        : 0,
+      vidrios: checklistItems.find((item) => item.id === 'vidrios')?.value
+        ? 1
+        : 0,
+      retrovisor: checklistItems.find((item) => item.id === 'retrovisor')?.value
+        ? 1
+        : 0,
+      tapiceria: checklistItems.find((item) => item.id === 'tapiceria')?.value
+        ? 1
+        : 0,
+      gps: checklistItems.find((item) => item.id === 'gps')?.value ? 1 : 0,
+      combustible: this.mainInspectionForm.value.vehicleState.combustible || '',
+      panapass: this.mainInspectionForm.value.vehicleState.panapass || '',
+      description: this.mainInspectionForm.value.vehicleState.descripcion || '',
+      nota: this.mainInspectionForm.value.vehicleState.nota || '',
+    };
+
+    this.isLoading = true;
+
+    console.log('Datos a enviar:', newInspectionData);
+
+    this.apiService
+      .postData('inspections/create_inspection', newInspectionData)
+      .subscribe(
+        (response: InspectionCreateResponse) => {
+          console.log('Inspección creada con éxito:', response);
+          this.inspectionCreateID = response.id;
+          this.isLoading = false;
+          this.openSnackbar('Inspección creada con éxito.');
+        },
+        (error) => {
+          console.error('Error al crear la inspección:', error);
+          this.openSnackbar(
+            'Error al crear la inspección. Vuelve a intentarlo más tarde.'
+          );
+          this.dialogRef.close();
+        }
+      );
+  }
+
+  uploadImages() {
+    if (this.takePhotosVehicleComponent) {
+      this.isLoading = true;
+      this.takePhotosVehicleComponent.sendAllPhotos().subscribe({
+        next: (response) => {
+          this.openSnackbar('Todas las fotos se han subido con éxito.');
+          this.takePhotosVehicleComponent.clearPhotos();
+          this.dialogRef.close();
+        },
+        error: (err) => {
+          this.isLoading = false;
+        },
+        complete: () => {
+          this.isLoading = false;
+        },
+      });
+    }
   }
 }
