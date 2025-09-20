@@ -20,8 +20,7 @@ from utils.pdf import html2pdf
 import tempfile
 from utils.panapass import get_txt_file, search_value_in_txt
 
-#! Cambiar por el directorio que es
-upload_directory = "uploads"
+upload_directory = "/home/admin/imagenes"
 
 async def owners_data(company_code: str):
   db = session()
