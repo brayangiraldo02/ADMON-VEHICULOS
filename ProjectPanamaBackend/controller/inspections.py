@@ -181,7 +181,7 @@ async def inspections_info(data, company_code: str):
         "unidad": inspection.UNIDAD,
         "placa": inspection.PLACA,
         "nombre_usuario": inspection.USUARIO,
-        "acciones": ""
+        "estado_inspeccion": inspection.ESTADO
       })
 
     if not inspections_data:
