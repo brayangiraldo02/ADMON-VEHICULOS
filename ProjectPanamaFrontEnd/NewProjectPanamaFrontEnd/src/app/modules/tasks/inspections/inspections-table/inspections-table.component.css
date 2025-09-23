@@ -100,6 +100,23 @@ td:first-child {
   justify-content: center;
 }
 
+/* Estilos para filas según el estado */
+.row-suspended td:not(.actions-column) {
+  background-color: #FFCDD2 !important;
+}
+
+.row-suspended:hover td:not(.actions-column) {
+  background-color: #FFAAAA !important;
+}
+
+.row-pending td:not(.actions-column) {
+  background-color: #FFE0B2 !important;
+}
+
+.row-pending:hover td:not(.actions-column) {
+  background-color: #FFCC80 !important;
+}
+
 @media (max-width: 768px) {
   .main-container {
     padding: 2vh 20px;
