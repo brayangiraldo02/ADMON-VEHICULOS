@@ -545,3 +545,33 @@ async def create_inspection(data: NewInspection):
     return JSONResponse(content={"message": str(e)}, status_code=500)
   finally:
     db.close()
+
+#-----------------------------------------------------------------------------------------------
+
+async def download_image_by_url(image_url: str):
+  try:
+    if "/uploads/" not in image_url:
+      return JSONResponse(content={"message": "URL no válida"}, status_code=400)
+    
+    relative_path = image_url.split("/uploads/")[1]
+    
+    full_image_path = os.path.join(upload_directory, relative_path)
+    
+    if not os.path.exists(full_image_path):
+      return JSONResponse(content={"message": "Imagen no encontrada"}, status_code=404)
+    
+    filename = os.path.basename(full_image_path)
+    
+    headers = {
+      "Content-Disposition": f"attachment; filename={filename}"
+    }
+    
+    return FileResponse(
+      path=full_image_path,
+      media_type='image/jpeg',
+      filename=filename,
+      headers=headers
+    )
+    
+  except Exception as e:
+    return JSONResponse(content={"message": str(e)}, status_code=500)

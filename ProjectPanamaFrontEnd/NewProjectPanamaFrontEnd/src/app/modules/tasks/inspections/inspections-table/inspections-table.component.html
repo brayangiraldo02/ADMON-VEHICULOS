@@ -216,6 +216,7 @@
                 color="accent"
                 matTooltip="Ver imagen"
                 *ngIf="row.Estado == 'FIN'"
+                (click)="openImgDialog(row)"
               >
                 <mat-icon>image</mat-icon>
               </button>

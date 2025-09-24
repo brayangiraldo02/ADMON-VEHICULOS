@@ -9,6 +9,9 @@ class InspectionInfo(BaseModel):
   fechaInicial: str
   fechaFinal: str
 
+class DownloadImageRequest(BaseModel):
+  image_url: str
+
 class NewInspection(BaseModel):
   user: str
   company_code: str

@@ -10,6 +10,7 @@ import { map, Observable, startWith } from 'rxjs';
 import { ApiService } from 'src/app/services/api.service';
 import { JwtService } from 'src/app/services/jwt.service';
 import { InspectionsAddDialogComponent } from '../inspections-add-dialog/inspections-add-dialog.component';
+import { InspectionFinishImagesDialogComponent } from '../inspection-finish-images-dialog/inspection-finish-images-dialog.component';
 
 export interface owners {
   id: string;
@@ -43,6 +44,7 @@ export interface InspectionsInfoData {
   Placa: string;
   Usuario: string;
   Estado: string;
+  Fotos: string[];
 }
 
 export interface apiResponse {
@@ -54,6 +56,7 @@ export interface apiResponse {
   placa: string;
   nombre_usuario: string;
   estado_inspeccion: string;
+  fotos: string[];
 }
 
 @Component({
@@ -385,6 +388,7 @@ export class InspectionsTableComponent implements OnInit {
           Placa: item.placa,
           Usuario: item.nombre_usuario,
           Estado: item.estado_inspeccion,
+          Fotos: item.fotos || []
         }));
         this.dataSource.paginator = this.paginator;
         this.dataSource.sort = this.sort;
@@ -470,5 +474,20 @@ export class InspectionsTableComponent implements OnInit {
       default:
         return 'DESCONOCIDO';
     }
+  }
+
+  openImgDialog(inspection: InspectionsInfoData) {
+    const isSmallScreen = this.breakpointObserver.isMatched(Breakpoints.XSmall);
+    const dialogWidth = isSmallScreen ? '90vw' : '60%';
+
+    this.dialog.open(InspectionFinishImagesDialogComponent,
+      {
+        width: dialogWidth,
+        data: {
+          vehicleNumber: inspection.Unidad,
+          images: inspection.Fotos
+        }
+      }
+    )
   }
 }
