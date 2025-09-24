@@ -1,4 +1,5 @@
 from fastapi.responses import FileResponse, JSONResponse
+from fastapi import UploadFile, File, BackgroundTasks, HTTPException
 import jinja2
 from config.dbconnection import session
 from models.propietarios import Propietarios
@@ -19,8 +20,12 @@ import pytz
 from utils.pdf import html2pdf
 import tempfile
 from utils.panapass import get_txt_file, search_value_in_txt
+from dotenv import load_dotenv
 
-upload_directory = "/home/admin/imagenes"
+load_dotenv()
+
+upload_directory = os.getenv('DIRECTORY_IMG')
+route_api = os.getenv('ROUTE_API')
 
 async def owners_data(company_code: str):
   db = session()
@@ -172,6 +177,14 @@ async def inspections_info(data, company_code: str):
     inspections_data = []
 
     for inspection in inspections:
+      fotos = []
+      for i in range(1, 17): 
+        foto_field = f"FOTO{i:02d}"
+        foto_value = getattr(inspection, foto_field, "")
+        if foto_value and foto_value.strip(): 
+          foto_url = f"{route_api}uploads/{foto_value}"
+          fotos.append(foto_url)
+      
       inspections_data.append({
         "id": inspection.ID,
         "fecha_hora": inspection.FECHA.strftime('%d-%m-%Y') + ' ' + inspection.HORA.strftime('%H:%M') if inspection.FECHA and inspection.HORA else None,
@@ -181,7 +194,8 @@ async def inspections_info(data, company_code: str):
         "unidad": inspection.UNIDAD,
         "placa": inspection.PLACA,
         "nombre_usuario": inspection.USUARIO,
-        "estado_inspeccion": inspection.ESTADO
+        "estado_inspeccion": inspection.ESTADO,
+        "fotos": fotos
       })
 
     if not inspections_data:
