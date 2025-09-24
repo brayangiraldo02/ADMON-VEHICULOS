@@ -70,6 +70,9 @@ app.include_router(yards_router)
 
 app.mount("/assets", StaticFiles(directory="assets"), name="assets")
 
+UPLOADS_DIR = os.getenv('DIRECTORY_IMG')
+app.mount("/uploads", StaticFiles(directory=UPLOADS_DIR), name="uploads")
+
 @app.get("/")
 def main():
   return {"Hello": "World"}

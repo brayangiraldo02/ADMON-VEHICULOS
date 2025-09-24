@@ -42,7 +42,7 @@ export interface InspectionsInfoData {
   Unidad: string;
   Placa: string;
   Usuario: string;
-  acciones: string;
+  Estado: string;
 }
 
 export interface apiResponse {
@@ -53,7 +53,7 @@ export interface apiResponse {
   unidad: string;
   placa: string;
   nombre_usuario: string;
-  acciones: string;
+  estado_inspeccion: string;
 }
 
 @Component({
@@ -86,7 +86,8 @@ export class InspectionsTableComponent implements OnInit {
     'Unidad',
     'Placa',
     'Usuario',
-    'Acciones',
+    'Estado',
+    'Acciones'
   ];
   dataSource: MatTableDataSource<InspectionsInfoData>;
 
@@ -383,7 +384,7 @@ export class InspectionsTableComponent implements OnInit {
           Unidad: item.unidad,
           Placa: item.placa,
           Usuario: item.nombre_usuario,
-          acciones: 'Edit',
+          Estado: item.estado_inspeccion,
         }));
         this.dataSource.paginator = this.paginator;
         this.dataSource.sort = this.sort;
@@ -456,5 +457,18 @@ export class InspectionsTableComponent implements OnInit {
       horizontalPosition: 'center',
       verticalPosition: 'top',
     })
+  }
+
+  getEstadoText(estado: string): string {
+    switch (estado) {
+      case 'PEN':
+        return '<strong>PENDIENTE</strong>';
+      case 'SUS':
+        return '<strong>SUSPENDIDO</strong>';
+      case 'FIN':
+        return 'FINALIZADO';
+      default:
+        return 'DESCONOCIDO';
+    }
   }
 }

@@ -37,6 +37,8 @@ interface InspectionsVehicleData {
   marca: string;
   modelo: string;
   placa: string;
+  estado_vehiculo: string;
+  cupo: string;
   conductor_nombre: string;
   conductor_codigo: string;
   conductor_celular: string;
@@ -196,6 +198,8 @@ export class InspectionsAddDialogComponent implements OnInit {
       marca: '',
       modelo: '',
       placa: '',
+      estado_vehiculo: '',
+      cupo: '',
       conductor_nombre: '',
       conductor_codigo: '',
       conductor_celular: '',

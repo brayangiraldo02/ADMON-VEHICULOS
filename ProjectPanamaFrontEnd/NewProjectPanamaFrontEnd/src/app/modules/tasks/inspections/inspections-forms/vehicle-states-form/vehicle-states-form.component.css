@@ -96,3 +96,14 @@ button {
 .full-width {
   width: 100%;
 }
+
+.panapass-container {
+  display: flex;
+  gap: 10px;
+  align-items: baseline;
+}
+
+.panapass-button {
+  background-color: rgba(63, 81, 181, 0.1);
+  color: #3f51b5;
+}

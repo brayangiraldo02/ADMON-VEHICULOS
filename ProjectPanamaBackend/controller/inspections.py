@@ -1,4 +1,5 @@
 from fastapi.responses import FileResponse, JSONResponse
+from fastapi import UploadFile, File, BackgroundTasks, HTTPException
 import jinja2
 from config.dbconnection import session
 from models.propietarios import Propietarios
@@ -6,6 +7,7 @@ from models.conductores import Conductores
 from models.vehiculos import Vehiculos
 from models.inspecciones import Inspecciones
 from models.tiposinspeccion import TiposInspeccion
+from models.estados import Estados
 from schemas.inspections import *
 from fastapi.encoders import jsonable_encoder
 from fastapi import UploadFile, File, BackgroundTasks
@@ -18,9 +20,12 @@ import pytz
 from utils.pdf import html2pdf
 import tempfile
 from utils.panapass import get_txt_file, search_value_in_txt
+from dotenv import load_dotenv
 
-#! Cambiar por el directorio que es
-upload_directory = "uploads"
+load_dotenv()
+
+upload_directory = os.getenv('DIRECTORY_IMG')
+route_api = os.getenv('ROUTE_API')
 
 async def owners_data(company_code: str):
   db = session()
@@ -172,6 +177,14 @@ async def inspections_info(data, company_code: str):
     inspections_data = []
 
     for inspection in inspections:
+      fotos = []
+      for i in range(1, 17): 
+        foto_field = f"FOTO{i:02d}"
+        foto_value = getattr(inspection, foto_field, "")
+        if foto_value and foto_value.strip(): 
+          foto_url = f"{route_api}uploads/{foto_value}"
+          fotos.append(foto_url)
+      
       inspections_data.append({
         "id": inspection.ID,
         "fecha_hora": inspection.FECHA.strftime('%d-%m-%Y') + ' ' + inspection.HORA.strftime('%H:%M') if inspection.FECHA and inspection.HORA else None,
@@ -181,7 +194,8 @@ async def inspections_info(data, company_code: str):
         "unidad": inspection.UNIDAD,
         "placa": inspection.PLACA,
         "nombre_usuario": inspection.USUARIO,
-        "acciones": ""
+        "estado_inspeccion": inspection.ESTADO,
+        "fotos": fotos
       })
 
     if not inspections_data:
@@ -408,6 +422,9 @@ async def new_inspection_data(company_code: str, vehicle_number: str):
       return JSONResponse(content={"message": "Vehicle not found"}, status_code=404)
     
     driver = db.query(Conductores).filter(Conductores.CODIGO == vehicle.CONDUCTOR).first()
+
+    states = db.query(Estados).filter(Estados.EMPRESA == company_code).all()
+    state_vehicle = next((state.NOMBRE for state in states if state.CODIGO == vehicle.ESTADO), '')
     
     panama_timezone = pytz.timezone('America/Panama')
     # Obtén la hora actual en la zona horaria de Ciudad de Panamá
@@ -428,6 +445,8 @@ async def new_inspection_data(company_code: str, vehicle_number: str):
       'marca': vehicle.NOMMARCA + ' ' + vehicle.LINEA,
       'modelo': vehicle.MODELO,
       'placa': vehicle.PLACA,
+      'estado_vehiculo': state_vehicle,
+      'cupo': vehicle.NRO_CUPO if vehicle.NRO_CUPO else '',
       'conductor_nombre': driver.NOMBRE if driver else '',
       'conductor_codigo': vehicle.CONDUCTOR if vehicle.CONDUCTOR else '',
       'conductor_celular': driver.TELEFONO if driver else '',
@@ -513,8 +532,10 @@ async def create_inspection(data: NewInspection):
       FEC_CREADO=now_in_panama.strftime("%Y-%m-%d %H:%M:%S")
     )
 
-    vehicle.KILO_ANTES = vehicle.KILOMETRAJ
-    vehicle.KILOMETRAJ = data.mileage
+    if data.mileage and (vehicle.KILOMETRAJ is None or data.mileage > vehicle.KILOMETRAJ):
+        vehicle.KILO_ANTES = vehicle.KILOMETRAJ
+        vehicle.KILOMETRAJ = data.mileage
+        db.add(vehicle)
 
     db.add(new_inspection)
     db.commit()

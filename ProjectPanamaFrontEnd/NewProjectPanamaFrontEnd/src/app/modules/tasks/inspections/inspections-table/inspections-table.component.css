@@ -59,10 +59,21 @@ form {
 
 th {
   padding: 0;
+  text-align: center;
 }
 
 th.mat-sort-header .mat-sort-header-container {
+  text-align: center;
   justify-content: center;
+}
+
+th.mat-header-cell {
+  text-align: center;
+  justify-content: center;
+}
+
+td.mat-cell {
+  text-align: center;
 }
 
 td {
@@ -72,6 +83,38 @@ td {
 th:first-child,
 td:first-child {
   padding-left: 20px; 
+}
+
+.actions-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.actions-container button {
+  width: 48px;
+  height: 48px;
+  min-width: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Estilos para filas según el estado */
+.row-suspended td:not(.actions-column) {
+  background-color: #FFCDD2 !important;
+}
+
+.row-suspended:hover td:not(.actions-column) {
+  background-color: #FFAAAA !important;
+}
+
+.row-pending td:not(.actions-column) {
+  background-color: #FFE0B2 !important;
+}
+
+.row-pending:hover td:not(.actions-column) {
+  background-color: #FFCC80 !important;
 }
 
 @media (max-width: 768px) {

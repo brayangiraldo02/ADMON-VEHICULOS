@@ -1,5 +1,8 @@
 import { Component, Input } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { PanapassDialogComponent } from '../../panapass-dialog/panapass-dialog.component';
+import { MatDialog } from '@angular/material/dialog';
+import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 
 @Component({
   selector: 'app-vehicle-states-form',
@@ -11,36 +14,40 @@ export class VehicleStatesFormComponent {
 
   checklistItems = [
     { id: 'alfombra', label: 'Alfombra' },
+    { id: 'antena', label: 'Antena' },
+    { id: 'caratula_radio', label: 'Carátula de Radio' },
+    { id: 'copas', label: 'Copas' },
     { id: 'copas_rines', label: 'Copas/Rines' },
     { id: 'extinguidor', label: 'Extinguidor' },
-    { id: 'antena', label: 'Antena' },
-    { id: 'lamparas', label: 'Lámparas' },
-    { id: 'triangulo', label: 'Triángulo' },
-    { id: 'gato', label: 'Gato' },
-    { id: 'pipa', label: 'Pipa' },
-    { id: 'copas', label: 'Copas' },
-    { id: 'llanta_repuesto', label: 'Llanta de Repuestos' },
-    { id: 'placa_municipal', label: 'Placa Municipal' },
-    { id: 'caratula_radio', label: 'Carátula de Radio' },
-    { id: 'registro_vehiculo', label: 'Registro Vehículo' },
-    { id: 'revisado', label: 'Revisado' },
-    { id: 'pago_municipio', label: 'Pago Municipio' },
     {
       id: 'formato_colisiones_menores',
       label: 'Formato de Colisiones Menores',
     },
-    { id: 'poliza_seguro', label: 'Póliza de Seguros' },
+    { id: 'gato', label: 'Gato' },
+    { id: 'gps', label: 'GPS' },
+    { id: 'lamparas', label: 'Lámparas' },
+    { id: 'llanta_repuesto', label: 'Llanta de Repuestos' },
     { id: 'luces_delanteras', label: 'Luces Delanteras' },
     { id: 'luces_traseras', label: 'Luces Traseras' },
-    { id: 'vidrios', label: 'Vidrios' },
+    { id: 'pago_municipio', label: 'Pago Municipio' },
+    { id: 'pipa', label: 'Pipa' },
+    { id: 'placa_municipal', label: 'Placa Municipal' },
+    { id: 'poliza_seguro', label: 'Póliza de Seguros' },
+    { id: 'registro_vehiculo', label: 'Registro Vehículo' },
     { id: 'retrovisor', label: 'Retrovisor' },
+    { id: 'revisado', label: 'Revisado' },
     { id: 'tapiceria', label: 'Tapicería' },
-    { id: 'gps', label: 'GPS' },
+    { id: 'triangulo', label: 'Triángulo' },
+    { id: 'vidrios', label: 'Vidrios' },
   ];
 
   vehicleForm!: FormGroup;
 
-  constructor(private fb: FormBuilder) {}
+  constructor(
+    private fb: FormBuilder,
+    private dialog: MatDialog,
+    private breakpointObserver: BreakpointObserver
+  ) {}
 
   ngOnInit(): void {
     this.vehicleForm = this.fb.group({
@@ -64,5 +71,14 @@ export class VehicleStatesFormComponent {
 
   get checklistItemsArray(): FormArray {
     return this.vehicleForm.get('checklistItems') as FormArray;
+  }
+
+  openGetPanapassDialog() {
+    const isSmallScreen = this.breakpointObserver.isMatched(Breakpoints.XSmall);
+    const dialogWidth = isSmallScreen ? '90vw' : '60%';
+
+    const dialogRef = this.dialog.open(PanapassDialogComponent, {
+      width: dialogWidth,
+    });
   }
 }
