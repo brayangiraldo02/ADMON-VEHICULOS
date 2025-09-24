@@ -458,4 +458,17 @@ export class InspectionsTableComponent implements OnInit {
       verticalPosition: 'top',
     })
   }
+
+  getEstadoText(estado: string): string {
+    switch (estado) {
+      case 'PEN':
+        return '<strong>PENDIENTE</strong>';
+      case 'SUS':
+        return '<strong>SUSPENDIDO</strong>';
+      case 'FIN':
+        return 'FINALIZADO';
+      default:
+        return 'DESCONOCIDO';
+    }
+  }
 }

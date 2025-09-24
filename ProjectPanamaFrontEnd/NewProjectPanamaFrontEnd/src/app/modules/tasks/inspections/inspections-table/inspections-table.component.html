@@ -189,15 +189,7 @@
         <ng-container matColumnDef="Estado">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Estado</th>
           <td mat-cell *matCellDef="let row">
-            {{
-              row.Estado == "PEN"
-                ? "PENDIENTE"
-                : row.Estado == "SUS"
-                ? "SUSPENDIDO"
-                : row.Estado == "FIN"
-                ? "FINALIZADO"
-                : "DESCONOCIDO"
-            }}
+            <span [innerHTML]="getEstadoText(row.Estado)"></span>
           </td>
         </ng-container>
 
@@ -206,24 +198,34 @@
           <th mat-header-cell *matHeaderCellDef>Acciones</th>
           <td mat-cell *matCellDef="let row" class="actions-column">
             <div class="actions-container">
-              <button mat-icon-button matTooltip="Editar inspección">
-                <mat-icon>edit</mat-icon>
-              </button>
-
               <button
                 mat-icon-button
                 color="primary"
-                matTooltip="Ver documento"
+                matTooltip="Editar inspección"
+                *ngIf="row.Estado == 'PEN'"
               >
-                <mat-icon>description</mat-icon>
-              </button>
-
-              <button mat-icon-button color="accent" matTooltip="Ver imagen">
-                <mat-icon>image</mat-icon>
+                <mat-icon>edit</mat-icon>
               </button>
 
               <button mat-icon-button color="warn" matTooltip="Ver formulario">
                 <mat-icon>assignment</mat-icon>
+              </button>
+
+              <button
+                mat-icon-button
+                color="accent"
+                matTooltip="Ver imagen"
+                *ngIf="row.Estado == 'FIN'"
+              >
+                <mat-icon>image</mat-icon>
+              </button>
+
+              <button
+                mat-icon-button
+                matTooltip="Ver documento"
+                *ngIf="row.Estado == 'FIN'"
+              >
+                <mat-icon>description</mat-icon>
               </button>
             </div>
           </td>
