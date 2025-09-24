@@ -58,6 +58,7 @@ import { VehicleStatesFormComponent } from './modules/tasks/inspections/inspecti
 import { TakePhotosVehicleComponent } from './modules/tasks/inspections/take-photos-vehicle/take-photos-vehicle.component';
 import { ImagePreviewDialogComponent } from './modules/tasks/inspections/image-preview-dialog/image-preview-dialog.component';
 import { PanapassDialogComponent } from './modules/tasks/inspections/panapass-dialog/panapass-dialog.component';
+import { InspectionFinishImagesDialogComponent } from './modules/tasks/inspections/inspection-finish-images-dialog/inspection-finish-images-dialog.component';
 
 @NgModule({
   declarations: [
@@ -113,6 +114,7 @@ import { PanapassDialogComponent } from './modules/tasks/inspections/panapass-di
     TakePhotosVehicleComponent,
     ImagePreviewDialogComponent,
     PanapassDialogComponent,
+    InspectionFinishImagesDialogComponent,
   ],
   imports: [
     BrowserModule,

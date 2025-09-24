@@ -12,14 +12,12 @@ import os
 import re
 import shutil
 from utils.panapass import get_txt_file, search_value_in_txt
+from dotenv import load_dotenv
 
-# PATH DE PRODUCCIÓN PARA XIMENA
-vehicle_documents_path  = "C:/Users/Ximena/Desktop/vehiculos"
-driver_documents_path = "C:/Users/Ximena/Desktop/conductores"
+load_dotenv()
 
-#PATH DE DESARROLLO PARA BRAYAN
-# vehicle_documents_path  = "/home/giraldo/Personal/Proyectos Externos/AlfaSoft/temp/vehiculos"
-# driver_documents_path  = "/home/giraldo/Personal/Proyectos Externos/AlfaSoft/temp/conductores"
+vehicle_documents_path = os.getenv('VEHICLE_DOCS_PATH')
+driver_documents_path = os.getenv('DRIVER_DOCS_PATH')
 
 async def vehicle_documents(company_code: str, vehicle_number: str):
   try:

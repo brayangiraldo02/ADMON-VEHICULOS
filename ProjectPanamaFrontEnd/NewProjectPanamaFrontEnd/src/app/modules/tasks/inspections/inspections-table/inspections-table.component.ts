@@ -10,6 +10,7 @@ import { map, Observable, startWith } from 'rxjs';
 import { ApiService } from 'src/app/services/api.service';
 import { JwtService } from 'src/app/services/jwt.service';
 import { InspectionsAddDialogComponent } from '../inspections-add-dialog/inspections-add-dialog.component';
+import { InspectionFinishImagesDialogComponent } from '../inspection-finish-images-dialog/inspection-finish-images-dialog.component';
 
 export interface owners {
   id: string;
@@ -42,7 +43,8 @@ export interface InspectionsInfoData {
   Unidad: string;
   Placa: string;
   Usuario: string;
-  acciones: string;
+  Estado: string;
+  Fotos: string[];
 }
 
 export interface apiResponse {
@@ -53,7 +55,8 @@ export interface apiResponse {
   unidad: string;
   placa: string;
   nombre_usuario: string;
-  acciones: string;
+  estado_inspeccion: string;
+  fotos: string[];
 }
 
 @Component({
@@ -86,7 +89,8 @@ export class InspectionsTableComponent implements OnInit {
     'Unidad',
     'Placa',
     'Usuario',
-    'Acciones',
+    'Estado',
+    'Acciones'
   ];
   dataSource: MatTableDataSource<InspectionsInfoData>;
 
@@ -383,7 +387,8 @@ export class InspectionsTableComponent implements OnInit {
           Unidad: item.unidad,
           Placa: item.placa,
           Usuario: item.nombre_usuario,
-          acciones: 'Edit',
+          Estado: item.estado_inspeccion,
+          Fotos: item.fotos || []
         }));
         this.dataSource.paginator = this.paginator;
         this.dataSource.sort = this.sort;
@@ -456,5 +461,33 @@ export class InspectionsTableComponent implements OnInit {
       horizontalPosition: 'center',
       verticalPosition: 'top',
     })
+  }
+
+  getEstadoText(estado: string): string {
+    switch (estado) {
+      case 'PEN':
+        return '<strong>PENDIENTE</strong>';
+      case 'SUS':
+        return '<strong>SUSPENDIDO</strong>';
+      case 'FIN':
+        return 'FINALIZADO';
+      default:
+        return 'DESCONOCIDO';
+    }
+  }
+
+  openImgDialog(inspection: InspectionsInfoData) {
+    const isSmallScreen = this.breakpointObserver.isMatched(Breakpoints.XSmall);
+    const dialogWidth = isSmallScreen ? '90vw' : '60%';
+
+    this.dialog.open(InspectionFinishImagesDialogComponent,
+      {
+        width: dialogWidth,
+        data: {
+          vehicleNumber: inspection.Unidad,
+          images: inspection.Fotos
+        }
+      }
+    )
   }
 }
