@@ -1,3 +1,4 @@
+from utils.inspections import update_expired_inspections
 from fastapi.responses import FileResponse, JSONResponse
 from fastapi import UploadFile, File, BackgroundTasks, HTTPException
 import jinja2
@@ -158,7 +159,6 @@ async def inspections_info(data, company_code: str):
         Inspecciones.FECHA <= data.fechaFinal,
     ]
 
-    # Filtrar inspecciones por propietario, conductor y vehículo
     if data.propietario != '':
         filters.append(Inspecciones.PROPI_IDEN == data.propietario)
     
@@ -169,6 +169,11 @@ async def inspections_info(data, company_code: str):
         filters.append(Inspecciones.CONDUCTOR == data.conductor)
 
     inspections = db.query(Inspecciones).filter(*filters).all()
+
+    if not inspections:
+      return JSONResponse(content={"message": "No inspections found"}, status_code=404)
+
+    await update_expired_inspections(db, inspections_list=inspections)
 
     inspections_types = db.query(TiposInspeccion).filter(TiposInspeccion.EMPRESA == company_code).all()
 
@@ -203,6 +208,7 @@ async def inspections_info(data, company_code: str):
       return JSONResponse(content={"message": "No inspections found"}, status_code=404)
     return JSONResponse(content=jsonable_encoder(inspections_data), status_code=200)
   except Exception as e:
+    db.rollback()
     return JSONResponse(content={"message": str(e)}, status_code=500)
   finally:
     db.close()
@@ -287,6 +293,8 @@ async def report_inspections(data, company_code: str):
 
     if not inspections:
       return JSONResponse(content={"message": "No inspections found"}, status_code=404)
+
+    await update_expired_inspections(db, inspections_list=inspections)
 
     inspections_types = db.query(TiposInspeccion).filter(TiposInspeccion.EMPRESA == company_code).all()
 
