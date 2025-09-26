@@ -106,11 +106,12 @@ export class InspectionsAddDialogComponent implements OnInit {
     private formBuilder: FormBuilder,
     private snackBar: MatSnackBar,
     private dialogRef: MatDialogRef<InspectionsAddDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: { idInspection: string, idTypeInspection: string }
+    @Inject(MAT_DIALOG_DATA)
+    public data: { idInspection: string; idTypeInspection: string }
   ) {}
 
   ngOnInit(): void {
-    if(this.data && this.data.idInspection){
+    if (this.data && this.data.idInspection) {
       this.inspectionCreateID = this.data.idInspection;
       this.inspectionType = this.data.idTypeInspection;
       this.isLoading = false;
@@ -411,19 +412,29 @@ export class InspectionsAddDialogComponent implements OnInit {
       this.takePhotosVehicleComponent.sendAllPhotos().subscribe({
         next: (response) => {
           this.openSnackbar('Todas las fotos se han subido con éxito.');
-          this.closeDialog();
+          this.closeDialog('refresh');
         },
         error: (err) => {
           this.isLoading = false;
-        }
+        },
       });
     }
   }
 
-  closeDialog() {
+  closeDialog(result?: string) {
     if (this.takePhotosVehicleComponent) {
       this.takePhotosVehicleComponent.stopCamera();
     }
-    this.dialogRef.close();
+
+    console.log('Cerrando diálogo con resultado:', result);
+    console.log('inspectionCreateID:', this.inspectionCreateID);
+
+    if (this.inspectionCreateID) {
+      result = 'refresh';
+    }
+
+    console.log('Cerrando diálogo con resultado:', result);
+
+    this.dialogRef.close(result); 
   }
 }

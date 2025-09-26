@@ -532,6 +532,25 @@ export class InspectionsTableComponent implements OnInit {
 
     const dialogRef = this.dialog.open(InspectionsAddDialogComponent, {
       width: dialogWidth,
+      disableClose: true,
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      console.log('Result from dialog:', result);
+      if (result === 'refresh') {
+        const formValues = this.inspectionForm.value;
+        const hasFilter =
+          formValues.propietario ||
+          formValues.conductor ||
+          formValues.vehiculo ||
+          formValues.fechaInicial ||
+          formValues.fechaFinal;
+        console.log('Has filter:', hasFilter);
+        if (hasFilter) {
+          console.log('Refreshing table data...');
+          this.getTableData();
+        }
+      }
     });
   }
 
@@ -571,7 +590,9 @@ export class InspectionsTableComponent implements OnInit {
 
   openUploadImagesDialog(inspection: InspectionsInfoData) {
     if (inspection.Estado !== 'PEN') {
-      this.openSnackbar('Solo se pueden subir fotos a inspecciones PENDIENTES.');
+      this.openSnackbar(
+        'Solo se pueden subir fotos a inspecciones PENDIENTES.'
+      );
       return;
     }
 
@@ -582,8 +603,26 @@ export class InspectionsTableComponent implements OnInit {
 
     const dialogRef = this.dialog.open(InspectionsAddDialogComponent, {
       width: dialogWidth,
-      data: { idInspection: inspection.id, idTypeInspection: inspection.Id_Tipo },
+      data: {
+        idInspection: inspection.id,
+        idTypeInspection: inspection.Id_Tipo,
+      },
       disableClose: true,
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result === 'refresh') {
+        const formValues = this.inspectionForm.value;
+        const hasFilter =
+          formValues.propietario ||
+          formValues.conductor ||
+          formValues.vehiculo ||
+          formValues.fechaInicial ||
+          formValues.fechaFinal;
+        if (hasFilter) {
+          this.getTableData();
+        }
+      }
     });
   }
 }
