@@ -208,7 +208,7 @@
                 <mat-icon>edit</mat-icon>
               </button>
 
-              <button mat-icon-button color="warn" matTooltip="Ver formulario">
+              <button mat-icon-button color="warn" matTooltip="Ver formulario" (click)="openInspectionInfoDialog(row.id)">
                 <mat-icon>assignment</mat-icon>
               </button>
 
@@ -222,13 +222,14 @@
                 <mat-icon>image</mat-icon>
               </button>
 
-              <button
+              <!-- TODO: Integrar documento -->
+              <!-- <button
                 mat-icon-button
                 matTooltip="Ver documento"
                 *ngIf="row.Estado == 'FIN'"
               >
                 <mat-icon>description</mat-icon>
-              </button>
+              </button> -->
             </div>
           </td>
         </ng-container>

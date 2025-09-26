@@ -12,6 +12,7 @@ import { JwtService } from 'src/app/services/jwt.service';
 import { InspectionsAddDialogComponent } from '../inspections-add-dialog/inspections-add-dialog.component';
 import { InspectionFinishImagesDialogComponent } from '../inspection-finish-images-dialog/inspection-finish-images-dialog.component';
 import { TakePhotosVehicleComponent } from '../take-photos-vehicle/take-photos-vehicle.component';
+import { InspectionInfoDialogComponent } from '../inspection-info-dialog/inspection-info-dialog.component';
 
 export interface owners {
   id: string;
@@ -642,6 +643,27 @@ export class InspectionsTableComponent implements OnInit, AfterViewInit {
           this.getTableData();
         }
       }
+    });
+  }
+
+  openInspectionInfoDialog(inspectionId: string) {
+    this.apiService.getData(`inspections/inspection_details/${inspectionId}`).subscribe({
+      next: (data: any) => {
+        const isSmallScreen = this.breakpointObserver.isMatched(Breakpoints.XSmall);
+        const dialogWidth = isSmallScreen ? '90vw' : '60%';
+
+        const dialogRef = this.dialog.open(InspectionInfoDialogComponent, {
+          width: dialogWidth,
+          data: data,
+        });
+
+        dialogRef.afterClosed().subscribe((result) => {
+          console.log('Result from dialog:', result);
+        });
+      },
+      error: (error) => {
+        console.error('Error fetching inspection details:', error);
+      },
     });
   }
 }
