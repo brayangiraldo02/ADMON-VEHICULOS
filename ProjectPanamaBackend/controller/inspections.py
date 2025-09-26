@@ -9,6 +9,7 @@ from models.vehiculos import Vehiculos
 from models.inspecciones import Inspecciones
 from models.tiposinspeccion import TiposInspeccion
 from models.estados import Estados
+from models.permisosusuario import PermisosUsuario
 from schemas.inspections import *
 from fastapi.encoders import jsonable_encoder
 from fastapi import UploadFile, File, BackgroundTasks
@@ -151,7 +152,7 @@ async def drivers_data(company_code: str):
 
 #-----------------------------------------------------------------------------------------------
 
-async def inspections_info(data, company_code: str):
+async def inspections_info(data: InspectionInfo, company_code: str):
   db = session()
   try:
     filters = [
@@ -174,6 +175,19 @@ async def inspections_info(data, company_code: str):
       return JSONResponse(content={"message": "No inspections found"}, status_code=404)
 
     await update_expired_inspections(db, inspections_list=inspections)
+
+    filtered_inspections = []
+    for inspection in inspections:
+      if inspection.ESTADO == "PEN":
+        if data.usuario and inspection.USUARIO == data.usuario:
+          filtered_inspections.append(inspection)
+      else:
+        filtered_inspections.append(inspection)
+
+    inspections = filtered_inspections
+
+    if not inspections:
+      return JSONResponse(content={"message": "No inspections found"}, status_code=404)
 
     inspections_types = db.query(TiposInspeccion).filter(TiposInspeccion.EMPRESA == company_code).all()
 
@@ -296,6 +310,16 @@ async def report_inspections(data, company_code: str):
 
     await update_expired_inspections(db, inspections_list=inspections)
 
+    filtered_inspections = []
+    for inspection in inspections:
+      if inspection.ESTADO == "PEN":
+        if data.usuario and inspection.USUARIO == data.usuario:
+          filtered_inspections.append(inspection)
+      else:
+        filtered_inspections.append(inspection)
+
+    inspections = filtered_inspections
+
     inspections_types = db.query(TiposInspeccion).filter(TiposInspeccion.EMPRESA == company_code).all()
 
     inspections_dict = {inspection.CODIGO: inspection.NOMBRE for inspection in inspections_types}
@@ -328,6 +352,8 @@ async def report_inspections(data, company_code: str):
           "inspecciones": inspections
         })
 
+    user = db.query(PermisosUsuario).filter(PermisosUsuario.CODIGO == data.usuario).first()
+    user = user.NOMBRE if user else ""
 
     #Total de inspecciones sumando la cantidad de inspecciones por propietario
     total_inspecciones = sum(len(inspections) for inspections in owners_dict.values())
@@ -351,7 +377,7 @@ async def report_inspections(data, company_code: str):
       'total_inspecciones': total_inspecciones,
       'fecha': fecha,
       'hora': hora_actual,
-      'usuario': data.usuario if data.usuario else "",
+      'usuario': user if user else "",
       'titulo': titulo
     }
 

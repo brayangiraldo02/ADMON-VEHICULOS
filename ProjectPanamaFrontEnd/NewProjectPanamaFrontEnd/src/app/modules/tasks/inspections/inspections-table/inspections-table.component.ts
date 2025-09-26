@@ -160,6 +160,11 @@ export class InspectionsTableComponent implements OnInit, AfterViewInit {
     return userData ? userData.nombre : '';
   }
 
+  getUserId() {
+    const userData = this.jwtService.getUserData();
+    return userData ? userData.id : '';
+  }
+
   getCompany() {
     const userData = this.jwtService.getUserData();
     return userData ? userData.empresa : '';
@@ -421,9 +426,11 @@ export class InspectionsTableComponent implements OnInit, AfterViewInit {
     this.isLoadingData = true;
 
     const formValues = this.inspectionForm.value;
+    const user = this.getUserId();
 
     // Formatear las fechas para enviar solo YYYY-MM-DD
     const formattedValues = {
+      usuario: user,
       conductor:
         formValues.conductor && formValues.conductor.codigo_conductor
           ? formValues.conductor.codigo_conductor
@@ -502,7 +509,7 @@ export class InspectionsTableComponent implements OnInit, AfterViewInit {
     }
 
     const formValues = this.inspectionForm.value;
-    const user = this.getUser();
+    const user = this.getUserId();
 
     // Formatear las fechas para enviar solo YYYY-MM-DD
     const formattedValues = {
