@@ -2,6 +2,7 @@ import {
   AfterViewInit,
   Component,
   Inject,
+  Input,
   OnInit,
   ViewChild,
 } from '@angular/core';
@@ -104,10 +105,18 @@ export class InspectionsAddDialogComponent implements OnInit {
     private jwtService: JwtService,
     private formBuilder: FormBuilder,
     private snackBar: MatSnackBar,
-    private dialogRef: MatDialogRef<InspectionsAddDialogComponent>
+    private dialogRef: MatDialogRef<InspectionsAddDialogComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: { idInspection: string, idTypeInspection: string }
   ) {}
 
   ngOnInit(): void {
+    if(this.data && this.data.idInspection){
+      this.inspectionCreateID = this.data.idInspection;
+      this.inspectionType = this.data.idTypeInspection;
+      this.isLoading = false;
+      return;
+    }
+
     this.getInputsData();
     this.resetVehicleInfo();
     this.initForms();
@@ -391,7 +400,7 @@ export class InspectionsAddDialogComponent implements OnInit {
           this.openSnackbar(
             'Error al crear la inspección. Vuelve a intentarlo más tarde.'
           );
-          this.dialogRef.close();
+          this.closeDialog();
         }
       );
   }
@@ -402,16 +411,19 @@ export class InspectionsAddDialogComponent implements OnInit {
       this.takePhotosVehicleComponent.sendAllPhotos().subscribe({
         next: (response) => {
           this.openSnackbar('Todas las fotos se han subido con éxito.');
-          this.takePhotosVehicleComponent.clearPhotos();
-          this.dialogRef.close();
+          this.closeDialog();
         },
         error: (err) => {
           this.isLoading = false;
-        },
-        complete: () => {
-          this.isLoading = false;
-        },
+        }
       });
     }
+  }
+
+  closeDialog() {
+    if (this.takePhotosVehicleComponent) {
+      this.takePhotosVehicleComponent.stopCamera();
+    }
+    this.dialogRef.close();
   }
 }

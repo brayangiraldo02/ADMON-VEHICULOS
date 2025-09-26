@@ -190,6 +190,7 @@ async def inspections_info(data, company_code: str):
         "fecha_hora": inspection.FECHA.strftime('%d-%m-%Y') + ' ' + inspection.HORA.strftime('%H:%M') if inspection.FECHA and inspection.HORA else None,
         "propietario": inspection.PROPI_IDEN,
         "tipo_inspeccion": inspections_dict.get(inspection.TIPO_INSPEC, ""),
+        "id_tipo_inspeccion": inspection.TIPO_INSPEC,
         "descripcion": inspection.DESCRIPCION,
         "unidad": inspection.UNIDAD,
         "placa": inspection.PLACA,

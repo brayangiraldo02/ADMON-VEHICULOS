@@ -1,4 +1,6 @@
-<h2 mat-dialog-title>Nueva Inspección</h2>
+<h2 mat-dialog-title *ngIf="inspectionCreateID === ''">Nueva Inspección</h2>
+<h2 mat-dialog-title *ngIf="inspectionCreateID !== '' && inspectionType">Subir Fotos de la Inspección</h2>
+<h2 mat-dialog-title *ngIf="inspectionCreateID !== '' && !inspectionType">Inspección</h2>
 
 <mat-dialog-content>
   <form [formGroup]="mainInspectionForm" *ngIf="inspectionCreateID === ''">
@@ -160,7 +162,7 @@
 </mat-dialog-content>
 
 <mat-dialog-actions align="end">
-  <button mat-button mat-dialog-close cdkFocusInitial>Cancelar</button>
+  <button mat-button mat-dialog-close cdkFocusInitial (click)="closeDialog()">Cancelar</button>
   <button
     mat-button
     [disabled]="mainInspectionForm.invalid || loadingVehicleInfo"

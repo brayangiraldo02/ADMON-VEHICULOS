@@ -162,7 +162,7 @@ export class TakePhotosVehicleComponent implements OnInit, OnDestroy {
     this.photos = [];
   }
 
-  private stopCamera(): void {
+  stopCamera(): void {
     if (this.stream) {
       this.stream.getTracks().forEach((track) => track.stop());
       this.stream = null;
