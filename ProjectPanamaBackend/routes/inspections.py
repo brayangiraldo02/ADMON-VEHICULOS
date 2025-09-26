@@ -43,3 +43,7 @@ async def post_create_inspection(data: NewInspection):
 @inspections_router.post("/inspections/download_image/", tags=["Inspections"])
 async def post_download_image(request: DownloadImageRequest):
     return await download_image_by_url(request.image_url)
+
+@inspections_router.get("/inspections/inspection_details/{inspection_id}/", tags=["Inspections"])
+async def get_inspection_details(inspection_id: int):
+    return await inspection_details(inspection_id)

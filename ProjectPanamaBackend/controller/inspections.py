@@ -610,3 +610,49 @@ async def download_image_by_url(image_url: str):
     
   except Exception as e:
     return JSONResponse(content={"message": str(e)}, status_code=500)
+  
+#-----------------------------------------------------------------------------------------------
+
+async def inspection_details(inspection_id: int):
+  db = session()
+  try:
+    inspection = db.query(Inspecciones).filter(Inspecciones.ID == inspection_id).first()
+    if not inspection:
+      return JSONResponse(content={"message": "Inspection not found"}, status_code=404)
+
+    await update_expired_inspections(db, inspections_list=[inspection])
+
+    fotos = []
+    for i in range(1, 17): 
+      foto_field = f"FOTO{i:02d}"
+      foto_value = getattr(inspection, foto_field, "")
+      if foto_value and foto_value.strip(): 
+        foto_url = f"{route_api}uploads/{foto_value}"
+        fotos.append(foto_url)
+    
+    inspection_data = {
+      "id": inspection.ID,
+      "empresa": inspection.EMPRESA,
+      "fecha": inspection.FECHA.strftime('%d-%m-%Y') if inspection.FECHA else None,
+      "hora": inspection.HORA.strftime('%H:%M') if inspection.HORA else None,
+      "propietario": inspection.PROPI_IDEN,
+      "nombre_propietario": inspection.NOMPROPI,
+      "conductor": inspection.CONDUCTOR,
+      "nombre_conductor": inspection.NOMCONDU,
+      "cedula_conductor": inspection.CEDULA,
+      "tipo_inspeccion": inspection.TIPO_INSPEC,
+      "descripcion": inspection.DESCRIPCION,
+      "unidad": inspection.UNIDAD,
+      "placa": inspection.PLACA,
+      "kilometraje": inspection.KILOMETRAJ if inspection.KILOMETRAJ else "",
+      "observaciones": inspection.OBSERVA if inspection.OBSERVA else "",
+      "estado_inspeccion": inspection.ESTADO,
+      "usuario": inspection.USUARIO if inspection.USUARIO else "",
+      "fotos": fotos
+    }
+
+    return JSONResponse(content=jsonable_encoder(inspection_data), status_code=200)
+  except Exception as e:
+    return JSONResponse(content={"message": str(e)}, status_code=500)
+  finally:
+    db.close()
