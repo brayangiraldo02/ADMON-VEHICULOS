@@ -257,7 +257,10 @@
     </div>
 
     <mat-paginator
+      #paginator
       [pageSizeOptions]="[8, 16, 32, 100]"
+      [pageSize]="8"
+      [showFirstLastButtons]="true"
       aria-label="Selecciona la cantidad de registros por página"
     ></mat-paginator>
   </div>

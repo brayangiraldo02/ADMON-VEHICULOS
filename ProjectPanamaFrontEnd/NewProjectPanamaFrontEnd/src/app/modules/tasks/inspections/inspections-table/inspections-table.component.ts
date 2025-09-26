@@ -1,5 +1,5 @@
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
@@ -67,7 +67,7 @@ export interface apiResponse {
   templateUrl: './inspections-table.component.html',
   styleUrls: ['./inspections-table.component.css'],
 })
-export class InspectionsTableComponent implements OnInit {
+export class InspectionsTableComponent implements OnInit, AfterViewInit {
   inspectionForm!: FormGroup;
   owners: owners[] = [];
   drivers: drivers[] = [];
@@ -127,8 +127,10 @@ export class InspectionsTableComponent implements OnInit {
   }
 
   ngAfterViewInit() {
-    this.dataSource.paginator = this.paginator;
-    this.dataSource.sort = this.sort;
+    if (this.paginator && this.sort) {
+      this.dataSource.paginator = this.paginator;
+      this.dataSource.sort = this.sort;
+    }
   }
 
   getDataAutoCompletes() {
@@ -390,11 +392,20 @@ export class InspectionsTableComponent implements OnInit {
       : '';
   }
 
+  private initializePaginator() {
+    setTimeout(() => {
+      if (this.paginator && this.sort) {
+        this.dataSource.paginator = this.paginator;
+        this.dataSource.sort = this.sort;
+      }
+    }, 0);
+  }
+
   clearTableData() {
     if (this.dataSource.data.length > 0) {
       this.dataSource.data = [];
-      this.dataSource.paginator = this.paginator;
-      this.dataSource.sort = this.sort;
+      // Reinicializar el paginator y sort
+      this.initializePaginator();
     }
   }
 
@@ -453,8 +464,9 @@ export class InspectionsTableComponent implements OnInit {
             Estado: item.estado_inspeccion,
             Fotos: item.fotos || [],
           }));
-          this.dataSource.paginator = this.paginator;
-          this.dataSource.sort = this.sort;
+          
+          // Reinicializar paginator y sort después de cargar los datos
+          this.initializePaginator();
 
           if (data.length === 0) {
             this.openSnackbar(
