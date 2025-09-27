@@ -104,6 +104,25 @@ h2 {
 
 /* ------------------------------- */
 
+/* --- ESTILOS PARA BARRA DE CARGA DE CREACIÓN --- */
+.creating-inspection-loader {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  min-height: 120px;
+}
+
+.loading-message {
+  text-align: center;
+  margin-top: 16px;
+  margin-bottom: 0;
+  color: #666;
+  font-size: 14px;
+  font-weight: 500;
+}
+
 .inputs-container {
   display: flex;
   gap: 10px;

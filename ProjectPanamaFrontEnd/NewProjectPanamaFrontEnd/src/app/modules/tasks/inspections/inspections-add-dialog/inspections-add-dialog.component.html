@@ -7,7 +7,13 @@
 </h2>
 
 <mat-dialog-content>
-  <form [formGroup]="mainInspectionForm" *ngIf="inspectionCreateID === ''">
+  <!-- Barra de carga durante la creación de la inspección -->
+  <div class="inputs-container creating-inspection-loader" *ngIf="inspectionCreateID === '' && isLoading && showCompactView">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <p class="loading-message">Creando inspección...</p>
+  </div>
+
+  <form [formGroup]="mainInspectionForm" *ngIf="inspectionCreateID === '' && !(isLoading && showCompactView)">
     <div class="main-content-container">
       <!-- Vista normal del formulario -->
       <div
