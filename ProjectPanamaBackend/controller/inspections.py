@@ -10,6 +10,7 @@ from models.inspecciones import Inspecciones
 from models.tiposinspeccion import TiposInspeccion
 from models.estados import Estados
 from models.permisosusuario import PermisosUsuario
+from models.infoempresas import InfoEmpresas
 from schemas.inspections import *
 from fastapi.encoders import jsonable_encoder
 from fastapi import UploadFile, File, BackgroundTasks
@@ -622,6 +623,11 @@ async def inspection_details(inspection_id: int):
 
     await update_expired_inspections(db, inspections_list=[inspection])
 
+    inspections_types = db.query(TiposInspeccion).filter(TiposInspeccion.EMPRESA == inspection.EMPRESA).all()
+    inspections_dict = {insp.CODIGO: insp.NOMBRE for insp in inspections_types}
+
+    company_info = db.query(InfoEmpresas).filter(InfoEmpresas.ID == inspection.EMPRESA).first()
+
     fotos = []
     for i in range(1, 17): 
       foto_field = f"FOTO{i:02d}"
@@ -632,7 +638,7 @@ async def inspection_details(inspection_id: int):
     
     inspection_data = {
       "id": inspection.ID,
-      "empresa": inspection.EMPRESA,
+      "empresa": company_info.NOMBRE if company_info else "",
       "fecha": inspection.FECHA.strftime('%d-%m-%Y') if inspection.FECHA else None,
       "hora": inspection.HORA.strftime('%H:%M') if inspection.HORA else None,
       "propietario": inspection.PROPI_IDEN,
@@ -640,7 +646,7 @@ async def inspection_details(inspection_id: int):
       "conductor": inspection.CONDUCTOR,
       "nombre_conductor": inspection.NOMCONDU,
       "cedula_conductor": inspection.CEDULA,
-      "tipo_inspeccion": inspection.TIPO_INSPEC,
+      "tipo_inspeccion": inspections_dict.get(inspection.TIPO_INSPEC, ""),
       "descripcion": inspection.DESCRIPCION,
       "unidad": inspection.UNIDAD,
       "placa": inspection.PLACA,
