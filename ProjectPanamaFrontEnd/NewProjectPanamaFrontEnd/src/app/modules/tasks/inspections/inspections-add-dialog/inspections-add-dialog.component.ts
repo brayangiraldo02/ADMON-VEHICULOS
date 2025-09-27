@@ -100,6 +100,8 @@ export class InspectionsAddDialogComponent implements OnInit {
 
   inspectionCreateID: string = '';
 
+  showCompactView: boolean = false;
+
   constructor(
     private apiService: ApiService,
     private jwtService: JwtService,
@@ -220,6 +222,7 @@ export class InspectionsAddDialogComponent implements OnInit {
     };
 
     this.inspectionType = '';
+    this.showCompactView = false; // Resetear vista compacta
   }
 
   selectedOptionVehicle(event: MatAutocompleteSelectedEvent): void {
@@ -273,6 +276,7 @@ export class InspectionsAddDialogComponent implements OnInit {
       this.inspectionInfoForm.get('tipo_inspeccion')!.value;
 
     this.inspectionType = InspectionsSelectedType.tipo;
+    this.showCompactView = true; // Activar vista compacta
   }
 
   onSaveOrNext() {

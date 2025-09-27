@@ -1,11 +1,20 @@
 <h2 mat-dialog-title *ngIf="inspectionCreateID === ''">Nueva Inspección</h2>
-<h2 mat-dialog-title *ngIf="inspectionCreateID !== '' && inspectionType">Subir Fotos de la Inspección</h2>
-<h2 mat-dialog-title *ngIf="inspectionCreateID !== '' && !inspectionType">Inspección</h2>
+<h2 mat-dialog-title *ngIf="inspectionCreateID !== '' && inspectionType">
+  Subir Fotos de la Inspección
+</h2>
+<h2 mat-dialog-title *ngIf="inspectionCreateID !== '' && !inspectionType">
+  Inspección
+</h2>
 
 <mat-dialog-content>
   <form [formGroup]="mainInspectionForm" *ngIf="inspectionCreateID === ''">
     <div class="main-content-container">
-      <div class="info-container" formGroupName="inspectionInfo">
+      <!-- Vista normal del formulario -->
+      <div
+        class="info-container"
+        formGroupName="inspectionInfo"
+        *ngIf="!showCompactView"
+      >
         <h3 *ngIf="!isLoading">Información del vehículo</h3>
 
         <div class="inputs-container">
@@ -138,6 +147,61 @@
         </ng-container>
       </div>
 
+      <!-- Vista compacta de la información -->
+      <div
+        class="compact-info-container"
+        *ngIf="showCompactView && selectedVehicle && !isLoading"
+      >
+        <div class="compact-header">
+          <h4>Información del vehículo</h4>
+        </div>
+
+        <div class="compact-info-list">
+          <div class="compact-info-item">
+            <span class="compact-label">Vehículo:</span>
+            <span class="compact-value"
+              >{{
+                displayVehicleData(inspectionInfoForm.get("vehiculo")?.value)
+              }}
+              - {{ vehicleInfo.placa }} - {{ vehicleInfo.cupo }}</span
+            >
+          </div>
+          <div class="compact-info-item">
+            <span class="compact-label">Tipo de Inspección:</span>
+            <span class="compact-value">{{
+              inspectionInfoForm.get("tipo_inspeccion")?.value?.nombre
+            }}</span>
+          </div>
+          <div class="compact-info-item">
+            <span class="compact-label">Estado:</span>
+            <span class="compact-value">{{ vehicleInfo.estado_vehiculo }}</span>
+          </div>
+          <div class="compact-info-item">
+            <span class="compact-label">Kilometraje:</span>
+            <span class="compact-value">{{ vehicleInfo.kilometraje }} km</span>
+          </div>
+          <div class="compact-info-item">
+            <span class="compact-label">PanaPass:</span>
+            <span class="compact-value">{{ vehicleInfo.panapass }}</span>
+          </div>
+          <div class="compact-info-item">
+            <span class="compact-label">Conductor:</span>
+            <span class="compact-value">{{
+              vehicleInfo.conductor_nombre
+            }} - {{
+              vehicleInfo.conductor_celular
+            }}</span>
+          </div>
+          <div class="compact-info-item">
+            <span class="compact-label">Fecha y Hora:</span>
+            <span class="compact-value"
+              >{{ vehicleInfo.fecha_inspeccion }} -
+              {{ vehicleInfo.hora_inspeccion }}</span
+            >
+          </div>
+        </div>
+      </div>
+
       <div
         class="info-container inspections-inputs-form"
         *ngIf="inspectionType !== '' && !isLoading"
@@ -162,7 +226,9 @@
 </mat-dialog-content>
 
 <mat-dialog-actions align="end">
-  <button mat-button mat-dialog-close cdkFocusInitial (click)="closeDialog()">Cancelar</button>
+  <button mat-button mat-dialog-close cdkFocusInitial (click)="closeDialog()">
+    Cancelar
+  </button>
   <button
     mat-button
     [disabled]="mainInspectionForm.invalid || loadingVehicleInfo"
