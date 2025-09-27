@@ -277,14 +277,12 @@ export class InspectionsAddDialogComponent implements OnInit {
 
   onSaveOrNext() {
     if (this.mainInspectionForm.invalid) {
-      console.log('El formulario completo es inválido.');
       this.openSnackbar('Por favor, completa los campos requeridos.');
 
       this.mainInspectionForm.markAllAsTouched();
       return;
     }
 
-    console.log(this.mainInspectionForm.value.vehicleState);
     const checklistItems: ChecklistItem[] =
       this.mainInspectionForm.value.vehicleState.checklistItems;
 
@@ -385,13 +383,10 @@ export class InspectionsAddDialogComponent implements OnInit {
 
     this.isLoading = true;
 
-    console.log('Datos a enviar:', newInspectionData);
-
     this.apiService
       .postData('inspections/create_inspection', newInspectionData)
       .subscribe(
         (response: InspectionCreateResponse) => {
-          console.log('Inspección creada con éxito:', response);
           this.inspectionCreateID = response.id;
           this.isLoading = false;
           this.openSnackbar('Inspección creada con éxito.');
@@ -425,9 +420,6 @@ export class InspectionsAddDialogComponent implements OnInit {
     if (this.takePhotosVehicleComponent) {
       this.takePhotosVehicleComponent.stopCamera();
     }
-
-    console.log('Cerrando diálogo con resultado:', result);
-    console.log('inspectionCreateID:', this.inspectionCreateID);
 
     if (this.inspectionCreateID) {
       result = 'refresh';

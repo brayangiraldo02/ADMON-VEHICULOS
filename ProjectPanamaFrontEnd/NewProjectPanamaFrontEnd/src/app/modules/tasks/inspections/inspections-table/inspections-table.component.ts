@@ -454,8 +454,6 @@ export class InspectionsTableComponent implements OnInit, AfterViewInit {
 
     const company = this.getCompany();
 
-    console.log('Form Values:', formattedValues);
-
     this.apiService
       .postData('inspections/inspections_info/' + company, formattedValues)
       .subscribe({
@@ -556,7 +554,6 @@ export class InspectionsTableComponent implements OnInit, AfterViewInit {
     });
 
     dialogRef.afterClosed().subscribe((result) => {
-      console.log('Result from dialog:', result);
       if (result === 'refresh') {
         const formValues = this.inspectionForm.value;
         const hasFilter =
@@ -565,9 +562,7 @@ export class InspectionsTableComponent implements OnInit, AfterViewInit {
           formValues.vehiculo ||
           formValues.fechaInicial ||
           formValues.fechaFinal;
-        console.log('Has filter:', hasFilter);
         if (hasFilter) {
-          console.log('Refreshing table data...');
           this.getTableData();
         }
       }
@@ -627,8 +622,6 @@ export class InspectionsTableComponent implements OnInit, AfterViewInit {
     const isSmallScreen = this.breakpointObserver.isMatched(Breakpoints.XSmall);
     const dialogWidth = isSmallScreen ? '90vw' : '60%';
 
-    console.log(inspection);
-
     const dialogRef = this.dialog.open(InspectionsAddDialogComponent, {
       width: dialogWidth,
       data: {
@@ -665,7 +658,6 @@ export class InspectionsTableComponent implements OnInit, AfterViewInit {
     });
 
     dialogRef.afterClosed().subscribe((result) => {
-      console.log('Result from dialog:', result);
       if (result === 'viewPhotos') {
         this.openImgDialog(
           this.dataSource.data.find((item) => item.id === inspectionId)!,
