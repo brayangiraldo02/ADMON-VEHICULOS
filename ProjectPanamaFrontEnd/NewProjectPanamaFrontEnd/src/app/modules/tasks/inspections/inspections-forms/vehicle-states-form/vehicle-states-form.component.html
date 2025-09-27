@@ -57,7 +57,7 @@
 
       <mat-form-field class="full-width">
         <mat-label>Kilometraje</mat-label>
-        <input matInput formControlName="kilometraje" />
+        <input matInput formControlName="kilometraje" (keypress)="onlyNumbers($event)" />
         <mat-error
           *ngIf="
             vehicleForm.get('kilometraje')?.invalid &&
