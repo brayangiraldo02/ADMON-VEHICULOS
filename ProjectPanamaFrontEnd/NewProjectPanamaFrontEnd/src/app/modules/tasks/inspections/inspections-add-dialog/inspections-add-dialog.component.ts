@@ -432,9 +432,7 @@ export class InspectionsAddDialogComponent implements OnInit {
     if (this.inspectionCreateID) {
       result = 'refresh';
     }
-
-    console.log('Cerrando diálogo con resultado:', result);
-
+    
     this.dialogRef.close(result); 
   }
 }
