@@ -100,9 +100,7 @@
           </div>
           <div class="info-item">
             <span class="label">Cupo:</span>
-            <span class="value"
-              >{{ inspectionData.cupo || "N/A" }}</span
-            >
+            <span class="value">{{ inspectionData.cupo || "N/A" }}</span>
           </div>
           <div class="info-item">
             <span class="label">Kilometraje:</span>
@@ -130,11 +128,15 @@
           </div>
           <div class="info-item">
             <span class="label">Nombre:</span>
-            <span class="value">{{ inspectionData.nombre_conductor || "N/A" }}</span>
+            <span class="value">{{
+              inspectionData.nombre_conductor || "N/A"
+            }}</span>
           </div>
           <div class="info-item">
             <span class="label">Cédula:</span>
-            <span class="value">{{ inspectionData.cedula_conductor || "N/A" }}</span>
+            <span class="value">{{
+              inspectionData.cedula_conductor || "N/A"
+            }}</span>
           </div>
         </div>
       </mat-card-content>
@@ -154,19 +156,142 @@
             <span class="label">Tipo de Inspección:</span>
             <span class="value">{{ inspectionData.tipo_inspeccion }}</span>
           </div>
-          <div class="info-item full-width">
+          <div class="info-item">
             <span class="label">Descripción:</span>
             <span class="value description-text">{{
               inspectionData.descripcion || "N/A"
             }}</span>
           </div>
-          <div
-            class="info-item full-width"
-            *ngIf="inspectionData.observaciones"
-          >
+          <div class="info-item">
             <span class="label">Observaciones:</span>
             <span class="value description-text">{{
               inspectionData.observaciones || "N/A"
+            }}</span>
+          </div>
+
+          <!-- Items de Inspección -->
+          <div class="info-item">
+            <span class="label">Alfombra:</span>
+            <span class="value">{{
+              inspectionData.alfombra ? "Sí" : "No"
+            }}</span>
+          </div>
+          <div class="info-item">
+            <span class="label">Antena:</span>
+            <span class="value">{{ inspectionData.antena ? "Sí" : "No" }}</span>
+          </div>
+          <div class="info-item">
+            <span class="label">Carátula Radio:</span>
+            <span class="value">{{
+              inspectionData.caratradio ? "Sí" : "No"
+            }}</span>
+          </div>
+          <div class="info-item">
+            <span class="label">Copas Rines:</span>
+            <span class="value">{{
+              inspectionData.copasrines ? "Sí" : "No"
+            }}</span>
+          </div>
+          <div class="info-item">
+            <span class="label">Extinguidor:</span>
+            <span class="value">{{
+              inspectionData.extinguidor ? "Sí" : "No"
+            }}</span>
+          </div>
+          <div class="info-item">
+            <span class="label">Formato Colisiones:</span>
+            <span class="value">{{
+              inspectionData.formatocolis ? "Sí" : "No"
+            }}</span>
+          </div>
+          <div class="info-item">
+            <span class="label">Gato:</span>
+            <span class="value">{{ inspectionData.gato ? "Sí" : "No" }}</span>
+          </div>
+          <div class="info-item">
+            <span class="label">GPS:</span>
+            <span class="value">{{ inspectionData.gps ? "Sí" : "No" }}</span>
+          </div>
+          <div class="info-item">
+            <span class="label">Lámparas:</span>
+            <span class="value">{{
+              inspectionData.lamparas ? "Sí" : "No"
+            }}</span>
+          </div>
+          <div class="info-item">
+            <span class="label">Llanta Repuesto:</span>
+            <span class="value">{{
+              inspectionData.llantarepu ? "Sí" : "No"
+            }}</span>
+          </div>
+          <div class="info-item">
+            <span class="label">Luces Delanteras:</span>
+            <span class="value">{{
+              inspectionData.luzdelante ? "Sí" : "No"
+            }}</span>
+          </div>
+          <div class="info-item">
+            <span class="label">Luces Traseras:</span>
+            <span class="value">{{
+              inspectionData.luztracera ? "Sí" : "No"
+            }}</span>
+          </div>
+          <div class="info-item">
+            <span class="label">Pago Municipio:</span>
+            <span class="value">{{
+              inspectionData.pagomunici ? "Sí" : "No"
+            }}</span>
+          </div>
+          <div class="info-item">
+            <span class="label">Pipa:</span>
+            <span class="value">{{ inspectionData.pipa ? "Sí" : "No" }}</span>
+          </div>
+          <div class="info-item">
+            <span class="label">Placa Municipal:</span>
+            <span class="value">{{
+              inspectionData.placamunic ? "Sí" : "No"
+            }}</span>
+          </div>
+          <div class="info-item">
+            <span class="label">Póliza Seguro:</span>
+            <span class="value">{{
+              inspectionData.poliseguro ? "Sí" : "No"
+            }}</span>
+          </div>
+          <div class="info-item">
+            <span class="label">Registro Vehículo:</span>
+            <span class="value">{{
+              inspectionData.regisvehic ? "Sí" : "No"
+            }}</span>
+          </div>
+          <div class="info-item">
+            <span class="label">Retrovisor:</span>
+            <span class="value">{{
+              inspectionData.retrovisor ? "Sí" : "No"
+            }}</span>
+          </div>
+          <div class="info-item">
+            <span class="label">Revisado:</span>
+            <span class="value">{{
+              inspectionData.revisado ? "Sí" : "No"
+            }}</span>
+          </div>
+          <div class="info-item">
+            <span class="label">Tapicería:</span>
+            <span class="value">{{
+              inspectionData.tapiceria ? "Sí" : "No"
+            }}</span>
+          </div>
+          <div class="info-item">
+            <span class="label">Triángulo:</span>
+            <span class="value">{{
+              inspectionData.triangulo ? "Sí" : "No"
+            }}</span>
+          </div>
+          <div class="info-item">
+            <span class="label">Vidrios:</span>
+            <span class="value">{{
+              inspectionData.vidrios ? "Sí" : "No"
             }}</span>
           </div>
         </div>

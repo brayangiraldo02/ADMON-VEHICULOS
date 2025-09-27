@@ -28,6 +28,28 @@ export interface InspectionData {
   estado_inspeccion: string;
   usuario: string;
   fotos: string[];
+  alfombra: boolean;
+  antena: boolean;
+  caratradio: boolean;
+  copasrines: boolean;
+  extinguidor: boolean;
+  formatocolis: boolean;
+  gato: boolean;
+  gps: boolean;
+  lamparas: boolean;
+  llantarepu: boolean;
+  luzdelante: boolean;
+  luztracera: boolean;
+  pagomunici: boolean;
+  pipa: boolean;
+  placamunic: boolean;
+  poliseguro: boolean;
+  regisvehic: boolean;
+  retrovisor: boolean;
+  revisado: boolean;
+  tapiceria: boolean;
+  triangulo: boolean;
+  vidrios: boolean;
 }
 
 @Component({
