@@ -1,10 +1,14 @@
-<h2 mat-dialog-title>
-  Detalles de Inspección
-</h2>
+<h2 mat-dialog-title>Detalles de Inspección</h2>
 
 <mat-dialog-content class="mat-typography">
-  <div class="inspection-content">
-    
+  <ng-template #loadingTemplate>
+    <div class="inspection-content">
+      <mat-progress-bar
+        mode="indeterminate"
+      ></mat-progress-bar>
+    </div>
+  </ng-template>
+  <div class="inspection-content" *ngIf="!isLoading; else loadingTemplate">
     <!-- Información Principal -->
     <mat-card class="info-section">
       <mat-card-header>
@@ -17,30 +21,39 @@
         <div class="info-grid">
           <div class="info-item">
             <span class="label">ID:</span>
-            <span class="value">{{ data.id }}</span>
+            <span class="value">{{ inspectionData.id }}</span>
           </div>
           <div class="info-item">
             <span class="label">Empresa:</span>
-            <span class="value">{{ data.empresa }}</span>
+            <span class="value">{{ inspectionData.empresa }}</span>
           </div>
           <div class="info-item">
             <span class="label">Fecha:</span>
-            <span class="value">{{ data.fecha }}</span>
+            <span class="value">{{ inspectionData.fecha }}</span>
           </div>
           <div class="info-item">
             <span class="label">Hora:</span>
-            <span class="value">{{ data.hora }}</span>
+            <span class="value">{{ inspectionData.hora }}</span>
           </div>
           <div class="info-item">
             <span class="label">Usuario:</span>
-            <span class="value">{{ data.usuario || 'N/A' }}</span>
+            <span class="value">{{ inspectionData.usuario || "N/A" }}</span>
           </div>
           <div class="info-item full-width">
             <span class="label">Estado:</span>
-            <mat-chip class="status-chip" [class.status-pending]="data.estado_inspeccion === 'PEN'" 
-                     [class.status-finished]="data.estado_inspeccion === 'FIN'"
-                     [class.status-suspended]="data.estado_inspeccion === 'SUS'">
-              {{ getStatusText(data.estado_inspeccion) }}
+            <mat-chip
+              class="status-chip"
+              [class.status-pending]="
+                inspectionData.estado_inspeccion === 'PEN'
+              "
+              [class.status-finished]="
+                inspectionData.estado_inspeccion === 'FIN'
+              "
+              [class.status-suspended]="
+                inspectionData.estado_inspeccion === 'SUS'
+              "
+            >
+              {{ getStatusText(inspectionData.estado_inspeccion) }}
             </mat-chip>
           </div>
         </div>
@@ -59,11 +72,11 @@
         <div class="info-grid">
           <div class="info-item">
             <span class="label">Código:</span>
-            <span class="value">{{ data.propietario }}</span>
+            <span class="value">{{ inspectionData.propietario }}</span>
           </div>
           <div class="info-item">
             <span class="label">Nombre:</span>
-            <span class="value">{{ data.nombre_propietario }}</span>
+            <span class="value">{{ inspectionData.nombre_propietario }}</span>
           </div>
         </div>
       </mat-card-content>
@@ -81,15 +94,15 @@
         <div class="info-grid">
           <div class="info-item">
             <span class="label">Código:</span>
-            <span class="value">{{ data.conductor }}</span>
+            <span class="value">{{ inspectionData.conductor }}</span>
           </div>
           <div class="info-item">
             <span class="label">Nombre:</span>
-            <span class="value">{{ data.nombre_conductor }}</span>
+            <span class="value">{{ inspectionData.nombre_conductor }}</span>
           </div>
           <div class="info-item">
             <span class="label">Cédula:</span>
-            <span class="value">{{ data.cedula_conductor }}</span>
+            <span class="value">{{ inspectionData.cedula_conductor }}</span>
           </div>
         </div>
       </mat-card-content>
@@ -107,15 +120,17 @@
         <div class="info-grid">
           <div class="info-item">
             <span class="label">Unidad:</span>
-            <span class="value">{{ data.unidad }}</span>
+            <span class="value">{{ inspectionData.unidad }}</span>
           </div>
           <div class="info-item">
             <span class="label">Placa:</span>
-            <span class="value">{{ data.placa }}</span>
+            <span class="value">{{ inspectionData.placa }}</span>
           </div>
           <div class="info-item">
             <span class="label">Kilometraje:</span>
-            <span class="value">{{ data.kilometraje || 'N/A' }} km</span>
+            <span class="value"
+              >{{ inspectionData.kilometraje || "N/A" }} km</span
+            >
           </div>
         </div>
       </mat-card-content>
@@ -133,44 +148,60 @@
         <div class="info-grid">
           <div class="info-item full-width">
             <span class="label">Tipo de Inspección:</span>
-            <span class="value">{{ data.tipo_inspeccion }}</span>
+            <span class="value">{{ inspectionData.tipo_inspeccion }}</span>
           </div>
           <div class="info-item full-width">
             <span class="label">Descripción:</span>
-            <span class="value description-text">{{ data.descripcion }}</span>
+            <span class="value description-text">{{
+              inspectionData.descripcion
+            }}</span>
           </div>
-          <div class="info-item full-width" *ngIf="data.observaciones">
+          <div
+            class="info-item full-width"
+            *ngIf="inspectionData.observaciones"
+          >
             <span class="label">Observaciones:</span>
-            <span class="value description-text">{{ data.observaciones }}</span>
+            <span class="value description-text">{{
+              inspectionData.observaciones
+            }}</span>
           </div>
         </div>
       </mat-card-content>
     </mat-card>
 
     <!-- Sección de Fotos -->
-    <mat-card class="info-section" *ngIf="data.fotos && data.fotos.length > 0">
+    <mat-card
+      class="info-section"
+      *ngIf="inspectionData.fotos && inspectionData.fotos.length > 0"
+    >
       <mat-card-header>
         <mat-card-title class="section-title">
           <mat-icon>photo_library</mat-icon>
-          Fotografías ({{ data.fotos.length }})
+          Fotografías ({{ inspectionData.fotos.length }})
         </mat-card-title>
       </mat-card-header>
       <mat-card-content>
         <div class="photos-section">
-          <button mat-raised-button color="primary" class="view-photos-btn">
+          <button
+            mat-raised-button
+            color="primary"
+            class="view-photos-btn"
+            (click)="closeDialog('viewPhotos')"
+          >
             <mat-icon>visibility</mat-icon>
             Ver Fotos
           </button>
-          <p class="photos-info">{{ data.fotos.length }} fotografía(s) disponible(s)</p>
+          <p class="photos-info">
+            {{ inspectionData.fotos.length }} fotografía(s) disponible(s)
+          </p>
         </div>
       </mat-card-content>
     </mat-card>
-
   </div>
 </mat-dialog-content>
 
 <mat-dialog-actions align="end">
-  <button mat-button mat-dialog-close>
+  <button mat-button mat-dialog-close (click)="closeDialog('')">
     <mat-icon>close</mat-icon>
     Cerrar
   </button>

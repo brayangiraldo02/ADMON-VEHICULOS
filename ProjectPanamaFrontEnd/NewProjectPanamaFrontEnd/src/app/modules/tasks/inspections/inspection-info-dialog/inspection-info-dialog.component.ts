@@ -1,8 +1,14 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { ApiService } from 'src/app/services/api.service';
 
 // Interfaz para los datos que recibirá el diálogo
 export interface InspectionDialogData {
+  inspectionId: number;
+}
+
+export interface InspectionData {
   id: number;
   empresa: string;
   fecha: string;
@@ -30,37 +36,35 @@ export interface InspectionDialogData {
 })
 export class InspectionInfoDialogComponent {
   // Inyectamos MatDialogRef para controlar el diálogo y MAT_DIALOG_DATA para recibir datos
+  inspectionData!: InspectionData;
+  isLoading: boolean = true;
+
   constructor(
     public dialogRef: MatDialogRef<InspectionInfoDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: InspectionDialogData
+    @Inject(MAT_DIALOG_DATA) public data: InspectionDialogData,
+    private apiService: ApiService,
+    private snackBar: MatSnackBar
   ) {}
 
-  // ngOnInit(): void {
-  //   // Aquí podrías realizar alguna inicialización si es necesario
-  //   this.data = {
-  //     id: 10,
-  //     empresa: '10',
-  //     fecha: '26-09-2025',
-  //     hora: '12:06',
-  //     propietario: '1',
-  //     nombre_propietario: 'FUSION GAMES',
-  //     conductor: '',
-  //     nombre_conductor: '',
-  //     cedula_conductor: '',
-  //     tipo_inspeccion: '02',
-  //     descripcion: 'a',
-  //     unidad: '1029',
-  //     placa: 'AR3822',
-  //     kilometraje: '',
-  //     observaciones: 'a',
-  //     estado_inspeccion: 'FIN',
-  //     usuario: 'HFVG10',
-  //     fotos: [
-  //       'http://localhost:8000/uploads/10/1029/inspecciones/10/foto01.jpg',
-  //       'http://localhost:8000/uploads/10/1029/inspecciones/10/foto02.jpg',
-  //     ],
-  //   };
-  // }
+  ngOnInit(): void {
+    this.getInspectionDetails(this.data.inspectionId);
+  }
+
+  getInspectionDetails(inspectionId: number): void {
+    this.apiService
+      .getData(`inspections/inspection_details/${inspectionId}`)
+      .subscribe({
+        next: (data: InspectionData) => {
+          this.inspectionData = data;
+          this.isLoading = false;
+        },
+        error: (error) => {
+          console.error('Error fetching inspection details:', error);
+          this.openSnackbar('Error al obtener los detalles de la inspección.');
+          this.closeDialog('');
+        },
+      });
+  }
 
   // Método para obtener el texto del estado (sin funcionalidad, solo para el diseño)
   getStatusText(status: string): string {
@@ -74,5 +78,17 @@ export class InspectionInfoDialogComponent {
       default:
         return status;
     }
+  }
+
+  openSnackbar(message: string) {
+    this.snackBar.open(message, 'Cerrar', {
+      duration: 3000,
+      horizontalPosition: 'center',
+      verticalPosition: 'top',
+    });
+  }
+
+  closeDialog(result: string): void {
+    this.dialogRef.close(result);
   }
 }

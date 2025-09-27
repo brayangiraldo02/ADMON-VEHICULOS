@@ -472,7 +472,7 @@ export class InspectionsTableComponent implements OnInit, AfterViewInit {
             Estado: item.estado_inspeccion,
             Fotos: item.fotos || [],
           }));
-          
+
           // Reinicializar paginator y sort después de cargar los datos
           this.initializePaginator();
 
@@ -595,16 +595,24 @@ export class InspectionsTableComponent implements OnInit, AfterViewInit {
     }
   }
 
-  openImgDialog(inspection: InspectionsInfoData) {
+  openImgDialog(inspection: InspectionsInfoData, action?: string) {
     const isSmallScreen = this.breakpointObserver.isMatched(Breakpoints.XSmall);
     const dialogWidth = isSmallScreen ? '90vw' : '60%';
 
-    this.dialog.open(InspectionFinishImagesDialogComponent, {
+    const dialogRef = this.dialog.open(InspectionFinishImagesDialogComponent, {
       width: dialogWidth,
       data: {
         vehicleNumber: inspection.Unidad,
         images: inspection.Fotos,
+        action: action || '',
       },
+      disableClose: true,
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result === 'viewPhotos') {
+        this.openInspectionInfoDialog(inspection.id);
+      }
     });
   }
 
@@ -647,23 +655,23 @@ export class InspectionsTableComponent implements OnInit, AfterViewInit {
   }
 
   openInspectionInfoDialog(inspectionId: string) {
-    this.apiService.getData(`inspections/inspection_details/${inspectionId}`).subscribe({
-      next: (data: any) => {
-        const isSmallScreen = this.breakpointObserver.isMatched(Breakpoints.XSmall);
-        const dialogWidth = isSmallScreen ? '90vw' : '60%';
+    const isSmallScreen = this.breakpointObserver.isMatched(Breakpoints.XSmall);
+    const dialogWidth = isSmallScreen ? '90vw' : '60%';
 
-        const dialogRef = this.dialog.open(InspectionInfoDialogComponent, {
-          width: dialogWidth,
-          data: data,
-        });
+    const dialogRef = this.dialog.open(InspectionInfoDialogComponent, {
+      width: dialogWidth,
+      data: { inspectionId },
+      disableClose: true,
+    });
 
-        dialogRef.afterClosed().subscribe((result) => {
-          console.log('Result from dialog:', result);
-        });
-      },
-      error: (error) => {
-        console.error('Error fetching inspection details:', error);
-      },
+    dialogRef.afterClosed().subscribe((result) => {
+      console.log('Result from dialog:', result);
+      if (result === 'viewPhotos') {
+        this.openImgDialog(
+          this.dataSource.data.find((item) => item.id === inspectionId)!,
+          result
+        );
+      }
     });
   }
 }
