@@ -45,6 +45,7 @@ export interface InspectionsInfoData {
   Descripcion: string;
   Unidad: string;
   Placa: string;
+  Cupo: string;
   Usuario: string;
   Estado: string;
   Fotos: string[];
@@ -58,6 +59,7 @@ export interface apiResponse {
   descripcion: string;
   unidad: string;
   placa: string;
+  cupo: string;
   nombre_usuario: string;
   estado_inspeccion: string;
   fotos: string[];
@@ -92,6 +94,7 @@ export class InspectionsTableComponent implements OnInit, AfterViewInit {
     'Descripcion',
     'Unidad',
     'Placa',
+    'Cupo',
     'Usuario',
     'Estado',
     'Acciones',
@@ -466,6 +469,7 @@ export class InspectionsTableComponent implements OnInit, AfterViewInit {
             Descripcion: item.descripcion,
             Unidad: item.unidad,
             Placa: item.placa,
+            Cupo: item.cupo,
             Usuario: item.nombre_usuario,
             Estado: item.estado_inspeccion,
             Fotos: item.fotos || [],

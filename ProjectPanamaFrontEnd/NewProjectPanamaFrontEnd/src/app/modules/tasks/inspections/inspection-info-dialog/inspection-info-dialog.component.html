@@ -3,9 +3,7 @@
 <mat-dialog-content class="mat-typography">
   <ng-template #loadingTemplate>
     <div class="inspection-content">
-      <mat-progress-bar
-        mode="indeterminate"
-      ></mat-progress-bar>
+      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
     </div>
   </ng-template>
   <div class="inspection-content" *ngIf="!isLoading; else loadingTemplate">
@@ -82,32 +80,6 @@
       </mat-card-content>
     </mat-card>
 
-    <!-- Información del Conductor -->
-    <mat-card class="info-section">
-      <mat-card-header>
-        <mat-card-title class="section-title">
-          <mat-icon>drive_eta</mat-icon>
-          Conductor
-        </mat-card-title>
-      </mat-card-header>
-      <mat-card-content>
-        <div class="info-grid">
-          <div class="info-item">
-            <span class="label">Código:</span>
-            <span class="value">{{ inspectionData.conductor }}</span>
-          </div>
-          <div class="info-item">
-            <span class="label">Nombre:</span>
-            <span class="value">{{ inspectionData.nombre_conductor }}</span>
-          </div>
-          <div class="info-item">
-            <span class="label">Cédula:</span>
-            <span class="value">{{ inspectionData.cedula_conductor }}</span>
-          </div>
-        </div>
-      </mat-card-content>
-    </mat-card>
-
     <!-- Información del Vehículo -->
     <mat-card class="info-section">
       <mat-card-header>
@@ -127,10 +99,42 @@
             <span class="value">{{ inspectionData.placa }}</span>
           </div>
           <div class="info-item">
+            <span class="label">Cupo:</span>
+            <span class="value"
+              >{{ inspectionData.cupo || "N/A" }}</span
+            >
+          </div>
+          <div class="info-item">
             <span class="label">Kilometraje:</span>
             <span class="value"
               >{{ inspectionData.kilometraje || "N/A" }} km</span
             >
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Información del Conductor -->
+    <mat-card class="info-section">
+      <mat-card-header>
+        <mat-card-title class="section-title">
+          <mat-icon>drive_eta</mat-icon>
+          Conductor
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="info-grid">
+          <div class="info-item">
+            <span class="label">Código:</span>
+            <span class="value">{{ inspectionData.conductor || "N/A" }}</span>
+          </div>
+          <div class="info-item">
+            <span class="label">Nombre:</span>
+            <span class="value">{{ inspectionData.nombre_conductor || "N/A" }}</span>
+          </div>
+          <div class="info-item">
+            <span class="label">Cédula:</span>
+            <span class="value">{{ inspectionData.cedula_conductor || "N/A" }}</span>
           </div>
         </div>
       </mat-card-content>
@@ -153,7 +157,7 @@
           <div class="info-item full-width">
             <span class="label">Descripción:</span>
             <span class="value description-text">{{
-              inspectionData.descripcion
+              inspectionData.descripcion || "N/A"
             }}</span>
           </div>
           <div
@@ -162,7 +166,7 @@
           >
             <span class="label">Observaciones:</span>
             <span class="value description-text">{{
-              inspectionData.observaciones
+              inspectionData.observaciones || "N/A"
             }}</span>
           </div>
         </div>

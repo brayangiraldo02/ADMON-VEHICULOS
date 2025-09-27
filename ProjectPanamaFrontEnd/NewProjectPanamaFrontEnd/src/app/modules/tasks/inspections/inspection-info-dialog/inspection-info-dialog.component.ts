@@ -23,6 +23,7 @@ export interface InspectionData {
   unidad: string;
   placa: string;
   kilometraje: string;
+  cupo: string;
   observaciones: string;
   estado_inspeccion: string;
   usuario: string;

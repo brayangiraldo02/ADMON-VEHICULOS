@@ -194,6 +194,10 @@ async def inspections_info(data: InspectionInfo, company_code: str):
 
     inspections_dict = {inspection.CODIGO: inspection.NOMBRE for inspection in inspections_types}
 
+    # Obtener todos los vehículos para obtener el campo cupo
+    vehicles = db.query(Vehiculos).filter(Vehiculos.EMPRESA == company_code).all()
+    vehicles_dict = {vehicle.NUMERO: vehicle.NRO_CUPO for vehicle in vehicles}
+
     inspections_data = []
 
     for inspection in inspections:
@@ -214,6 +218,7 @@ async def inspections_info(data: InspectionInfo, company_code: str):
         "descripcion": inspection.DESCRIPCION,
         "unidad": inspection.UNIDAD,
         "placa": inspection.PLACA,
+        "cupo": vehicles_dict.get(inspection.UNIDAD, ""),
         "nombre_usuario": inspection.USUARIO,
         "estado_inspeccion": inspection.ESTADO,
         "fotos": fotos
@@ -628,6 +633,8 @@ async def inspection_details(inspection_id: int):
 
     company_info = db.query(InfoEmpresas).filter(InfoEmpresas.ID == inspection.EMPRESA).first()
 
+    vehicle = db.query(Vehiculos).filter(Vehiculos.NUMERO == inspection.UNIDAD, Vehiculos.EMPRESA == inspection.EMPRESA).first()
+
     fotos = []
     for i in range(1, 17): 
       foto_field = f"FOTO{i:02d}"
@@ -650,6 +657,7 @@ async def inspection_details(inspection_id: int):
       "descripcion": inspection.DESCRIPCION,
       "unidad": inspection.UNIDAD,
       "placa": inspection.PLACA,
+      "cupo": vehicle.NRO_CUPO if vehicle and vehicle.NRO_CUPO else "",
       "kilometraje": inspection.KILOMETRAJ if inspection.KILOMETRAJ else "",
       "observaciones": inspection.OBSERVA if inspection.OBSERVA else "",
       "estado_inspeccion": inspection.ESTADO,
