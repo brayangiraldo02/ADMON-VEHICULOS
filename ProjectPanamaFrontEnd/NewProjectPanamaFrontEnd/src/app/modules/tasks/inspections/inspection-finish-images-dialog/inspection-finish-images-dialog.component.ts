@@ -8,6 +8,7 @@ import { DocumentsService } from 'src/app/services/documents.service';
 export interface InspectionImagesDialogData {
   vehicleNumber: string;
   images: string[];
+  action?: string;
 }
 
 @Component({
@@ -301,5 +302,9 @@ export class InspectionFinishImagesDialogComponent {
       horizontalPosition: 'center',
       verticalPosition: 'top',
     });
+  }
+
+  closeDialog(): void {
+    this.dialogRef.close(this.data.action);
   }
 }

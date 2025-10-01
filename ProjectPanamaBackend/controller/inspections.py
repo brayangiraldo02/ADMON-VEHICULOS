@@ -1,3 +1,4 @@
+from utils.inspections import update_expired_inspections
 from fastapi.responses import FileResponse, JSONResponse
 from fastapi import UploadFile, File, BackgroundTasks, HTTPException
 import jinja2
@@ -8,6 +9,8 @@ from models.vehiculos import Vehiculos
 from models.inspecciones import Inspecciones
 from models.tiposinspeccion import TiposInspeccion
 from models.estados import Estados
+from models.permisosusuario import PermisosUsuario
+from models.infoempresas import InfoEmpresas
 from schemas.inspections import *
 from fastapi.encoders import jsonable_encoder
 from fastapi import UploadFile, File, BackgroundTasks
@@ -150,7 +153,7 @@ async def drivers_data(company_code: str):
 
 #-----------------------------------------------------------------------------------------------
 
-async def inspections_info(data, company_code: str):
+async def inspections_info(data: InspectionInfo, company_code: str):
   db = session()
   try:
     filters = [
@@ -158,7 +161,6 @@ async def inspections_info(data, company_code: str):
         Inspecciones.FECHA <= data.fechaFinal,
     ]
 
-    # Filtrar inspecciones por propietario, conductor y vehículo
     if data.propietario != '':
         filters.append(Inspecciones.PROPI_IDEN == data.propietario)
     
@@ -170,9 +172,31 @@ async def inspections_info(data, company_code: str):
 
     inspections = db.query(Inspecciones).filter(*filters).all()
 
+    if not inspections:
+      return JSONResponse(content={"message": "No inspections found"}, status_code=404)
+
+    await update_expired_inspections(db, inspections_list=inspections)
+
+    filtered_inspections = []
+    for inspection in inspections:
+      if inspection.ESTADO == "PEN":
+        if data.usuario and inspection.USUARIO == data.usuario:
+          filtered_inspections.append(inspection)
+      else:
+        filtered_inspections.append(inspection)
+
+    inspections = filtered_inspections
+
+    if not inspections:
+      return JSONResponse(content={"message": "No inspections found"}, status_code=404)
+
     inspections_types = db.query(TiposInspeccion).filter(TiposInspeccion.EMPRESA == company_code).all()
 
     inspections_dict = {inspection.CODIGO: inspection.NOMBRE for inspection in inspections_types}
+
+    # Obtener todos los vehículos para obtener el campo cupo
+    vehicles = db.query(Vehiculos).filter(Vehiculos.EMPRESA == company_code).all()
+    vehicles_dict = {vehicle.NUMERO: vehicle.NRO_CUPO for vehicle in vehicles}
 
     inspections_data = []
 
@@ -190,9 +214,11 @@ async def inspections_info(data, company_code: str):
         "fecha_hora": inspection.FECHA.strftime('%d-%m-%Y') + ' ' + inspection.HORA.strftime('%H:%M') if inspection.FECHA and inspection.HORA else None,
         "propietario": inspection.PROPI_IDEN,
         "tipo_inspeccion": inspections_dict.get(inspection.TIPO_INSPEC, ""),
+        "id_tipo_inspeccion": inspection.TIPO_INSPEC,
         "descripcion": inspection.DESCRIPCION,
         "unidad": inspection.UNIDAD,
         "placa": inspection.PLACA,
+        "cupo": vehicles_dict.get(inspection.UNIDAD, ""),
         "nombre_usuario": inspection.USUARIO,
         "estado_inspeccion": inspection.ESTADO,
         "fotos": fotos
@@ -202,6 +228,7 @@ async def inspections_info(data, company_code: str):
       return JSONResponse(content={"message": "No inspections found"}, status_code=404)
     return JSONResponse(content=jsonable_encoder(inspections_data), status_code=200)
   except Exception as e:
+    db.rollback()
     return JSONResponse(content={"message": str(e)}, status_code=500)
   finally:
     db.close()
@@ -287,6 +314,18 @@ async def report_inspections(data, company_code: str):
     if not inspections:
       return JSONResponse(content={"message": "No inspections found"}, status_code=404)
 
+    await update_expired_inspections(db, inspections_list=inspections)
+
+    filtered_inspections = []
+    for inspection in inspections:
+      if inspection.ESTADO == "PEN":
+        if data.usuario and inspection.USUARIO == data.usuario:
+          filtered_inspections.append(inspection)
+      else:
+        filtered_inspections.append(inspection)
+
+    inspections = filtered_inspections
+
     inspections_types = db.query(TiposInspeccion).filter(TiposInspeccion.EMPRESA == company_code).all()
 
     inspections_dict = {inspection.CODIGO: inspection.NOMBRE for inspection in inspections_types}
@@ -319,6 +358,8 @@ async def report_inspections(data, company_code: str):
           "inspecciones": inspections
         })
 
+    user = db.query(PermisosUsuario).filter(PermisosUsuario.CODIGO == data.usuario).first()
+    user = user.NOMBRE if user else ""
 
     #Total de inspecciones sumando la cantidad de inspecciones por propietario
     total_inspecciones = sum(len(inspections) for inspections in owners_dict.values())
@@ -342,7 +383,7 @@ async def report_inspections(data, company_code: str):
       'total_inspecciones': total_inspecciones,
       'fecha': fecha,
       'hora': hora_actual,
-      'usuario': data.usuario if data.usuario else "",
+      'usuario': user if user else "",
       'titulo': titulo
     }
 
@@ -575,3 +616,79 @@ async def download_image_by_url(image_url: str):
     
   except Exception as e:
     return JSONResponse(content={"message": str(e)}, status_code=500)
+  
+#-----------------------------------------------------------------------------------------------
+
+async def inspection_details(inspection_id: int):
+  db = session()
+  try:
+    inspection = db.query(Inspecciones).filter(Inspecciones.ID == inspection_id).first()
+    if not inspection:
+      return JSONResponse(content={"message": "Inspection not found"}, status_code=404)
+
+    await update_expired_inspections(db, inspections_list=[inspection])
+
+    inspections_types = db.query(TiposInspeccion).filter(TiposInspeccion.EMPRESA == inspection.EMPRESA).all()
+    inspections_dict = {insp.CODIGO: insp.NOMBRE for insp in inspections_types}
+
+    company_info = db.query(InfoEmpresas).filter(InfoEmpresas.ID == inspection.EMPRESA).first()
+
+    vehicle = db.query(Vehiculos).filter(Vehiculos.NUMERO == inspection.UNIDAD, Vehiculos.EMPRESA == inspection.EMPRESA).first()
+
+    fotos = []
+    for i in range(1, 17): 
+      foto_field = f"FOTO{i:02d}"
+      foto_value = getattr(inspection, foto_field, "")
+      if foto_value and foto_value.strip(): 
+        foto_url = f"{route_api}uploads/{foto_value}"
+        fotos.append(foto_url)
+    
+    inspection_data = {
+      "id": inspection.ID,
+      "empresa": company_info.NOMBRE if company_info else "",
+      "fecha": inspection.FECHA.strftime('%d-%m-%Y') if inspection.FECHA else None,
+      "hora": inspection.HORA.strftime('%H:%M') if inspection.HORA else None,
+      "propietario": inspection.PROPI_IDEN,
+      "nombre_propietario": inspection.NOMPROPI,
+      "conductor": inspection.CONDUCTOR,
+      "nombre_conductor": inspection.NOMCONDU,
+      "cedula_conductor": inspection.CEDULA,
+      "tipo_inspeccion": inspections_dict.get(inspection.TIPO_INSPEC, ""),
+      "descripcion": inspection.DESCRIPCION,
+      "unidad": inspection.UNIDAD,
+      "placa": inspection.PLACA,
+      "cupo": vehicle.NRO_CUPO if vehicle and vehicle.NRO_CUPO else "",
+      "kilometraje": inspection.KILOMETRAJ if inspection.KILOMETRAJ else "",
+      "observaciones": inspection.OBSERVA if inspection.OBSERVA else "",
+      "estado_inspeccion": inspection.ESTADO,
+      "alfombra": inspection.ALFOMBRA,
+      "antena": inspection.ANTENA,
+      "caratradio": inspection.CARATRADIO,
+      "copasrines": inspection.COPASRINES,
+      "extinguidor": inspection.EXTINGUIDOR,
+      "formatocolis": inspection.FORMACOLIS,
+      "gato": inspection.GATO,
+      "gps": inspection.GPS,
+      "lamparas": inspection.LAMPARAS,
+      "llantarepu": inspection.LLANTAREPU,
+      "luzdelante": inspection.LUZDELANTE,
+      "luztracera": inspection.LUZTRACERA,
+      "pagomunici": inspection.PAGOMUNICI,
+      "pipa": inspection.PIPA,
+      "placamunic": inspection.PLACAMUNIC,
+      "poliseguro": inspection.POLISEGURO,
+      "regisvehic": inspection.REGISVEHIC,
+      "retrovisor": inspection.RETROVISOR,
+      "revisado": inspection.REVISADO,
+      "tapiceria": inspection.TAPICERIA,
+      "triangulo": inspection.TRIANGULO,
+      "vidrios": inspection.VIDRIOS,
+      "usuario": inspection.USUARIO if inspection.USUARIO else "",
+      "fotos": fotos,
+    }
+
+    return JSONResponse(content=jsonable_encoder(inspection_data), status_code=200)
+  except Exception as e:
+    return JSONResponse(content={"message": str(e)}, status_code=500)
+  finally:
+    db.close()

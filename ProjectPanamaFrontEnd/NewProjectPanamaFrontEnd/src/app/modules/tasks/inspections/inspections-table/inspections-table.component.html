@@ -180,6 +180,12 @@
           <td mat-cell *matCellDef="let row">{{ row.Placa }}</td>
         </ng-container>
 
+        <!-- cupo Column -->
+        <ng-container matColumnDef="Cupo">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Cupo</th>
+          <td mat-cell *matCellDef="let row">{{ row.Cupo }}</td>
+        </ng-container>
+
         <!-- nombre_usuario Column -->
         <ng-container matColumnDef="Usuario">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Usuario</th>
@@ -203,11 +209,17 @@
                 color="primary"
                 matTooltip="Editar inspección"
                 *ngIf="row.Estado == 'PEN'"
+                (click)="openUploadImagesDialog(row)"
               >
                 <mat-icon>edit</mat-icon>
               </button>
 
-              <button mat-icon-button color="warn" matTooltip="Ver formulario">
+              <button
+                mat-icon-button
+                color="warn"
+                matTooltip="Ver formulario"
+                (click)="openInspectionInfoDialog(row.id)"
+              >
                 <mat-icon>assignment</mat-icon>
               </button>
 
@@ -221,13 +233,14 @@
                 <mat-icon>image</mat-icon>
               </button>
 
-              <button
+              <!-- TODO: Integrar documento -->
+              <!-- <button
                 mat-icon-button
                 matTooltip="Ver documento"
                 *ngIf="row.Estado == 'FIN'"
               >
                 <mat-icon>description</mat-icon>
-              </button>
+              </button> -->
             </div>
           </td>
         </ng-container>
@@ -256,7 +269,10 @@
     </div>
 
     <mat-paginator
+      #paginator
       [pageSizeOptions]="[8, 16, 32, 100]"
+      [pageSize]="8"
+      [showFirstLastButtons]="true"
       aria-label="Selecciona la cantidad de registros por página"
     ></mat-paginator>
   </div>

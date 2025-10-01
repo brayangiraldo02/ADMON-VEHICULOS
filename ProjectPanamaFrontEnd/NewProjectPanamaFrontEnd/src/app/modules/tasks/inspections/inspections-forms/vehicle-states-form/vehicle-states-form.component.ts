@@ -81,4 +81,29 @@ export class VehicleStatesFormComponent {
       width: dialogWidth,
     });
   }
+
+  // Función para validar que solo se ingresen números
+  onlyNumbers(event: KeyboardEvent): boolean {
+    const charCode = event.which ? event.which : event.keyCode;
+    
+    // Permitir teclas especiales: backspace, delete, tab, escape, enter, home, end, flechas
+    if (charCode === 8 || charCode === 9 || charCode === 27 || charCode === 13 ||
+        charCode === 35 || charCode === 36 ||
+        (charCode >= 37 && charCode <= 40) || charCode === 46) {
+      return true;
+    }
+    
+    // Permitir Ctrl+A, Ctrl+C, Ctrl+V, Ctrl+X, Ctrl+Z
+    if (event.ctrlKey && (charCode === 65 || charCode === 67 || charCode === 86 || charCode === 88 || charCode === 90)) {
+      return true;
+    }
+    
+    // Solo permitir números (0-9)
+    if (charCode < 48 || charCode > 57) {
+      event.preventDefault();
+      return false;
+    }
+    
+    return true;
+  }
 }

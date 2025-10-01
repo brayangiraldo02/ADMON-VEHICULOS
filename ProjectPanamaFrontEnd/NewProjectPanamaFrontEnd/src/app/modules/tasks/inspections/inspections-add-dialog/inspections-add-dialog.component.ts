@@ -2,6 +2,7 @@ import {
   AfterViewInit,
   Component,
   Inject,
+  Input,
   OnInit,
   ViewChild,
 } from '@angular/core';
@@ -99,15 +100,26 @@ export class InspectionsAddDialogComponent implements OnInit {
 
   inspectionCreateID: string = '';
 
+  showCompactView: boolean = false;
+
   constructor(
     private apiService: ApiService,
     private jwtService: JwtService,
     private formBuilder: FormBuilder,
     private snackBar: MatSnackBar,
-    private dialogRef: MatDialogRef<InspectionsAddDialogComponent>
+    private dialogRef: MatDialogRef<InspectionsAddDialogComponent>,
+    @Inject(MAT_DIALOG_DATA)
+    public data: { idInspection: string; idTypeInspection: string }
   ) {}
 
   ngOnInit(): void {
+    if (this.data && this.data.idInspection) {
+      this.inspectionCreateID = this.data.idInspection;
+      this.inspectionType = this.data.idTypeInspection;
+      this.isLoading = false;
+      return;
+    }
+
     this.getInputsData();
     this.resetVehicleInfo();
     this.initForms();
@@ -210,6 +222,7 @@ export class InspectionsAddDialogComponent implements OnInit {
     };
 
     this.inspectionType = '';
+    this.showCompactView = false; // Resetear vista compacta
   }
 
   selectedOptionVehicle(event: MatAutocompleteSelectedEvent): void {
@@ -263,18 +276,17 @@ export class InspectionsAddDialogComponent implements OnInit {
       this.inspectionInfoForm.get('tipo_inspeccion')!.value;
 
     this.inspectionType = InspectionsSelectedType.tipo;
+    this.showCompactView = true; // Activar vista compacta
   }
 
   onSaveOrNext() {
     if (this.mainInspectionForm.invalid) {
-      console.log('El formulario completo es inválido.');
       this.openSnackbar('Por favor, completa los campos requeridos.');
 
       this.mainInspectionForm.markAllAsTouched();
       return;
     }
 
-    console.log(this.mainInspectionForm.value.vehicleState);
     const checklistItems: ChecklistItem[] =
       this.mainInspectionForm.value.vehicleState.checklistItems;
 
@@ -375,13 +387,10 @@ export class InspectionsAddDialogComponent implements OnInit {
 
     this.isLoading = true;
 
-    console.log('Datos a enviar:', newInspectionData);
-
     this.apiService
       .postData('inspections/create_inspection', newInspectionData)
       .subscribe(
         (response: InspectionCreateResponse) => {
-          console.log('Inspección creada con éxito:', response);
           this.inspectionCreateID = response.id;
           this.isLoading = false;
           this.openSnackbar('Inspección creada con éxito.');
@@ -391,7 +400,7 @@ export class InspectionsAddDialogComponent implements OnInit {
           this.openSnackbar(
             'Error al crear la inspección. Vuelve a intentarlo más tarde.'
           );
-          this.dialogRef.close();
+          this.closeDialog();
         }
       );
   }
@@ -402,16 +411,24 @@ export class InspectionsAddDialogComponent implements OnInit {
       this.takePhotosVehicleComponent.sendAllPhotos().subscribe({
         next: (response) => {
           this.openSnackbar('Todas las fotos se han subido con éxito.');
-          this.takePhotosVehicleComponent.clearPhotos();
-          this.dialogRef.close();
+          this.closeDialog('refresh');
         },
         error: (err) => {
           this.isLoading = false;
         },
-        complete: () => {
-          this.isLoading = false;
-        },
       });
     }
+  }
+
+  closeDialog(result?: string) {
+    if (this.takePhotosVehicleComponent) {
+      this.takePhotosVehicleComponent.stopCamera();
+    }
+
+    if (this.inspectionCreateID) {
+      result = 'refresh';
+    }
+    
+    this.dialogRef.close(result); 
   }
 }

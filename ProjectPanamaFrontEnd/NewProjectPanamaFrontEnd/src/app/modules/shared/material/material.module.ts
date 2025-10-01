@@ -22,6 +22,7 @@ import { ClipboardModule } from '@angular/cdk/clipboard';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatCardModule } from '@angular/material/card';
 import {MatTooltipModule} from '@angular/material/tooltip';
+import { MatChipsModule} from '@angular/material/chips';
 
 const materialModules = [
   MatFormFieldModule, 
@@ -46,7 +47,8 @@ const materialModules = [
   ClipboardModule,
   MatRadioModule,
   MatCardModule,
-  MatTooltipModule
+  MatTooltipModule,
+  MatChipsModule
 ]
 
 @NgModule({

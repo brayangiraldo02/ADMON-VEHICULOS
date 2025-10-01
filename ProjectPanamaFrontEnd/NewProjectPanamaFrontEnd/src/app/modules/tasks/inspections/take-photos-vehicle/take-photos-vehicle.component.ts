@@ -138,10 +138,8 @@ export class TakePhotosVehicleComponent implements OnInit, OnDestroy {
       .uploadPhoto('inspections/upload_images/' + this.inspectionId, formData)
       .pipe(
         tap((response) => {
-          console.log(response);
           this.uploadStatus =
             response.message || '¡Todas las fotos se han subido con éxito!';
-          console.log('Respuesta del servidor:', response);
           return true;
         }),
         catchError((err) => {
@@ -162,7 +160,7 @@ export class TakePhotosVehicleComponent implements OnInit, OnDestroy {
     this.photos = [];
   }
 
-  private stopCamera(): void {
+  stopCamera(): void {
     if (this.stream) {
       this.stream.getTracks().forEach((track) => track.stop());
       this.stream = null;
