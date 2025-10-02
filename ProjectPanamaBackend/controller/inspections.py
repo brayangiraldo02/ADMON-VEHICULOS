@@ -659,6 +659,7 @@ async def inspection_details(inspection_id: int):
       "placa": inspection.PLACA,
       "cupo": vehicle.NRO_CUPO if vehicle and vehicle.NRO_CUPO else "",
       "kilometraje": inspection.KILOMETRAJ if inspection.KILOMETRAJ else "",
+      "panapass": inspection.PANAPASS if inspection.PANAPASS else "",
       "observaciones": inspection.OBSERVA if inspection.OBSERVA else "",
       "estado_inspeccion": inspection.ESTADO,
       "alfombra": inspection.ALFOMBRA,
@@ -688,6 +689,143 @@ async def inspection_details(inspection_id: int):
     }
 
     return JSONResponse(content=jsonable_encoder(inspection_data), status_code=200)
+  except Exception as e:
+    return JSONResponse(content={"message": str(e)}, status_code=500)
+  finally:
+    db.close()
+
+#-----------------------------------------------------------------------------------------------
+async def generate_inspection_pdf(data: ReportInspection, company_code: str):
+  db = session()
+  try:
+    inspection = db.query(Inspecciones).filter(Inspecciones.ID == data.inspection_id, Inspecciones.EMPRESA == company_code).first()
+    if not inspection:
+      return JSONResponse(content={"message": "Inspection not found"}, status_code=404)
+    
+    inspections_types = db.query(TiposInspeccion).filter(TiposInspeccion.EMPRESA == inspection.EMPRESA).all()
+    inspections_dict = {insp.CODIGO: insp.NOMBRE for insp in inspections_types}
+
+    company_info = db.query(InfoEmpresas).filter(InfoEmpresas.ID == inspection.EMPRESA).first()
+
+    vehicle = db.query(Vehiculos).filter(Vehiculos.NUMERO == inspection.UNIDAD, Vehiculos.EMPRESA == inspection.EMPRESA).first()
+
+    fotos = []
+    for i in range(1, 17): 
+      foto_field = f"FOTO{i:02d}"
+      foto_value = getattr(inspection, foto_field, "")
+      if foto_value and foto_value.strip(): 
+        foto_url = f"{route_api}uploads/{foto_value}"
+        fotos.append(foto_url)
+    
+    inspection_data = {
+      "id": inspection.ID,
+      "empresa": company_info.NOMBRE if company_info else "",
+      "fecha": inspection.FECHA.strftime('%d-%m-%Y') if inspection.FECHA else None,
+      "hora": inspection.HORA.strftime('%H:%M') if inspection.HORA else None,
+      "propietario": inspection.PROPI_IDEN,
+      "nombre_propietario": inspection.NOMPROPI,
+      "conductor": inspection.CONDUCTOR,
+      "nombre_conductor": inspection.NOMCONDU,
+      "cedula_conductor": inspection.CEDULA,
+      "tipo_inspeccion": inspections_dict.get(inspection.TIPO_INSPEC, ""),
+      "descripcion": inspection.DESCRIPCION,
+      "unidad": inspection.UNIDAD,
+      "placa": inspection.PLACA,
+      "cupo": vehicle.NRO_CUPO if vehicle and vehicle.NRO_CUPO else "",
+      "kilometraje": inspection.KILOMETRAJ if inspection.KILOMETRAJ else "",
+      "panapass": inspection.PANAPASS if inspection.PANAPASS else "",
+      "observaciones": inspection.OBSERVA if inspection.OBSERVA else "",
+      "estado_inspeccion": inspection.ESTADO,
+      "alfombra": inspection.ALFOMBRA,
+      "antena": inspection.ANTENA,
+      "caratradio": inspection.CARATRADIO,
+      "copasrines": inspection.COPASRINES,
+      "extinguidor": inspection.EXTINGUIDOR,
+      "formatocolis": inspection.FORMACOLIS,
+      "gato": inspection.GATO,
+      "gps": inspection.GPS,
+      "lamparas": inspection.LAMPARAS,
+      "llantarepu": inspection.LLANTAREPU,
+      "luzdelante": inspection.LUZDELANTE,
+      "luztracera": inspection.LUZTRACERA,
+      "pagomunici": inspection.PAGOMUNICI,
+      "pipa": inspection.PIPA,
+      "placamunic": inspection.PLACAMUNIC,
+      "poliseguro": inspection.POLISEGURO,
+      "regisvehic": inspection.REGISVEHIC,
+      "retrovisor": inspection.RETROVISOR,
+      "revisado": inspection.REVISADO,
+      "tapiceria": inspection.TAPICERIA,
+      "triangulo": inspection.TRIANGULO,
+      "vidrios": inspection.VIDRIOS,
+      "usuario": inspection.USUARIO if inspection.USUARIO else "",
+      "fotos": fotos,
+    }
+
+    user = db.query(PermisosUsuario).filter(PermisosUsuario.CODIGO == data.user).first()
+    user = user.NOMBRE if user else ""
+
+    # Datos de la fecha y hora actual
+    # Define la zona horaria de Ciudad de Panamá
+    panama_timezone = pytz.timezone('America/Panama')
+    # Obtén la hora actual en la zona horaria de Ciudad de Panamá
+    now_in_panama = datetime.now(panama_timezone)
+    # Formatea la fecha y la hora según lo requerido
+    fecha = now_in_panama.strftime("%d/%m/%Y")
+    hora_actual = now_in_panama.strftime("%I:%M:%S %p")
+
+    titulo = 'Inspección de vehículo'
+    data_view = {
+      'inspection': inspection_data,
+      'fecha': fecha,
+      'hora': hora_actual,
+      'usuario': user if user else "",
+      'titulo': titulo
+    }
+
+    headers = {
+      "Content-Disposition": "attachment; filename=inspeccion.pdf"
+    }
+
+    template_loader = jinja2.FileSystemLoader(searchpath="./templates")
+    template_env = jinja2.Environment(loader=template_loader)
+    header_file = "header.html"
+    footer_file = "footer.html"
+    template = template_env.get_template("Inspecciones.html")
+    header = template_env.get_template(header_file)
+    footer = template_env.get_template(footer_file)
+    output_text = template.render(data_view=data_view)
+    output_header = header.render(data_view=data_view)
+    output_footer = footer.render(data_view=data_view)
+
+    with tempfile.NamedTemporaryFile(delete=False, suffix='.html', mode='w') as html_file:
+      html_path = html_file.name
+      html_file.write(output_text)
+    with tempfile.NamedTemporaryFile(delete=False, suffix='.html', mode='w') as header_file:
+      header_path = header_file.name
+      header_file.write(output_header)
+    with tempfile.NamedTemporaryFile(delete=False, suffix='.html', mode='w') as footer_file:
+      footer_path = footer_file.name
+      footer_file.write(output_footer)
+    pdf_path = tempfile.NamedTemporaryFile(delete=False, suffix='.pdf').name
+
+    html2pdf(titulo, html_path, pdf_path, header_path=header_path, footer_path=footer_path)
+
+    background_tasks = BackgroundTasks()
+    background_tasks.add_task(os.remove, html_path)
+    background_tasks.add_task(os.remove, header_path)
+    background_tasks.add_task(os.remove, footer_path)
+    background_tasks.add_task(os.remove, pdf_path)
+
+    response = FileResponse(
+        pdf_path, 
+        media_type='application/pdf', 
+        filename='templates/inspeccion.pdf', 
+        headers=headers,
+        background=background_tasks
+      )
+
+    return response
   except Exception as e:
     return JSONResponse(content={"message": str(e)}, status_code=500)
   finally:

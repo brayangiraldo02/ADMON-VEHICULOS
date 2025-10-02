@@ -47,3 +47,7 @@ class NewInspection(BaseModel):
   panapass: str 
   description: str
   nota: str
+
+class ReportInspection(BaseModel):
+  user: str
+  inspection_id: int

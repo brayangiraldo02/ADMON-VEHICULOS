@@ -47,3 +47,7 @@ async def post_download_image(request: DownloadImageRequest):
 @inspections_router.get("/inspections/inspection_details/{inspection_id}/", tags=["Inspections"])
 async def get_inspection_details(inspection_id: int):
     return await inspection_details(inspection_id)
+
+@inspections_router.post("/inspections/generate_inspection_pdf/{company_code}/", tags=["Inspections"])
+async def post_generate_inspection_pdf(data: ReportInspection, company_code: str):
+    return await generate_inspection_pdf(data, company_code)
