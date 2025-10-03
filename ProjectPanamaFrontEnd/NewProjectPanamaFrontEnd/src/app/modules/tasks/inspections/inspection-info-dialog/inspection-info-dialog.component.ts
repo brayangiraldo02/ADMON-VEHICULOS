@@ -25,6 +25,8 @@ export interface InspectionData {
   kilometraje: string;
   cupo: string;
   observaciones: string;
+  panapass: string;
+  combustible: string;
   estado_inspeccion: string;
   usuario: string;
   fotos: string[];

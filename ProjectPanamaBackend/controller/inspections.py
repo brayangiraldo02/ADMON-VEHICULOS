@@ -673,6 +673,7 @@ async def inspection_details(inspection_id: int):
       "cupo": vehicle.NRO_CUPO if vehicle and vehicle.NRO_CUPO else "",
       "kilometraje": inspection.KILOMETRAJ if inspection.KILOMETRAJ else "",
       "panapass": inspection.PANAPASS if inspection.PANAPASS else "",
+      "combustible": inspection.COMBUSTIBLE if inspection.COMBUSTIBLE else "",
       "observaciones": inspection.OBSERVA if inspection.OBSERVA else "",
       "estado_inspeccion": inspection.ESTADO,
       "alfombra": inspection.ALFOMBRA,
