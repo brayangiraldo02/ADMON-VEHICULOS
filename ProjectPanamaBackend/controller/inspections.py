@@ -606,6 +606,79 @@ async def create_inspection(data: NewInspection):
 
 #-----------------------------------------------------------------------------------------------
 
+async def update_inspection(data: UpdateInspection):
+  db = session()
+  try:
+    inspection = db.query(Inspecciones).filter(Inspecciones.ID == data.inspection_id).first()
+    
+    if not inspection:
+      return JSONResponse(content={"message": "Inspección no encontrada"}, status_code=404)
+    
+    # Verificar que la inspección esté en estado PENDIENTE
+    if inspection.ESTADO != "PEN":
+      return JSONResponse(content={"message": "Solo se pueden editar inspecciones PENDIENTES"}, status_code=400)
+    
+    # Verificar que el usuario sea el creador de la inspección
+    if inspection.USUARIO != data.user:
+      return JSONResponse(content={"message": "No tienes permiso para editar esta inspección"}, status_code=403)
+    
+    # Actualizar los campos de la inspección
+    inspection.KILOMETRAJ = data.mileage
+    inspection.TIPO_INSPEC = data.inspection_type
+    inspection.ALFOMBRA = bool(data.alfombra)
+    inspection.COPASRINES = bool(data.copas_rines)
+    inspection.EXTINGUIDOR = bool(data.extinguidor)
+    inspection.ANTENA = bool(data.antena)
+    inspection.LAMPARAS = bool(data.lamparas)
+    inspection.TRIANGULO = bool(data.triangulo)
+    inspection.GATO = bool(data.gato)
+    inspection.PIPA = bool(data.pipa)
+    inspection.PLACAMUNIC = bool(data.placa_municipal)
+    inspection.CARATRADIO = bool(data.caratula_radio)
+    inspection.REGISVEHIC = bool(data.registro_vehiculo)
+    inspection.REVISADO = bool(data.revisado)
+    inspection.PAGOMUNICI = bool(data.pago_municipio)
+    inspection.FORMACOLIS = bool(data.formato_colisiones_menores)
+    inspection.POLISEGURO = bool(data.poliza_seguros)
+    inspection.LUZDELANTE = bool(data.luces_delanteras)
+    inspection.LUZTRACERA = bool(data.luces_traseras)
+    inspection.VIDRIOS = bool(data.vidrios)
+    inspection.RETROVISOR = bool(data.retrovisor)
+    inspection.TAPICERIA = bool(data.tapiceria)
+    inspection.GPS = bool(data.gps)
+    inspection.LLANTAREPU = bool(data.llanta_repuesto)
+    inspection.COMBUSTIBLE = data.combustible
+    inspection.PANAPASS = data.panapass
+    inspection.DESCRIPCION = data.description
+    inspection.OBSERVA = data.nota
+    
+    # Actualizar kilometraje del vehículo si es mayor
+    vehicle = db.query(Vehiculos).filter(
+      Vehiculos.NUMERO == inspection.UNIDAD,
+      Vehiculos.EMPRESA == inspection.EMPRESA
+    ).first()
+    
+    if vehicle and data.mileage and (vehicle.KILOMETRAJ is None or data.mileage > vehicle.KILOMETRAJ):
+      vehicle.KILO_ANTES = vehicle.KILOMETRAJ
+      vehicle.KILOMETRAJ = data.mileage
+      db.add(vehicle)
+    
+    db.commit()
+    db.refresh(inspection)
+    
+    return JSONResponse(content={
+      "message": "Inspección actualizada exitosamente",
+      "id": inspection.ID
+    }, status_code=200)
+    
+  except Exception as e:
+    db.rollback()
+    return JSONResponse(content={"message": str(e)}, status_code=500)
+  finally:
+    db.close()
+
+#-----------------------------------------------------------------------------------------------
+
 async def download_image_by_url(image_url: str):
   try:
     if "/uploads/" not in image_url:

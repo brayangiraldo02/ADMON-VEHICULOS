@@ -1,5 +1,5 @@
 from fastapi import APIRouter, UploadFile, File
-from schemas.inspections import InspectionInfo, DownloadImageRequest
+from schemas.inspections import InspectionInfo, DownloadImageRequest, NewInspection, UpdateInspection
 from controller.inspections import *
 
 inspections_router = APIRouter()
@@ -39,6 +39,10 @@ async def get_new_inspection_data(company_code: str, vehicle_number: str):
 @inspections_router.post("/inspections/create_inspection/", tags=["Inspections"])
 async def post_create_inspection(data: NewInspection):
     return await create_inspection(data)
+
+@inspections_router.put("/inspections/update_inspection/", tags=["Inspections"])
+async def put_update_inspection(data: UpdateInspection):
+    return await update_inspection(data)
 
 @inspections_router.post("/inspections/download_image/", tags=["Inspections"])
 async def post_download_image(request: DownloadImageRequest):

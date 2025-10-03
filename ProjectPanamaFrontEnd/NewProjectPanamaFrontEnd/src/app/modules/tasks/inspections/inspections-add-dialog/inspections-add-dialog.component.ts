@@ -10,7 +10,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { map, Observable, startWith } from 'rxjs';
+import { map, Observable, startWith, forkJoin } from 'rxjs';
 import { ApiService } from 'src/app/services/api.service';
 import { JwtService } from 'src/app/services/jwt.service';
 import { VehicleStatesFormComponent } from '../inspections-forms/vehicle-states-form/vehicle-states-form.component';
@@ -102,6 +102,10 @@ export class InspectionsAddDialogComponent implements OnInit {
 
   showCompactView: boolean = false;
 
+  isEditMode: boolean = false;
+  inspectionData: any = null;
+  wasEdited: boolean = false;
+
   constructor(
     private apiService: ApiService,
     private jwtService: JwtService,
@@ -114,20 +118,219 @@ export class InspectionsAddDialogComponent implements OnInit {
 
   ngOnInit(): void {
     if (this.data && this.data.idInspection) {
+      // Si hay idTypeInspection, significa que solo quiere subir fotos (flujo antiguo)
+      if (this.data.idTypeInspection) {
+        this.inspectionCreateID = this.data.idInspection;
+        this.inspectionType = this.data.idTypeInspection;
+        this.isLoading = false;
+        return;
+      }
+      
+      // Si no hay idTypeInspection, es modo edición (nuevo flujo)
+      this.isEditMode = true;
       this.inspectionCreateID = this.data.idInspection;
-      this.inspectionType = this.data.idTypeInspection;
-      this.isLoading = false;
-      return;
+      this.loadInspectionData(this.data.idInspection);
+    } else {
+      // Modo creación
+      this.getInputsData();
+      this.resetVehicleInfo();
+      this.initForms();
     }
-
-    this.getInputsData();
-    this.resetVehicleInfo();
-    this.initForms();
   }
 
   getInputsData() {
     this.getDataVehicles();
     this.getInspectionTypes();
+  }
+
+  loadInspectionData(inspectionId: string) {
+    this.isLoading = true;
+    this.resetVehicleInfo();
+    this.initForms();
+    
+    const company = this.getCompany();
+    
+    // Cargar datos en paralelo usando forkJoin
+    forkJoin({
+      vehicles: this.apiService.getData('inspections/vehicles_data/' + company),
+      inspectionTypes: this.apiService.getData('inspections/inspection_types/' + company),
+      inspectionData: this.apiService.getData('inspections/inspection_details/' + inspectionId)
+    }).subscribe(
+      (results: any) => {
+        // Guardar vehículos
+        this.vehicles = [...results.vehicles];
+        this.optionsVehicles = this.inspectionInfoForm
+          .get('vehiculo')!
+          .valueChanges.pipe(
+            startWith(''),
+            map((value) => this._filterVehicles(value || ''))
+          );
+        
+        // Guardar tipos de inspección
+        this.inspectionTypes = [...results.inspectionTypes];
+        
+        // Guardar datos de inspección
+        this.inspectionData = results.inspectionData;
+        
+        // Ahora sí, poblar el formulario con los datos
+        this.populateFormWithInspectionData(results.inspectionData);
+        
+        this.isLoading = false;
+      },
+      (error) => {
+        console.error('Error al cargar datos de inspección:', error);
+        this.openSnackbar('Error al cargar los datos de la inspección.');
+        this.isLoading = false;
+        this.closeDialog();
+      }
+    );
+  }
+
+  populateFormWithInspectionData(data: any) {
+    // Precargar información del vehículo
+    this.vehicleInfo = {
+      numero: data.unidad,
+      marca: '',
+      modelo: '',
+      placa: data.placa,
+      estado_vehiculo: '',
+      cupo: data.cupo,
+      conductor_nombre: data.nombre_conductor,
+      conductor_codigo: data.conductor,
+      conductor_celular: '',
+      kilometraje: data.kilometraje,
+      fecha_inspeccion: data.fecha,
+      hora_inspeccion: data.hora,
+      panapass: data.panapass,
+    };
+
+    // Buscar el vehículo en la lista de vehículos para preseleccionarlo
+    const vehicleMatch = this.vehicles.find(
+      (v) => v.numero_unidad === data.unidad
+    );
+
+    if (vehicleMatch) {
+      this.inspectionInfoForm.patchValue({
+        vehiculo: vehicleMatch,
+      });
+      this.selectedVehicle = true;
+    }
+
+    // Buscar el tipo de inspección para preseleccionarlo
+    const inspectionTypeMatch = this.inspectionTypes.find(
+      (t) => t.nombre === data.tipo_inspeccion
+    );
+
+    if (inspectionTypeMatch) {
+      this.inspectionInfoForm.patchValue({
+        tipo_inspeccion: inspectionTypeMatch,
+      });
+      this.inspectionType = inspectionTypeMatch.tipo;
+    }
+
+    // Activar vista compacta
+    this.showCompactView = true;
+
+    // Esperar a que el formulario de estados del vehículo esté listo
+    setTimeout(() => {
+      if (this.mainInspectionForm.get('vehicleState')) {
+        const vehicleStateForm = this.mainInspectionForm.get('vehicleState');
+
+        // Precargar valores del formulario de estados
+        vehicleStateForm?.patchValue({
+          combustible: data.combustible,
+          kilometraje: data.kilometraje,
+          panapass: data.panapass,
+          descripcion: data.descripcion,
+          nota: data.observaciones,
+        });
+
+        // Precargar checklist items
+        const checklistArray = vehicleStateForm?.get('checklistItems') as any;
+        if (checklistArray && checklistArray.controls) {
+          checklistArray.controls.forEach((control: any, index: number) => {
+            const itemId = control.get('id')?.value;
+            let value = null;
+
+            switch (itemId) {
+              case 'alfombra':
+                value = data.alfombra;
+                break;
+              case 'antena':
+                value = data.antena;
+                break;
+              case 'caratula_radio':
+                value = data.caratradio;
+                break;
+              case 'copas':
+                value = false; // No existe en el modelo
+                break;
+              case 'copas_rines':
+                value = data.copasrines;
+                break;
+              case 'extinguidor':
+                value = data.extinguidor;
+                break;
+              case 'formato_colisiones_menores':
+                value = data.formatocolis;
+                break;
+              case 'gato':
+                value = data.gato;
+                break;
+              case 'gps':
+                value = data.gps;
+                break;
+              case 'lamparas':
+                value = data.lamparas;
+                break;
+              case 'llanta_repuesto':
+                value = data.llantarepu;
+                break;
+              case 'luces_delanteras':
+                value = data.luzdelante;
+                break;
+              case 'luces_traseras':
+                value = data.luztracera;
+                break;
+              case 'pago_municipio':
+                value = data.pagomunici;
+                break;
+              case 'pipa':
+                value = data.pipa;
+                break;
+              case 'placa_municipal':
+                value = data.placamunic;
+                break;
+              case 'poliza_seguro':
+                value = data.poliseguro;
+                break;
+              case 'registro_vehiculo':
+                value = data.regisvehic;
+                break;
+              case 'retrovisor':
+                value = data.retrovisor;
+                break;
+              case 'revisado':
+                value = data.revisado;
+                break;
+              case 'tapiceria':
+                value = data.tapiceria;
+                break;
+              case 'triangulo':
+                value = data.triangulo;
+                break;
+              case 'vidrios':
+                value = data.vidrios;
+                break;
+            }
+
+            if (value !== null) {
+              control.patchValue({ value: value });
+            }
+          });
+        }
+      }
+    }, 500);
   }
 
   initForms(): void {
@@ -290,119 +493,250 @@ export class InspectionsAddDialogComponent implements OnInit {
     const checklistItems: ChecklistItem[] =
       this.mainInspectionForm.value.vehicleState.checklistItems;
 
-    const newInspectionData = {
-      user: this.jwtService.getUserData()?.id,
-      company_code: this.getCompany(),
-      vehicle_number: this.vehicleInfo.numero,
-      mileage: this.mainInspectionForm.value.vehicleState.kilometraje || 0,
-      inspection_type:
-        this.mainInspectionForm.value.inspectionInfo.tipo_inspeccion.id,
-      inspection_date: this.vehicleInfo.fecha_inspeccion,
-      inspection_time: this.vehicleInfo.hora_inspeccion,
-      alfombra: checklistItems.find((item) => item.id === 'alfombra')?.value
-        ? 1
-        : 0,
-      copas_rines: checklistItems.find((item) => item.id === 'copas_rines')
-        ?.value
-        ? 1
-        : 0,
-      extinguidor: checklistItems.find((item) => item.id === 'extinguidor')
-        ?.value
-        ? 1
-        : 0,
-      antena: checklistItems.find((item) => item.id === 'antena')?.value
-        ? 1
-        : 0,
-      lamparas: checklistItems.find((item) => item.id === 'lamparas')?.value
-        ? 1
-        : 0,
-      triangulo: checklistItems.find((item) => item.id === 'triangulo')?.value
-        ? 1
-        : 0,
-      gato: checklistItems.find((item) => item.id === 'gato')?.value ? 1 : 0,
-      pipa: checklistItems.find((item) => item.id === 'pipa')?.value ? 1 : 0,
-      copas: checklistItems.find((item) => item.id === 'copas')?.value ? 1 : 0,
-      llanta_repuesto: checklistItems.find(
-        (item) => item.id === 'llanta_repuesto'
-      )?.value
-        ? 1
-        : 0,
-      placa_municipal: checklistItems.find(
-        (item) => item.id === 'placa_municipal'
-      )?.value
-        ? 1
-        : 0,
-      caratula_radio: checklistItems.find(
-        (item) => item.id === 'caratula_radio'
-      )?.value
-        ? 1
-        : 0,
-      registro_vehiculo: checklistItems.find(
-        (item) => item.id === 'registro_vehiculo'
-      )?.value
-        ? 1
-        : 0,
-      revisado: checklistItems.find((item) => item.id === 'revisado')?.value
-        ? 1
-        : 0,
-      pago_municipio: checklistItems.find(
-        (item) => item.id === 'pago_municipio'
-      )?.value
-        ? 1
-        : 0,
-      formato_colisiones_menores: checklistItems.find(
-        (item) => item.id === 'formato_colisiones_menores'
-      )?.value
-        ? 1
-        : 0,
-      poliza_seguros: checklistItems.find((item) => item.id === 'poliza_seguro')
-        ?.value
-        ? 1
-        : 0,
-      luces_delanteras: checklistItems.find(
-        (item) => item.id === 'luces_delanteras'
-      )?.value
-        ? 1
-        : 0,
-      luces_traseras: checklistItems.find(
-        (item) => item.id === 'luces_traseras'
-      )?.value
-        ? 1
-        : 0,
-      vidrios: checklistItems.find((item) => item.id === 'vidrios')?.value
-        ? 1
-        : 0,
-      retrovisor: checklistItems.find((item) => item.id === 'retrovisor')?.value
-        ? 1
-        : 0,
-      tapiceria: checklistItems.find((item) => item.id === 'tapiceria')?.value
-        ? 1
-        : 0,
-      gps: checklistItems.find((item) => item.id === 'gps')?.value ? 1 : 0,
-      combustible: this.mainInspectionForm.value.vehicleState.combustible || '',
-      panapass: this.mainInspectionForm.value.vehicleState.panapass || '',
-      description: this.mainInspectionForm.value.vehicleState.descripcion || '',
-      nota: this.mainInspectionForm.value.vehicleState.nota || '',
-    };
+    if (this.isEditMode) {
+      // Modo edición
+      const updateInspectionData = {
+        inspection_id: parseInt(this.inspectionCreateID),
+        user: this.jwtService.getUserData()?.id,
+        mileage: this.mainInspectionForm.value.vehicleState.kilometraje || 0,
+        inspection_type:
+          this.mainInspectionForm.value.inspectionInfo.tipo_inspeccion.id,
+        alfombra: checklistItems.find((item) => item.id === 'alfombra')?.value
+          ? 1
+          : 0,
+        copas_rines: checklistItems.find((item) => item.id === 'copas_rines')
+          ?.value
+          ? 1
+          : 0,
+        extinguidor: checklistItems.find((item) => item.id === 'extinguidor')
+          ?.value
+          ? 1
+          : 0,
+        antena: checklistItems.find((item) => item.id === 'antena')?.value
+          ? 1
+          : 0,
+        lamparas: checklistItems.find((item) => item.id === 'lamparas')?.value
+          ? 1
+          : 0,
+        triangulo: checklistItems.find((item) => item.id === 'triangulo')?.value
+          ? 1
+          : 0,
+        gato: checklistItems.find((item) => item.id === 'gato')?.value ? 1 : 0,
+        pipa: checklistItems.find((item) => item.id === 'pipa')?.value ? 1 : 0,
+        copas: checklistItems.find((item) => item.id === 'copas')?.value
+          ? 1
+          : 0,
+        llanta_repuesto: checklistItems.find(
+          (item) => item.id === 'llanta_repuesto'
+        )?.value
+          ? 1
+          : 0,
+        placa_municipal: checklistItems.find(
+          (item) => item.id === 'placa_municipal'
+        )?.value
+          ? 1
+          : 0,
+        caratula_radio: checklistItems.find(
+          (item) => item.id === 'caratula_radio'
+        )?.value
+          ? 1
+          : 0,
+        registro_vehiculo: checklistItems.find(
+          (item) => item.id === 'registro_vehiculo'
+        )?.value
+          ? 1
+          : 0,
+        revisado: checklistItems.find((item) => item.id === 'revisado')?.value
+          ? 1
+          : 0,
+        pago_municipio: checklistItems.find(
+          (item) => item.id === 'pago_municipio'
+        )?.value
+          ? 1
+          : 0,
+        formato_colisiones_menores: checklistItems.find(
+          (item) => item.id === 'formato_colisiones_menores'
+        )?.value
+          ? 1
+          : 0,
+        poliza_seguros: checklistItems.find(
+          (item) => item.id === 'poliza_seguro'
+        )?.value
+          ? 1
+          : 0,
+        luces_delanteras: checklistItems.find(
+          (item) => item.id === 'luces_delanteras'
+        )?.value
+          ? 1
+          : 0,
+        luces_traseras: checklistItems.find(
+          (item) => item.id === 'luces_traseras'
+        )?.value
+          ? 1
+          : 0,
+        vidrios: checklistItems.find((item) => item.id === 'vidrios')?.value
+          ? 1
+          : 0,
+        retrovisor: checklistItems.find((item) => item.id === 'retrovisor')
+          ?.value
+          ? 1
+          : 0,
+        tapiceria: checklistItems.find((item) => item.id === 'tapiceria')?.value
+          ? 1
+          : 0,
+        gps: checklistItems.find((item) => item.id === 'gps')?.value ? 1 : 0,
+        combustible:
+          this.mainInspectionForm.value.vehicleState.combustible || '',
+        panapass: this.mainInspectionForm.value.vehicleState.panapass || '',
+        description:
+          this.mainInspectionForm.value.vehicleState.descripcion || '',
+        nota: this.mainInspectionForm.value.vehicleState.nota || '',
+      };
 
-    this.isLoading = true;
+      this.isLoading = true;
 
-    this.apiService
-      .postData('inspections/create_inspection', newInspectionData)
-      .subscribe(
-        (response: InspectionCreateResponse) => {
-          this.inspectionCreateID = response.id;
-          this.isLoading = false;
-          this.openSnackbar('Inspección creada con éxito.');
-        },
-        (error) => {
-          console.error('Error al crear la inspección:', error);
-          this.openSnackbar(
-            'Error al crear la inspección. Vuelve a intentarlo más tarde.'
-          );
-          this.closeDialog();
-        }
-      );
+      this.apiService
+        .updateData('inspections/update_inspection', updateInspectionData)
+        .subscribe(
+          (response: any) => {
+            this.isLoading = false;
+            this.openSnackbar('Inspección actualizada con éxito. Ahora puedes subir las fotos.');
+            // Cambiar a modo de subir fotos
+            this.isEditMode = false;
+            this.wasEdited = true;
+            // El inspectionCreateID ya tiene el valor correcto
+          },
+          (error: any) => {
+            console.error('Error al actualizar la inspección:', error);
+            this.openSnackbar(
+              error.error?.message ||
+                'Error al actualizar la inspección. Vuelve a intentarlo más tarde.'
+            );
+            this.isLoading = false;
+          }
+        );
+    } else {
+      // Modo creación
+      const newInspectionData = {
+        user: this.jwtService.getUserData()?.id,
+        company_code: this.getCompany(),
+        vehicle_number: this.vehicleInfo.numero,
+        mileage: this.mainInspectionForm.value.vehicleState.kilometraje || 0,
+        inspection_type:
+          this.mainInspectionForm.value.inspectionInfo.tipo_inspeccion.id,
+        inspection_date: this.vehicleInfo.fecha_inspeccion,
+        inspection_time: this.vehicleInfo.hora_inspeccion,
+        alfombra: checklistItems.find((item) => item.id === 'alfombra')?.value
+          ? 1
+          : 0,
+        copas_rines: checklistItems.find((item) => item.id === 'copas_rines')
+          ?.value
+          ? 1
+          : 0,
+        extinguidor: checklistItems.find((item) => item.id === 'extinguidor')
+          ?.value
+          ? 1
+          : 0,
+        antena: checklistItems.find((item) => item.id === 'antena')?.value
+          ? 1
+          : 0,
+        lamparas: checklistItems.find((item) => item.id === 'lamparas')?.value
+          ? 1
+          : 0,
+        triangulo: checklistItems.find((item) => item.id === 'triangulo')?.value
+          ? 1
+          : 0,
+        gato: checklistItems.find((item) => item.id === 'gato')?.value ? 1 : 0,
+        pipa: checklistItems.find((item) => item.id === 'pipa')?.value ? 1 : 0,
+        copas: checklistItems.find((item) => item.id === 'copas')?.value
+          ? 1
+          : 0,
+        llanta_repuesto: checklistItems.find(
+          (item) => item.id === 'llanta_repuesto'
+        )?.value
+          ? 1
+          : 0,
+        placa_municipal: checklistItems.find(
+          (item) => item.id === 'placa_municipal'
+        )?.value
+          ? 1
+          : 0,
+        caratula_radio: checklistItems.find(
+          (item) => item.id === 'caratula_radio'
+        )?.value
+          ? 1
+          : 0,
+        registro_vehiculo: checklistItems.find(
+          (item) => item.id === 'registro_vehiculo'
+        )?.value
+          ? 1
+          : 0,
+        revisado: checklistItems.find((item) => item.id === 'revisado')?.value
+          ? 1
+          : 0,
+        pago_municipio: checklistItems.find(
+          (item) => item.id === 'pago_municipio'
+        )?.value
+          ? 1
+          : 0,
+        formato_colisiones_menores: checklistItems.find(
+          (item) => item.id === 'formato_colisiones_menores'
+        )?.value
+          ? 1
+          : 0,
+        poliza_seguros: checklistItems.find(
+          (item) => item.id === 'poliza_seguro'
+        )?.value
+          ? 1
+          : 0,
+        luces_delanteras: checklistItems.find(
+          (item) => item.id === 'luces_delanteras'
+        )?.value
+          ? 1
+          : 0,
+        luces_traseras: checklistItems.find(
+          (item) => item.id === 'luces_traseras'
+        )?.value
+          ? 1
+          : 0,
+        vidrios: checklistItems.find((item) => item.id === 'vidrios')?.value
+          ? 1
+          : 0,
+        retrovisor: checklistItems.find((item) => item.id === 'retrovisor')
+          ?.value
+          ? 1
+          : 0,
+        tapiceria: checklistItems.find((item) => item.id === 'tapiceria')?.value
+          ? 1
+          : 0,
+        gps: checklistItems.find((item) => item.id === 'gps')?.value ? 1 : 0,
+        combustible:
+          this.mainInspectionForm.value.vehicleState.combustible || '',
+        panapass: this.mainInspectionForm.value.vehicleState.panapass || '',
+        description:
+          this.mainInspectionForm.value.vehicleState.descripcion || '',
+        nota: this.mainInspectionForm.value.vehicleState.nota || '',
+      };
+
+      this.isLoading = true;
+
+      this.apiService
+        .postData('inspections/create_inspection', newInspectionData)
+        .subscribe(
+          (response: InspectionCreateResponse) => {
+            this.inspectionCreateID = response.id;
+            this.isLoading = false;
+            this.openSnackbar('Inspección creada con éxito.');
+          },
+          (error) => {
+            console.error('Error al crear la inspección:', error);
+            this.openSnackbar(
+              'Error al crear la inspección. Vuelve a intentarlo más tarde.'
+            );
+            this.closeDialog();
+          }
+        );
+    }
   }
 
   uploadImages() {
@@ -425,7 +759,8 @@ export class InspectionsAddDialogComponent implements OnInit {
       this.takePhotosVehicleComponent.stopCamera();
     }
 
-    if (this.inspectionCreateID) {
+    // Refrescar si se creó una inspección o si se editó
+    if (this.inspectionCreateID || this.wasEdited) {
       result = 'refresh';
     }
     

@@ -633,7 +633,7 @@ export class InspectionsTableComponent implements OnInit, AfterViewInit {
       width: dialogWidth,
       data: {
         idInspection: inspection.id,
-        idTypeInspection: inspection.Id_Tipo,
+        // No pasamos idTypeInspection para activar el modo edición
       },
       disableClose: true,
     });
