@@ -208,7 +208,7 @@
                 mat-icon-button
                 color="primary"
                 matTooltip="Editar inspección"
-                *ngIf="row.Estado == 'PEN'"
+                *ngIf="row.PuedeEditar === 1"
                 (click)="openUploadImagesDialog(row)"
               >
                 <mat-icon>edit</mat-icon>

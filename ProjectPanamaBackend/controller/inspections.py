@@ -180,19 +180,6 @@ async def inspections_info(data: InspectionInfo, company_code: str):
 
     await update_expired_inspections(db, inspections_list=inspections)
 
-    filtered_inspections = []
-    for inspection in inspections:
-      if inspection.ESTADO == "PEN":
-        if data.usuario and inspection.USUARIO == data.usuario:
-          filtered_inspections.append(inspection)
-      else:
-        filtered_inspections.append(inspection)
-
-    inspections = filtered_inspections
-
-    if not inspections:
-      return JSONResponse(content={"message": "No inspections found"}, status_code=404)
-
     inspections_types = db.query(TiposInspeccion).filter(TiposInspeccion.EMPRESA == company_code).all()
 
     inspections_dict = {inspection.CODIGO: inspection.NOMBRE for inspection in inspections_types}
@@ -212,6 +199,8 @@ async def inspections_info(data: InspectionInfo, company_code: str):
           foto_url = f"{route_api}uploads/{foto_value}"
           fotos.append(foto_url)
       
+      puede_editar = 1 if (inspection.ESTADO == "PEN" and data.usuario and inspection.USUARIO == data.usuario) else 0
+      
       inspections_data.append({
         "id": inspection.ID,
         "fecha_hora": inspection.FECHA.strftime('%d-%m-%Y') + ' ' + inspection.HORA.strftime('%H:%M') if inspection.FECHA and inspection.HORA else None,
@@ -224,6 +213,7 @@ async def inspections_info(data: InspectionInfo, company_code: str):
         "cupo": vehicles_dict.get(inspection.UNIDAD, ""),
         "nombre_usuario": inspection.USUARIO,
         "estado_inspeccion": inspection.ESTADO,
+        "puede_editar": puede_editar,
         "fotos": fotos
       })
 

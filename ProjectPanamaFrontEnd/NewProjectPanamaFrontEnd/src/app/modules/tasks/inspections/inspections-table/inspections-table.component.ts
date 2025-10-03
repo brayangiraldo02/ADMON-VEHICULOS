@@ -48,6 +48,7 @@ export interface InspectionsInfoData {
   Cupo: string;
   Usuario: string;
   Estado: string;
+  PuedeEditar: number;
   Fotos: string[];
 }
 
@@ -62,6 +63,7 @@ export interface apiResponse {
   cupo: string;
   nombre_usuario: string;
   estado_inspeccion: string;
+  puede_editar: number;
   fotos: string[];
 }
 
@@ -472,6 +474,7 @@ export class InspectionsTableComponent implements OnInit, AfterViewInit {
             Cupo: item.cupo,
             Usuario: item.nombre_usuario,
             Estado: item.estado_inspeccion,
+            PuedeEditar: item.puede_editar,
             Fotos: item.fotos || [],
           }));
 
@@ -616,9 +619,9 @@ export class InspectionsTableComponent implements OnInit, AfterViewInit {
   }
 
   openUploadImagesDialog(inspection: InspectionsInfoData) {
-    if (inspection.Estado !== 'PEN') {
+    if (inspection.PuedeEditar !== 1) {
       this.openSnackbar(
-        'Solo se pueden subir fotos a inspecciones PENDIENTES.'
+        'Solo puedes editar inspecciones PENDIENTES creadas por ti.'
       );
       return;
     }
