@@ -233,14 +233,14 @@
                 <mat-icon>image</mat-icon>
               </button>
 
-              <!-- TODO: Integrar documento -->
-              <!-- <button
+              <button
                 mat-icon-button
                 matTooltip="Ver documento"
                 *ngIf="row.Estado == 'FIN'"
+                (click)="openDocumentPDF(row.id)"
               >
                 <mat-icon>description</mat-icon>
-              </button> -->
+              </button>
             </div>
           </td>
         </ng-container>

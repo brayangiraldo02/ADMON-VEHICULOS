@@ -670,4 +670,21 @@ export class InspectionsTableComponent implements OnInit, AfterViewInit {
       }
     });
   }
+
+  openDocumentPDF(inspectionId: string) {
+    const user = this.getUserId();
+    const company = this.getCompany();
+
+    const data = {
+      user: user,
+      inspection_id: inspectionId,
+    }
+
+    const endpoint = 'inspections/generate_inspection_pdf/' + company;
+
+    localStorage.setItem('pdfEndpoint', endpoint);
+    localStorage.setItem('pdfData', JSON.stringify(data));
+    window.open(`/pdf`, '_blank');
+  }
 }
+
