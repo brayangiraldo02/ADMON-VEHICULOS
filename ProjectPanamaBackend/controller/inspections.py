@@ -173,7 +173,7 @@ async def inspections_info(data: InspectionInfo, company_code: str):
     if data.conductor != '':
         filters.append(Inspecciones.CONDUCTOR == data.conductor)
 
-    inspections = db.query(Inspecciones).filter(*filters).all()
+    inspections = db.query(Inspecciones).filter(*filters).order_by(Inspecciones.FECHA.desc(), Inspecciones.HORA.desc()).all()
 
     if not inspections:
       return JSONResponse(content={"message": "No inspections found"}, status_code=404)
@@ -302,7 +302,7 @@ async def report_inspections(data, company_code: str):
     if data.conductor != '':
         filters.append(Inspecciones.CONDUCTOR == data.conductor)
 
-    inspections = db.query(Inspecciones).filter(*filters).all()
+    inspections = db.query(Inspecciones).filter(*filters).order_by(Inspecciones.FECHA.desc(), Inspecciones.HORA.desc()).all()
 
     if not inspections:
       return JSONResponse(content={"message": "No inspections found"}, status_code=404)
