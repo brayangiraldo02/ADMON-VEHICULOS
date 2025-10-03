@@ -329,6 +329,8 @@ async def report_inspections(data, company_code: str):
       inspections_data ={
         "id": inspection.ID,
         "fecha_hora": inspection.FECHA.strftime('%d-%m-%Y') + ' ' + inspection.HORA.strftime('%H:%M') if inspection.FECHA and inspection.HORA else None,
+        "fecha_obj": inspection.FECHA,  # Guardar objeto fecha para ordenar
+        "hora_obj": inspection.HORA,    # Guardar objeto hora para ordenar
         "tipo_inspeccion": inspections_dict.get(inspection.TIPO_INSPEC, "").title(),
         "descripcion": inspection.DESCRIPCION,
         "unidad": inspection.UNIDAD,
@@ -336,9 +338,21 @@ async def report_inspections(data, company_code: str):
         "kilometraje": inspection.KILOMETRAJ if inspection.KILOMETRAJ else "",
         "nombre_usuario": inspection.USUARIO if inspection.USUARIO else "",
         "propietario": inspection.PROPI_IDEN,
+        "estado_inspeccion": "FINALIZADA" if inspection.ESTADO == "FIN" else ("PENDIENTE" if inspection.ESTADO == "PEN" else ("SUSPENDIDA" if inspection.ESTADO == "SUS" else inspection.ESTADO)),
         "acciones": ""
       }
       owners_dict[inspection.PROPI_IDEN].append(inspections_data)
+
+    # Ordenar las inspecciones de cada propietario por fecha y hora descendente
+    for owner_code in owners_dict:
+      owners_dict[owner_code].sort(
+        key=lambda x: (x['fecha_obj'] or datetime.min.date(), x['hora_obj'] or datetime.min.time()),
+        reverse=True
+      )
+      # Eliminar los objetos temporales de fecha y hora
+      for insp in owners_dict[owner_code]:
+        del insp['fecha_obj']
+        del insp['hora_obj']
 
     result = []
     for owner_code, inspections in owners_dict.items():
