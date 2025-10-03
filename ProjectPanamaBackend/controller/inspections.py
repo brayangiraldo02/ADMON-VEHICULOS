@@ -2,6 +2,8 @@ from utils.inspections import update_expired_inspections
 from fastapi.responses import FileResponse, JSONResponse
 from fastapi import UploadFile, File, BackgroundTasks, HTTPException
 import jinja2
+import asyncio
+from concurrent.futures import ThreadPoolExecutor
 from config.dbconnection import session
 from models.propietarios import Propietarios
 from models.conductores import Conductores
@@ -29,6 +31,7 @@ load_dotenv()
 
 upload_directory = os.getenv('DIRECTORY_IMG')
 route_api = os.getenv('ROUTE_API')
+PDF_THREAD_POOL = ThreadPoolExecutor(max_workers=2)
 
 async def owners_data(company_code: str):
   db = session()
@@ -413,7 +416,17 @@ async def report_inspections(data, company_code: str):
       footer_file.write(output_footer)
     pdf_path = tempfile.NamedTemporaryFile(delete=False, suffix='.pdf').name
 
-    html2pdf(titulo, html_path, pdf_path, header_path=header_path, footer_path=footer_path)
+    # Ejecutar la conversión PDF en un thread separado para no bloquear el event loop
+    loop = asyncio.get_event_loop()
+    await loop.run_in_executor(
+      PDF_THREAD_POOL,
+      html2pdf,
+      titulo,
+      html_path,
+      pdf_path,
+      header_path,
+      footer_path
+    )
 
     background_tasks = BackgroundTasks()
     background_tasks.add_task(os.remove, html_path)
@@ -809,7 +822,17 @@ async def generate_inspection_pdf(data: ReportInspection, company_code: str):
       footer_file.write(output_footer)
     pdf_path = tempfile.NamedTemporaryFile(delete=False, suffix='.pdf').name
 
-    html2pdf(titulo, html_path, pdf_path, header_path=header_path, footer_path=footer_path)
+    # Ejecutar la conversión PDF en un thread separado para no bloquear el event loop
+    loop = asyncio.get_event_loop()
+    await loop.run_in_executor(
+      PDF_THREAD_POOL,
+      html2pdf,
+      titulo,
+      html_path,
+      pdf_path,
+      header_path,
+      footer_path
+    )
 
     background_tasks = BackgroundTasks()
     background_tasks.add_task(os.remove, html_path)
