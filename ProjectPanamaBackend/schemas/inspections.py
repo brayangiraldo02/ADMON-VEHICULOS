@@ -2,12 +2,12 @@ from typing import Optional
 from pydantic import BaseModel
 
 class InspectionInfo(BaseModel):
-  usuario: Optional[str] = None
-  propietario: str
-  conductor: str
-  vehiculo: str
-  fechaInicial: str
-  fechaFinal: str
+  usuario: str
+  propietario: Optional[str] = None
+  conductor: Optional[str] = None
+  vehiculo: Optional[str] = None
+  fechaInicial: Optional[str] = None
+  fechaFinal: Optional[str] = None
 
 class DownloadImageRequest(BaseModel):
   image_url: str

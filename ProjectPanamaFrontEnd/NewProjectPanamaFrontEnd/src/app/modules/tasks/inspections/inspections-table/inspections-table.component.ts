@@ -130,6 +130,7 @@ export class InspectionsTableComponent implements OnInit, AfterViewInit {
     this.getMaxDate();
     this.setupOwnerListener();
     this.setupDriverListener();
+    this.getTableInitialData();
   }
 
   ngAfterViewInit() {
@@ -137,6 +138,60 @@ export class InspectionsTableComponent implements OnInit, AfterViewInit {
       this.dataSource.paginator = this.paginator;
       this.dataSource.sort = this.sort;
     }
+  }
+
+  getTableInitialData() {
+    const company = this.getCompany();
+    const formattedValues = {
+      usuario: this.getUserId(),
+    }
+
+    this.apiService
+      .postData('inspections/inspections_info/all/' + company, formattedValues)
+      .subscribe({
+        next: (data: apiResponse[]) => {
+          this.dataSource.data = data.map((item) => ({
+            id: item.id,
+            Fecha: item.fecha_hora,
+            Tipo: item.tipo_inspeccion,
+            Id_Tipo: item.id_tipo_inspeccion,
+            Descripcion: item.descripcion,
+            Unidad: item.unidad,
+            Placa: item.placa,
+            Cupo: item.cupo,
+            Usuario: item.nombre_usuario,
+            Estado: item.estado_inspeccion,
+            PuedeEditar: item.puede_editar,
+            Fotos: item.fotos || [],
+          }));
+
+          // Reinicializar paginator y sort después de cargar los datos
+          this.initializePaginator();
+
+          if (data.length === 0) {
+            this.openSnackbar(
+              'No se encontraron inspecciones en la base de datos.'
+            );
+          } else {
+            this.openSnackbar('Inspecciones cargadas correctamente.');
+          }
+          this.isLoading = false;
+        },
+        error: (error) => {
+          console.error('Error fetching inspections:', error);
+
+          if (error.status === 404) {
+            this.openSnackbar(
+              'No se encontraron inspecciones en la base de datos.'
+            );
+          } else {
+            this.openSnackbar(
+              'Error al cargar las inspecciones. Por favor, inténtelo de nuevo más tarde.'
+            );
+          }
+          this.isLoading = false;
+        },
+      });
   }
 
   getDataAutoCompletes() {
@@ -187,7 +242,6 @@ export class InspectionsTableComponent implements OnInit, AfterViewInit {
           startWith(''),
           map((value) => this._filterOwners(value || ''))
         );
-      this.isLoading = false;
     });
   }
 
