@@ -170,7 +170,7 @@ export class InspectionsTableComponent implements OnInit, AfterViewInit {
 
           if (data.length === 0) {
             this.openSnackbar(
-              'No se encontraron inspecciones en la base de datos.'
+              'No se encontraron inspecciones.'
             );
           } else {
             this.openSnackbar('Inspecciones cargadas correctamente.');
@@ -182,7 +182,7 @@ export class InspectionsTableComponent implements OnInit, AfterViewInit {
 
           if (error.status === 404) {
             this.openSnackbar(
-              'No se encontraron inspecciones en la base de datos.'
+              'No se encontraron inspecciones.'
             );
           } else {
             this.openSnackbar(
