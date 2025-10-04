@@ -1,19 +1,27 @@
-<h2 mat-dialog-title *ngIf="inspectionCreateID === ''">Nueva Inspección</h2>
-<h2 mat-dialog-title *ngIf="inspectionCreateID !== '' && inspectionType">
+<h2 mat-dialog-title *ngIf="!isEditMode && inspectionCreateID === ''">Nueva Inspección</h2>
+<h2 mat-dialog-title *ngIf="isEditMode && inspectionType">Editar Inspección</h2>
+<h2 mat-dialog-title *ngIf="inspectionCreateID !== '' && inspectionType && !isEditMode">
   Subir Fotos de la Inspección
 </h2>
-<h2 mat-dialog-title *ngIf="inspectionCreateID !== '' && !inspectionType">
+<h2 mat-dialog-title *ngIf="inspectionCreateID !== '' && !inspectionType && !isEditMode">
   Inspección
 </h2>
 
 <mat-dialog-content>
   <!-- Barra de carga durante la creación de la inspección -->
-  <div class="inputs-container creating-inspection-loader" *ngIf="inspectionCreateID === '' && isLoading && showCompactView">
+  <div class="inputs-container creating-inspection-loader" *ngIf="!isEditMode && inspectionCreateID === '' && isLoading && showCompactView">
     <mat-progress-bar mode="indeterminate"></mat-progress-bar>
     <p class="loading-message">Creando inspección...</p>
   </div>
 
-  <form [formGroup]="mainInspectionForm" *ngIf="inspectionCreateID === '' && !(isLoading && showCompactView)">
+  <!-- Barra de carga durante la carga de datos en modo edición -->
+  <div class="inputs-container creating-inspection-loader" *ngIf="isEditMode && isLoading">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <p class="loading-message">Cargando datos de la inspección...</p>
+  </div>
+
+  <!-- Formulario: se muestra en creación O en edición (pero no cuando se están subiendo fotos) -->
+  <form [formGroup]="mainInspectionForm" *ngIf="(inspectionCreateID === '' || isEditMode) && !(isLoading && showCompactView && !isEditMode)">
     <div class="main-content-container">
       <!-- Vista normal del formulario -->
       <div
@@ -39,6 +47,7 @@
               matInput
               formControlName="vehiculo"
               [matAutocomplete]="auto3"
+              [readonly]="isEditMode"
             />
             <mat-autocomplete
               #auto3="matAutocomplete"
@@ -63,6 +72,7 @@
             <mat-select
               placeholder="Selecciona un tipo de inspección"
               formControlName="tipo_inspeccion"
+              [disabled]="isEditMode"
             >
               <mat-option [value]="null"> - </mat-option>
               <mat-option
@@ -218,15 +228,17 @@
       </div>
     </div>
   </form>
+  
+  <!-- Componente de fotos: solo se muestra cuando NO está en modo edición y hay un inspectionCreateID -->
   <app-take-photos-vehicle
-    *ngIf="inspectionCreateID !== '' && !isLoading"
+    *ngIf="inspectionCreateID !== '' && !isLoading && !isEditMode"
     [inspectionId]="inspectionCreateID"
   ></app-take-photos-vehicle>
 
   <div class="inputs-container">
     <mat-progress-bar
       mode="indeterminate"
-      *ngIf="inspectionCreateID !== '' && isLoading"
+      *ngIf="inspectionCreateID !== '' && isLoading && !isEditMode"
     ></mat-progress-bar>
   </div>
 </mat-dialog-content>
@@ -239,7 +251,7 @@
     mat-button
     [disabled]="mainInspectionForm.invalid || loadingVehicleInfo"
     (click)="startInspection()"
-    *ngIf="!inspectionType"
+    *ngIf="!inspectionType && !isEditMode"
   >
     Empezar
   </button>
@@ -247,15 +259,23 @@
     mat-button
     [disabled]="loadingVehicleInfo"
     (click)="onSaveOrNext()"
-    *ngIf="inspectionType && inspectionCreateID === ''"
+    *ngIf="inspectionType && inspectionCreateID === '' && !isEditMode"
   >
     Siguiente
   </button>
   <button
     mat-button
     [disabled]="loadingVehicleInfo"
+    (click)="onSaveOrNext()"
+    *ngIf="inspectionType && isEditMode"
+  >
+    Guardar
+  </button>
+  <button
+    mat-button
+    [disabled]="loadingVehicleInfo"
     (click)="uploadImages()"
-    *ngIf="inspectionType && inspectionCreateID !== ''"
+    *ngIf="inspectionType && inspectionCreateID !== '' && !isEditMode"
   >
     Subir Fotos
   </button>

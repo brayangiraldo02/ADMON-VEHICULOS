@@ -51,9 +51,9 @@ export class VehicleStatesFormComponent {
 
   ngOnInit(): void {
     this.vehicleForm = this.fb.group({
-      combustible: ['', Validators.required],
-      kilometraje: ['', Validators.required],
-      panapass: ['', Validators.required],
+      combustible: [''],
+      kilometraje: [''],
+      panapass: [''],
       descripcion: ['', Validators.required],
       nota: [''],
 

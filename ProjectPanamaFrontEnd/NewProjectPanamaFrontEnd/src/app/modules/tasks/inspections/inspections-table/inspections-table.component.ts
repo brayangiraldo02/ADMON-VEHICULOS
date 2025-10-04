@@ -48,6 +48,7 @@ export interface InspectionsInfoData {
   Cupo: string;
   Usuario: string;
   Estado: string;
+  PuedeEditar: number;
   Fotos: string[];
 }
 
@@ -62,6 +63,7 @@ export interface apiResponse {
   cupo: string;
   nombre_usuario: string;
   estado_inspeccion: string;
+  puede_editar: number;
   fotos: string[];
 }
 
@@ -128,6 +130,7 @@ export class InspectionsTableComponent implements OnInit, AfterViewInit {
     this.getMaxDate();
     this.setupOwnerListener();
     this.setupDriverListener();
+    this.getTableInitialData();
   }
 
   ngAfterViewInit() {
@@ -135,6 +138,60 @@ export class InspectionsTableComponent implements OnInit, AfterViewInit {
       this.dataSource.paginator = this.paginator;
       this.dataSource.sort = this.sort;
     }
+  }
+
+  getTableInitialData() {
+    const company = this.getCompany();
+    const formattedValues = {
+      usuario: this.getUserId(),
+    }
+
+    this.apiService
+      .postData('inspections/inspections_info/all/' + company, formattedValues)
+      .subscribe({
+        next: (data: apiResponse[]) => {
+          this.dataSource.data = data.map((item) => ({
+            id: item.id,
+            Fecha: item.fecha_hora,
+            Tipo: item.tipo_inspeccion,
+            Id_Tipo: item.id_tipo_inspeccion,
+            Descripcion: item.descripcion,
+            Unidad: item.unidad,
+            Placa: item.placa,
+            Cupo: item.cupo,
+            Usuario: item.nombre_usuario,
+            Estado: item.estado_inspeccion,
+            PuedeEditar: item.puede_editar,
+            Fotos: item.fotos || [],
+          }));
+
+          // Reinicializar paginator y sort después de cargar los datos
+          this.initializePaginator();
+
+          if (data.length === 0) {
+            this.openSnackbar(
+              'No se encontraron inspecciones.'
+            );
+          } else {
+            this.openSnackbar('Inspecciones cargadas correctamente.');
+          }
+          this.isLoading = false;
+        },
+        error: (error) => {
+          console.error('Error fetching inspections:', error);
+
+          if (error.status === 404) {
+            this.openSnackbar(
+              'No se encontraron inspecciones.'
+            );
+          } else {
+            this.openSnackbar(
+              'Error al cargar las inspecciones. Por favor, inténtelo de nuevo más tarde.'
+            );
+          }
+          this.isLoading = false;
+        },
+      });
   }
 
   getDataAutoCompletes() {
@@ -185,7 +242,6 @@ export class InspectionsTableComponent implements OnInit, AfterViewInit {
           startWith(''),
           map((value) => this._filterOwners(value || ''))
         );
-      this.isLoading = false;
     });
   }
 
@@ -472,6 +528,7 @@ export class InspectionsTableComponent implements OnInit, AfterViewInit {
             Cupo: item.cupo,
             Usuario: item.nombre_usuario,
             Estado: item.estado_inspeccion,
+            PuedeEditar: item.puede_editar,
             Fotos: item.fotos || [],
           }));
 
@@ -616,9 +673,9 @@ export class InspectionsTableComponent implements OnInit, AfterViewInit {
   }
 
   openUploadImagesDialog(inspection: InspectionsInfoData) {
-    if (inspection.Estado !== 'PEN') {
+    if (inspection.PuedeEditar !== 1) {
       this.openSnackbar(
-        'Solo se pueden subir fotos a inspecciones PENDIENTES.'
+        'Solo puedes editar inspecciones PENDIENTES creadas por ti.'
       );
       return;
     }
@@ -630,7 +687,7 @@ export class InspectionsTableComponent implements OnInit, AfterViewInit {
       width: dialogWidth,
       data: {
         idInspection: inspection.id,
-        idTypeInspection: inspection.Id_Tipo,
+        // No pasamos idTypeInspection para activar el modo edición
       },
       disableClose: true,
     });
@@ -670,4 +727,21 @@ export class InspectionsTableComponent implements OnInit, AfterViewInit {
       }
     });
   }
+
+  openDocumentPDF(inspectionId: string) {
+    const user = this.getUserId();
+    const company = this.getCompany();
+
+    const data = {
+      user: user,
+      inspection_id: inspectionId,
+    }
+
+    const endpoint = 'inspections/generate_inspection_pdf/' + company;
+
+    localStorage.setItem('pdfEndpoint', endpoint);
+    localStorage.setItem('pdfData', JSON.stringify(data));
+    window.open(`/pdf`, '_blank');
+  }
 }
+

@@ -2,6 +2,8 @@ from utils.inspections import update_expired_inspections
 from fastapi.responses import FileResponse, JSONResponse
 from fastapi import UploadFile, File, BackgroundTasks, HTTPException
 import jinja2
+import asyncio
+from concurrent.futures import ThreadPoolExecutor
 from config.dbconnection import session
 from models.propietarios import Propietarios
 from models.conductores import Conductores
@@ -29,6 +31,7 @@ load_dotenv()
 
 upload_directory = os.getenv('DIRECTORY_IMG')
 route_api = os.getenv('ROUTE_API')
+PDF_THREAD_POOL = ThreadPoolExecutor(max_workers=2)
 
 async def owners_data(company_code: str):
   db = session()
@@ -153,42 +156,15 @@ async def drivers_data(company_code: str):
 
 #-----------------------------------------------------------------------------------------------
 
-async def inspections_info(data: InspectionInfo, company_code: str):
+async def inspections_info_all(data: InspectionInfo, company_code: str):
   db = session()
   try:
-    filters = [
-        Inspecciones.FECHA >= data.fechaInicial,
-        Inspecciones.FECHA <= data.fechaFinal,
-    ]
-
-    if data.propietario != '':
-        filters.append(Inspecciones.PROPI_IDEN == data.propietario)
-    
-    if data.vehiculo != '':
-        filters.append(Inspecciones.UNIDAD == data.vehiculo)
-    
-    if data.conductor != '':
-        filters.append(Inspecciones.CONDUCTOR == data.conductor)
-
-    inspections = db.query(Inspecciones).filter(*filters).all()
+    inspections = db.query(Inspecciones).filter(Inspecciones.EMPRESA == company_code).order_by(Inspecciones.FECHA.desc(), Inspecciones.HORA.desc()).all()
 
     if not inspections:
       return JSONResponse(content={"message": "No inspections found"}, status_code=404)
 
     await update_expired_inspections(db, inspections_list=inspections)
-
-    filtered_inspections = []
-    for inspection in inspections:
-      if inspection.ESTADO == "PEN":
-        if data.usuario and inspection.USUARIO == data.usuario:
-          filtered_inspections.append(inspection)
-      else:
-        filtered_inspections.append(inspection)
-
-    inspections = filtered_inspections
-
-    if not inspections:
-      return JSONResponse(content={"message": "No inspections found"}, status_code=404)
 
     inspections_types = db.query(TiposInspeccion).filter(TiposInspeccion.EMPRESA == company_code).all()
 
@@ -209,6 +185,8 @@ async def inspections_info(data: InspectionInfo, company_code: str):
           foto_url = f"{route_api}uploads/{foto_value}"
           fotos.append(foto_url)
       
+      puede_editar = 1 if (inspection.ESTADO == "PEN" and data.usuario and inspection.USUARIO == data.usuario) else 0
+      
       inspections_data.append({
         "id": inspection.ID,
         "fecha_hora": inspection.FECHA.strftime('%d-%m-%Y') + ' ' + inspection.HORA.strftime('%H:%M') if inspection.FECHA and inspection.HORA else None,
@@ -221,6 +199,79 @@ async def inspections_info(data: InspectionInfo, company_code: str):
         "cupo": vehicles_dict.get(inspection.UNIDAD, ""),
         "nombre_usuario": inspection.USUARIO,
         "estado_inspeccion": inspection.ESTADO,
+        "puede_editar": puede_editar,
+        "fotos": fotos
+      })
+
+    if not inspections_data:
+      return JSONResponse(content={"message": "No inspections found"}, status_code=404)
+    return JSONResponse(content=jsonable_encoder(inspections_data), status_code=200)
+  except Exception as e:
+    db.rollback()
+    return JSONResponse(content={"message": str(e)}, status_code=500)
+  finally:
+    db.close()
+
+#-----------------------------------------------------------------------------------------------
+
+async def inspections_info(data: InspectionInfo, company_code: str):
+  db = session()
+  try:
+    filters = [
+        Inspecciones.FECHA >= data.fechaInicial,
+        Inspecciones.FECHA <= data.fechaFinal,
+    ]
+
+    if data.propietario != '':
+        filters.append(Inspecciones.PROPI_IDEN == data.propietario)
+    
+    if data.vehiculo != '':
+        filters.append(Inspecciones.UNIDAD == data.vehiculo)
+    
+    if data.conductor != '':
+        filters.append(Inspecciones.CONDUCTOR == data.conductor)
+
+    inspections = db.query(Inspecciones).filter(*filters).order_by(Inspecciones.FECHA.desc(), Inspecciones.HORA.desc()).all()
+
+    if not inspections:
+      return JSONResponse(content={"message": "No inspections found"}, status_code=404)
+
+    await update_expired_inspections(db, inspections_list=inspections)
+
+    inspections_types = db.query(TiposInspeccion).filter(TiposInspeccion.EMPRESA == company_code).all()
+
+    inspections_dict = {inspection.CODIGO: inspection.NOMBRE for inspection in inspections_types}
+
+    # Obtener todos los vehículos para obtener el campo cupo
+    vehicles = db.query(Vehiculos).filter(Vehiculos.EMPRESA == company_code).all()
+    vehicles_dict = {vehicle.NUMERO: vehicle.NRO_CUPO for vehicle in vehicles}
+
+    inspections_data = []
+
+    for inspection in inspections:
+      fotos = []
+      for i in range(1, 17): 
+        foto_field = f"FOTO{i:02d}"
+        foto_value = getattr(inspection, foto_field, "")
+        if foto_value and foto_value.strip(): 
+          foto_url = f"{route_api}uploads/{foto_value}"
+          fotos.append(foto_url)
+      
+      puede_editar = 1 if (inspection.ESTADO == "PEN" and data.usuario and inspection.USUARIO == data.usuario) else 0
+      
+      inspections_data.append({
+        "id": inspection.ID,
+        "fecha_hora": inspection.FECHA.strftime('%d-%m-%Y') + ' ' + inspection.HORA.strftime('%H:%M') if inspection.FECHA and inspection.HORA else None,
+        "propietario": inspection.PROPI_IDEN,
+        "tipo_inspeccion": inspections_dict.get(inspection.TIPO_INSPEC, ""),
+        "id_tipo_inspeccion": inspection.TIPO_INSPEC,
+        "descripcion": inspection.DESCRIPCION,
+        "unidad": inspection.UNIDAD,
+        "placa": inspection.PLACA,
+        "cupo": vehicles_dict.get(inspection.UNIDAD, ""),
+        "nombre_usuario": inspection.USUARIO,
+        "estado_inspeccion": inspection.ESTADO,
+        "puede_editar": puede_editar,
         "fotos": fotos
       })
 
@@ -309,7 +360,7 @@ async def report_inspections(data, company_code: str):
     if data.conductor != '':
         filters.append(Inspecciones.CONDUCTOR == data.conductor)
 
-    inspections = db.query(Inspecciones).filter(*filters).all()
+    inspections = db.query(Inspecciones).filter(*filters).order_by(Inspecciones.FECHA.desc(), Inspecciones.HORA.desc()).all()
 
     if not inspections:
       return JSONResponse(content={"message": "No inspections found"}, status_code=404)
@@ -336,6 +387,8 @@ async def report_inspections(data, company_code: str):
       inspections_data ={
         "id": inspection.ID,
         "fecha_hora": inspection.FECHA.strftime('%d-%m-%Y') + ' ' + inspection.HORA.strftime('%H:%M') if inspection.FECHA and inspection.HORA else None,
+        "fecha_obj": inspection.FECHA,  # Guardar objeto fecha para ordenar
+        "hora_obj": inspection.HORA,    # Guardar objeto hora para ordenar
         "tipo_inspeccion": inspections_dict.get(inspection.TIPO_INSPEC, "").title(),
         "descripcion": inspection.DESCRIPCION,
         "unidad": inspection.UNIDAD,
@@ -343,9 +396,21 @@ async def report_inspections(data, company_code: str):
         "kilometraje": inspection.KILOMETRAJ if inspection.KILOMETRAJ else "",
         "nombre_usuario": inspection.USUARIO if inspection.USUARIO else "",
         "propietario": inspection.PROPI_IDEN,
+        "estado_inspeccion": "FINALIZADA" if inspection.ESTADO == "FIN" else ("PENDIENTE" if inspection.ESTADO == "PEN" else ("SUSPENDIDA" if inspection.ESTADO == "SUS" else inspection.ESTADO)),
         "acciones": ""
       }
       owners_dict[inspection.PROPI_IDEN].append(inspections_data)
+
+    # Ordenar las inspecciones de cada propietario por fecha y hora descendente
+    for owner_code in owners_dict:
+      owners_dict[owner_code].sort(
+        key=lambda x: (x['fecha_obj'] or datetime.min.date(), x['hora_obj'] or datetime.min.time()),
+        reverse=True
+      )
+      # Eliminar los objetos temporales de fecha y hora
+      for insp in owners_dict[owner_code]:
+        del insp['fecha_obj']
+        del insp['hora_obj']
 
     result = []
     for owner_code, inspections in owners_dict.items():
@@ -413,7 +478,17 @@ async def report_inspections(data, company_code: str):
       footer_file.write(output_footer)
     pdf_path = tempfile.NamedTemporaryFile(delete=False, suffix='.pdf').name
 
-    html2pdf(titulo, html_path, pdf_path, header_path=header_path, footer_path=footer_path)
+    # Ejecutar la conversión PDF en un thread separado para no bloquear el event loop
+    loop = asyncio.get_event_loop()
+    await loop.run_in_executor(
+      PDF_THREAD_POOL,
+      html2pdf,
+      titulo,
+      html_path,
+      pdf_path,
+      header_path,
+      footer_path
+    )
 
     background_tasks = BackgroundTasks()
     background_tasks.add_task(os.remove, html_path)
@@ -589,6 +664,79 @@ async def create_inspection(data: NewInspection):
 
 #-----------------------------------------------------------------------------------------------
 
+async def update_inspection(data: UpdateInspection):
+  db = session()
+  try:
+    inspection = db.query(Inspecciones).filter(Inspecciones.ID == data.inspection_id).first()
+    
+    if not inspection:
+      return JSONResponse(content={"message": "Inspección no encontrada"}, status_code=404)
+    
+    # Verificar que la inspección esté en estado PENDIENTE
+    if inspection.ESTADO != "PEN":
+      return JSONResponse(content={"message": "Solo se pueden editar inspecciones PENDIENTES"}, status_code=400)
+    
+    # Verificar que el usuario sea el creador de la inspección
+    if inspection.USUARIO != data.user:
+      return JSONResponse(content={"message": "No tienes permiso para editar esta inspección"}, status_code=403)
+    
+    # Actualizar los campos de la inspección
+    inspection.KILOMETRAJ = data.mileage
+    inspection.TIPO_INSPEC = data.inspection_type
+    inspection.ALFOMBRA = bool(data.alfombra)
+    inspection.COPASRINES = bool(data.copas_rines)
+    inspection.EXTINGUIDOR = bool(data.extinguidor)
+    inspection.ANTENA = bool(data.antena)
+    inspection.LAMPARAS = bool(data.lamparas)
+    inspection.TRIANGULO = bool(data.triangulo)
+    inspection.GATO = bool(data.gato)
+    inspection.PIPA = bool(data.pipa)
+    inspection.PLACAMUNIC = bool(data.placa_municipal)
+    inspection.CARATRADIO = bool(data.caratula_radio)
+    inspection.REGISVEHIC = bool(data.registro_vehiculo)
+    inspection.REVISADO = bool(data.revisado)
+    inspection.PAGOMUNICI = bool(data.pago_municipio)
+    inspection.FORMACOLIS = bool(data.formato_colisiones_menores)
+    inspection.POLISEGURO = bool(data.poliza_seguros)
+    inspection.LUZDELANTE = bool(data.luces_delanteras)
+    inspection.LUZTRACERA = bool(data.luces_traseras)
+    inspection.VIDRIOS = bool(data.vidrios)
+    inspection.RETROVISOR = bool(data.retrovisor)
+    inspection.TAPICERIA = bool(data.tapiceria)
+    inspection.GPS = bool(data.gps)
+    inspection.LLANTAREPU = bool(data.llanta_repuesto)
+    inspection.COMBUSTIBLE = data.combustible
+    inspection.PANAPASS = data.panapass
+    inspection.DESCRIPCION = data.description
+    inspection.OBSERVA = data.nota
+    
+    # Actualizar kilometraje del vehículo si es mayor
+    vehicle = db.query(Vehiculos).filter(
+      Vehiculos.NUMERO == inspection.UNIDAD,
+      Vehiculos.EMPRESA == inspection.EMPRESA
+    ).first()
+    
+    if vehicle and data.mileage and (vehicle.KILOMETRAJ is None or data.mileage > vehicle.KILOMETRAJ):
+      vehicle.KILO_ANTES = vehicle.KILOMETRAJ
+      vehicle.KILOMETRAJ = data.mileage
+      db.add(vehicle)
+    
+    db.commit()
+    db.refresh(inspection)
+    
+    return JSONResponse(content={
+      "message": "Inspección actualizada exitosamente",
+      "id": inspection.ID
+    }, status_code=200)
+    
+  except Exception as e:
+    db.rollback()
+    return JSONResponse(content={"message": str(e)}, status_code=500)
+  finally:
+    db.close()
+
+#-----------------------------------------------------------------------------------------------
+
 async def download_image_by_url(image_url: str):
   try:
     if "/uploads/" not in image_url:
@@ -659,6 +807,8 @@ async def inspection_details(inspection_id: int):
       "placa": inspection.PLACA,
       "cupo": vehicle.NRO_CUPO if vehicle and vehicle.NRO_CUPO else "",
       "kilometraje": inspection.KILOMETRAJ if inspection.KILOMETRAJ else "",
+      "panapass": inspection.PANAPASS if inspection.PANAPASS else "",
+      "combustible": inspection.COMBUSTIBLE if inspection.COMBUSTIBLE else "",
       "observaciones": inspection.OBSERVA if inspection.OBSERVA else "",
       "estado_inspeccion": inspection.ESTADO,
       "alfombra": inspection.ALFOMBRA,
@@ -688,6 +838,153 @@ async def inspection_details(inspection_id: int):
     }
 
     return JSONResponse(content=jsonable_encoder(inspection_data), status_code=200)
+  except Exception as e:
+    return JSONResponse(content={"message": str(e)}, status_code=500)
+  finally:
+    db.close()
+
+#-----------------------------------------------------------------------------------------------
+async def generate_inspection_pdf(data: ReportInspection, company_code: str):
+  db = session()
+  try:
+    inspection = db.query(Inspecciones).filter(Inspecciones.ID == data.inspection_id, Inspecciones.EMPRESA == company_code).first()
+    if not inspection:
+      return JSONResponse(content={"message": "Inspection not found"}, status_code=404)
+    
+    inspections_types = db.query(TiposInspeccion).filter(TiposInspeccion.EMPRESA == inspection.EMPRESA).all()
+    inspections_dict = {insp.CODIGO: insp.NOMBRE for insp in inspections_types}
+
+    company_info = db.query(InfoEmpresas).filter(InfoEmpresas.ID == inspection.EMPRESA).first()
+
+    vehicle = db.query(Vehiculos).filter(Vehiculos.NUMERO == inspection.UNIDAD, Vehiculos.EMPRESA == inspection.EMPRESA).first()
+
+    fotos = []
+    for i in range(1, 17): 
+      foto_field = f"FOTO{i:02d}"
+      foto_value = getattr(inspection, foto_field, "")
+      if foto_value and foto_value.strip(): 
+        foto_url = f"{route_api}uploads/{foto_value}"
+        fotos.append(foto_url)
+    
+    inspection_data = {
+      "id": inspection.ID,
+      "empresa": company_info.NOMBRE if company_info else "",
+      "fecha": inspection.FECHA.strftime('%d-%m-%Y') if inspection.FECHA else None,
+      "hora": inspection.HORA.strftime('%H:%M') if inspection.HORA else None,
+      "propietario": inspection.PROPI_IDEN,
+      "nombre_propietario": inspection.NOMPROPI,
+      "conductor": inspection.CONDUCTOR,
+      "nombre_conductor": inspection.NOMCONDU,
+      "cedula_conductor": inspection.CEDULA,
+      "tipo_inspeccion": inspections_dict.get(inspection.TIPO_INSPEC, ""),
+      "descripcion": inspection.DESCRIPCION,
+      "unidad": inspection.UNIDAD,
+      "placa": inspection.PLACA,
+      "cupo": vehicle.NRO_CUPO if vehicle and vehicle.NRO_CUPO else "",
+      "kilometraje": inspection.KILOMETRAJ if inspection.KILOMETRAJ else "",
+      "panapass": inspection.PANAPASS if inspection.PANAPASS else "",
+      "observaciones": inspection.OBSERVA if inspection.OBSERVA else "",
+      "estado_inspeccion": inspection.ESTADO,
+      "alfombra": inspection.ALFOMBRA,
+      "antena": inspection.ANTENA,
+      "caratradio": inspection.CARATRADIO,
+      "copasrines": inspection.COPASRINES,
+      "extinguidor": inspection.EXTINGUIDOR,
+      "formatocolis": inspection.FORMACOLIS,
+      "gato": inspection.GATO,
+      "gps": inspection.GPS,
+      "lamparas": inspection.LAMPARAS,
+      "llantarepu": inspection.LLANTAREPU,
+      "luzdelante": inspection.LUZDELANTE,
+      "luztracera": inspection.LUZTRACERA,
+      "pagomunici": inspection.PAGOMUNICI,
+      "pipa": inspection.PIPA,
+      "placamunic": inspection.PLACAMUNIC,
+      "poliseguro": inspection.POLISEGURO,
+      "regisvehic": inspection.REGISVEHIC,
+      "retrovisor": inspection.RETROVISOR,
+      "revisado": inspection.REVISADO,
+      "tapiceria": inspection.TAPICERIA,
+      "triangulo": inspection.TRIANGULO,
+      "vidrios": inspection.VIDRIOS,
+      "usuario": inspection.USUARIO if inspection.USUARIO else "",
+      "fotos": fotos,
+    }
+
+    user = db.query(PermisosUsuario).filter(PermisosUsuario.CODIGO == data.user).first()
+    user = user.NOMBRE if user else ""
+
+    # Datos de la fecha y hora actual
+    # Define la zona horaria de Ciudad de Panamá
+    panama_timezone = pytz.timezone('America/Panama')
+    # Obtén la hora actual en la zona horaria de Ciudad de Panamá
+    now_in_panama = datetime.now(panama_timezone)
+    # Formatea la fecha y la hora según lo requerido
+    fecha = now_in_panama.strftime("%d/%m/%Y")
+    hora_actual = now_in_panama.strftime("%I:%M:%S %p")
+
+    titulo = 'Inspección de vehículo'
+    data_view = {
+      'inspection': inspection_data,
+      'fecha': fecha,
+      'hora': hora_actual,
+      'usuario': user if user else "",
+      'titulo': titulo
+    }
+
+    headers = {
+      "Content-Disposition": "attachment; filename=inspeccion.pdf"
+    }
+
+    template_loader = jinja2.FileSystemLoader(searchpath="./templates")
+    template_env = jinja2.Environment(loader=template_loader)
+    header_file = "header.html"
+    footer_file = "footer.html"
+    template = template_env.get_template("Inspecciones.html")
+    header = template_env.get_template(header_file)
+    footer = template_env.get_template(footer_file)
+    output_text = template.render(data_view=data_view)
+    output_header = header.render(data_view=data_view)
+    output_footer = footer.render(data_view=data_view)
+
+    with tempfile.NamedTemporaryFile(delete=False, suffix='.html', mode='w') as html_file:
+      html_path = html_file.name
+      html_file.write(output_text)
+    with tempfile.NamedTemporaryFile(delete=False, suffix='.html', mode='w') as header_file:
+      header_path = header_file.name
+      header_file.write(output_header)
+    with tempfile.NamedTemporaryFile(delete=False, suffix='.html', mode='w') as footer_file:
+      footer_path = footer_file.name
+      footer_file.write(output_footer)
+    pdf_path = tempfile.NamedTemporaryFile(delete=False, suffix='.pdf').name
+
+    # Ejecutar la conversión PDF en un thread separado para no bloquear el event loop
+    loop = asyncio.get_event_loop()
+    await loop.run_in_executor(
+      PDF_THREAD_POOL,
+      html2pdf,
+      titulo,
+      html_path,
+      pdf_path,
+      header_path,
+      footer_path
+    )
+
+    background_tasks = BackgroundTasks()
+    background_tasks.add_task(os.remove, html_path)
+    background_tasks.add_task(os.remove, header_path)
+    background_tasks.add_task(os.remove, footer_path)
+    background_tasks.add_task(os.remove, pdf_path)
+
+    response = FileResponse(
+        pdf_path, 
+        media_type='application/pdf', 
+        filename='templates/inspeccion.pdf', 
+        headers=headers,
+        background=background_tasks
+      )
+
+    return response
   except Exception as e:
     return JSONResponse(content={"message": str(e)}, status_code=500)
   finally:
