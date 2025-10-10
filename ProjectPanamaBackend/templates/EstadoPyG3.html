@@ -174,11 +174,11 @@
         <td>{{ unidad.estado }}</td>
 
         <td>{{ "" if unidad.incomes == 0.00 else unidad.incomes }}</td>
-        <td>
-          <span style="display:inline-block; width:48%; text-align:center; font-weight:bold;">
+        <td style="white-space: nowrap; padding: 5px 2px;">
+          <span style="display: inline-block; width: 45%; text-align: center; font-weight: bold;">
             {{ "" if unidad.pending_insurance == 0.00 else unidad.pending_insurance }}
           </span>
-          <span style="display:inline-block; width:48%; text-align:center;">
+          <span style="display: inline-block; width: 45%; text-align: center;">
             {{ "" if unidad.insurances == 0.00 else unidad.insurances }}
           </span>
         </td>

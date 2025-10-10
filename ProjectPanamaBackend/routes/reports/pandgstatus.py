@@ -3,7 +3,7 @@ from fastapi.responses import JSONResponse
 from models.infoempresas import InfoEmpresas
 from models.propietarios import Propietarios
 from config.dbconnection import session
-from sqlalchemy import func, case
+from sqlalchemy import func, case, or_, and_
 from models.vehiculos import Vehiculos
 from models.cajarecaudos import CajaRecaudos
 from models.reclamoscolisiones import ReclamosColisiones
@@ -78,8 +78,13 @@ async def pandgstatus_report(company_code: str, data: PandGStatusReport):
       func.sum(case((ReclamosColisiones.CERRADO == "F", 1), else_=0)).label('pending')
     ).filter(
       ReclamosColisiones.EMPRESA == company_code,
-      ReclamosColisiones.FECHA >= data.primeraFecha,
-      ReclamosColisiones.FECHA <= data.ultimaFecha,
+      or_(
+        and_(
+          ReclamosColisiones.BCO_FECHA >= data.primeraFecha,
+          ReclamosColisiones.BCO_FECHA <= data.ultimaFecha
+        ),
+        ReclamosColisiones.CERRADO == 'F'
+      ),
       ReclamosColisiones.PROPI_IDEN.in_(owners_codes)
     ).group_by(ReclamosColisiones.PROPI_IDEN, ReclamosColisiones.NUMERO).all()
 
