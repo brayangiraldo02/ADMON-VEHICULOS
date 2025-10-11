@@ -15,6 +15,7 @@ import { ApiService } from 'src/app/services/api.service';
 import { JwtService } from 'src/app/services/jwt.service';
 import { VehicleStatesFormComponent } from '../inspections-forms/vehicle-states-form/vehicle-states-form.component';
 import { TakePhotosVehicleComponent } from '../take-photos-vehicle/take-photos-vehicle.component';
+import { SignaturePadComponent } from 'src/app/modules/shared/components/signature-pad/signature-pad.component';
 
 interface Vehicles {
   placa_vehiculo: string;
@@ -80,6 +81,9 @@ export class InspectionsAddDialogComponent implements OnInit {
   @ViewChild(TakePhotosVehicleComponent)
   takePhotosVehicleComponent!: TakePhotosVehicleComponent;
 
+  @ViewChild(SignaturePadComponent)
+  signaturePadComponent!: SignaturePadComponent;
+
   inspectionInfoForm!: FormGroup;
 
   mainInspectionForm!: FormGroup;
@@ -105,6 +109,9 @@ export class InspectionsAddDialogComponent implements OnInit {
   isEditMode: boolean = false;
   inspectionData: any = null;
   wasEdited: boolean = false;
+
+  showSignaturePad: boolean = false;
+  signatureBase64: string = '';
 
   constructor(
     private apiService: ApiService,
@@ -744,13 +751,28 @@ export class InspectionsAddDialogComponent implements OnInit {
       this.isLoading = true;
       this.takePhotosVehicleComponent.sendAllPhotos().subscribe({
         next: (response) => {
+          this.isLoading = false;
           this.openSnackbar('Todas las fotos se han subido con éxito.');
-          this.closeDialog('refresh');
+          // Mostrar el pad de firma después de subir las fotos
+          this.showSignaturePad = true;
         },
         error: (err) => {
           this.isLoading = false;
         },
       });
+    }
+  }
+
+  onSignatureSaved(signatureBase64: string) {
+    this.signatureBase64 = signatureBase64;
+    this.openSnackbar('Firma guardada correctamente.');
+    // TODO: Enviar la firma al backend
+    this.closeDialog('refresh');
+  }
+
+  saveInspectionSignature() {
+    if (this.signaturePadComponent) {
+      this.signaturePadComponent.saveSignature();
     }
   }
 

@@ -5,11 +5,13 @@ import { InfoCompanyComponent } from './components/info-company/info-company.com
 import { FormsModule } from '@angular/forms';
 import { MaterialModule } from './material/material.module';
 import { ConfirmActionDialogComponent } from './components/confirm-action-dialog/confirm-action-dialog.component';
+import { SignaturePadComponent } from './components/signature-pad/signature-pad.component';
 
 @NgModule({
   declarations: [
     InfoCompanyComponent,
     ConfirmActionDialogComponent,
+    SignaturePadComponent,
   ],
   imports: [
     CommonModule,
@@ -18,6 +20,9 @@ import { ConfirmActionDialogComponent } from './components/confirm-action-dialog
     MaterialModule
   ],
   exports: [
+    InfoCompanyComponent,
+    ConfirmActionDialogComponent,
+    SignaturePadComponent
   ]
 })
 export class SharedModule { }
