@@ -13,8 +13,8 @@
 <mat-dialog-content>
   <!-- Barra de carga durante la creación de la inspección -->
   <div class="inputs-container creating-inspection-loader" *ngIf="!isEditMode && inspectionCreateID === '' && isLoading && showCompactView">
-    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
     <p class="loading-message">Creando inspección...</p>
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
   </div>
 
   <!-- Barra de carga durante la carga de datos en modo edición -->
@@ -37,7 +37,7 @@
         <div class="inputs-container">
           <mat-progress-bar
             mode="indeterminate"
-            *ngIf="isLoading"
+            *ngIf="isLoading && !isEditMode"
           ></mat-progress-bar>
         </div>
 
@@ -97,7 +97,7 @@
 
         <div
           class="inputs-container"
-          *ngIf="loadingVehicleInfo && !selectedVehicle"
+          *ngIf="loadingVehicleInfo && !selectedVehicle && !isEditMode"
         >
           <mat-progress-bar mode="indeterminate"></mat-progress-bar>
         </div>
