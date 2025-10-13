@@ -184,7 +184,9 @@ async def inspections_info_all(data: InspectionInfo, company_code: str):
         if foto_value and foto_value.strip(): 
           foto_url = f"{route_api}uploads/{foto_value}"
           fotos.append(foto_url)
-      
+
+      firma_url = f"{route_api}uploads/{inspection.FIRMA}" if inspection.FIRMA and inspection.FIRMA.strip() else ''
+
       puede_editar = 1 if (inspection.ESTADO == "PEN" and data.usuario and inspection.USUARIO == data.usuario) else 0
       
       inspections_data.append({
@@ -200,7 +202,8 @@ async def inspections_info_all(data: InspectionInfo, company_code: str):
         "nombre_usuario": inspection.USUARIO,
         "estado_inspeccion": inspection.ESTADO,
         "puede_editar": puede_editar,
-        "fotos": fotos
+        "fotos": fotos,
+        "firma": [firma_url]
       })
 
     if not inspections_data:
@@ -256,6 +259,8 @@ async def inspections_info(data: InspectionInfo, company_code: str):
         if foto_value and foto_value.strip(): 
           foto_url = f"{route_api}uploads/{foto_value}"
           fotos.append(foto_url)
+
+      firma_url = f"{route_api}uploads/{inspection.FIRMA}" if inspection.FIRMA and inspection.FIRMA.strip() else ''
       
       puede_editar = 1 if (inspection.ESTADO == "PEN" and data.usuario and inspection.USUARIO == data.usuario) else 0
       
@@ -272,7 +277,8 @@ async def inspections_info(data: InspectionInfo, company_code: str):
         "nombre_usuario": inspection.USUARIO,
         "estado_inspeccion": inspection.ESTADO,
         "puede_editar": puede_editar,
-        "fotos": fotos
+        "fotos": fotos,
+        "firma": [firma_url]
       })
 
     if not inspections_data:
@@ -334,6 +340,54 @@ async def upload_images(inspection_id: int, images: List[UploadFile] = File(...)
         message += f" {len(images) - saved_count} fueron descartadas por falta de espacio."
 
     return JSONResponse(content={"message": message}, status_code=201)
+
+  except Exception as e:
+    db.rollback()
+    return JSONResponse(content={"message": str(e)}, status_code=500)
+  finally:
+    db.close()
+
+#-----------------------------------------------------------------------------------------------
+async def upload_signature(inspection_id: int, signature: UploadFile = File(...)):
+  db = session()
+  try:
+    inspection = db.query(Inspecciones).filter(Inspecciones.ID == inspection_id).first()
+    if not inspection:
+      raise HTTPException(status_code=404, detail=f"Inspección con ID {inspection_id} no encontrada.")
+
+    vehicle_number = inspection.UNIDAD
+    company_code = inspection.EMPRESA
+
+    # Verificar si ya existe una firma
+    if inspection.FIRMA:
+      return JSONResponse(
+        content={"message": "Ya existe una firma para esta inspección."},
+        status_code=400
+      )
+
+    # Crear el directorio para la firma dentro de la carpeta de inspecciones
+    full_signature_path = os.path.join(upload_directory, company_code, vehicle_number, "inspecciones", str(inspection_id))
+    os.makedirs(full_signature_path, exist_ok=True)
+
+    # Obtener la extensión del archivo
+    _, ext = os.path.splitext(signature.filename)
+    new_filename = f"firma{ext}"
+
+    # Guardar el archivo
+    full_file_path = os.path.join(full_signature_path, new_filename)
+    with open(full_file_path, "wb") as buffer:
+      shutil.copyfileobj(signature.file, buffer)
+
+    # Crear la ruta relativa para guardar en la base de datos
+    relative_db_path = os.path.join(company_code, vehicle_number, "inspecciones", str(inspection_id), new_filename)
+    normalized_path = relative_db_path.replace("\\", "/")
+    
+    # Actualizar el campo FIRMA en la base de datos
+    inspection.FIRMA = normalized_path
+
+    db.commit()
+
+    return JSONResponse(content={"message": "Firma guardada exitosamente.", "path": normalized_path}, status_code=201)
 
   except Exception as e:
     db.rollback()
@@ -865,6 +919,8 @@ async def generate_inspection_pdf(data: ReportInspection, company_code: str):
       if foto_value and foto_value.strip(): 
         foto_url = f"{route_api}uploads/{foto_value}"
         fotos.append(foto_url)
+
+    firma_url = f"{route_api}uploads/{inspection.FIRMA}" if inspection.FIRMA and inspection.FIRMA.strip() else ''
     
     inspection_data = {
       "id": inspection.ID,
@@ -910,6 +966,7 @@ async def generate_inspection_pdf(data: ReportInspection, company_code: str):
       "vidrios": inspection.VIDRIOS,
       "usuario": inspection.USUARIO if inspection.USUARIO else "",
       "fotos": fotos,
+      "firma": firma_url
     }
 
     user = db.query(PermisosUsuario).filter(PermisosUsuario.CODIGO == data.user).first()

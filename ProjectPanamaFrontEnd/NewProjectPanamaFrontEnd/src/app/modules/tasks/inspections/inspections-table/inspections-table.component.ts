@@ -50,6 +50,7 @@ export interface InspectionsInfoData {
   Estado: string;
   PuedeEditar: number;
   Fotos: string[];
+  Firma: string[];
 }
 
 export interface apiResponse {
@@ -65,6 +66,7 @@ export interface apiResponse {
   estado_inspeccion: string;
   puede_editar: number;
   fotos: string[];
+  firma: string[];
 }
 
 @Component({
@@ -144,7 +146,7 @@ export class InspectionsTableComponent implements OnInit, AfterViewInit {
     const company = this.getCompany();
     const formattedValues = {
       usuario: this.getUserId(),
-    }
+    };
 
     this.apiService
       .postData('inspections/inspections_info/all/' + company, formattedValues)
@@ -163,15 +165,14 @@ export class InspectionsTableComponent implements OnInit, AfterViewInit {
             Estado: item.estado_inspeccion,
             PuedeEditar: item.puede_editar,
             Fotos: item.fotos || [],
+            Firma: item.firma || [],
           }));
 
           // Reinicializar paginator y sort después de cargar los datos
           this.initializePaginator();
 
           if (data.length === 0) {
-            this.openSnackbar(
-              'No se encontraron inspecciones.'
-            );
+            this.openSnackbar('No se encontraron inspecciones.');
           } else {
             this.openSnackbar('Inspecciones cargadas correctamente.');
           }
@@ -181,9 +182,7 @@ export class InspectionsTableComponent implements OnInit, AfterViewInit {
           console.error('Error fetching inspections:', error);
 
           if (error.status === 404) {
-            this.openSnackbar(
-              'No se encontraron inspecciones.'
-            );
+            this.openSnackbar('No se encontraron inspecciones.');
           } else {
             this.openSnackbar(
               'Error al cargar las inspecciones. Por favor, inténtelo de nuevo más tarde.'
@@ -530,6 +529,7 @@ export class InspectionsTableComponent implements OnInit, AfterViewInit {
             Estado: item.estado_inspeccion,
             PuedeEditar: item.puede_editar,
             Fotos: item.fotos || [],
+            Firma: item.firma || [],
           }));
 
           // Reinicializar paginator y sort después de cargar los datos
@@ -655,18 +655,20 @@ export class InspectionsTableComponent implements OnInit, AfterViewInit {
     const isSmallScreen = this.breakpointObserver.isMatched(Breakpoints.XSmall);
     const dialogWidth = isSmallScreen ? '90vw' : '60%';
 
+    const data = {
+      vehicleNumber: inspection.Unidad,
+      images: action === 'viewSignature' ? inspection.Firma : inspection.Fotos,
+      action: action || '',
+    };
+
     const dialogRef = this.dialog.open(InspectionFinishImagesDialogComponent, {
       width: dialogWidth,
-      data: {
-        vehicleNumber: inspection.Unidad,
-        images: inspection.Fotos,
-        action: action || '',
-      },
+      data: data,
       disableClose: true,
     });
 
     dialogRef.afterClosed().subscribe((result) => {
-      if (result === 'viewPhotos') {
+      if (result === 'viewPhotos' || result === 'viewSignature') {
         this.openInspectionInfoDialog(inspection.id);
       }
     });
@@ -719,7 +721,7 @@ export class InspectionsTableComponent implements OnInit, AfterViewInit {
     });
 
     dialogRef.afterClosed().subscribe((result) => {
-      if (result === 'viewPhotos') {
+      if (result === 'viewPhotos' || result === 'viewSignature') {
         this.openImgDialog(
           this.dataSource.data.find((item) => item.id === inspectionId)!,
           result
@@ -735,7 +737,7 @@ export class InspectionsTableComponent implements OnInit, AfterViewInit {
     const data = {
       user: user,
       inspection_id: inspectionId,
-    }
+    };
 
     const endpoint = 'inspections/generate_inspection_pdf/' + company;
 
@@ -744,4 +746,3 @@ export class InspectionsTableComponent implements OnInit, AfterViewInit {
     window.open(`/pdf`, '_blank');
   }
 }
-

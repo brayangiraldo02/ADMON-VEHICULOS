@@ -765,9 +765,37 @@ export class InspectionsAddDialogComponent implements OnInit {
 
   onSignatureSaved(signatureBase64: string) {
     this.signatureBase64 = signatureBase64;
-    this.openSnackbar('Firma guardada correctamente.');
-    // TODO: Enviar la firma al backend
-    this.closeDialog('refresh');
+    
+    // Convertir base64 a Blob
+    const base64Data = signatureBase64.split(',')[1];
+    const byteCharacters = atob(base64Data);
+    const byteNumbers = new Array(byteCharacters.length);
+    
+    for (let i = 0; i < byteCharacters.length; i++) {
+      byteNumbers[i] = byteCharacters.charCodeAt(i);
+    }
+    
+    const byteArray = new Uint8Array(byteNumbers);
+    const blob = new Blob([byteArray], { type: 'image/png' });
+    
+    // Crear FormData y agregar la firma
+    const formData = new FormData();
+    formData.append('signature', blob, `firma_${this.inspectionCreateID}.png`);
+    
+    // Enviar la firma al backend
+    this.isLoading = true;
+    this.apiService.postData(`inspections/upload_signature/${this.inspectionCreateID}`, formData).subscribe({
+      next: (response: any) => {
+        this.isLoading = false;
+        this.openSnackbar('Firma guardada correctamente.');
+        this.closeDialog('refresh');
+      },
+      error: (error) => {
+        this.isLoading = false;
+        console.error('Error al guardar la firma:', error);
+        this.openSnackbar('Error al guardar la firma. Vuelve a intentarlo más tarde.');
+      }
+    });
   }
 
   saveInspectionSignature() {

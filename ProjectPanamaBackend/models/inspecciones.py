@@ -58,6 +58,7 @@ class Inspecciones(Base):
     FOTO14 = Column(VARCHAR(200), default="")
     FOTO15 = Column(VARCHAR(200), default="")
     FOTO16 = Column(VARCHAR(200), default="")
+    FIRMA = Column(VARCHAR(200), default="")
     USUARIO = Column(CHAR(10), default="")
     ESTADO = Column(VARCHAR(10), nullable=False, default="PEN") # PEN=Pendiente, FIN=Finalizada, SUS=Suspendida
     FEC_CREADO = Column(DateTime, default=None)
