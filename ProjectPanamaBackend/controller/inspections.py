@@ -195,6 +195,8 @@ async def inspections_info_all(data: InspectionInfo, company_code: str):
       firma_url = f"{route_api}uploads/{inspection.FIRMA}" if inspection.FIRMA and inspection.FIRMA.strip() else ''
 
       puede_editar = 1 if (inspection.ESTADO == "PEN" and data.usuario and inspection.USUARIO == data.usuario) else 0
+
+      user = db.query(PermisosUsuario).filter(PermisosUsuario.CODIGO == inspection.USUARIO).first()
       
       inspections_data.append({
         "id": inspection.ID,
@@ -206,7 +208,7 @@ async def inspections_info_all(data: InspectionInfo, company_code: str):
         "unidad": inspection.UNIDAD,
         "placa": inspection.PLACA,
         "cupo": vehicles_dict.get(inspection.UNIDAD, ""),
-        "nombre_usuario": inspection.USUARIO,
+        "nombre_usuario": user.NOMBRE if user else "",
         "estado_inspeccion": inspection.ESTADO,
         "puede_editar": puede_editar,
         "fotos": fotos,
@@ -270,6 +272,8 @@ async def inspections_info(data: InspectionInfo, company_code: str):
       firma_url = f"{route_api}uploads/{inspection.FIRMA}" if inspection.FIRMA and inspection.FIRMA.strip() else ''
       
       puede_editar = 1 if (inspection.ESTADO == "PEN" and data.usuario and inspection.USUARIO == data.usuario) else 0
+
+      user = db.query(PermisosUsuario).filter(PermisosUsuario.CODIGO == inspection.USUARIO).first()
       
       inspections_data.append({
         "id": inspection.ID,
@@ -281,7 +285,7 @@ async def inspections_info(data: InspectionInfo, company_code: str):
         "unidad": inspection.UNIDAD,
         "placa": inspection.PLACA,
         "cupo": vehicles_dict.get(inspection.UNIDAD, ""),
-        "nombre_usuario": inspection.USUARIO,
+        "nombre_usuario": user.NOMBRE if user else "",
         "estado_inspeccion": inspection.ESTADO,
         "puede_editar": puede_editar,
         "fotos": fotos,
@@ -866,6 +870,8 @@ async def inspection_details(inspection_id: int):
       if foto_value and foto_value.strip(): 
         foto_url = f"{route_api}uploads/{foto_value}"
         fotos.append(foto_url)
+
+    user = db.query(PermisosUsuario).filter(PermisosUsuario.CODIGO == inspection.USUARIO).first()
     
     inspection_data = {
       "id": inspection.ID,
@@ -910,7 +916,7 @@ async def inspection_details(inspection_id: int):
       "tapiceria": inspection.TAPICERIA,
       "triangulo": inspection.TRIANGULO,
       "vidrios": inspection.VIDRIOS,
-      "usuario": inspection.USUARIO if inspection.USUARIO else "",
+      "usuario": user.NOMBRE if user else "",
       "fotos": fotos,
     }
 
