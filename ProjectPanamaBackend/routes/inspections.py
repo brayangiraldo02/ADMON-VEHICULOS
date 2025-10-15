@@ -28,6 +28,10 @@ async def post_inspections_info(data: InspectionInfo, company_code: str):
 async def post_upload_images(inspection_id: int, images: List[UploadFile] = File(...)):
     return await upload_images(inspection_id, images)
 
+@inspections_router.post("/inspections/upload_signature/{inspection_id}/", tags=["Inspections"])
+async def post_upload_signature(inspection_id: int, signature: UploadFile = File(...)):
+    return await upload_signature(inspection_id, signature)
+
 @inspections_router.post("/inspections/report_inspections/{company_code}/", tags=["Inspections"])
 async def post_report_inspections(data: InspectionInfo, company_code: str):
     return await report_inspections(data, company_code)

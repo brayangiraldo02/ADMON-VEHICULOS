@@ -145,13 +145,21 @@
       margin-top: 50px;
       text-align: center;
       page-break-before: auto;
-      padding: 50px 0; 
+      padding: 50px 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .seccion-firma img {
+      max-width: 300px;
+      height: auto;
+      margin-bottom: 0;
     }
     .linea-firma {
-      display: inline-block;
+      display: block;
       width: 300px;
       border-bottom: 1px solid #000;
-      margin-top: 40px;
+      margin: 0 auto;
     }
     .texto-firma {
       display: block;
@@ -321,9 +329,10 @@
 
   <!-- Firma -->
   <div class="seccion-firma">
-    <span class="texto-firma">{{ data_view.inspection.nombre_conductor }}</span>
-    <span class="linea-firma"></span>
-    <span class="texto-firma">Firma Conductor</span>
+    <div class="texto-firma"><img src="{{ data_view.inspection.firma }}"></div>
+    <div class="texto-firma">{{ data_view.inspection.nombre_conductor }}</div>
+    <div class="linea-firma"></div>
+    <div class="texto-firma">Firma Conductor</div>
   </div>
 </body>
 </html>

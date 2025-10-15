@@ -26,12 +26,8 @@
             <span class="value">{{ inspectionData.empresa }}</span>
           </div>
           <div class="info-item">
-            <span class="label">Fecha:</span>
-            <span class="value">{{ inspectionData.fecha }}</span>
-          </div>
-          <div class="info-item">
-            <span class="label">Hora:</span>
-            <span class="value">{{ inspectionData.hora }}</span>
+            <span class="label">Fecha y hora:</span>
+            <span class="value">{{ inspectionData.fecha }} {{ inspectionData.hora }}</span>
           </div>
           <div class="info-item">
             <span class="label">Usuario:</span>
@@ -70,7 +66,7 @@
         <div class="info-grid">
           <div class="info-item">
             <span class="label">Código:</span>
-            <span class="value">{{ inspectionData.propietario }}</span>
+            <span class="value">{{ getOwnerCode(inspectionData.propietario) }}</span>
           </div>
           <div class="info-item">
             <span class="label">Nombre:</span>
@@ -331,6 +327,30 @@
           <p class="photos-info">
             {{ inspectionData.fotos.length }} fotografía(s) disponible(s)
           </p>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card
+      class="info-section"
+    >
+      <mat-card-header>
+        <mat-card-title class="section-title">
+          <mat-icon>draw</mat-icon>
+          Firma del Conductor
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="photos-section">
+          <button
+            mat-raised-button
+            color="primary"
+            class="view-photos-btn"
+            (click)="closeDialog('viewSignature')"
+          >
+            <mat-icon>visibility</mat-icon>
+            Ver Firma
+          </button>
         </div>
       </mat-card-content>
     </mat-card>
