@@ -95,10 +95,14 @@ async def vehicles_data(company_code: str):
     owners = db.query(Propietarios).filter(Propietarios.EMPRESA == company_code, Propietarios.CODIGO != "").all()
     owners_dict = {owner.CODIGO: owner.NOMBRE for owner in owners}
 
+    states = db.query(Estados).filter(Estados.EMPRESA == company_code).all()
+    states_dict = {state.CODIGO: state.NOMBRE for state in states}
+
     result = []
 
     for vehicle in vehicles:
       owner_name = owners_dict.get(vehicle.PROPI_IDEN, "")
+      state_name = states_dict.get(vehicle.ESTADO, "")
       
       result.append({
         "placa_vehiculo": vehicle.PLACA,
@@ -106,6 +110,9 @@ async def vehicles_data(company_code: str):
         "codigo_conductor": vehicle.CONDUCTOR,
         "codigo_propietario": vehicle.PROPI_IDEN,
         "nombre_propietario": owner_name,
+        "propietario": vehicle.PROPI_IDEN + " - " + owner_name if owner_name else vehicle.PROPI_IDEN,
+        "kilometraje": vehicle.KILOMETRAJ if vehicle.KILOMETRAJ else "",
+        "estado_vehiculo": state_name,
         "marca": vehicle.NOMMARCA,
         "linea": vehicle.LINEA,
         "modelo": vehicle.MODELO,
@@ -609,13 +616,22 @@ async def new_inspection_data(company_code: str, vehicle_number: str):
       panapass_value = search_value_in_txt('Unidad', vehicle_number, 'Saldo Cuenta PanaPass', txt_file_path)
     else:
       panapass_value = ''
-    
+
+    id_owner = vehicle.PROPI_IDEN if vehicle.PROPI_IDEN else ''
+    if id_owner:
+      owner = db.query(Propietarios).filter(Propietarios.CODIGO == id_owner, Propietarios.EMPRESA == company_code).first()
+      if owner:
+        owner_vehicle = owner.CODIGO + ' - ' + owner.NOMBRE
+      else:
+        owner_vehicle = ''
+
     vehicle_info = {
       'numero': vehicle_number,
       'marca': vehicle.NOMMARCA + ' ' + vehicle.LINEA,
       'modelo': vehicle.MODELO,
       'placa': vehicle.PLACA,
       'estado_vehiculo': state_vehicle,
+      'propietario': owner_vehicle,
       'cupo': vehicle.NRO_CUPO if vehicle.NRO_CUPO else '',
       'conductor_nombre': driver.NOMBRE if driver else '',
       'conductor_codigo': vehicle.CONDUCTOR if vehicle.CONDUCTOR else '',
@@ -837,6 +853,12 @@ async def inspection_details(inspection_id: int):
 
     vehicle = db.query(Vehiculos).filter(Vehiculos.NUMERO == inspection.UNIDAD, Vehiculos.EMPRESA == inspection.EMPRESA).first()
 
+    states = db.query(Estados).filter(Estados.EMPRESA == inspection.EMPRESA).all()
+    state_vehicle = next((state.CODIGO + ' - ' + state.NOMBRE for state in states if state.CODIGO == vehicle.ESTADO), '') if vehicle else ''
+
+    owners = db.query(Propietarios).filter(Propietarios.CODIGO == inspection.PROPI_IDEN, Propietarios.EMPRESA == inspection.EMPRESA).first()
+    owner_name = owners.CODIGO + ' - ' + owners.NOMBRE if owners else ''
+
     fotos = []
     for i in range(1, 17): 
       foto_field = f"FOTO{i:02d}"
@@ -850,11 +872,12 @@ async def inspection_details(inspection_id: int):
       "empresa": company_info.NOMBRE if company_info else "",
       "fecha": inspection.FECHA.strftime('%d-%m-%Y') if inspection.FECHA else None,
       "hora": inspection.HORA.strftime('%H:%M') if inspection.HORA else None,
-      "propietario": inspection.PROPI_IDEN,
+      "propietario": owner_name,
       "nombre_propietario": inspection.NOMPROPI,
       "conductor": inspection.CONDUCTOR,
       "nombre_conductor": inspection.NOMCONDU,
       "cedula_conductor": inspection.CEDULA,
+      "estado_vehiculo": state_vehicle,
       "tipo_inspeccion": inspections_dict.get(inspection.TIPO_INSPEC, ""),
       "descripcion": inspection.DESCRIPCION,
       "unidad": inspection.UNIDAD,

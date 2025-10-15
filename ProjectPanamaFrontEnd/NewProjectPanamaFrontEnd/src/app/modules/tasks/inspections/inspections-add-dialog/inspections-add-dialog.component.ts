@@ -39,6 +39,7 @@ interface InspectionsVehicleData {
   marca: string;
   modelo: string;
   placa: string;
+  propietario: string;
   estado_vehiculo: string;
   cupo: string;
   conductor_nombre: string;
@@ -194,13 +195,15 @@ export class InspectionsAddDialogComponent implements OnInit {
   }
 
   populateFormWithInspectionData(data: any) {
+    console.log(data);
     // Precargar información del vehículo
     this.vehicleInfo = {
       numero: data.unidad,
       marca: '',
       modelo: '',
       placa: data.placa,
-      estado_vehiculo: '',
+      estado_vehiculo: data.estado_vehiculo,
+      propietario: data.propietario,
       cupo: data.cupo,
       conductor_nombre: data.nombre_conductor,
       conductor_codigo: data.conductor,
@@ -388,7 +391,7 @@ export class InspectionsAddDialogComponent implements OnInit {
 
   displayVehicleData(vehicle: Vehicles): string {
     return vehicle
-      ? `${vehicle.numero_unidad} - ${vehicle.marca} ${vehicle.linea} ${vehicle.modelo}`
+      ? `${vehicle.numero_unidad} ${vehicle.placa_vehiculo} - ${vehicle.marca} ${vehicle.linea} ${vehicle.modelo}`
       : '';
   }
 
@@ -421,6 +424,7 @@ export class InspectionsAddDialogComponent implements OnInit {
       modelo: '',
       placa: '',
       estado_vehiculo: '',
+      propietario: '',
       cupo: '',
       conductor_nombre: '',
       conductor_codigo: '',

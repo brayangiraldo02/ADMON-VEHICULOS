@@ -12,7 +12,7 @@ h2 {
 .info-container {
   width: 100%;
   flex: 1;
-  min-width: 0; /* Permite que el contenedor se reduzca */
+  min-width: 0; 
 }
 
 .info-container h3 {
@@ -21,18 +21,9 @@ h2 {
 
 /* --- ESTE ES EL NUEVO BLOQUE --- */
 .inspections-inputs-form {
-  max-height: 450px; /* Puedes ajustar este valor */
+  max-height: 60vh;
   overflow-y: auto;
   padding-right: 10px;
-}
-
-/* Eliminar scroll en móvil */
-@media (max-width: 950px) {
-  .inspections-inputs-form {
-    max-height: none;
-    overflow-y: visible;
-    padding-right: 0;
-  }
 }
 
 /* --- ESTILOS PARA LA VISTA COMPACTA --- */
@@ -47,6 +38,8 @@ h2 {
   margin-right: 20px;
   box-sizing: border-box;
   overflow-wrap: break-word;
+  max-height: 60vh;
+  overflow-y: auto; 
 }
 
 .compact-header {
@@ -56,6 +49,10 @@ h2 {
   margin-bottom: 12px;
   border-bottom: 1px solid #dee2e6;
   padding-bottom: 8px;
+  position: sticky; 
+  top: 0;
+  background-color: #f8f9fa;
+  z-index: 1;
 }
 
 .compact-header h4 {
@@ -101,8 +98,6 @@ h2 {
   max-width: 100%;
   overflow-wrap: break-word;
 }
-
-/* ------------------------------- */
 
 /* --- ESTILOS PARA BARRA DE CARGA DE CREACIÓN --- */
 .creating-inspection-loader {
@@ -161,18 +156,24 @@ h2 {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
+/* ------------------------------------------ */
+
+/* Eliminar scroll en móvil */
 @media (max-width: 950px) {
+  .inspections-inputs-form {
+    max-height: none;
+    overflow-y: visible;
+    padding-right: 0;
+  }
+
   .signature-container {
     height: 250px;
   }
-}
 
-/* ------------------------------------------ */
-
-@media (max-width: 950px) {
   /* Añadimos esto para que en móvil el layout se apile correctamente */
   .main-content-container {
     flex-direction: column;
+    max-height: none; 
   }
   
   .inputs-container {
@@ -203,6 +204,12 @@ h2 {
     min-width: unset;
     margin-right: 0;
     margin-bottom: 16px;
+    max-height: none; 
+    overflow-y: visible;
+  }
+
+  .compact-header {
+    position: relative;
   }
 
   .compact-info-item {

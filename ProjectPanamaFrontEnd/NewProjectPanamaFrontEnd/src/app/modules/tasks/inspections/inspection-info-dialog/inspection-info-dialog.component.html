@@ -26,12 +26,8 @@
             <span class="value">{{ inspectionData.empresa }}</span>
           </div>
           <div class="info-item">
-            <span class="label">Fecha:</span>
-            <span class="value">{{ inspectionData.fecha }}</span>
-          </div>
-          <div class="info-item">
-            <span class="label">Hora:</span>
-            <span class="value">{{ inspectionData.hora }}</span>
+            <span class="label">Fecha y hora:</span>
+            <span class="value">{{ inspectionData.fecha }} {{ inspectionData.hora }}</span>
           </div>
           <div class="info-item">
             <span class="label">Usuario:</span>
@@ -70,7 +66,7 @@
         <div class="info-grid">
           <div class="info-item">
             <span class="label">Código:</span>
-            <span class="value">{{ inspectionData.propietario }}</span>
+            <span class="value">{{ getOwnerCode(inspectionData.propietario) }}</span>
           </div>
           <div class="info-item">
             <span class="label">Nombre:</span>

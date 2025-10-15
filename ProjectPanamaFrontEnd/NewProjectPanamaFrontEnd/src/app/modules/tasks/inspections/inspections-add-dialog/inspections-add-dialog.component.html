@@ -105,8 +105,8 @@
         <ng-container *ngIf="selectedVehicle && !isLoading">
           <div class="inputs-container">
             <mat-form-field class="field-input">
-              <mat-label>Placa</mat-label>
-              <input matInput readonly [value]="vehicleInfo.placa" />
+              <mat-label>Propietario</mat-label>
+              <input matInput readonly [value]="vehicleInfo.propietario" />
             </mat-form-field>
             <mat-form-field class="field-input">
               <mat-label>Estado</mat-label>
@@ -182,7 +182,7 @@
               >{{
                 displayVehicleData(inspectionInfoForm.get("vehiculo")?.value)
               }}
-              - {{ vehicleInfo.placa }} - {{ vehicleInfo.cupo }}</span
+                - {{ vehicleInfo.cupo }}</span
             >
           </div>
           <div class="compact-info-item">
@@ -194,6 +194,10 @@
           <div class="compact-info-item">
             <span class="compact-label">Estado:</span>
             <span class="compact-value">{{ vehicleInfo.estado_vehiculo }}</span>
+          </div>
+          <div class="compact-info-item">
+            <span class="compact-label">Propietario:</span>
+            <span class="compact-value">{{ vehicleInfo.propietario }}</span>
           </div>
           <div class="compact-info-item">
             <span class="compact-label">Kilometraje:</span>
