@@ -89,7 +89,6 @@ export class InspectionsTableComponent implements OnInit, AfterViewInit {
 
   maxDate: Date = new Date();
 
-  isLoading = true;
   isLoadingData = false;
 
   displayedColumns: string[] = [
@@ -143,6 +142,8 @@ export class InspectionsTableComponent implements OnInit, AfterViewInit {
   }
 
   getTableInitialData() {
+    this.isLoadingData = true;
+
     const company = this.getCompany();
     const formattedValues = {
       usuario: this.getUserId(),
@@ -176,7 +177,7 @@ export class InspectionsTableComponent implements OnInit, AfterViewInit {
           } else {
             this.openSnackbar('Inspecciones cargadas correctamente.');
           }
-          this.isLoading = false;
+          this.isLoadingData = false;
         },
         error: (error) => {
           console.error('Error fetching inspections:', error);
@@ -188,7 +189,7 @@ export class InspectionsTableComponent implements OnInit, AfterViewInit {
               'Error al cargar las inspecciones. Por favor, inténtelo de nuevo más tarde.'
             );
           }
-          this.isLoading = false;
+          this.isLoadingData = false;
         },
       });
   }
@@ -625,6 +626,8 @@ export class InspectionsTableComponent implements OnInit, AfterViewInit {
           formValues.fechaFinal;
         if (hasFilter) {
           this.getTableData();
+        } else {
+          this.getTableInitialData();
         }
       }
     });
@@ -705,6 +708,8 @@ export class InspectionsTableComponent implements OnInit, AfterViewInit {
           formValues.fechaFinal;
         if (hasFilter) {
           this.getTableData();
+        } else {
+          this.getTableInitialData();
         }
       }
     });

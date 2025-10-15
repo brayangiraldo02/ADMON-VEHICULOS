@@ -3,7 +3,7 @@
     <h1 class="title">Inspecciones</h1>
   </div>
 
-  <form [formGroup]="inspectionForm" *ngIf="!isLoading">
+  <form [formGroup]="inspectionForm" *ngIf="!isLoadingData">
     <div class="inputs-container">
       <mat-form-field class="field-input">
         <mat-label>Propietarios</mat-label>
@@ -146,7 +146,7 @@
 
   <div
     class="mat-elevation-z8"
-    *ngIf="!isLoading && dataSource.data.length > 0"
+    *ngIf="!isLoadingData && dataSource.data.length > 0"
   >
     <div class="table-scroll-container">
       <table mat-table [dataSource]="dataSource" matSort>
@@ -276,6 +276,4 @@
       aria-label="Selecciona la cantidad de registros por página"
     ></mat-paginator>
   </div>
-
-  <mat-progress-bar mode="indeterminate" *ngIf="isLoading"></mat-progress-bar>
 </div>
