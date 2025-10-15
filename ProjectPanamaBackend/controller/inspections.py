@@ -95,10 +95,14 @@ async def vehicles_data(company_code: str):
     owners = db.query(Propietarios).filter(Propietarios.EMPRESA == company_code, Propietarios.CODIGO != "").all()
     owners_dict = {owner.CODIGO: owner.NOMBRE for owner in owners}
 
+    states = db.query(Estados).filter(Estados.EMPRESA == company_code).all()
+    states_dict = {state.CODIGO: state.NOMBRE for state in states}
+
     result = []
 
     for vehicle in vehicles:
       owner_name = owners_dict.get(vehicle.PROPI_IDEN, "")
+      state_name = states_dict.get(vehicle.ESTADO, "")
       
       result.append({
         "placa_vehiculo": vehicle.PLACA,
@@ -106,6 +110,9 @@ async def vehicles_data(company_code: str):
         "codigo_conductor": vehicle.CONDUCTOR,
         "codigo_propietario": vehicle.PROPI_IDEN,
         "nombre_propietario": owner_name,
+        "propietario": vehicle.PROPI_IDEN + " - " + owner_name if owner_name else vehicle.PROPI_IDEN,
+        "kilometraje": vehicle.KILOMETRAJ if vehicle.KILOMETRAJ else "",
+        "estado_vehiculo": state_name,
         "marca": vehicle.NOMMARCA,
         "linea": vehicle.LINEA,
         "modelo": vehicle.MODELO,
@@ -184,8 +191,12 @@ async def inspections_info_all(data: InspectionInfo, company_code: str):
         if foto_value and foto_value.strip(): 
           foto_url = f"{route_api}uploads/{foto_value}"
           fotos.append(foto_url)
-      
+
+      firma_url = f"{route_api}uploads/{inspection.FIRMA}" if inspection.FIRMA and inspection.FIRMA.strip() else ''
+
       puede_editar = 1 if (inspection.ESTADO == "PEN" and data.usuario and inspection.USUARIO == data.usuario) else 0
+
+      user = db.query(PermisosUsuario).filter(PermisosUsuario.CODIGO == inspection.USUARIO).first()
       
       inspections_data.append({
         "id": inspection.ID,
@@ -197,10 +208,11 @@ async def inspections_info_all(data: InspectionInfo, company_code: str):
         "unidad": inspection.UNIDAD,
         "placa": inspection.PLACA,
         "cupo": vehicles_dict.get(inspection.UNIDAD, ""),
-        "nombre_usuario": inspection.USUARIO,
+        "nombre_usuario": user.NOMBRE if user else "",
         "estado_inspeccion": inspection.ESTADO,
         "puede_editar": puede_editar,
-        "fotos": fotos
+        "fotos": fotos,
+        "firma": [firma_url]
       })
 
     if not inspections_data:
@@ -256,8 +268,12 @@ async def inspections_info(data: InspectionInfo, company_code: str):
         if foto_value and foto_value.strip(): 
           foto_url = f"{route_api}uploads/{foto_value}"
           fotos.append(foto_url)
+
+      firma_url = f"{route_api}uploads/{inspection.FIRMA}" if inspection.FIRMA and inspection.FIRMA.strip() else ''
       
       puede_editar = 1 if (inspection.ESTADO == "PEN" and data.usuario and inspection.USUARIO == data.usuario) else 0
+
+      user = db.query(PermisosUsuario).filter(PermisosUsuario.CODIGO == inspection.USUARIO).first()
       
       inspections_data.append({
         "id": inspection.ID,
@@ -269,10 +285,11 @@ async def inspections_info(data: InspectionInfo, company_code: str):
         "unidad": inspection.UNIDAD,
         "placa": inspection.PLACA,
         "cupo": vehicles_dict.get(inspection.UNIDAD, ""),
-        "nombre_usuario": inspection.USUARIO,
+        "nombre_usuario": user.NOMBRE if user else "",
         "estado_inspeccion": inspection.ESTADO,
         "puede_editar": puede_editar,
-        "fotos": fotos
+        "fotos": fotos,
+        "firma": [firma_url]
       })
 
     if not inspections_data:
@@ -334,6 +351,54 @@ async def upload_images(inspection_id: int, images: List[UploadFile] = File(...)
         message += f" {len(images) - saved_count} fueron descartadas por falta de espacio."
 
     return JSONResponse(content={"message": message}, status_code=201)
+
+  except Exception as e:
+    db.rollback()
+    return JSONResponse(content={"message": str(e)}, status_code=500)
+  finally:
+    db.close()
+
+#-----------------------------------------------------------------------------------------------
+async def upload_signature(inspection_id: int, signature: UploadFile = File(...)):
+  db = session()
+  try:
+    inspection = db.query(Inspecciones).filter(Inspecciones.ID == inspection_id).first()
+    if not inspection:
+      raise HTTPException(status_code=404, detail=f"Inspección con ID {inspection_id} no encontrada.")
+
+    vehicle_number = inspection.UNIDAD
+    company_code = inspection.EMPRESA
+
+    # Verificar si ya existe una firma
+    if inspection.FIRMA:
+      return JSONResponse(
+        content={"message": "Ya existe una firma para esta inspección."},
+        status_code=400
+      )
+
+    # Crear el directorio para la firma dentro de la carpeta de inspecciones
+    full_signature_path = os.path.join(upload_directory, company_code, vehicle_number, "inspecciones", str(inspection_id))
+    os.makedirs(full_signature_path, exist_ok=True)
+
+    # Obtener la extensión del archivo
+    _, ext = os.path.splitext(signature.filename)
+    new_filename = f"firma{ext}"
+
+    # Guardar el archivo
+    full_file_path = os.path.join(full_signature_path, new_filename)
+    with open(full_file_path, "wb") as buffer:
+      shutil.copyfileobj(signature.file, buffer)
+
+    # Crear la ruta relativa para guardar en la base de datos
+    relative_db_path = os.path.join(company_code, vehicle_number, "inspecciones", str(inspection_id), new_filename)
+    normalized_path = relative_db_path.replace("\\", "/")
+    
+    # Actualizar el campo FIRMA en la base de datos
+    inspection.FIRMA = normalized_path
+
+    db.commit()
+
+    return JSONResponse(content={"message": "Firma guardada exitosamente.", "path": normalized_path}, status_code=201)
 
   except Exception as e:
     db.rollback()
@@ -555,13 +620,22 @@ async def new_inspection_data(company_code: str, vehicle_number: str):
       panapass_value = search_value_in_txt('Unidad', vehicle_number, 'Saldo Cuenta PanaPass', txt_file_path)
     else:
       panapass_value = ''
-    
+
+    id_owner = vehicle.PROPI_IDEN if vehicle.PROPI_IDEN else ''
+    if id_owner:
+      owner = db.query(Propietarios).filter(Propietarios.CODIGO == id_owner, Propietarios.EMPRESA == company_code).first()
+      if owner:
+        owner_vehicle = owner.CODIGO + ' - ' + owner.NOMBRE
+      else:
+        owner_vehicle = ''
+
     vehicle_info = {
       'numero': vehicle_number,
       'marca': vehicle.NOMMARCA + ' ' + vehicle.LINEA,
       'modelo': vehicle.MODELO,
       'placa': vehicle.PLACA,
       'estado_vehiculo': state_vehicle,
+      'propietario': owner_vehicle,
       'cupo': vehicle.NRO_CUPO if vehicle.NRO_CUPO else '',
       'conductor_nombre': driver.NOMBRE if driver else '',
       'conductor_codigo': vehicle.CONDUCTOR if vehicle.CONDUCTOR else '',
@@ -783,6 +857,12 @@ async def inspection_details(inspection_id: int):
 
     vehicle = db.query(Vehiculos).filter(Vehiculos.NUMERO == inspection.UNIDAD, Vehiculos.EMPRESA == inspection.EMPRESA).first()
 
+    states = db.query(Estados).filter(Estados.EMPRESA == inspection.EMPRESA).all()
+    state_vehicle = next((state.CODIGO + ' - ' + state.NOMBRE for state in states if state.CODIGO == vehicle.ESTADO), '') if vehicle else ''
+
+    owners = db.query(Propietarios).filter(Propietarios.CODIGO == inspection.PROPI_IDEN, Propietarios.EMPRESA == inspection.EMPRESA).first()
+    owner_name = owners.CODIGO + ' - ' + owners.NOMBRE if owners else ''
+
     fotos = []
     for i in range(1, 17): 
       foto_field = f"FOTO{i:02d}"
@@ -790,17 +870,20 @@ async def inspection_details(inspection_id: int):
       if foto_value and foto_value.strip(): 
         foto_url = f"{route_api}uploads/{foto_value}"
         fotos.append(foto_url)
+
+    user = db.query(PermisosUsuario).filter(PermisosUsuario.CODIGO == inspection.USUARIO).first()
     
     inspection_data = {
       "id": inspection.ID,
       "empresa": company_info.NOMBRE if company_info else "",
       "fecha": inspection.FECHA.strftime('%d-%m-%Y') if inspection.FECHA else None,
       "hora": inspection.HORA.strftime('%H:%M') if inspection.HORA else None,
-      "propietario": inspection.PROPI_IDEN,
+      "propietario": owner_name,
       "nombre_propietario": inspection.NOMPROPI,
       "conductor": inspection.CONDUCTOR,
       "nombre_conductor": inspection.NOMCONDU,
       "cedula_conductor": inspection.CEDULA,
+      "estado_vehiculo": state_vehicle,
       "tipo_inspeccion": inspections_dict.get(inspection.TIPO_INSPEC, ""),
       "descripcion": inspection.DESCRIPCION,
       "unidad": inspection.UNIDAD,
@@ -833,7 +916,7 @@ async def inspection_details(inspection_id: int):
       "tapiceria": inspection.TAPICERIA,
       "triangulo": inspection.TRIANGULO,
       "vidrios": inspection.VIDRIOS,
-      "usuario": inspection.USUARIO if inspection.USUARIO else "",
+      "usuario": user.NOMBRE if user else "",
       "fotos": fotos,
     }
 
@@ -865,6 +948,8 @@ async def generate_inspection_pdf(data: ReportInspection, company_code: str):
       if foto_value and foto_value.strip(): 
         foto_url = f"{route_api}uploads/{foto_value}"
         fotos.append(foto_url)
+
+    firma_url = f"{route_api}uploads/{inspection.FIRMA}" if inspection.FIRMA and inspection.FIRMA.strip() else ''
     
     inspection_data = {
       "id": inspection.ID,
@@ -882,6 +967,7 @@ async def generate_inspection_pdf(data: ReportInspection, company_code: str):
       "placa": inspection.PLACA,
       "cupo": vehicle.NRO_CUPO if vehicle and vehicle.NRO_CUPO else "",
       "kilometraje": inspection.KILOMETRAJ if inspection.KILOMETRAJ else "",
+      "combustible": inspection.COMBUSTIBLE if inspection.COMBUSTIBLE else "",
       "panapass": inspection.PANAPASS if inspection.PANAPASS else "",
       "observaciones": inspection.OBSERVA if inspection.OBSERVA else "",
       "estado_inspeccion": inspection.ESTADO,
@@ -909,6 +995,7 @@ async def generate_inspection_pdf(data: ReportInspection, company_code: str):
       "vidrios": inspection.VIDRIOS,
       "usuario": inspection.USUARIO if inspection.USUARIO else "",
       "fotos": fotos,
+      "firma": firma_url
     }
 
     user = db.query(PermisosUsuario).filter(PermisosUsuario.CODIGO == data.user).first()

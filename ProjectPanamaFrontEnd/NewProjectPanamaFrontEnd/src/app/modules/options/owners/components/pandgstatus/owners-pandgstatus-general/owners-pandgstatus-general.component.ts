@@ -13,11 +13,11 @@ interface DateCurrently {
 }
 
 @Component({
-  selector: 'app-owners-pandgstatus',
-  templateUrl: './owners-pandgstatus.component.html',
-  styleUrls: ['./owners-pandgstatus.component.css'],
+  selector: 'app-owners-pandgstatus-general',
+  templateUrl: './owners-pandgstatus-general.component.html',
+  styleUrls: ['./owners-pandgstatus-general.component.css'],
 })
-export class OwnersPandgstatusComponent  implements OnInit {
+export class OwnersPandgstatusGeneralComponent implements OnInit {
   @Output() close = new EventEmitter<void>();
 
   isLoadingValues: boolean = true;
@@ -85,7 +85,6 @@ export class OwnersPandgstatusComponent  implements OnInit {
 
   getUser() {
     this.user = this.jwtService.getUserData();
-    this.user = this.user.nombre;
   }
 
   isEmpresaSeleccionada(opcionId: string): boolean {
@@ -98,9 +97,7 @@ export class OwnersPandgstatusComponent  implements OnInit {
         this.selectedOwners.push(opcionId);
       }
     } else {
-      this.selectedOwners = this.selectedOwners.filter(
-        (id) => id !== opcionId
-      );
+      this.selectedOwners = this.selectedOwners.filter((id) => id !== opcionId);
     }
   }
 
@@ -119,8 +116,7 @@ export class OwnersPandgstatusComponent  implements OnInit {
 
   onSubmit(): void {
     if (this.infoForm && this.infoForm.valid) {
-      
-      if(this.selectedOwners.length === 0) {
+      if (this.selectedOwners.length === 0) {
         this.selectedOwners = this.getOwnersId();
       }
 
@@ -130,17 +126,16 @@ export class OwnersPandgstatusComponent  implements OnInit {
 
   openExternalLink(): void {
     const company = this.getCompany();
-    let endpoint = 'pandgstatus/'+company;
+    let endpoint = 'pandgstatus-summary/'+company;
     if (endpoint) {
-
       const data = {
-        usuario: this.user,
+        usuario: this.user.nombre,
         primeraFecha: this.infoForm.value.firstDate,
         ultimaFecha: this.infoForm.value.lastDate,
-        unidad: 'TODOS',
-        empresa: this.selectedOwners, 
+        unidad: '',
+        empresa: this.selectedOwners,
       };
-      
+
       localStorage.setItem('pdfEndpoint', endpoint);
       localStorage.setItem('pdfData', JSON.stringify(data));
       window.open(`/pdf`, '_blank');

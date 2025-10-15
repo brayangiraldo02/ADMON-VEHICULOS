@@ -1,4 +1,7 @@
+import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { Component, effect, ElementRef, ViewChild } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { OwnersPandgstatusOptionsDialogComponent } from 'src/app/modules/options/owners/components/pandgstatus/owners-pandgstatus-options-dialog/owners-pandgstatus-options-dialog.component';
 import { JwtService } from 'src/app/services/jwt.service';
 import { GlobalStatesService } from 'src/app/states/global-states.service';
 
@@ -42,6 +45,7 @@ export class HomeOwnersComponent {
   ownersRelationshiprevenuesGeneralVisible: boolean = false;
   ownersPartsrelationshipVisible: boolean = false;
   ownersPandgstatusVisible: boolean = false;
+  ownersPandgstatusGeneralVisible: boolean = false;
   ownersFeespaidVisible: boolean = false;
   infoCompanyVisible: boolean = false;
 
@@ -49,7 +53,9 @@ export class HomeOwnersComponent {
     private jwtService: JwtService,
     // private apiService: ApiService,
     // private router: Router,
-    private globalStatesService: GlobalStatesService
+    private globalStatesService: GlobalStatesService,
+    private dialog: MatDialog,
+    private breakpointObserver: BreakpointObserver
   ) {
     effect(() => {
       this.infoCompanyVisible = this.globalStatesService.displayInfoCompany();
@@ -111,7 +117,7 @@ export class HomeOwnersComponent {
         name: 'Estado de P y G',
         url: 'hoalalalal',
         disabled: false,
-        click: () => this.showModalOwnersPandgstatus(),
+        click: () => this.openPyGStatusOptionsDialog(),
       },
       {
         name: 'Cuotas Pagas por Conductor',
@@ -207,10 +213,34 @@ export class HomeOwnersComponent {
     document.body.style.overflow = 'hidden';
   }
 
+  showModalOwnersPandgstatusGeneral() {
+    this.ownersPandgstatusGeneralVisible = !this.ownersPandgstatusGeneralVisible;
+    document.documentElement.style.overflow = 'hidden';
+    document.body.style.overflow = 'hidden';
+  }
+
   showModalOwnersFeespaid() {
     this.ownersFeespaidVisible = !this.ownersFeespaidVisible;
     document.documentElement.style.overflow = 'hidden';
     document.body.style.overflow = 'hidden';
+  }
+
+  openPyGStatusOptionsDialog() {
+    const isSmallScreen = this.breakpointObserver.isMatched(Breakpoints.XSmall);
+    const dialogWidth = isSmallScreen ? '90vw' : '60%';
+
+    const dialogRef = this.dialog.open(OwnersPandgstatusOptionsDialogComponent, {
+      width: dialogWidth,
+      disableClose: true,
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result === 'units') {
+        this.showModalOwnersPandgstatus();
+      } else if (result === 'general') {
+        this.showModalOwnersPandgstatusGeneral();
+      }
+    });
   }
 
   hideModal() {
@@ -246,6 +276,10 @@ export class HomeOwnersComponent {
 
     if (this.ownersPandgstatusVisible) {
       this.ownersPandgstatusVisible = !this.ownersPandgstatusVisible;
+    }
+
+    if (this.ownersPandgstatusGeneralVisible) {
+      this.ownersPandgstatusGeneralVisible = !this.ownersPandgstatusGeneralVisible;
     }
 
     if (this.ownersFeespaidVisible) {

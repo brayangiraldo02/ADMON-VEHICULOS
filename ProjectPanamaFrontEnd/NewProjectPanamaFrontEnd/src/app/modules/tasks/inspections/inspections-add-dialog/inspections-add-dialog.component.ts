@@ -15,6 +15,7 @@ import { ApiService } from 'src/app/services/api.service';
 import { JwtService } from 'src/app/services/jwt.service';
 import { VehicleStatesFormComponent } from '../inspections-forms/vehicle-states-form/vehicle-states-form.component';
 import { TakePhotosVehicleComponent } from '../take-photos-vehicle/take-photos-vehicle.component';
+import { SignaturePadComponent } from 'src/app/modules/shared/components/signature-pad/signature-pad.component';
 
 interface Vehicles {
   placa_vehiculo: string;
@@ -38,6 +39,7 @@ interface InspectionsVehicleData {
   marca: string;
   modelo: string;
   placa: string;
+  propietario: string;
   estado_vehiculo: string;
   cupo: string;
   conductor_nombre: string;
@@ -80,6 +82,9 @@ export class InspectionsAddDialogComponent implements OnInit {
   @ViewChild(TakePhotosVehicleComponent)
   takePhotosVehicleComponent!: TakePhotosVehicleComponent;
 
+  @ViewChild(SignaturePadComponent)
+  signaturePadComponent!: SignaturePadComponent;
+
   inspectionInfoForm!: FormGroup;
 
   mainInspectionForm!: FormGroup;
@@ -105,6 +110,9 @@ export class InspectionsAddDialogComponent implements OnInit {
   isEditMode: boolean = false;
   inspectionData: any = null;
   wasEdited: boolean = false;
+
+  showSignaturePad: boolean = false;
+  signatureBase64: string = '';
 
   constructor(
     private apiService: ApiService,
@@ -187,13 +195,15 @@ export class InspectionsAddDialogComponent implements OnInit {
   }
 
   populateFormWithInspectionData(data: any) {
+    console.log(data);
     // Precargar información del vehículo
     this.vehicleInfo = {
       numero: data.unidad,
       marca: '',
       modelo: '',
       placa: data.placa,
-      estado_vehiculo: '',
+      estado_vehiculo: data.estado_vehiculo,
+      propietario: data.propietario,
       cupo: data.cupo,
       conductor_nombre: data.nombre_conductor,
       conductor_codigo: data.conductor,
@@ -381,7 +391,7 @@ export class InspectionsAddDialogComponent implements OnInit {
 
   displayVehicleData(vehicle: Vehicles): string {
     return vehicle
-      ? `${vehicle.numero_unidad} - ${vehicle.marca} ${vehicle.linea} ${vehicle.modelo}`
+      ? `${vehicle.numero_unidad} ${vehicle.placa_vehiculo} - ${vehicle.marca} ${vehicle.linea} ${vehicle.modelo}`
       : '';
   }
 
@@ -414,6 +424,7 @@ export class InspectionsAddDialogComponent implements OnInit {
       modelo: '',
       placa: '',
       estado_vehiculo: '',
+      propietario: '',
       cupo: '',
       conductor_nombre: '',
       conductor_codigo: '',
@@ -744,13 +755,56 @@ export class InspectionsAddDialogComponent implements OnInit {
       this.isLoading = true;
       this.takePhotosVehicleComponent.sendAllPhotos().subscribe({
         next: (response) => {
+          this.isLoading = false;
           this.openSnackbar('Todas las fotos se han subido con éxito.');
-          this.closeDialog('refresh');
+          // Mostrar el pad de firma después de subir las fotos
+          this.showSignaturePad = true;
         },
         error: (err) => {
           this.isLoading = false;
         },
       });
+    }
+  }
+
+  onSignatureSaved(signatureBase64: string) {
+    this.signatureBase64 = signatureBase64;
+    
+    // Convertir base64 a Blob
+    const base64Data = signatureBase64.split(',')[1];
+    const byteCharacters = atob(base64Data);
+    const byteNumbers = new Array(byteCharacters.length);
+    
+    for (let i = 0; i < byteCharacters.length; i++) {
+      byteNumbers[i] = byteCharacters.charCodeAt(i);
+    }
+    
+    const byteArray = new Uint8Array(byteNumbers);
+    const blob = new Blob([byteArray], { type: 'image/png' });
+    
+    // Crear FormData y agregar la firma
+    const formData = new FormData();
+    formData.append('signature', blob, `firma_${this.inspectionCreateID}.png`);
+    
+    // Enviar la firma al backend
+    this.isLoading = true;
+    this.apiService.postData(`inspections/upload_signature/${this.inspectionCreateID}`, formData).subscribe({
+      next: (response: any) => {
+        this.isLoading = false;
+        this.openSnackbar('Firma guardada correctamente.');
+        this.closeDialog('refresh');
+      },
+      error: (error) => {
+        this.isLoading = false;
+        console.error('Error al guardar la firma:', error);
+        this.openSnackbar('Error al guardar la firma. Vuelve a intentarlo más tarde.');
+      }
+    });
+  }
+
+  saveInspectionSignature() {
+    if (this.signaturePadComponent) {
+      this.signaturePadComponent.saveSignature();
     }
   }
 

@@ -105,6 +105,14 @@ export class InspectionInfoDialogComponent {
     }
   }
 
+  // Método para extraer solo el código del propietario (antes del espacio y guión)
+  getOwnerCode(ownerString: string): string {
+    if (!ownerString) return '';
+    // Extraer todo lo que está antes del espacio y guión
+    const match = ownerString.match(/^([^\s-]+)/);
+    return match ? match[1] : ownerString;
+  }
+
   openSnackbar(message: string) {
     this.snackBar.open(message, 'Cerrar', {
       duration: 3000,
