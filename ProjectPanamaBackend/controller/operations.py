@@ -32,6 +32,12 @@ import jinja2
 from utils.pdf import html2pdf
 from utils.text import clean_text
 from sqlalchemy import func
+from dotenv import load_dotenv
+import shutil
+
+load_dotenv()
+
+driver_documents_path = os.getenv('DRIVER_DOCS_PATH')
 
 path_10  = "/home/admin/dropbox-alfasoft/Integracion"
 path_58  = "/home/admin/dropbox-alfasoft/Integracion (1)"
@@ -376,6 +382,8 @@ async def generate_contract(vehicle_number: str):
     if not civil_status:
       return JSONResponse(content={"message": "Civil status not found"}, status_code=404)
     
+    base_path = os.path.join(driver_documents_path, vehicle.EMPRESA, driver.CODIGO)
+    
     wReg = 0
     # Verificar datos del vehiculo
     if float(vehicle.NROENTREGA) == 0:
@@ -606,6 +614,10 @@ async def generate_contract(vehicle_number: str):
     temp_pdf_path = temp_docx_path.replace('.docx', '.pdf')
     if not os.path.exists(temp_pdf_path):
       raise FileNotFoundError(f"El archivo PDF no se generó correctamente: {temp_pdf_path}")
+
+    final_pdf_path = os.path.join(base_path, "docu07.pdf")
+    final_pdf_path = final_pdf_path.replace('\\', '/')
+    shutil.copy(temp_pdf_path, final_pdf_path)
 
     os.remove(temp_docx_path)
 
