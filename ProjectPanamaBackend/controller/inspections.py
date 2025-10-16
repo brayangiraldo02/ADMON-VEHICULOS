@@ -23,6 +23,7 @@ from collections import defaultdict
 from datetime import datetime
 import pytz
 from utils.pdf import html2pdf
+from utils.text import clean_text
 import tempfile
 from utils.panapass import get_txt_file, search_value_in_txt
 from dotenv import load_dotenv
@@ -32,6 +33,8 @@ load_dotenv()
 upload_directory = os.getenv('DIRECTORY_IMG')
 route_api = os.getenv('ROUTE_API')
 PDF_THREAD_POOL = ThreadPoolExecutor(max_workers=2)
+path_10  = "/home/admin/dropbox-alfasoft/Integracion"
+path_58  = "/home/admin/dropbox-alfasoft/Integracion (1)"
 
 async def owners_data(company_code: str):
   db = session()
@@ -729,6 +732,21 @@ async def create_inspection(data: NewInspection):
 
     db.add(new_inspection)
     db.commit()
+
+    base_path = None
+
+    if vehicle.EMPRESA == '10':
+      base_path = path_10
+    elif vehicle.EMPRESA == '58':
+      base_path = path_58
+
+    if base_path:
+      panama_timezone = pytz.timezone('America/Panama')
+      now_in_panama = datetime.now(panama_timezone)
+
+      text_file = os.path.join(base_path, f"inspeccion_{vehicle.NUMERO}.txt")
+      with open(text_file, 'w') as file:
+        file.write(f"{vehicle.NUMERO},,{vehicle.CONDUCTOR},,,{data.mileage},{data.description},,{now_in_panama.strftime('%Y-%m-%d')},{clean_text(data.user)}")
 
     return JSONResponse(content={"id": new_inspection.ID}, status_code=201)
   except Exception as e:
