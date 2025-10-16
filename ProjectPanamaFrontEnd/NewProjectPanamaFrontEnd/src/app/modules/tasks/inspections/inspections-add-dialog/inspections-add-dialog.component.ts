@@ -391,7 +391,7 @@ export class InspectionsAddDialogComponent implements OnInit {
 
   displayVehicleData(vehicle: Vehicles): string {
     return vehicle
-      ? `${vehicle.numero_unidad} ${vehicle.placa_vehiculo} - ${vehicle.marca} ${vehicle.linea} ${vehicle.modelo}`
+      ? `${vehicle.numero_unidad} - ${vehicle.placa_vehiculo} - ${vehicle.marca} ${vehicle.linea} ${vehicle.modelo}`
       : '';
   }
 
