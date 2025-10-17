@@ -38,9 +38,8 @@ import shutil
 load_dotenv()
 
 driver_documents_path = os.getenv('DRIVER_DOCS_PATH')
-
-path_10  = "/home/admin/dropbox-alfasoft/Integracion"
-path_58  = "/home/admin/dropbox-alfasoft/Integracion (1)"
+path_10  = os.getenv('DROPBOX_INTEGRATION_PATH_10')
+path_58  = os.getenv('DROPBOX_INTEGRATION_PATH_58')
 
 async def get_vehicle_operation(vehicle_number: str):
   db = session()
