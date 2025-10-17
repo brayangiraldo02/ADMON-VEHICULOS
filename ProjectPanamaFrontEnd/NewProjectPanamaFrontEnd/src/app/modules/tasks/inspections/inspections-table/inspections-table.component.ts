@@ -48,6 +48,7 @@ export interface InspectionsInfoData {
   Cupo: string;
   Usuario: string;
   Estado: string;
+  Propietario: string;
   PuedeEditar: number;
   Fotos: string[];
   Firma: string[];
@@ -63,6 +64,7 @@ export interface apiResponse {
   placa: string;
   cupo: string;
   nombre_usuario: string;
+  propietario: string;
   estado_inspeccion: string;
   puede_editar: number;
   fotos: string[];
@@ -99,6 +101,7 @@ export class InspectionsTableComponent implements OnInit, AfterViewInit {
     'Placa',
     'Cupo',
     'Usuario',
+    'Propietario',
     'Estado',
     'Acciones',
   ];
@@ -163,6 +166,7 @@ export class InspectionsTableComponent implements OnInit, AfterViewInit {
             Placa: item.placa,
             Cupo: item.cupo,
             Usuario: item.nombre_usuario,
+            Propietario: item.propietario,
             Estado: item.estado_inspeccion,
             PuedeEditar: item.puede_editar,
             Fotos: item.fotos || [],
@@ -527,6 +531,7 @@ export class InspectionsTableComponent implements OnInit, AfterViewInit {
             Placa: item.placa,
             Cupo: item.cupo,
             Usuario: item.nombre_usuario,
+            Propietario: item.propietario,
             Estado: item.estado_inspeccion,
             PuedeEditar: item.puede_editar,
             Fotos: item.fotos || [],

@@ -32,9 +32,9 @@ load_dotenv()
 
 upload_directory = os.getenv('DIRECTORY_IMG')
 route_api = os.getenv('ROUTE_API')
+path_10  = os.getenv('DROPBOX_INTEGRATION_PATH_10')
+path_58  = os.getenv('DROPBOX_INTEGRATION_PATH_58')
 PDF_THREAD_POOL = ThreadPoolExecutor(max_workers=2)
-path_10  = "/home/admin/dropbox-alfasoft/Integracion"
-path_58  = "/home/admin/dropbox-alfasoft/Integracion (1)"
 
 async def owners_data(company_code: str):
   db = session()
@@ -184,6 +184,8 @@ async def inspections_info_all(data: InspectionInfo, company_code: str):
     vehicles = db.query(Vehiculos).filter(Vehiculos.EMPRESA == company_code).all()
     vehicles_dict = {vehicle.NUMERO: vehicle.NRO_CUPO for vehicle in vehicles}
 
+    owners_dict = {owner.CODIGO: owner.NOMBRE for owner in db.query(Propietarios).filter(Propietarios.EMPRESA == company_code).all()}
+
     inspections_data = []
 
     for inspection in inspections:
@@ -212,6 +214,7 @@ async def inspections_info_all(data: InspectionInfo, company_code: str):
         "placa": inspection.PLACA,
         "cupo": vehicles_dict.get(inspection.UNIDAD, ""),
         "nombre_usuario": user.NOMBRE if user else "",
+        "propietario": owners_dict.get(inspection.PROPI_IDEN, ""),
         "estado_inspeccion": inspection.ESTADO,
         "puede_editar": puede_editar,
         "fotos": fotos,
@@ -257,6 +260,8 @@ async def inspections_info(data: InspectionInfo, company_code: str):
 
     inspections_dict = {inspection.CODIGO: inspection.NOMBRE for inspection in inspections_types}
 
+    owners_dict = {owner.CODIGO: owner.NOMBRE for owner in db.query(Propietarios).filter(Propietarios.EMPRESA == company_code).all()}
+
     # Obtener todos los vehículos para obtener el campo cupo
     vehicles = db.query(Vehiculos).filter(Vehiculos.EMPRESA == company_code).all()
     vehicles_dict = {vehicle.NUMERO: vehicle.NRO_CUPO for vehicle in vehicles}
@@ -289,6 +294,7 @@ async def inspections_info(data: InspectionInfo, company_code: str):
         "placa": inspection.PLACA,
         "cupo": vehicles_dict.get(inspection.UNIDAD, ""),
         "nombre_usuario": user.NOMBRE if user else "",
+        "propietario": owners_dict.get(inspection.PROPI_IDEN, ""),
         "estado_inspeccion": inspection.ESTADO,
         "puede_editar": puede_editar,
         "fotos": fotos,
@@ -740,11 +746,14 @@ async def create_inspection(data: NewInspection):
     elif vehicle.EMPRESA == '58':
       base_path = path_58
 
+    print(base_path)
+
     if base_path:
       panama_timezone = pytz.timezone('America/Panama')
       now_in_panama = datetime.now(panama_timezone)
 
       text_file = os.path.join(base_path, f"inspeccion_{vehicle.NUMERO}.txt")
+      print(text_file)
       with open(text_file, 'w') as file:
         file.write(f"{vehicle.NUMERO},,{vehicle.CONDUCTOR},,,{data.mileage},{data.description},,{now_in_panama.strftime('%Y-%m-%d')},{clean_text(data.user)}")
 
