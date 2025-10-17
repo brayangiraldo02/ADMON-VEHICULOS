@@ -959,6 +959,8 @@ async def generate_inspection_pdf(data: ReportInspection, company_code: str):
 
     vehicle = db.query(Vehiculos).filter(Vehiculos.NUMERO == inspection.UNIDAD, Vehiculos.EMPRESA == inspection.EMPRESA).first()
 
+    user = db.query(PermisosUsuario).filter(PermisosUsuario.CODIGO == inspection.USUARIO).first()
+
     fotos = []
     for i in range(1, 17): 
       foto_field = f"FOTO{i:02d}"
@@ -1011,7 +1013,7 @@ async def generate_inspection_pdf(data: ReportInspection, company_code: str):
       "tapiceria": inspection.TAPICERIA,
       "triangulo": inspection.TRIANGULO,
       "vidrios": inspection.VIDRIOS,
-      "usuario": inspection.USUARIO if inspection.USUARIO else "",
+      "usuario": user.NOMBRE if user else "",
       "fotos": fotos,
       "firma": firma_url
     }
