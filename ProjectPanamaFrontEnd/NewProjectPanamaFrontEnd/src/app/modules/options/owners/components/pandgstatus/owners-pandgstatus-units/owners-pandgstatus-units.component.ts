@@ -137,7 +137,6 @@ export class OwnersPandgstatusUnitsComponent  implements OnInit {
         usuario: this.user,
         primeraFecha: this.infoForm.value.firstDate,
         ultimaFecha: this.infoForm.value.lastDate,
-        unidad: 'TODOS',
         empresa: this.selectedOwners, 
       };
       
