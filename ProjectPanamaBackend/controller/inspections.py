@@ -945,6 +945,7 @@ async def inspection_details(inspection_id: int):
       "vidrios": inspection.VIDRIOS,
       "usuario": user.NOMBRE if user else "",
       "fotos": fotos,
+      "firma": 1 if inspection.FIRMA and inspection.FIRMA.strip() else 0
     }
 
     return JSONResponse(content=jsonable_encoder(inspection_data), status_code=200)
