@@ -14,10 +14,11 @@ from fastapi.encoders import jsonable_encoder
 from utils.reports import *
 from utils.docx import *
 from utils.pdf import *
-from fastapi import BackgroundTasks
+from fastapi import BackgroundTasks, UploadFile, File
 import tempfile
 import os
-from docxtpl import DocxTemplate
+from docxtpl import DocxTemplate, InlineImage
+from docx.shared import Inches
 import pytz
 from num2words import num2words
 import locale
@@ -354,11 +355,11 @@ async def vehicle_delivery_info(vehicle_number: str):
 #-----------------------------------------------------------------------------------------------
 
 base_dir = os.path.dirname(os.path.dirname(__file__))
-docx_template_path = os.path.join(base_dir, 'documents', 'ContratoOriginal.docx')
+docx_template_path = os.path.join(base_dir, 'documents', 'ContratoOriginal2.docx')
 
 locale.setlocale(locale.LC_TIME, "es_ES.utf8")
 
-async def generate_contract(vehicle_number: str):
+async def generate_contract(vehicle_number: str, signature: UploadFile | None = File(None)):
   db = session()
   try:
     vehicle = db.query(Vehiculos).filter(Vehiculos.NUMERO == vehicle_number).first()
@@ -534,6 +535,20 @@ async def generate_contract(vehicle_number: str):
     n_year = num2words(int(year), lang='es')
     n_month = now_in_panama.strftime("%B")
     n_day = num2words(int(day), lang='es')
+
+    if signature:
+      temp_signature_fd, temp_signature_path = tempfile.mkstemp(suffix=os.path.splitext(signature.filename)[1])
+      os.close(temp_signature_fd)
+      with open(temp_signature_path, "wb") as f:
+          shutil.copyfileobj(signature.file, f)
+    else:
+      temp_signature_path = ""
+   
+    current_docx_path = docx_template_path
+    temp_docx_fd, temp_docx_path = tempfile.mkstemp(suffix=".docx")
+    os.close(temp_docx_fd)
+    
+    doc = DocxTemplate(current_docx_path)
     
     data = {
       'Representa': owner.REPRESENTA,
@@ -593,15 +608,9 @@ async def generate_contract(vehicle_number: str):
       'nAno': n_year,
       'nMes': n_month,
       'nDia': n_day,
+      'Firma': InlineImage(doc, temp_signature_path, width=Inches(2)) if temp_signature_path else '',
     }
     
-    current_docx_path = docx_template_path
-
-    temp_docx_fd, temp_docx_path = tempfile.mkstemp(suffix=".docx")
-    os.close(temp_docx_fd)
-
-    #doc = Document(current_docx_path)
-    doc = DocxTemplate(current_docx_path)
     doc.render(data)
 
     #replace_text_in_docx_robust(doc, data) ##
@@ -621,6 +630,7 @@ async def generate_contract(vehicle_number: str):
     os.remove(temp_docx_path)
 
     background_task = BackgroundTasks()
+    background_task.add_task(os.remove, temp_signature_path)
     background_task.add_task(os.remove, temp_pdf_path)
 
     return FileResponse(

@@ -1,4 +1,4 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, UploadFile, File
 from schemas.operations import *
 from controller.operations import *
 
@@ -20,9 +20,9 @@ async def post_delivery_vehicle_driver(data: DeliveryVehicleDriver):
 async def get_vehicle_delivery_info(vehicle_number: str):
   return await vehicle_delivery_info(vehicle_number)
 
-@operations_router.get("/operations/generate-contract/pdf/{vehicle_number}/", tags=["Operations"])
-async def get_generate_contract(vehicle_number: str):
-  return await generate_contract(vehicle_number)
+@operations_router.post("/operations/generate-contract/pdf/{vehicle_number}/", tags=["Operations"])
+async def post_generate_contract(vehicle_number: str, signature: UploadFile = File(None)):
+  return await generate_contract(vehicle_number, signature)
 
 @operations_router.post("/operations/validation/", tags=["Operations"])
 async def post_validation(data: BillValidation):
