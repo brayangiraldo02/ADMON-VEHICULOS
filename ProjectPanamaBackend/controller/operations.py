@@ -359,7 +359,7 @@ docx_template_path = os.path.join(base_dir, 'documents', 'ContratoOriginal2.docx
 
 locale.setlocale(locale.LC_TIME, "es_ES.utf8")
 
-async def generate_contract(vehicle_number: str, signature: UploadFile | None = File(None)):
+async def generate_contract(vehicle_number: str, signature: UploadFile = File(...)):
   db = session()
   try:
     vehicle = db.query(Vehiculos).filter(Vehiculos.NUMERO == vehicle_number).first()
@@ -536,13 +536,12 @@ async def generate_contract(vehicle_number: str, signature: UploadFile | None = 
     n_month = now_in_panama.strftime("%B")
     n_day = num2words(int(day), lang='es')
 
-    if signature:
-      temp_signature_fd, temp_signature_path = tempfile.mkstemp(suffix=os.path.splitext(signature.filename)[1])
-      os.close(temp_signature_fd)
-      with open(temp_signature_path, "wb") as f:
-          shutil.copyfileobj(signature.file, f)
-    else:
-      temp_signature_path = ""
+    os.makedirs(base_path, exist_ok=True)
+    ext = os.path.splitext(signature.filename)[1]
+    signature_filename = f"firma_contrato{ext}"
+    final_signature_path = os.path.join(base_path, signature_filename)
+    with open(final_signature_path, "wb") as f:
+        shutil.copyfileobj(signature.file, f)
    
     current_docx_path = docx_template_path
     temp_docx_fd, temp_docx_path = tempfile.mkstemp(suffix=".docx")
@@ -608,7 +607,7 @@ async def generate_contract(vehicle_number: str, signature: UploadFile | None = 
       'nAno': n_year,
       'nMes': n_month,
       'nDia': n_day,
-      'Firma': InlineImage(doc, temp_signature_path, width=Inches(2)) if temp_signature_path else '',
+      'Firma': InlineImage(doc, final_signature_path, width=Inches(2)),
     }
     
     doc.render(data)
@@ -630,7 +629,6 @@ async def generate_contract(vehicle_number: str, signature: UploadFile | None = 
     os.remove(temp_docx_path)
 
     background_task = BackgroundTasks()
-    background_task.add_task(os.remove, temp_signature_path)
     background_task.add_task(os.remove, temp_pdf_path)
 
     return FileResponse(
