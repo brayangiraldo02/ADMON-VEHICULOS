@@ -55,3 +55,7 @@ class ReturnVehicle(BaseModel):
   original_vehicle: str
   reason: str
   user: Optional[str] = ''
+
+class GenerateContractData(BaseModel):
+  company_code: str
+  signature_base64: str

@@ -35,6 +35,7 @@ from utils.text import clean_text
 from sqlalchemy import func
 from dotenv import load_dotenv
 import shutil
+import base64
 
 load_dotenv()
 
@@ -359,10 +360,10 @@ docx_template_path = os.path.join(base_dir, 'documents', 'ContratoOriginal2.docx
 
 locale.setlocale(locale.LC_TIME, "es_ES.utf8")
 
-async def generate_contract(vehicle_number: str, signature: UploadFile = File(...)):
+async def generate_contract(vehicle_number: str, data: GenerateContractData):
   db = session()
   try:
-    vehicle = db.query(Vehiculos).filter(Vehiculos.NUMERO == vehicle_number).first()
+    vehicle = db.query(Vehiculos).filter(Vehiculos.NUMERO == vehicle_number, Vehiculos.EMPRESA == data.company_code).first()
     if not vehicle:
       return JSONResponse(content={"message": "Vehicle not found"}, status_code=404)
     
@@ -537,12 +538,17 @@ async def generate_contract(vehicle_number: str, signature: UploadFile = File(..
     n_day = num2words(int(day), lang='es')
 
     os.makedirs(base_path, exist_ok=True)
-    ext = os.path.splitext(signature.filename)[1]
-    signature_filename = f"firma_contrato{ext}"
-    final_signature_path = os.path.join(base_path, signature_filename)
+    if data.signature_base64.startswith("data:image"):
+      signature_base64 = data.signature_base64.split(",")[1]
+    else:
+      signature_base64 = data.signature_base64
+
+    image_data = base64.b64decode(signature_base64)
+
+    final_signature_path = os.path.join(base_path, "firma_contrato.png")
     with open(final_signature_path, "wb") as f:
-        shutil.copyfileobj(signature.file, f)
-   
+      f.write(image_data)
+
     current_docx_path = docx_template_path
     temp_docx_fd, temp_docx_path = tempfile.mkstemp(suffix=".docx")
     os.close(temp_docx_fd)
