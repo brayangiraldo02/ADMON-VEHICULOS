@@ -545,7 +545,7 @@ async def generate_contract(vehicle_number: str, data: GenerateContractData):
 
     image_data = base64.b64decode(signature_base64)
 
-    final_signature_path = os.path.join(base_path, "firma_contrato.png")
+    final_signature_path = os.path.join(base_path, f"{vehicle.NUMERO}_{vehicle.CONDUCTOR}_firma.png")
     with open(final_signature_path, "wb") as f:
       f.write(image_data)
 
