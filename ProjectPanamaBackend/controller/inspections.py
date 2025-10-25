@@ -683,6 +683,8 @@ async def create_inspection(data: NewInspection):
     if not inspection_type:
       return JSONResponse(content={"message": "Tipo de inspección no encontrado"}, status_code=404)
     
+    user = db.query(PermisosUsuario).filter(PermisosUsuario.CODIGO == data.user, PermisosUsuario.EMPRESA == data.company_code).first()
+    
     panama_timezone = pytz.timezone('America/Panama')
     now_in_panama = datetime.now(panama_timezone)
 
@@ -692,12 +694,14 @@ async def create_inspection(data: NewInspection):
       EMPRESA=data.company_code,
       UNIDAD=vehicle.NUMERO,
       PLACA=vehicle.PLACA,
+      NRO_CUPO=vehicle.NRO_CUPO,
       PROPI_IDEN=vehicle.PROPI_IDEN,
       NOMPROPI=owner.NOMBRE,
       CONDUCTOR=vehicle.CONDUCTOR,
       CEDULA=driver.CEDULA,
       NOMCONDU=driver.NOMBRE,
       TIPO_INSPEC=inspection_type.CODIGO,
+      NOMINSPEC=inspection_type.NOMBRE,
       KILOMETRAJ=data.mileage,
       DESCRIPCION=data.description,
       OBSERVA=data.nota,
@@ -728,6 +732,7 @@ async def create_inspection(data: NewInspection):
       TRIANGULO=data.triangulo,
       VIDRIOS=data.vidrios,
       USUARIO=data.user if data.user else "",
+      NOMUSUARIO=user.NOMBRE if user else "",
       FEC_CREADO=now_in_panama.strftime("%Y-%m-%d %H:%M:%S")
     )
 
@@ -745,8 +750,6 @@ async def create_inspection(data: NewInspection):
       base_path = path_10
     elif vehicle.EMPRESA == '58':
       base_path = path_58
-
-    print(base_path)
 
     if base_path:
       panama_timezone = pytz.timezone('America/Panama')
