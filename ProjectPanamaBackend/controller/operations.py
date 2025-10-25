@@ -14,6 +14,7 @@ from fastapi.encoders import jsonable_encoder
 from utils.reports import *
 from utils.docx import *
 from utils.pdf import *
+from utils.images import *
 from fastapi import BackgroundTasks, UploadFile, File
 import tempfile
 import os
@@ -538,12 +539,8 @@ async def generate_contract(vehicle_number: str, data: GenerateContractData):
     n_day = num2words(int(day), lang='es')
 
     os.makedirs(base_path, exist_ok=True)
-    if data.signature_base64.startswith("data:image"):
-      signature_base64 = data.signature_base64.split(",")[1]
-    else:
-      signature_base64 = data.signature_base64
 
-    image_data = base64.b64decode(signature_base64)
+    image_data = decode_image(data.signature_base64)
 
     final_signature_path = os.path.join(base_path, f"{vehicle.NUMERO}_{vehicle.CONDUCTOR}_firma.png")
     with open(final_signature_path, "wb") as f:
