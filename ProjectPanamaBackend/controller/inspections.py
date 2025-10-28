@@ -236,10 +236,13 @@ async def inspections_info(data: InspectionInfo, company_code: str):
   db = session()
   try:
     filters = [
-        Inspecciones.FECHA >= data.fechaInicial,
-        Inspecciones.FECHA <= data.fechaFinal,
+      Inspecciones.EMPRESA == company_code
     ]
 
+    if data.fechaInicial != '' and data.fechaFinal != '':
+        filters.append(Inspecciones.FECHA >= data.fechaInicial)
+        filters.append(Inspecciones.FECHA <= data.fechaFinal)
+    
     if data.propietario != '':
         filters.append(Inspecciones.PROPI_IDEN == data.propietario)
     
