@@ -74,7 +74,7 @@ async def upload_picture(data: DriverData):
 async def vehicle_driver_data(company_code: str, vehicle_number: str):
   db = session()
   try:
-    vehicles = db.query(
+    vehicle = db.query(
     Vehiculos.NUMERO,
     Vehiculos.NOMMARCA,
     Vehiculos.PLACA,
@@ -98,51 +98,48 @@ async def vehicle_driver_data(company_code: str, vehicle_number: str):
       ).join(Estados, (Estados.CODIGO == Vehiculos.ESTADO) & (Estados.EMPRESA == Vehiculos.EMPRESA)
       ).filter(Vehiculos.EMPRESA == company_code, Vehiculos.NUMERO == vehicle_number
       ).all()
-
-    if not vehicles:
+    
+    if not vehicle:
        return JSONResponse(content={"message": "No se encontraron vehículos para la empresa."}, status_code=404)
     
-    info = []
+    signature_path = ''
+    has_signature = 0
 
-    for row in vehicles:
-      signature_path = ''
-      has_signature = 0
+    picture_path = ''
+    has_picture = 0
 
-      picture_path = ''
-      has_picture = 0
+    signature = os.path.join(driver_documents_path, company_code, vehicle.driver_code, f"{vehicle.NUMERO}_{vehicle.driver_code}_firma.png")
+    if os.path.exists(signature):
+      signature_path = signature
+      has_signature = 1
 
-      signature = os.path.join(driver_documents_path, company_code, row.driver_code, f"{row.NUMERO}_{row.driver_code}_firma.png")
-      if os.path.exists(signature):
-        signature_path = signature
-        has_signature = 1
+    picture = os.path.join(driver_documents_path, company_code, vehicle.driver_code, f"{vehicle.NUMERO}_{vehicle.driver_code}_foto.png")
+    if os.path.exists(picture):
+      picture_path = picture
+      has_picture = 1
 
-      picture = os.path.join(driver_documents_path, company_code, row.driver_code, f"{row.NUMERO}_{row.driver_code}_foto.png")
-      if os.path.exists(picture):
-        picture_path = picture
-        has_picture = 1
-
-      info.append({
-        'vehicle_number': row.NUMERO,
-        'model': row.NOMMARCA,
-        'plate': row.PLACA,
-        'quota': row.NRO_CUPO,
-        'central': row.central_name,
-        'owner_name': row.owner_name,
-        'nro_delivery': row.NROENTREGA,
-        'daily_quota': row.CUO_DIARIA,
-        'deposit_value': row.VLR_DEPOSI,
-        'state_name': row.state_name,
-        'has_quota': 'Con Cupo' if row.CON_CUPO == '1' else '',
-        'driver_code': row.driver_code,
-        'driver_name': row.driver_name,
-        'driver_id': row.driver_id,
-        'driver_phone': row.driver_phone,
-        'driver_address': row.driver_address,
-        'has_signature': has_signature,
-        'url_signature': signature_path,
-        'has_picture': has_picture,
-        'url_picture': picture_path
-      })
+    info = {
+      'vehicle_number': vehicle.NUMERO,
+      'model': vehicle.NOMMARCA,
+      'plate': vehicle.PLACA,
+      'quota': vehicle.NRO_CUPO,
+      'central': vehicle.central_name,
+      'owner_name': vehicle.owner_name,
+      'nro_delivery': vehicle.NROENTREGA,
+      'daily_quota': vehicle.CUO_DIARIA,
+      'deposit_value': vehicle.VLR_DEPOSI,
+      'state_name': vehicle.state_name,
+      'has_quota': 'Con Cupo' if vehicle.CON_CUPO == '1' else '',
+      'driver_code': vehicle.driver_code,
+      'driver_name': vehicle.driver_name,
+      'driver_id': vehicle.driver_id,
+      'driver_phone': vehicle.driver_phone,
+      'driver_address': vehicle.driver_address,
+      'has_signature': has_signature,
+      'url_signature': signature_path,
+      'has_picture': has_picture,
+      'url_picture': picture_path
+    }
 
     return JSONResponse(content=jsonable_encoder(info), status_code=200)
   except Exception as e:
