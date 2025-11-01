@@ -71,7 +71,7 @@ async def upload_picture(data: DriverData):
 
 #-----------------------------------------------------------------------------------------------
 
-async def vehicle_driver_data(company_code: str):
+async def vehicle_driver_data(company_code: str, vehicle_number: str):
   db = session()
   try:
     vehicles = db.query(
@@ -84,7 +84,6 @@ async def vehicle_driver_data(company_code: str):
     Vehiculos.VLR_DEPOSI,
     Vehiculos.CON_CUPO,
     Vehiculos.CONDUCTOR,
-    Vehiculos.FEC_CONTRA,
     Conductores.CODIGO.label('driver_code'),
     Conductores.NOMBRE.label('driver_name'),
     Conductores.CEDULA.label('driver_id'),
@@ -97,7 +96,7 @@ async def vehicle_driver_data(company_code: str):
       ).join(Propietarios, (Propietarios.CODIGO == Vehiculos.PROPI_IDEN) & (Propietarios.EMPRESA == Vehiculos.EMPRESA)
       ).join(Centrales, (Centrales.CODIGO == Vehiculos.CENTRAL) & (Centrales.EMPRESA == Vehiculos.EMPRESA)
       ).join(Estados, (Estados.CODIGO == Vehiculos.ESTADO) & (Estados.EMPRESA == Vehiculos.EMPRESA)
-      ).filter(Vehiculos.EMPRESA == company_code
+      ).filter(Vehiculos.EMPRESA == company_code, Vehiculos.NUMERO == vehicle_number
       ).all()
 
     if not vehicles:
@@ -139,7 +138,6 @@ async def vehicle_driver_data(company_code: str):
         'driver_id': row.driver_id,
         'driver_phone': row.driver_phone,
         'driver_address': row.driver_address,
-        'contract_date': row.FEC_CONTRA.strftime('%d/%m/%Y') if row.FEC_CONTRA and hasattr(row.FEC_CONTRA, 'strftime') else None,
         'has_signature': has_signature,
         'url_signature': signature_path,
         'has_picture': has_picture,
