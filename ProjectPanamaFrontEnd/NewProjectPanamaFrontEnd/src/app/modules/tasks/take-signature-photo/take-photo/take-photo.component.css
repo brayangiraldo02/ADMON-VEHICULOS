@@ -97,6 +97,10 @@ h2 {
   color: red;
 }
 
+.message-strong-green {
+  color: green;
+}
+
 
 /* Responsive styles for screens smaller than 600px */
 @media (max-width: 599px) {

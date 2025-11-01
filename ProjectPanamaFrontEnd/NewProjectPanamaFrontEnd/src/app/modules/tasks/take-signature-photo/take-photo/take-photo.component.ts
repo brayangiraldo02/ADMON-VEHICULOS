@@ -5,7 +5,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { Observable } from 'rxjs/internal/Observable';
 import { map } from 'rxjs/internal/operators/map';
 import { startWith } from 'rxjs/internal/operators/startWith';
-import { SignaturePadComponent } from 'src/app/modules/shared/components/signature-pad/signature-pad.component';
+import { CameraComponent } from 'src/app/modules/shared/components/camera/camera/camera.component';
 import { ApiService } from 'src/app/services/api.service';
 import { JwtService } from 'src/app/services/jwt.service';
 
@@ -14,26 +14,27 @@ interface vehicle {
   placa: string;
 }
 
-interface vehicleSignatureInfo {
-  numero: string;
-  marca: string;
-  placa: string;
-  cupo: string;
+interface vehiclePhotoInfo {
+  vehicle_number: string;
+  model: string;
+  plate: string;
+  quota: string;
   central: string;
-  propietario_nombre: string;
-  nro_entrega: string;
-  cuota_diaria: number;
-  valor_deposito: number;
-  estado: string;
-  con_cupo: string;
-  conductor_codigo: string;
-  conductor_nombre: string;
-  conductor_cedula: string;
-  conductor_celular: string;
-  conductor_direccion: string;
-  fecha_contrato: string;
-  permitido: number | null | undefined;
-  mensaje: string;
+  owner_name: string;
+  nro_delivery: string;
+  daily_quota: number;
+  deposit_value: number;
+  state_name: string;
+  has_quota: string;
+  driver_code: string;
+  driver_name: string;
+  driver_id: string;
+  driver_phone: string;
+  driver_address: string;
+  has_signature: number;
+  url_signature: string;
+  has_picture: number;
+  url_picture: string;
 }
 
 @Component({
@@ -42,8 +43,8 @@ interface vehicleSignatureInfo {
   styleUrls: ['./take-photo.component.css'],
 })
 export class TakePhotoComponent implements OnInit {
-  @ViewChild(SignaturePadComponent)
-  signaturePadComponent!: SignaturePadComponent;
+  @ViewChild(CameraComponent)
+  cameraComponent!: CameraComponent;
 
   vehicles = new FormControl('');
   drivers = new FormControl({ value: '', disabled: true });
@@ -51,29 +52,31 @@ export class TakePhotoComponent implements OnInit {
   filteredOptions!: Observable<vehicle[]>;
 
   isLoadingVehicles = true;
-  isLoadingvehicleSignatureInfo = false;
-  signatureDriver = false;
+  isLoadingvehiclePhotoInfo = false;
+  selectedVehicle: boolean = false;
+  photoDriver = false;
 
-  vehicleSignatureInfo: vehicleSignatureInfo = {
-    numero: '',
-    marca: '',
-    placa: '',
-    cupo: '',
+  vehiclePhotoInfo: vehiclePhotoInfo = {
+    vehicle_number: '',
+    model: '',
+    plate: '',
+    quota: '',
     central: '',
-    propietario_nombre: '',
-    nro_entrega: '',
-    cuota_diaria: 0,
-    valor_deposito: 0,
-    estado: '',
-    con_cupo: '',
-    conductor_codigo: '',
-    conductor_nombre: '',
-    conductor_cedula: '',
-    conductor_celular: '',
-    conductor_direccion: '',
-    fecha_contrato: '',
-    permitido: null,
-    mensaje: '',
+    owner_name: '',
+    nro_delivery: '',
+    daily_quota: 0,
+    deposit_value: 0,
+    state_name: '',
+    has_quota: '',
+    driver_code: '',
+    driver_name: '',
+    driver_id: '',
+    driver_phone: '',
+    driver_address: '',
+    has_signature: 0,
+    url_signature: '',
+    has_picture: 0,
+    url_picture: '',
   };
 
   constructor(
@@ -122,26 +125,28 @@ export class TakePhotoComponent implements OnInit {
   }
 
   resetInfo() {
-    this.vehicleSignatureInfo = {
-      numero: '',
-      marca: '',
-      placa: '',
-      cupo: '',
+    this.selectedVehicle = false;
+    this.vehiclePhotoInfo = {
+      vehicle_number: '',
+      model: '',
+      plate: '',
+      quota: '',
       central: '',
-      propietario_nombre: '',
-      nro_entrega: '',
-      cuota_diaria: 0,
-      valor_deposito: 0,
-      estado: '',
-      con_cupo: '',
-      conductor_codigo: '',
-      conductor_nombre: '',
-      conductor_cedula: '',
-      conductor_celular: '',
-      conductor_direccion: '',
-      fecha_contrato: '',
-      permitido: null,
-      mensaje: '',
+      owner_name: '',
+      nro_delivery: '',
+      daily_quota: 0,
+      deposit_value: 0,
+      state_name: '',
+      has_quota: '',
+      driver_code: '',
+      driver_name: '',
+      driver_id: '',
+      driver_phone: '',
+      driver_address: '',
+      has_signature: 0,
+      url_signature: '',
+      has_picture: 0,
+      url_picture: '',
     };
     this.drivers.setValue('');
   }
@@ -158,7 +163,7 @@ export class TakePhotoComponent implements OnInit {
     );
   }
 
-  getContractInfo(event: any) {
+  getVehiclePhotoInfo(event: any) {
     if (event.option.value === undefined) {
       this.resetInfo();
       this.resetVehicleAutocomplete();
@@ -167,26 +172,25 @@ export class TakePhotoComponent implements OnInit {
 
     if (event && event.option.value !== undefined) {
       const selectedVehicle = event.option.value;
-      console.log('Selected Vehicle:', selectedVehicle);
-      this.isLoadingvehicleSignatureInfo = true;
+      const company = this.getCompany();
+      this.isLoadingvehiclePhotoInfo = true;
       this.resetInfo();
 
       this.apiService
-        .getData('operations/generate-contract/info/' + selectedVehicle)
+        .getData('driver/vehicle-data/' + company + '/' + selectedVehicle)
         .subscribe(
-          (response: vehicleSignatureInfo) => {
-            console.log('Contract Info:', response);
-
-            this.isLoadingvehicleSignatureInfo = false;
-            this.vehicleSignatureInfo = response;
-            this.drivers.setValue(response.conductor_codigo);
+          (response: vehiclePhotoInfo) => {
+            this.isLoadingvehiclePhotoInfo = false;
+            this.vehiclePhotoInfo = response;
+            this.drivers.setValue(response.driver_code);
+            this.selectedVehicle = true;
           },
           (error) => {
-            console.error('Error fetching contract info:', error);
+            console.error('Error fetching vehicle info:', error);
             this.openSnackbar(
               'Error al obtener la información. Inténtalo de nuevo con otra unidad.'
             );
-            this.isLoadingvehicleSignatureInfo = false;
+            this.isLoadingvehiclePhotoInfo = false;
             this.resetInfo();
             this.resetVehicleAutocomplete();
           }
@@ -204,9 +208,38 @@ export class TakePhotoComponent implements OnInit {
     );
   }
 
-  saveSignature() {
-    if (this.signaturePadComponent) {
-      this.signaturePadComponent.saveSignature();
+  viewCamera() {
+    this.photoDriver = true;
+  }
+
+  savePhoto(photosBase64: string[]) {
+    if (this.selectedVehicle && photosBase64.length > 0) {
+      const data = {
+        company_code: this.getCompany(),
+        vehicle_number: this.vehiclePhotoInfo.vehicle_number,
+        base64: photosBase64[0], // Solo tomar la primera foto
+      };
+
+      this.isLoadingVehicles = true;
+
+      this.apiService.postData('driver/upload-picture', data).subscribe(
+        (response: any) => {
+          this.openSnackbar('Foto guardada exitosamente.');
+          this.closeDialog();
+        },
+        (error) => {
+          console.error('Error saving photo:', error);
+          this.openSnackbar('Error al guardar la foto. Inténtalo de nuevo.');
+          this.closeDialog();
+        }
+      );
+    }
+  }
+
+  triggerSavePhoto() {
+    if (this.cameraComponent) {
+      const photos = this.cameraComponent.getPhotosBase64();
+      this.savePhoto(photos);
     }
   }
 

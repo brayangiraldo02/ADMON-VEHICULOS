@@ -31,5 +31,6 @@
 </mat-dialog-content>
 <mat-dialog-actions align="end">
   <button mat-button *ngIf="takeSignature" [disabled]="isButtonDisabled()" (click)="nextStepSignature()">Siguiente</button>
+  <button mat-button *ngIf="takePhoto" [disabled]="isPhotoButtonDisabled()" (click)="nextStepPhoto()">Siguiente</button>
   <button mat-button mat-dialog-close cdkFocusInitial>Cerrar</button>
 </mat-dialog-actions>

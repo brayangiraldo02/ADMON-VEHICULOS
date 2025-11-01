@@ -1,5 +1,6 @@
 import { Component, ViewChild } from '@angular/core';
 import { TakeSignatureComponent } from '../take-signature/take-signature.component';
+import { TakePhotoComponent } from '../take-photo/take-photo.component';
 
 @Component({
   selector: 'app-take-signature-photo',
@@ -10,9 +11,13 @@ export class TakeSignaturePhotoComponent {
   @ViewChild(TakeSignatureComponent)
   takeSignatureComponent!: TakeSignatureComponent;
 
+  @ViewChild(TakePhotoComponent)
+  takePhotoComponent!: TakePhotoComponent;
+
   takeSignature: boolean = false;
   takePhoto: boolean = false;
   isSignaturePadVisible: boolean = false;
+  isCameraVisible: boolean = false;
 
   constructor() {}
 
@@ -40,6 +45,17 @@ export class TakeSignaturePhotoComponent {
     }
   }
 
+  nextStepPhoto() {
+    if (this.takePhotoComponent) {
+      if (!this.isCameraVisible) {
+        this.takePhotoComponent.viewCamera();
+        this.isCameraVisible = true;
+      } else {
+        this.takePhotoComponent.triggerSavePhoto();
+      }
+    }
+  }
+
   isButtonDisabled(): boolean {
     if (!this.takeSignatureComponent) {
       return true;
@@ -51,6 +67,20 @@ export class TakeSignaturePhotoComponent {
       info.driver_code === '' ||
       info.has_signature === 1 ||
       !this.takeSignatureComponent.selectedVehicle
+    );
+  }
+
+  isPhotoButtonDisabled(): boolean {
+    if (!this.takePhotoComponent) {
+      return true;
+    }
+
+    const info = this.takePhotoComponent.vehiclePhotoInfo;
+
+    return (
+      info.driver_code === '' ||
+      info.has_picture === 1 ||
+      !this.takePhotoComponent.selectedVehicle
     );
   }
 }
