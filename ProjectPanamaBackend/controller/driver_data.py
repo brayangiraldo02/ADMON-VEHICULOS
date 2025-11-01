@@ -75,7 +75,24 @@ async def vehicle_driver_data(company_code: str):
   db = session()
   try:
     vehicles = db.query(
-      Vehiculos, Conductores, Propietarios, Centrales, Estados
+    Vehiculos.NUMERO,
+    Vehiculos.NOMMARCA,
+    Vehiculos.PLACA,
+    Vehiculos.NRO_CUPO,
+    Vehiculos.NROENTREGA,
+    Vehiculos.CUO_DIARIA,
+    Vehiculos.VLR_DEPOSI,
+    Vehiculos.CON_CUPO,
+    Vehiculos.CONDUCTOR,
+    Vehiculos.FEC_CONTRA,
+    Conductores.CODIGO.label('driver_code'),
+    Conductores.NOMBRE.label('driver_name'),
+    Conductores.CEDULA.label('driver_id'),
+    Conductores.TELEFONO.label('driver_phone'),
+    Conductores.DIRECCION.label('driver_address'),
+    Propietarios.NOMBRE.label('owner_name'),
+    Centrales.NOMBRE.label('central_name'),
+    Estados.NOMBRE.label('state_name')
       ).join(Conductores, (Conductores.CODIGO == Vehiculos.CONDUCTOR) & (Conductores.EMPRESA == Vehiculos.EMPRESA)
       ).join(Propietarios, (Propietarios.CODIGO == Vehiculos.PROPI_IDEN) & (Propietarios.EMPRESA == Vehiculos.EMPRESA)
       ).join(Centrales, (Centrales.CODIGO == Vehiculos.CENTRAL) & (Centrales.EMPRESA == Vehiculos.EMPRESA)
@@ -88,41 +105,41 @@ async def vehicle_driver_data(company_code: str):
     
     info = []
 
-    for vehicle, driver, owner, central, state in vehicles:
+    for row in vehicles:
       signature_path = ''
       has_signature = 0
 
       picture_path = ''
       has_picture = 0
 
-      signature = os.path.join(driver_documents_path, company_code, driver.CODIGO, f"{vehicle.NUMERO}_{driver.CODIGO}_firma.png")
+      signature = os.path.join(driver_documents_path, company_code, row.driver_code, f"{row.NUMERO}_{row.driver_code}_firma.png")
       if os.path.exists(signature):
         signature_path = signature
         has_signature = 1
 
-      picture = os.path.join(driver_documents_path, company_code, driver.CODIGO, f"{vehicle.NUMERO}_{driver.CODIGO}_foto.png")
+      picture = os.path.join(driver_documents_path, company_code, row.driver_code, f"{row.NUMERO}_{row.driver_code}_foto.png")
       if os.path.exists(picture):
         picture_path = picture
         has_picture = 1
 
       info.append({
-        'vehicle_number': vehicle.NUMERO,
-        'model': vehicle.NOMMARCA,
-        'plate': vehicle.PLACA,
-        'quota': vehicle.NRO_CUPO,
-        'central': central.NOMBRE,
-        'owner_name': owner.NOMBRE,
-        'nro_delivery': vehicle.NROENTREGA,
-        'daily_quota': vehicle.CUO_DIARIA,
-        'deposit_value': vehicle.VLR_DEPOSI,
-        'state_name': state.NOMBRE,
-        'has_quota': 'Con Cupo' if vehicle.CON_CUPO == '1' else '',
-        'driver_code': vehicle.CONDUCTOR,
-        'driver_name': driver.NOMBRE,
-        'driver_id': driver.CEDULA,
-        'driver_phone': driver.TELEFONO,
-        'driver_address': driver.DIRECCION,
-        'contract_date': vehicle.FEC_CONTRA.strftime('%d/%m/%Y') if vehicle.FEC_CONTRA and hasattr(vehicle.FEC_CONTRA, 'strftime') else None,
+        'vehicle_number': row.NUMERO,
+        'model': row.NOMMARCA,
+        'plate': row.PLACA,
+        'quota': row.NRO_CUPO,
+        'central': row.central_name,
+        'owner_name': row.owner_name,
+        'nro_delivery': row.NROENTREGA,
+        'daily_quota': row.CUO_DIARIA,
+        'deposit_value': row.VLR_DEPOSI,
+        'state_name': row.state_name,
+        'has_quota': 'Con Cupo' if row.CON_CUPO == '1' else '',
+        'driver_code': row.driver_code,
+        'driver_name': row.driver_name,
+        'driver_id': row.driver_id,
+        'driver_phone': row.driver_phone,
+        'driver_address': row.driver_address,
+        'contract_date': row.FEC_CONTRA.strftime('%d/%m/%Y') if row.FEC_CONTRA and hasattr(row.FEC_CONTRA, 'strftime') else None,
         'has_signature': has_signature,
         'url_signature': signature_path,
         'has_picture': has_picture,
