@@ -97,7 +97,7 @@ async def vehicle_driver_data(company_code: str, vehicle_number: str):
       ).join(Centrales, (Centrales.CODIGO == Vehiculos.CENTRAL) & (Centrales.EMPRESA == Vehiculos.EMPRESA)
       ).join(Estados, (Estados.CODIGO == Vehiculos.ESTADO) & (Estados.EMPRESA == Vehiculos.EMPRESA)
       ).filter(Vehiculos.EMPRESA == company_code, Vehiculos.NUMERO == vehicle_number
-      ).all()
+      ).first()
     
     if not vehicle:
        return JSONResponse(content={"message": "No se encontraron vehículos para la empresa."}, status_code=404)
