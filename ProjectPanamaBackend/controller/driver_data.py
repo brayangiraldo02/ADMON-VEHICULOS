@@ -54,7 +54,7 @@ async def upload_picture(data: DriverData):
     base_path = os.path.join(driver_documents_path, data.company_code, driver.CODIGO)
     os.makedirs(base_path, exist_ok=True)
 
-    final_picture_path = os.path.join(base_path, f"{data.vehicle_number}_{driver.CODIGO}_foto.png")
+    final_picture_path = os.path.join(base_path, f"{driver.CODIGO}_foto.png")
 
     if os.path.exists(final_picture_path):
       return JSONResponse(content={"message": "Picture already exists"}, status_code=400)
