@@ -22,13 +22,14 @@ async def upload_signature(data: DriverData):
     if not driver:
       return JSONResponse(content={"message": "Driver not found"}, status_code=404)
     
-    base_path = os.path.join(driver_documents_path, data.company_code, driver.CODIGO)
+    base_path = os.path.join(driver_documents_path, data.company_code, driver.CODIGO, "firmas")
     os.makedirs(base_path, exist_ok=True)
 
-    final_signature_path = os.path.join(base_path, f"{data.vehicle_number}_{driver.CODIGO}_firma.png")
+    existing_signatures = [f for f in os.listdir(base_path) if f.startswith(f"{data.vehicle_number}_{driver.CODIGO}_firma")]
 
-    if os.path.exists(final_signature_path):
-      return JSONResponse(content={"message": "Signature already exists"}, status_code=400)
+    next_index = len(existing_signatures) + 1
+
+    final_signature_path = os.path.join(base_path, f"{data.vehicle_number}_{driver.CODIGO}_firma_{next_index}.png")
 
     image_data = decode_image(data.base64)
     
