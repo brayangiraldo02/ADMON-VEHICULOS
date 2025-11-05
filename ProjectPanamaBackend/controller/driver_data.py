@@ -14,6 +14,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 driver_documents_path = os.getenv('DRIVER_DOCS_PATH')
+vehicle_documents_path = os.getenv('VEHICLE_DOCS_PATH')
 
 async def upload_signature(data: DriverData):
   db = session()
@@ -55,6 +56,34 @@ async def upload_picture(data: DriverData):
     os.makedirs(base_path, exist_ok=True)
 
     final_picture_path = os.path.join(base_path, f"{driver.CODIGO}_foto.png")
+
+    if os.path.exists(final_picture_path):
+      return JSONResponse(content={"message": "Picture already exists"}, status_code=400)
+
+    image_data = decode_image(data.base64)
+
+    with open(final_picture_path, "wb") as f:
+      f.write(image_data)
+
+    return JSONResponse(content={"message": "Picture uploaded successfully"}, status_code=200)
+  except Exception as e:
+    return JSONResponse(content={"message": str(e)}, status_code=500)
+  finally:
+    db.close()
+
+#----------------------------------------------------------------------------------------------
+
+async def upload_vehicle_photo(data: DriverData):
+  db = session()
+  try:
+    vehicle = db.query(Vehiculos).filter(Vehiculos.EMPRESA == data.company_code, Vehiculos.NUMERO == data.vehicle_number).first()
+    if not vehicle:
+      return JSONResponse(content={"message": "Vehicle not found"}, status_code=404)
+
+    base_path = os.path.join(vehicle_documents_path, data.company_code, vehicle.NUMERO)
+    os.makedirs(base_path, exist_ok=True)
+
+    final_picture_path = os.path.join(base_path, f"{vehicle.NUMERO}_foto.png")
 
     if os.path.exists(final_picture_path):
       return JSONResponse(content={"message": "Picture already exists"}, status_code=400)
