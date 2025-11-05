@@ -137,16 +137,26 @@ async def vehicle_driver_data(company_code: str, vehicle_number: str):
 
     picture_path = ''
     has_picture = 0
+    
+    vehicle_photo_path = ''
+    has_vehicle_photo = 0
 
-    signature = os.path.join(driver_documents_path, company_code, vehicle.driver_code, f"{vehicle.NUMERO}_{vehicle.driver_code}_firma.png")
-    if os.path.exists(signature):
-      signature_path = signature
-      has_signature = 1
+    signature_dir = os.path.join(driver_documents_path, company_code, vehicle.driver_code, "firmas")
+    if os.path.exists(signature_dir):
+      signatures = [f for f in os.listdir(signature_dir) if f.startswith(f"{vehicle.NUMERO}_{vehicle.driver_code}_firma")]
+      if signatures:
+        signature_path = os.path.join(signature_dir, signatures[-1])
+        has_signature = 1
 
-    picture = os.path.join(driver_documents_path, company_code, vehicle.driver_code, f"{vehicle.NUMERO}_{vehicle.driver_code}_foto.png")
+    picture = os.path.join(driver_documents_path, company_code, vehicle.driver_code, f"{vehicle.driver_code}_foto.png")
     if os.path.exists(picture):
       picture_path = picture
       has_picture = 1
+
+    vehicle_photo = os.path.join(vehicle_documents_path, company_code, vehicle.NUMERO, f"{vehicle.NUMERO}_foto.png")
+    if os.path.exists(vehicle_photo):
+      vehicle_photo_path = vehicle_photo
+      has_vehicle_photo = 1
 
     info = {
       'vehicle_number': vehicle.NUMERO,
@@ -168,7 +178,9 @@ async def vehicle_driver_data(company_code: str, vehicle_number: str):
       'has_signature': has_signature,
       'url_signature': signature_path,
       'has_picture': has_picture,
-      'url_picture': picture_path
+      'url_picture': picture_path,
+      'has_vehicle_photo': has_vehicle_photo,
+      'url_vehicle_photo': vehicle_photo_path
     }
 
     return JSONResponse(content=jsonable_encoder(info), status_code=200)
