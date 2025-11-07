@@ -8,6 +8,7 @@ import { InfoCompanyComponent } from '../info-company/info-company.component';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { OptionsDocumentsDialogComponent } from 'src/app/modules/tasks/documents/options-documents-dialog/options-documents-dialog.component';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { TakeSignaturePhotoComponent } from 'src/app/modules/tasks/take-signature-photo/options-take-signature-photo-dialog/options-take-signature-photo-dialog.component';
 
 @Component({
   selector: 'app-sidenav',
@@ -104,6 +105,12 @@ export class SidenavComponent implements OnInit {
         label: 'Documentos',
         action: () => this.openDialogDocuments(),
         conditions: this.permisos.opcion17
+      },
+      {
+        icon: 'photo_camera',
+        label: 'Firma / Foto',
+        action: () => this.openDialogTakeSignaturePhoto(),
+        conditions: true
       }
     ];
   }
@@ -161,6 +168,17 @@ export class SidenavComponent implements OnInit {
     const dialogWidth = isSmallScreen ? '90vw' : '60%';
 
     const dialogRef = this.dialog.open(InfoCompanyComponent,
+      {
+        width: dialogWidth,
+      }
+    );
+  }
+
+  openDialogTakeSignaturePhoto(): void {
+    const isSmallScreen = this.breakpointObserver.isMatched(Breakpoints.XSmall);
+    const dialogWidth = isSmallScreen ? '90vw' : '60%';
+
+    const dialogRef = this.dialog.open(TakeSignaturePhotoComponent,
       {
         width: dialogWidth,
       }

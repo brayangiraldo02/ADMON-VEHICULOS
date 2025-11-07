@@ -1,0 +1,36 @@
+<h2 mat-dialog-title *ngIf="!takeSignature && !takePhoto">Capturar Firmas y Fotos</h2>
+<h2 mat-dialog-title *ngIf="takeSignature">Capturar Firma</h2>
+<h2 mat-dialog-title *ngIf="takePhoto">Capturar Foto</h2>
+<mat-dialog-content>
+  <div class="buttons-container" *ngIf="!takeSignature && !takePhoto">
+    <button
+      mat-raised-button
+      class="button"
+      (click)="openDocuments('signature')"
+    >
+      <mat-icon>draw</mat-icon>
+      Firma
+    </button>
+    <button
+      mat-raised-button
+      class="button"
+      (click)="openDocuments('photo')"
+    >
+      <mat-icon>portrait</mat-icon>
+      Foto
+    </button>
+  </div>
+
+  <div *ngIf="takeSignature">
+    <app-take-signature></app-take-signature>
+  </div>
+
+  <div *ngIf="takePhoto">
+    <app-take-photo></app-take-photo>
+  </div>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button *ngIf="takeSignature" [disabled]="isButtonDisabled()" (click)="nextStepSignature()">Siguiente</button>
+  <button mat-button *ngIf="takePhoto" [disabled]="isPhotoButtonDisabled()" (click)="nextStepPhoto()">Siguiente</button>
+  <button mat-button mat-dialog-close cdkFocusInitial>Cerrar</button>
+</mat-dialog-actions>

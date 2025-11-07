@@ -14,10 +14,12 @@ from fastapi.encoders import jsonable_encoder
 from utils.reports import *
 from utils.docx import *
 from utils.pdf import *
-from fastapi import BackgroundTasks
+from utils.images import *
+from fastapi import BackgroundTasks, UploadFile, File
 import tempfile
 import os
-from docxtpl import DocxTemplate
+from docxtpl import DocxTemplate, InlineImage
+from docx.shared import Inches
 import pytz
 from num2words import num2words
 import locale
@@ -32,9 +34,15 @@ import jinja2
 from utils.pdf import html2pdf
 from utils.text import clean_text
 from sqlalchemy import func
+from dotenv import load_dotenv
+import shutil
+import base64
 
-path_10  = "/home/admin/dropbox-alfasoft/Integracion"
-path_58  = "/home/admin/dropbox-alfasoft/Integracion (1)"
+load_dotenv()
+
+driver_documents_path = os.getenv('DRIVER_DOCS_PATH')
+path_10  = os.getenv('DROPBOX_INTEGRATION_PATH_10')
+path_58  = os.getenv('DROPBOX_INTEGRATION_PATH_58')
 
 async def get_vehicle_operation(vehicle_number: str):
   db = session()
@@ -349,14 +357,14 @@ async def vehicle_delivery_info(vehicle_number: str):
 #-----------------------------------------------------------------------------------------------
 
 base_dir = os.path.dirname(os.path.dirname(__file__))
-docx_template_path = os.path.join(base_dir, 'documents', 'ContratoOriginal.docx')
+docx_template_path = os.path.join(base_dir, 'documents', 'ContratoOriginal2.docx')
 
 locale.setlocale(locale.LC_TIME, "es_ES.utf8")
 
-async def generate_contract(vehicle_number: str):
+async def generate_contract(vehicle_number: str, data: GenerateContractData):
   db = session()
   try:
-    vehicle = db.query(Vehiculos).filter(Vehiculos.NUMERO == vehicle_number).first()
+    vehicle = db.query(Vehiculos).filter(Vehiculos.NUMERO == vehicle_number, Vehiculos.EMPRESA == data.company_code).first()
     if not vehicle:
       return JSONResponse(content={"message": "Vehicle not found"}, status_code=404)
     
@@ -375,6 +383,8 @@ async def generate_contract(vehicle_number: str):
     civil_status = db.query(EstadoCivil).filter(EstadoCivil.CODIGO == driver.ESTA_CIVIL).first()
     if not civil_status:
       return JSONResponse(content={"message": "Civil status not found"}, status_code=404)
+    
+    base_path = os.path.join(driver_documents_path, vehicle.EMPRESA, driver.CODIGO)
     
     wReg = 0
     # Verificar datos del vehiculo
@@ -527,6 +537,20 @@ async def generate_contract(vehicle_number: str):
     n_year = num2words(int(year), lang='es')
     n_month = now_in_panama.strftime("%B")
     n_day = num2words(int(day), lang='es')
+
+    os.makedirs(base_path, exist_ok=True)
+
+    image_data = decode_image(data.signature_base64)
+
+    final_signature_path = os.path.join(base_path, f"{vehicle.NUMERO}_{vehicle.CONDUCTOR}_firma_contrato.png")
+    with open(final_signature_path, "wb") as f:
+      f.write(image_data)
+
+    current_docx_path = docx_template_path
+    temp_docx_fd, temp_docx_path = tempfile.mkstemp(suffix=".docx")
+    os.close(temp_docx_fd)
+    
+    doc = DocxTemplate(current_docx_path)
     
     data = {
       'Representa': owner.REPRESENTA,
@@ -586,15 +610,9 @@ async def generate_contract(vehicle_number: str):
       'nAno': n_year,
       'nMes': n_month,
       'nDia': n_day,
+      'Firma': InlineImage(doc, final_signature_path, width=Inches(2)),
     }
     
-    current_docx_path = docx_template_path
-
-    temp_docx_fd, temp_docx_path = tempfile.mkstemp(suffix=".docx")
-    os.close(temp_docx_fd)
-
-    #doc = Document(current_docx_path)
-    doc = DocxTemplate(current_docx_path)
     doc.render(data)
 
     #replace_text_in_docx_robust(doc, data) ##
@@ -606,6 +624,10 @@ async def generate_contract(vehicle_number: str):
     temp_pdf_path = temp_docx_path.replace('.docx', '.pdf')
     if not os.path.exists(temp_pdf_path):
       raise FileNotFoundError(f"El archivo PDF no se generó correctamente: {temp_pdf_path}")
+
+    final_pdf_path = os.path.join(base_path, "docu07.pdf")
+    final_pdf_path = final_pdf_path.replace('\\', '/')
+    shutil.copy(temp_pdf_path, final_pdf_path)
 
     os.remove(temp_docx_path)
 

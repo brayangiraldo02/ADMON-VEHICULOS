@@ -23,6 +23,7 @@ from collections import defaultdict
 from datetime import datetime
 import pytz
 from utils.pdf import html2pdf
+from utils.text import clean_text
 import tempfile
 from utils.panapass import get_txt_file, search_value_in_txt
 from dotenv import load_dotenv
@@ -31,6 +32,8 @@ load_dotenv()
 
 upload_directory = os.getenv('DIRECTORY_IMG')
 route_api = os.getenv('ROUTE_API')
+path_10  = os.getenv('DROPBOX_INTEGRATION_PATH_10')
+path_58  = os.getenv('DROPBOX_INTEGRATION_PATH_58')
 PDF_THREAD_POOL = ThreadPoolExecutor(max_workers=2)
 
 async def owners_data(company_code: str):
@@ -181,6 +184,8 @@ async def inspections_info_all(data: InspectionInfo, company_code: str):
     vehicles = db.query(Vehiculos).filter(Vehiculos.EMPRESA == company_code).all()
     vehicles_dict = {vehicle.NUMERO: vehicle.NRO_CUPO for vehicle in vehicles}
 
+    owners_dict = {owner.CODIGO: owner.NOMBRE for owner in db.query(Propietarios).filter(Propietarios.EMPRESA == company_code).all()}
+
     inspections_data = []
 
     for inspection in inspections:
@@ -209,6 +214,7 @@ async def inspections_info_all(data: InspectionInfo, company_code: str):
         "placa": inspection.PLACA,
         "cupo": vehicles_dict.get(inspection.UNIDAD, ""),
         "nombre_usuario": user.NOMBRE if user else "",
+        "propietario": owners_dict.get(inspection.PROPI_IDEN, ""),
         "estado_inspeccion": inspection.ESTADO,
         "puede_editar": puede_editar,
         "fotos": fotos,
@@ -230,10 +236,13 @@ async def inspections_info(data: InspectionInfo, company_code: str):
   db = session()
   try:
     filters = [
-        Inspecciones.FECHA >= data.fechaInicial,
-        Inspecciones.FECHA <= data.fechaFinal,
+      Inspecciones.EMPRESA == company_code
     ]
 
+    if data.fechaInicial != '' and data.fechaFinal != '':
+        filters.append(Inspecciones.FECHA >= data.fechaInicial)
+        filters.append(Inspecciones.FECHA <= data.fechaFinal)
+    
     if data.propietario != '':
         filters.append(Inspecciones.PROPI_IDEN == data.propietario)
     
@@ -253,6 +262,8 @@ async def inspections_info(data: InspectionInfo, company_code: str):
     inspections_types = db.query(TiposInspeccion).filter(TiposInspeccion.EMPRESA == company_code).all()
 
     inspections_dict = {inspection.CODIGO: inspection.NOMBRE for inspection in inspections_types}
+
+    owners_dict = {owner.CODIGO: owner.NOMBRE for owner in db.query(Propietarios).filter(Propietarios.EMPRESA == company_code).all()}
 
     # Obtener todos los vehículos para obtener el campo cupo
     vehicles = db.query(Vehiculos).filter(Vehiculos.EMPRESA == company_code).all()
@@ -286,6 +297,7 @@ async def inspections_info(data: InspectionInfo, company_code: str):
         "placa": inspection.PLACA,
         "cupo": vehicles_dict.get(inspection.UNIDAD, ""),
         "nombre_usuario": user.NOMBRE if user else "",
+        "propietario": owners_dict.get(inspection.PROPI_IDEN, ""),
         "estado_inspeccion": inspection.ESTADO,
         "puede_editar": puede_editar,
         "fotos": fotos,
@@ -674,6 +686,8 @@ async def create_inspection(data: NewInspection):
     if not inspection_type:
       return JSONResponse(content={"message": "Tipo de inspección no encontrado"}, status_code=404)
     
+    user = db.query(PermisosUsuario).filter(PermisosUsuario.CODIGO == data.user, PermisosUsuario.EMPRESA == data.company_code).first()
+    
     panama_timezone = pytz.timezone('America/Panama')
     now_in_panama = datetime.now(panama_timezone)
 
@@ -683,12 +697,14 @@ async def create_inspection(data: NewInspection):
       EMPRESA=data.company_code,
       UNIDAD=vehicle.NUMERO,
       PLACA=vehicle.PLACA,
+      NRO_CUPO=vehicle.NRO_CUPO,
       PROPI_IDEN=vehicle.PROPI_IDEN,
       NOMPROPI=owner.NOMBRE,
       CONDUCTOR=vehicle.CONDUCTOR,
       CEDULA=driver.CEDULA,
       NOMCONDU=driver.NOMBRE,
       TIPO_INSPEC=inspection_type.CODIGO,
+      NOMINSPEC=inspection_type.NOMBRE,
       KILOMETRAJ=data.mileage,
       DESCRIPCION=data.description,
       OBSERVA=data.nota,
@@ -719,6 +735,7 @@ async def create_inspection(data: NewInspection):
       TRIANGULO=data.triangulo,
       VIDRIOS=data.vidrios,
       USUARIO=data.user if data.user else "",
+      NOMUSUARIO=user.NOMBRE if user else "",
       FEC_CREADO=now_in_panama.strftime("%Y-%m-%d %H:%M:%S")
     )
 
@@ -729,6 +746,22 @@ async def create_inspection(data: NewInspection):
 
     db.add(new_inspection)
     db.commit()
+
+    base_path = None
+
+    if vehicle.EMPRESA == '10':
+      base_path = path_10
+    elif vehicle.EMPRESA == '58':
+      base_path = path_58
+
+    if base_path:
+      panama_timezone = pytz.timezone('America/Panama')
+      now_in_panama = datetime.now(panama_timezone)
+
+      text_file = os.path.join(base_path, f"inspeccion_{vehicle.NUMERO}.txt")
+      print(text_file)
+      with open(text_file, 'w') as file:
+        file.write(f"{vehicle.NUMERO},,{vehicle.CONDUCTOR},,,{data.mileage},{data.description},,{now_in_panama.strftime('%Y-%m-%d')},{clean_text(data.user)}")
 
     return JSONResponse(content={"id": new_inspection.ID}, status_code=201)
   except Exception as e:
@@ -918,6 +951,7 @@ async def inspection_details(inspection_id: int):
       "vidrios": inspection.VIDRIOS,
       "usuario": user.NOMBRE if user else "",
       "fotos": fotos,
+      "firma": 1 if inspection.FIRMA and inspection.FIRMA.strip() else 0
     }
 
     return JSONResponse(content=jsonable_encoder(inspection_data), status_code=200)
@@ -940,6 +974,8 @@ async def generate_inspection_pdf(data: ReportInspection, company_code: str):
     company_info = db.query(InfoEmpresas).filter(InfoEmpresas.ID == inspection.EMPRESA).first()
 
     vehicle = db.query(Vehiculos).filter(Vehiculos.NUMERO == inspection.UNIDAD, Vehiculos.EMPRESA == inspection.EMPRESA).first()
+
+    user = db.query(PermisosUsuario).filter(PermisosUsuario.CODIGO == inspection.USUARIO).first()
 
     fotos = []
     for i in range(1, 17): 
@@ -993,7 +1029,7 @@ async def generate_inspection_pdf(data: ReportInspection, company_code: str):
       "tapiceria": inspection.TAPICERIA,
       "triangulo": inspection.TRIANGULO,
       "vidrios": inspection.VIDRIOS,
-      "usuario": inspection.USUARIO if inspection.USUARIO else "",
+      "usuario": user.NOMBRE if user else "",
       "fotos": fotos,
       "firma": firma_url
     }

@@ -61,8 +61,7 @@ async def get_all_owners(company_code: str):
     ).filter(
       Centrales.EMPRESA == company_code,
       Propietarios.EMPRESA == company_code
-    )\
-    .all()
+    ).distinct().all()
 
     owners_list = []
     for owner in owners:

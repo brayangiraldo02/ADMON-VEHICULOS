@@ -6,12 +6,16 @@ import { FormsModule } from '@angular/forms';
 import { MaterialModule } from './material/material.module';
 import { ConfirmActionDialogComponent } from './components/confirm-action-dialog/confirm-action-dialog.component';
 import { SignaturePadComponent } from './components/signature-pad/signature-pad.component';
+import { CameraComponent } from './components/camera/camera/camera.component';
+import { CameraPreviewComponent } from './components/camera/camera-preview/camera-preview.component';
 
 @NgModule({
   declarations: [
     InfoCompanyComponent,
     ConfirmActionDialogComponent,
     SignaturePadComponent,
+    CameraComponent,
+    CameraPreviewComponent,
   ],
   imports: [
     CommonModule,
@@ -22,7 +26,8 @@ import { SignaturePadComponent } from './components/signature-pad/signature-pad.
   exports: [
     InfoCompanyComponent,
     ConfirmActionDialogComponent,
-    SignaturePadComponent
+    SignaturePadComponent,
+    CameraComponent
   ]
 })
 export class SharedModule { }

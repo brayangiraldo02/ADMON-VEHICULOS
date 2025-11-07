@@ -30,6 +30,7 @@ export interface InspectionData {
   estado_inspeccion: string;
   usuario: string;
   fotos: string[];
+  firma: number;
   alfombra: boolean;
   antena: boolean;
   caratradio: boolean;
