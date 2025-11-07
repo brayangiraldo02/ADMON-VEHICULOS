@@ -63,6 +63,7 @@ import { InspectionInfoDialogComponent } from './modules/tasks/inspections/inspe
 import { TakeSignaturePhotoComponent } from './modules/tasks/take-signature-photo/options-take-signature-photo-dialog/options-take-signature-photo-dialog.component';
 import { TakeSignatureComponent } from './modules/tasks/take-signature-photo/take-signature/take-signature.component';
 import { TakePhotoComponent } from './modules/tasks/take-signature-photo/take-photo/take-photo.component';
+import { TakeVehiclePhotoComponent } from './modules/tasks/take-signature-photo/take-vehicle-photo/take-vehicle-photo.component';
 
 @NgModule({
   declarations: [
@@ -123,6 +124,7 @@ import { TakePhotoComponent } from './modules/tasks/take-signature-photo/take-ph
     TakeSignaturePhotoComponent,
     TakeSignatureComponent,
     TakePhotoComponent,
+    TakeVehiclePhotoComponent,
   ],
   imports: [
     BrowserModule,
