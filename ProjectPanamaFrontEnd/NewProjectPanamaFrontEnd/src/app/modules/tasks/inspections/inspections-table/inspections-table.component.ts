@@ -141,6 +141,20 @@ export class InspectionsTableComponent implements OnInit, AfterViewInit {
     if (this.paginator && this.sort) {
       this.dataSource.paginator = this.paginator;
       this.dataSource.sort = this.sort;
+
+      this.dataSource.sortingDataAccessor = (item, property) => {
+        if (property === 'Fecha') {
+          const [datePart, timePart] = item.Fecha.split(' ');
+          const [day, month, year] = datePart.split('-');
+          const dateTimeString = `${year}-${month}-${day}T${timePart}:00`;
+          return new Date(dateTimeString).getTime();
+        }
+        return (item as any)[property];
+      };
+
+      this.sort.active = 'Fecha';
+      this.sort.direction = 'desc';
+      this.dataSource.sort = this.sort;
     }
   }
 
