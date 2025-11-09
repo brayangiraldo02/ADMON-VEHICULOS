@@ -19,7 +19,7 @@
   width: 100%;
 }
 
-@media (max-width: 410px) {
+@media (max-width: 900px) {
   .buttons-container {
     flex-direction: column;
   }

@@ -336,7 +336,7 @@ async def upload_images(inspection_id: int, images: List[UploadFile] = File(...)
             status_code=400
         )
         
-    full_inspection_path = os.path.join(upload_directory, company_code, vehicle_number, "inspecciones", str(inspection_id))
+    full_inspection_path = os.path.join(upload_directory, "vehiculos" ,company_code, vehicle_number, "inspecciones", str(inspection_id))
     os.makedirs(full_inspection_path, exist_ok=True)
 
     saved_count = 0
@@ -389,7 +389,7 @@ async def upload_signature(inspection_id: int, signature: UploadFile = File(...)
       )
 
     # Crear el directorio para la firma dentro de la carpeta de inspecciones
-    full_signature_path = os.path.join(upload_directory, company_code, vehicle_number, "inspecciones", str(inspection_id))
+    full_signature_path = os.path.join(upload_directory, "vehiculos", company_code, vehicle_number, "inspecciones", str(inspection_id))
     os.makedirs(full_signature_path, exist_ok=True)
 
     # Obtener la extensión del archivo
@@ -624,7 +624,9 @@ async def new_inspection_data(company_code: str, vehicle_number: str):
     now_in_panama = datetime.now(panama_timezone)
     # Formatea la fecha y la hora según lo requerido
     fecha = now_in_panama.strftime("%d/%m/%Y")
-    hora_actual = now_in_panama.strftime("%I:%M:%S %p")
+    hora_actual = now_in_panama.strftime("%H:%M:%S")
+
+    print(hora_actual)
 
     # Obtener el archivo de texto para la empresa
     txt_file_path = get_txt_file(vehicle.EMPRESA)
@@ -851,7 +853,7 @@ async def download_image_by_url(image_url: str):
     
     relative_path = image_url.split("/uploads/")[1]
     
-    full_image_path = os.path.join(upload_directory, relative_path)
+    full_image_path = os.path.join(upload_directory, "vehiculos", relative_path)
     
     if not os.path.exists(full_image_path):
       return JSONResponse(content={"message": "Imagen no encontrada"}, status_code=404)
