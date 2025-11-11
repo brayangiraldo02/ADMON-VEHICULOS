@@ -89,7 +89,6 @@ export class TakeSignaturePhotoComponent {
 
     return (
       info.driver_code === '' ||
-      info.has_signature === 1 ||
       !this.takeSignatureComponent.selectedVehicle
     );
   }
@@ -103,7 +102,6 @@ export class TakeSignaturePhotoComponent {
 
     return (
       info.driver_code === '' ||
-      info.has_picture === 1 ||
       !this.takePhotoComponent.selectedVehicle
     );
   }
@@ -117,7 +115,6 @@ export class TakeSignaturePhotoComponent {
 
     return (
       info.driver_code === '' ||
-      info.has_vehicle_photo === 1 ||
       !this.takeVehiclePhotoComponent.selectedVehicle
     );
   }

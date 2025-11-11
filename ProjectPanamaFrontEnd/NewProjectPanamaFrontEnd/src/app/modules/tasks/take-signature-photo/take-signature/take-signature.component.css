@@ -97,6 +97,10 @@ h2 {
   color: red;
 }
 
+.message-strong-alert {
+  color: orange;
+}
+
 .message-strong-green {
   color: green;
 }

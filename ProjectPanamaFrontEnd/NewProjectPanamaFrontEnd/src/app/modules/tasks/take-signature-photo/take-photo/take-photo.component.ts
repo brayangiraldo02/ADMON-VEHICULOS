@@ -32,9 +32,8 @@ interface vehiclePhotoInfo {
   driver_phone: string;
   driver_address: string;
   has_signature: number;
-  url_signature: string;
   has_picture: number;
-  url_picture: string;
+  has_vehicle_photo: number;
 }
 
 @Component({
@@ -74,9 +73,8 @@ export class TakePhotoComponent implements OnInit {
     driver_phone: '',
     driver_address: '',
     has_signature: 0,
-    url_signature: '',
     has_picture: 0,
-    url_picture: '',
+    has_vehicle_photo: 0,
   };
 
   constructor(
@@ -144,9 +142,8 @@ export class TakePhotoComponent implements OnInit {
       driver_phone: '',
       driver_address: '',
       has_signature: 0,
-      url_signature: '',
       has_picture: 0,
-      url_picture: '',
+      has_vehicle_photo: 0,
     };
     this.drivers.setValue('');
   }
