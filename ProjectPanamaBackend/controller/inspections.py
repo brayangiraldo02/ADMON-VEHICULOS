@@ -194,10 +194,10 @@ async def inspections_info_all(data: InspectionInfo, company_code: str):
         foto_field = f"FOTO{i:02d}"
         foto_value = getattr(inspection, foto_field, "")
         if foto_value and foto_value.strip(): 
-          foto_url = f"{route_api}uploads/{foto_value}"
+          foto_url = f"{route_api}uploads/vehiculos/{foto_value}"
           fotos.append(foto_url)
 
-      firma_url = f"{route_api}uploads/{inspection.FIRMA}" if inspection.FIRMA and inspection.FIRMA.strip() else ''
+      firma_url = f"{route_api}uploads/vehiculos/{inspection.FIRMA}" if inspection.FIRMA and inspection.FIRMA.strip() else ''
 
       puede_editar = 1 if (inspection.ESTADO == "PEN" and data.usuario and inspection.USUARIO == data.usuario) else 0
 
@@ -277,10 +277,10 @@ async def inspections_info(data: InspectionInfo, company_code: str):
         foto_field = f"FOTO{i:02d}"
         foto_value = getattr(inspection, foto_field, "")
         if foto_value and foto_value.strip(): 
-          foto_url = f"{route_api}uploads/{foto_value}"
+          foto_url = f"{route_api}uploads/vehiculos/{foto_value}"
           fotos.append(foto_url)
 
-      firma_url = f"{route_api}uploads/{inspection.FIRMA}" if inspection.FIRMA and inspection.FIRMA.strip() else ''
+      firma_url = f"{route_api}uploads/vehiculos/{inspection.FIRMA}" if inspection.FIRMA and inspection.FIRMA.strip() else ''
       
       puede_editar = 1 if (inspection.ESTADO == "PEN" and data.usuario and inspection.USUARIO == data.usuario) else 0
 
@@ -903,7 +903,7 @@ async def inspection_details(inspection_id: int):
       foto_field = f"FOTO{i:02d}"
       foto_value = getattr(inspection, foto_field, "")
       if foto_value and foto_value.strip(): 
-        foto_url = f"{route_api}uploads/{foto_value}"
+        foto_url = f"{route_api}uploads/vehiculos/{foto_value}"
         fotos.append(foto_url)
 
     user = db.query(PermisosUsuario).filter(PermisosUsuario.CODIGO == inspection.USUARIO).first()
@@ -984,10 +984,10 @@ async def generate_inspection_pdf(data: ReportInspection, company_code: str):
       foto_field = f"FOTO{i:02d}"
       foto_value = getattr(inspection, foto_field, "")
       if foto_value and foto_value.strip(): 
-        foto_url = f"{route_api}uploads/{foto_value}"
+        foto_url = f"{route_api}uploads/vehiculos/{foto_value}"
         fotos.append(foto_url)
 
-    firma_url = f"{route_api}uploads/{inspection.FIRMA}" if inspection.FIRMA and inspection.FIRMA.strip() else ''
+    firma_url = f"{route_api}uploads/vehiculos/{inspection.FIRMA}" if inspection.FIRMA and inspection.FIRMA.strip() else ''
     
     inspection_data = {
       "id": inspection.ID,
