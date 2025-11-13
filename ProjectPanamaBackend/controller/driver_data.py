@@ -28,13 +28,13 @@ async def upload_signature(data: DriverData):
     base_path = os.path.join(upload_directory, "conductores", data.company_code, driver.CODIGO, "firmas")
     os.makedirs(base_path, exist_ok=True)
 
-    existing_signatures = [f for f in os.listdir(base_path) if f.startswith(f"{data.vehicle_number}_{driver.CODIGO}_firma")]
+    existing_signatures = [f for f in os.listdir(base_path) if f.startswith(f"{driver.CODIGO}_firma")]
 
     next_index = len(existing_signatures) + 1
 
-    final_signature_path = os.path.join(base_path, f"{data.vehicle_number}_{driver.CODIGO}_firma_{next_index}.png")
+    final_signature_path = os.path.join(base_path, f"{driver.CODIGO}_firma_{next_index}.png")
     
-    signature_url = f"{route_api}uploads/conductores/{data.company_code}/{driver.CODIGO}/firmas/{data.vehicle_number}_{driver.CODIGO}_firma_{next_index}.png"
+    signature_url = f"{route_api}uploads/conductores/{data.company_code}/{driver.CODIGO}/firmas/{driver.CODIGO}_firma_{next_index}.png"
 
     image_data = decode_image(data.base64)
     
