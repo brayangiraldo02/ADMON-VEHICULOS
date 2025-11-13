@@ -160,7 +160,7 @@ async def vehicle_driver_data(company_code: str, vehicle_number: str):
 
     signature_dir = os.path.join(upload_directory, "conductores", company_code, vehicle.driver_code, "firmas")
     if os.path.exists(signature_dir):
-      signatures = [f for f in os.listdir(signature_dir) if f.startswith(f"{vehicle.NUMERO}_{vehicle.driver_code}_firma")]
+      signatures = [f for f in os.listdir(signature_dir) if f.startswith(f"{vehicle.driver_code}_firma")]
       if signatures:
         signature_path = os.path.join(signature_dir, signatures[-1])
         has_signature = 1
