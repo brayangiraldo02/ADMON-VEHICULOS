@@ -13,6 +13,7 @@ from models.tiposinspeccion import TiposInspeccion
 from models.estados import Estados
 from models.permisosusuario import PermisosUsuario
 from models.infoempresas import InfoEmpresas
+from models.centrales import Centrales
 from schemas.inspections import *
 from fastapi.encoders import jsonable_encoder
 from fastapi import UploadFile, File, BackgroundTasks
@@ -1111,6 +1112,67 @@ async def generate_inspection_pdf(data: ReportInspection, company_code: str):
       )
 
     return response
+  except Exception as e:
+    return JSONResponse(content={"message": str(e)}, status_code=500)
+  finally:
+    db.close()
+
+#-----------------------------------------------------------------------------------------------
+async def vehicle_info(company_code: str, vehicle_number: str):
+  db = session()
+  try:
+    vehicle = db.query(
+    Vehiculos.NUMERO,
+    Vehiculos.NOMMARCA,
+    Vehiculos.PLACA,
+    Vehiculos.NRO_CUPO,
+    Vehiculos.NROENTREGA,
+    Vehiculos.CUO_DIARIA,
+    Vehiculos.VLR_DEPOSI,
+    Vehiculos.CON_CUPO,
+    Vehiculos.CONDUCTOR,
+    Conductores.CODIGO.label('driver_code'),
+    Conductores.NOMBRE.label('driver_name'),
+    Conductores.CEDULA.label('driver_id'),
+    Conductores.TELEFONO.label('driver_phone'),
+    Conductores.DIRECCION.label('driver_address'),
+    Propietarios.NOMBRE.label('owner_name'),
+    Centrales.NOMBRE.label('central_name'),
+    Estados.NOMBRE.label('state_name')
+      ).join(Conductores, (Conductores.CODIGO == Vehiculos.CONDUCTOR) & (Conductores.EMPRESA == Vehiculos.EMPRESA)
+      ).join(Propietarios, (Propietarios.CODIGO == Vehiculos.PROPI_IDEN) & (Propietarios.EMPRESA == Vehiculos.EMPRESA)
+      ).join(Centrales, (Centrales.CODIGO == Vehiculos.CENTRAL) & (Centrales.EMPRESA == Vehiculos.EMPRESA)
+      ).join(Estados, (Estados.CODIGO == Vehiculos.ESTADO) & (Estados.EMPRESA == Vehiculos.EMPRESA)
+      ).filter(Vehiculos.EMPRESA == company_code, Vehiculos.NUMERO == vehicle_number
+      ).first()
+    
+    inspections = db.query(Inspecciones).filter(Inspecciones.UNIDAD == vehicle_number, Inspecciones.EMPRESA == company_code).all()
+    
+    if not vehicle:
+       return JSONResponse(content={"message": "Vehicle not found"}, status_code=404)
+
+    info = {
+      'vehicle_number': vehicle.NUMERO,
+      'model': vehicle.NOMMARCA,
+      'plate': vehicle.PLACA,
+      'quota': vehicle.NRO_CUPO,
+      'central': vehicle.central_name,
+      'owner_name': vehicle.owner_name,
+      'nro_delivery': vehicle.NROENTREGA,
+      'daily_quota': vehicle.CUO_DIARIA,
+      'deposit_value': vehicle.VLR_DEPOSI,
+      'state_name': vehicle.state_name,
+      'has_quota': 'Con Cupo' if vehicle.CON_CUPO == '1' else '',
+      'driver_code': vehicle.driver_code,
+      'driver_name': vehicle.driver_name,
+      'driver_id': vehicle.driver_id,
+      'driver_phone': vehicle.driver_phone,
+      'driver_address': vehicle.driver_address,
+      'inspections': len(inspections) if inspections else 0
+    }
+    
+    return JSONResponse(content=jsonable_encoder(info), status_code=200)
+    
   except Exception as e:
     return JSONResponse(content={"message": str(e)}, status_code=500)
   finally:

@@ -63,3 +63,7 @@ async def get_inspection_details(inspection_id: int):
 @inspections_router.post("/inspections/generate_inspection_pdf/{company_code}/", tags=["Inspections"])
 async def post_generate_inspection_pdf(data: ReportInspection, company_code: str):
     return await generate_inspection_pdf(data, company_code)
+
+@inspections_router.get("/inspections/vehicle_info/{company_code}/{vehicle_number}/", tags=["Inspections"])
+async def get_vehicle_info(company_code: str, vehicle_number: str):
+    return await vehicle_info(company_code, vehicle_number)
