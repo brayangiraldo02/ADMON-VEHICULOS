@@ -16,6 +16,6 @@ async def post_upload_picture(data: DriverData):
 async def post_upload_vehicle_photo(data: DriverData):
   return await upload_vehicle_photo(data)
 
-@driver_data_router.get("/driver/vehicle-data/{company_code}/{vehicle_number}", tags=["Driver Data"])
+@driver_data_router.get("/driver/vehicle-data/{company_code}/{vehicle_number}/", tags=["Driver Data"])
 async def get_vehicle_driver_data(company_code: str, vehicle_number: str):
   return await vehicle_driver_data(company_code, vehicle_number)
