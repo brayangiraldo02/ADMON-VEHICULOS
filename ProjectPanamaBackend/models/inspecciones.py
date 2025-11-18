@@ -60,6 +60,7 @@ class Inspecciones(Base):
     FOTO14 = Column(VARCHAR(200), default="")
     FOTO15 = Column(VARCHAR(200), default="")
     FOTO16 = Column(VARCHAR(200), default="")
+    NRO_FOTOS = Column(Integer, default=0)
     FIRMA = Column(VARCHAR(200), default="")
     USUARIO = Column(CHAR(10), default="")
     NOMUSUARIO = Column(CHAR(40), nullable=False)

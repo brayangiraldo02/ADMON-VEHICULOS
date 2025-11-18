@@ -355,6 +355,7 @@ async def upload_images(inspection_id: int, images: List[UploadFile] = File(...)
         saved_count += 1
 
     inspection.ESTADO = "FIN"
+    inspection.NRO_FOTOS = saved_count
 
     db.commit()
 
