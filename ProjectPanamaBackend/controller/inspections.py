@@ -28,6 +28,9 @@ from utils.text import clean_text
 import tempfile
 from utils.panapass import get_txt_file, search_value_in_txt
 from dotenv import load_dotenv
+import qrcode
+from reportlab.pdfgen import canvas
+from reportlab.lib.pagesizes import letter
 
 load_dotenv()
 
@@ -35,6 +38,7 @@ upload_directory = os.getenv('DIRECTORY_IMG')
 route_api = os.getenv('ROUTE_API')
 path_10  = os.getenv('DROPBOX_INTEGRATION_PATH_10')
 path_58  = os.getenv('DROPBOX_INTEGRATION_PATH_58')
+qr_path = 'inspections'
 PDF_THREAD_POOL = ThreadPoolExecutor(max_workers=2)
 
 async def owners_data(company_code: str):
@@ -1177,3 +1181,38 @@ async def vehicle_info(company_code: str, vehicle_number: str):
     return JSONResponse(content={"message": str(e)}, status_code=500)
   finally:
     db.close()
+
+#-----------------------------------------------------------------------------------------------
+async def generate_qr(company_code: str, vehicle_number: str):
+  try:
+    full_url = f"{route_api}{qr_path}/{vehicle_number}"
+    with tempfile.NamedTemporaryFile(suffix=".png", delete=False) as tmp_qr:
+      qr = qrcode.make(full_url)
+      qr.save(tmp_qr.name)
+      tmp_qr_path = tmp_qr.name
+
+    with tempfile.NamedTemporaryFile(suffix=".pdf", delete=False) as tmp_pdf:
+      tmp_pdf_path = tmp_pdf.name
+      pdf = canvas.Canvas(tmp_pdf_path, pagesize=letter)
+      width, height = letter
+
+      qr_size = 200
+      x = (width - qr_size) / 2
+      y = (height - qr_size) / 2
+
+      pdf.drawInlineImage(tmp_qr_path, x, y, qr_size, qr_size)
+      pdf.showPage()
+      pdf.save()
+
+    background_tasks = BackgroundTasks()
+    background_tasks.add_task(os.remove, tmp_pdf_path)
+    background_tasks.add_task(os.remove, tmp_qr_path)
+
+    return FileResponse(
+      tmp_pdf_path,
+      media_type='application/pdf',
+      filename='qr_code.pdf',
+      background=background_tasks
+    )
+  except Exception as e:
+    return JSONResponse(content={"message": str(e)}, status_code=500)
