@@ -64,6 +64,7 @@ import { TakeSignaturePhotoComponent } from './modules/tasks/take-signature-phot
 import { TakeSignatureComponent } from './modules/tasks/take-signature-photo/take-signature/take-signature.component';
 import { TakePhotoComponent } from './modules/tasks/take-signature-photo/take-photo/take-photo.component';
 import { TakeVehiclePhotoComponent } from './modules/tasks/take-signature-photo/take-vehicle-photo/take-vehicle-photo.component';
+import { InspectionsGenerateQrDialogComponent } from './modules/tasks/inspections/inspections-generate-qr-dialog/inspections-generate-qr-dialog.component';
 
 @NgModule({
   declarations: [
@@ -125,6 +126,7 @@ import { TakeVehiclePhotoComponent } from './modules/tasks/take-signature-photo/
     TakeSignatureComponent,
     TakePhotoComponent,
     TakeVehiclePhotoComponent,
+    InspectionsGenerateQrDialogComponent,
   ],
   imports: [
     BrowserModule,

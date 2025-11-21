@@ -150,7 +150,7 @@
             Opciones
           </button>
           <mat-menu #menu="matMenu">
-            <button mat-menu-item>
+            <button mat-menu-item (click)="openGenerateQRDialog()">
               <mat-icon>qr_code_2</mat-icon>
               <span>Generar QR</span>
             </button>

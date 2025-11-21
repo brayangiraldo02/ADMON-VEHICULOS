@@ -14,6 +14,7 @@ import { InspectionFinishImagesDialogComponent } from '../inspection-finish-imag
 import { TakePhotosVehicleComponent } from '../take-photos-vehicle/take-photos-vehicle.component';
 import { InspectionInfoDialogComponent } from '../inspection-info-dialog/inspection-info-dialog.component';
 import { ActivatedRoute } from '@angular/router';
+import { InspectionsGenerateQrDialogComponent } from '../inspections-generate-qr-dialog/inspections-generate-qr-dialog.component';
 
 export interface owners {
   id: string;
@@ -804,5 +805,15 @@ export class InspectionsTableComponent implements OnInit, AfterViewInit {
     localStorage.setItem('pdfEndpoint', endpoint);
     localStorage.setItem('pdfData', JSON.stringify(data));
     window.open(`/pdf`, '_blank');
+  }
+
+  openGenerateQRDialog() {
+    const isSmallScreen = this.breakpointObserver.isMatched(Breakpoints.XSmall);
+    const dialogWidth = isSmallScreen ? '90vw' : '60%';
+
+    const dialogRef = this.dialog.open(InspectionsGenerateQrDialogComponent, {
+      width: dialogWidth,
+      disableClose: false,
+    });
   }
 }
