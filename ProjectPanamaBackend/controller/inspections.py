@@ -30,7 +30,7 @@ from utils.panapass import get_txt_file, search_value_in_txt
 from dotenv import load_dotenv
 import qrcode
 from reportlab.pdfgen import canvas
-from reportlab.lib.pagesizes import letter
+from reportlab.lib.units import mm
 
 load_dotenv()
 
@@ -1196,14 +1196,24 @@ async def generate_qr(company_code: str, vehicle_number: str):
 
     with tempfile.NamedTemporaryFile(suffix=".pdf", delete=False) as tmp_pdf:
       tmp_pdf_path = tmp_pdf.name
-      pdf = canvas.Canvas(tmp_pdf_path, pagesize=letter)
-      width, height = letter
+      
+      sticker_width = 50 * mm
+      sticker_height = 30 * mm
+      
+      pdf = canvas.Canvas(tmp_pdf_path, pagesize=(sticker_width, sticker_height))
 
-      qr_size = 200
-      x = (width - qr_size) / 2
-      y = (height - qr_size) / 2
+      qr_size = 24 * mm 
+      x_qr = 2 * mm
+      y_qr = (sticker_height - qr_size) / 2  
 
-      pdf.drawInlineImage(tmp_qr_path, x, y, qr_size, qr_size)
+      pdf.drawInlineImage(tmp_qr_path, x_qr, y_qr, qr_size, qr_size)
+
+      text_x = x_qr + qr_size + (2 * mm) 
+      
+      pdf.setFont("Helvetica", 6) 
+      pdf.drawString(text_x, (sticker_height / 2) + 2 * mm, "SISTEMAS ALFA")
+      pdf.setFont("Helvetica-Bold", 12) 
+      pdf.drawString(text_x, (sticker_height / 2) - 4 * mm, vehicle_number)
       pdf.showPage()
       pdf.save()
 
