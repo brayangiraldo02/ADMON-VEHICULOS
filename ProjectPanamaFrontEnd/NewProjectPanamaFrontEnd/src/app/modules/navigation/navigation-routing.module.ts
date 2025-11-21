@@ -103,6 +103,11 @@ const routes: Routes = [
         path: 'inspections',
         component: InspectionsTableComponent,
         canActivate: [inspectionsGuard],
+      },
+      {
+        path: 'inspections/:id',
+        component: InspectionsTableComponent,
+        canActivate: [inspectionsGuard],
       }
       // Las rutas 'pdf' y 'login' NO se definen aquí.
       // La ruta 'prueba' ya no es necesaria como tal, ya que su funcionalidad (cargar NavigationModule)

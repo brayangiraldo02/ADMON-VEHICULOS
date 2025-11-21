@@ -429,9 +429,12 @@ async def report_inspections(data, company_code: str):
   db = session()
   try:
     filters = [
-        Inspecciones.FECHA >= data.fechaInicial,
-        Inspecciones.FECHA <= data.fechaFinal,
+        Inspecciones.EMPRESA == company_code
     ]
+
+    if data.fechaInicial and data.fechaFinal:
+        filters.append(Inspecciones.FECHA >= data.fechaInicial)
+        filters.append(Inspecciones.FECHA <= data.fechaFinal)
 
     # Filtrar inspecciones por propietario, conductor y vehículo
     if data.propietario != '':
@@ -525,8 +528,8 @@ async def report_inspections(data, company_code: str):
     data_view = {
       'inspections': result,
       'fechas': {
-            "fecha_inicial": datetime.strptime(data.fechaInicial, "%Y-%m-%d").strftime("%d/%m/%Y"),
-            "fecha_final": datetime.strptime(data.fechaFinal, "%Y-%m-%d").strftime("%d/%m/%Y")
+            "fecha_inicial": datetime.strptime(data.fechaInicial, "%Y-%m-%d").strftime("%d/%m/%Y") if data.fechaInicial else "",
+            "fecha_final": datetime.strptime(data.fechaFinal, "%Y-%m-%d").strftime("%d/%m/%Y") if data.fechaFinal else ""
         },
       'total_inspecciones': total_inspecciones,
       'fecha': fecha,

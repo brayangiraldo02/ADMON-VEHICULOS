@@ -1,10 +1,11 @@
 <div class="main-container">
   <div class="title-container">
-    <h1 class="title">Inspecciones</h1>
+    <h1 class="title" *ngIf="!idVehicleNumber">Inspecciones</h1>
+    <h1 class="title" *ngIf="idVehicleNumber">Inspecciones de {{ idVehicleNumber }}</h1>
   </div>
 
   <form [formGroup]="inspectionForm" *ngIf="!isLoadingData">
-    <div class="inputs-container">
+    <div class="inputs-container" *ngIf="!idVehicleNumber">
       <mat-form-field class="field-input">
         <mat-label>Propietarios</mat-label>
         <input
@@ -77,7 +78,11 @@
     </div>
 
     <div class="inputs-container">
-      <mat-form-field class="field-input" (click)="datepicker.open()">
+      <mat-form-field
+        class="field-input"
+        (click)="datepicker.open()"
+        *ngIf="!idVehicleNumber"
+      >
         <input
           matInput
           placeholder="Selecciona una fecha inicial"
@@ -99,7 +104,11 @@
         </mat-error>
       </mat-form-field>
 
-      <mat-form-field class="field-input" (click)="datepicker2.open()">
+      <mat-form-field
+        class="field-input"
+        (click)="datepicker2.open()"
+        *ngIf="!idVehicleNumber"
+      >
         <input
           matInput
           placeholder="Selecciona una fecha final"
@@ -122,12 +131,35 @@
       </mat-form-field>
 
       <div class="field-input buttons-container">
-        <button mat-raised-button class="button" (click)="getTableData()">
+        <button
+          mat-raised-button
+          class="button"
+          (click)="getTableData()"
+          *ngIf="!idVehicleNumber"
+        >
           Buscar
         </button>
-        <button mat-raised-button class="button" (click)="getPdfData()">
+        <button mat-raised-button class="button" *ngIf="idVehicleNumber">
+          Información
+        </button>
+        <button mat-raised-button class="button" (click)="getPdfData()" *ngIf="idVehicleNumber">
           Reporte
         </button>
+        <ng-container *ngIf="!idVehicleNumber">
+          <button mat-raised-button [matMenuTriggerFor]="menu" class="button">
+            Opciones
+          </button>
+          <mat-menu #menu="matMenu">
+            <button mat-menu-item>
+              <mat-icon>qr_code_2</mat-icon>
+              <span>Generar QR</span>
+            </button>
+            <button mat-menu-item (click)="getPdfData()">
+              <mat-icon>article</mat-icon>
+              <span>Reporte</span>
+            </button>
+          </mat-menu>
+        </ng-container>
         <button
           mat-raised-button
           class="button"

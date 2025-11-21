@@ -13,6 +13,7 @@ import { InspectionsAddDialogComponent } from '../inspections-add-dialog/inspect
 import { InspectionFinishImagesDialogComponent } from '../inspection-finish-images-dialog/inspection-finish-images-dialog.component';
 import { TakePhotosVehicleComponent } from '../take-photos-vehicle/take-photos-vehicle.component';
 import { InspectionInfoDialogComponent } from '../inspection-info-dialog/inspection-info-dialog.component';
+import { ActivatedRoute } from '@angular/router';
 
 export interface owners {
   id: string;
@@ -78,6 +79,7 @@ export interface apiResponse {
 })
 export class InspectionsTableComponent implements OnInit, AfterViewInit {
   inspectionForm!: FormGroup;
+  idVehicleNumber!: string;
   owners: owners[] = [];
   drivers: drivers[] = [];
   vehicles: vehicles[] = [];
@@ -116,7 +118,8 @@ export class InspectionsTableComponent implements OnInit, AfterViewInit {
     private jwtService: JwtService,
     private snackBar: MatSnackBar,
     private dialog: MatDialog,
-    private breakpointObserver: BreakpointObserver
+    private breakpointObserver: BreakpointObserver,
+    private route: ActivatedRoute
   ) {
     this.dataSource = new MatTableDataSource<InspectionsInfoData>([]);
   }
@@ -130,11 +133,32 @@ export class InspectionsTableComponent implements OnInit, AfterViewInit {
       fechaFinal: ['', Validators.required],
     });
 
-    this.getDataAutoCompletes();
-    this.getMaxDate();
-    this.setupOwnerListener();
-    this.setupDriverListener();
-    this.getTableInitialData();
+    this.route.paramMap.subscribe((params) => {
+      const id = params.get('id');
+      this.isLoadingData = true;
+
+      if (id) {
+        this.idVehicleNumber = id;
+
+        // Eliminar validadores de fecha solo para este caso
+        this.inspectionForm.get('fechaInicial')?.clearValidators();
+        this.inspectionForm.get('fechaInicial')?.updateValueAndValidity();
+        this.inspectionForm.get('fechaFinal')?.clearValidators();
+        this.inspectionForm.get('fechaFinal')?.updateValueAndValidity();
+
+        this.getMaxDate();
+        this.setupOwnerListener();
+        this.setupDriverListener();
+      } else {
+        this.getTableInitialData();
+
+        this.getMaxDate();
+        this.setupOwnerListener();
+        this.setupDriverListener();
+      }
+
+      this.getDataAutoCompletes();
+    });
   }
 
   ngAfterViewInit() {
@@ -422,6 +446,17 @@ export class InspectionsTableComponent implements OnInit, AfterViewInit {
             startWith(''),
             map((value) => this._filterVehicles(value || ''))
           );
+
+        if (this.idVehicleNumber) {
+          const foundVehicle = this.allVehicles.find(
+            (v) => v.numero_unidad === this.idVehicleNumber
+          );
+
+          if (foundVehicle) {
+            this.inspectionForm.patchValue({ vehiculo: foundVehicle });
+            this.getTableData();
+          }
+        }
       });
   }
 
@@ -583,7 +618,8 @@ export class InspectionsTableComponent implements OnInit, AfterViewInit {
   }
 
   getPdfData() {
-    if (this.inspectionForm.invalid) {
+    if (this.inspectionForm.invalid && !this.idVehicleNumber) {
+      this.openSnackbar('Por favor, complete las fechas requeridas.');
       this.inspectionForm.markAllAsTouched();
       return;
     }
