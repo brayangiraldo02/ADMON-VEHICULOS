@@ -13,6 +13,7 @@ from models.tiposinspeccion import TiposInspeccion
 from models.estados import Estados
 from models.permisosusuario import PermisosUsuario
 from models.infoempresas import InfoEmpresas
+from models.centrales import Centrales
 from schemas.inspections import *
 from fastapi.encoders import jsonable_encoder
 from fastapi import UploadFile, File, BackgroundTasks
@@ -27,6 +28,9 @@ from utils.text import clean_text
 import tempfile
 from utils.panapass import get_txt_file, search_value_in_txt
 from dotenv import load_dotenv
+import qrcode
+from reportlab.pdfgen import canvas
+from reportlab.lib.units import mm
 
 load_dotenv()
 
@@ -34,6 +38,7 @@ upload_directory = os.getenv('DIRECTORY_IMG')
 route_api = os.getenv('ROUTE_API')
 path_10  = os.getenv('DROPBOX_INTEGRATION_PATH_10')
 path_58  = os.getenv('DROPBOX_INTEGRATION_PATH_58')
+qr_path = 'inspections'
 PDF_THREAD_POOL = ThreadPoolExecutor(max_workers=2)
 
 async def owners_data(company_code: str):
@@ -194,10 +199,10 @@ async def inspections_info_all(data: InspectionInfo, company_code: str):
         foto_field = f"FOTO{i:02d}"
         foto_value = getattr(inspection, foto_field, "")
         if foto_value and foto_value.strip(): 
-          foto_url = f"{route_api}uploads/{foto_value}"
+          foto_url = f"{route_api}uploads/vehiculos/{foto_value}"
           fotos.append(foto_url)
 
-      firma_url = f"{route_api}uploads/{inspection.FIRMA}" if inspection.FIRMA and inspection.FIRMA.strip() else ''
+      firma_url = f"{route_api}uploads/vehiculos/{inspection.FIRMA}" if inspection.FIRMA and inspection.FIRMA.strip() else ''
 
       puede_editar = 1 if (inspection.ESTADO == "PEN" and data.usuario and inspection.USUARIO == data.usuario) else 0
 
@@ -277,10 +282,10 @@ async def inspections_info(data: InspectionInfo, company_code: str):
         foto_field = f"FOTO{i:02d}"
         foto_value = getattr(inspection, foto_field, "")
         if foto_value and foto_value.strip(): 
-          foto_url = f"{route_api}uploads/{foto_value}"
+          foto_url = f"{route_api}uploads/vehiculos/{foto_value}"
           fotos.append(foto_url)
 
-      firma_url = f"{route_api}uploads/{inspection.FIRMA}" if inspection.FIRMA and inspection.FIRMA.strip() else ''
+      firma_url = f"{route_api}uploads/vehiculos/{inspection.FIRMA}" if inspection.FIRMA and inspection.FIRMA.strip() else ''
       
       puede_editar = 1 if (inspection.ESTADO == "PEN" and data.usuario and inspection.USUARIO == data.usuario) else 0
 
@@ -336,7 +341,7 @@ async def upload_images(inspection_id: int, images: List[UploadFile] = File(...)
             status_code=400
         )
         
-    full_inspection_path = os.path.join(upload_directory, company_code, vehicle_number, "inspecciones", str(inspection_id))
+    full_inspection_path = os.path.join(upload_directory, "vehiculos" ,company_code, vehicle_number, "inspecciones", str(inspection_id))
     os.makedirs(full_inspection_path, exist_ok=True)
 
     saved_count = 0
@@ -355,6 +360,7 @@ async def upload_images(inspection_id: int, images: List[UploadFile] = File(...)
         saved_count += 1
 
     inspection.ESTADO = "FIN"
+    inspection.NRO_FOTOS = saved_count
 
     db.commit()
 
@@ -389,7 +395,7 @@ async def upload_signature(inspection_id: int, signature: UploadFile = File(...)
       )
 
     # Crear el directorio para la firma dentro de la carpeta de inspecciones
-    full_signature_path = os.path.join(upload_directory, company_code, vehicle_number, "inspecciones", str(inspection_id))
+    full_signature_path = os.path.join(upload_directory, "vehiculos", company_code, vehicle_number, "inspecciones", str(inspection_id))
     os.makedirs(full_signature_path, exist_ok=True)
 
     # Obtener la extensión del archivo
@@ -423,9 +429,12 @@ async def report_inspections(data, company_code: str):
   db = session()
   try:
     filters = [
-        Inspecciones.FECHA >= data.fechaInicial,
-        Inspecciones.FECHA <= data.fechaFinal,
+        Inspecciones.EMPRESA == company_code
     ]
+
+    if data.fechaInicial and data.fechaFinal:
+        filters.append(Inspecciones.FECHA >= data.fechaInicial)
+        filters.append(Inspecciones.FECHA <= data.fechaFinal)
 
     # Filtrar inspecciones por propietario, conductor y vehículo
     if data.propietario != '':
@@ -519,8 +528,8 @@ async def report_inspections(data, company_code: str):
     data_view = {
       'inspections': result,
       'fechas': {
-            "fecha_inicial": datetime.strptime(data.fechaInicial, "%Y-%m-%d").strftime("%d/%m/%Y"),
-            "fecha_final": datetime.strptime(data.fechaFinal, "%Y-%m-%d").strftime("%d/%m/%Y")
+            "fecha_inicial": datetime.strptime(data.fechaInicial, "%Y-%m-%d").strftime("%d/%m/%Y") if data.fechaInicial else "",
+            "fecha_final": datetime.strptime(data.fechaFinal, "%Y-%m-%d").strftime("%d/%m/%Y") if data.fechaFinal else ""
         },
       'total_inspecciones': total_inspecciones,
       'fecha': fecha,
@@ -624,7 +633,9 @@ async def new_inspection_data(company_code: str, vehicle_number: str):
     now_in_panama = datetime.now(panama_timezone)
     # Formatea la fecha y la hora según lo requerido
     fecha = now_in_panama.strftime("%d/%m/%Y")
-    hora_actual = now_in_panama.strftime("%I:%M:%S %p")
+    hora_actual = now_in_panama.strftime("%H:%M:%S")
+
+    print(hora_actual)
 
     # Obtener el archivo de texto para la empresa
     txt_file_path = get_txt_file(vehicle.EMPRESA)
@@ -851,7 +862,7 @@ async def download_image_by_url(image_url: str):
     
     relative_path = image_url.split("/uploads/")[1]
     
-    full_image_path = os.path.join(upload_directory, relative_path)
+    full_image_path = os.path.join(upload_directory, "vehiculos", relative_path)
     
     if not os.path.exists(full_image_path):
       return JSONResponse(content={"message": "Imagen no encontrada"}, status_code=404)
@@ -901,7 +912,7 @@ async def inspection_details(inspection_id: int):
       foto_field = f"FOTO{i:02d}"
       foto_value = getattr(inspection, foto_field, "")
       if foto_value and foto_value.strip(): 
-        foto_url = f"{route_api}uploads/{foto_value}"
+        foto_url = f"{route_api}uploads/vehiculos/{foto_value}"
         fotos.append(foto_url)
 
     user = db.query(PermisosUsuario).filter(PermisosUsuario.CODIGO == inspection.USUARIO).first()
@@ -982,10 +993,10 @@ async def generate_inspection_pdf(data: ReportInspection, company_code: str):
       foto_field = f"FOTO{i:02d}"
       foto_value = getattr(inspection, foto_field, "")
       if foto_value and foto_value.strip(): 
-        foto_url = f"{route_api}uploads/{foto_value}"
+        foto_url = f"{route_api}uploads/vehiculos/{foto_value}"
         fotos.append(foto_url)
 
-    firma_url = f"{route_api}uploads/{inspection.FIRMA}" if inspection.FIRMA and inspection.FIRMA.strip() else ''
+    firma_url = f"{route_api}uploads/vehiculos/{inspection.FIRMA}" if inspection.FIRMA and inspection.FIRMA.strip() else ''
     
     inspection_data = {
       "id": inspection.ID,
@@ -1112,3 +1123,109 @@ async def generate_inspection_pdf(data: ReportInspection, company_code: str):
     return JSONResponse(content={"message": str(e)}, status_code=500)
   finally:
     db.close()
+
+#-----------------------------------------------------------------------------------------------
+async def vehicle_info(company_code: str, vehicle_number: str):
+  db = session()
+  try:
+    vehicle = db.query(
+    Vehiculos.NUMERO,
+    Vehiculos.NOMMARCA,
+    Vehiculos.PLACA,
+    Vehiculos.NRO_CUPO,
+    Vehiculos.NROENTREGA,
+    Vehiculos.CUO_DIARIA,
+    Vehiculos.VLR_DEPOSI,
+    Vehiculos.CON_CUPO,
+    Vehiculos.CONDUCTOR,
+    Conductores.CODIGO.label('driver_code'),
+    Conductores.NOMBRE.label('driver_name'),
+    Conductores.CEDULA.label('driver_id'),
+    Conductores.TELEFONO.label('driver_phone'),
+    Conductores.DIRECCION.label('driver_address'),
+    Propietarios.NOMBRE.label('owner_name'),
+    Centrales.NOMBRE.label('central_name'),
+    Estados.NOMBRE.label('state_name')
+      ).join(Conductores, (Conductores.CODIGO == Vehiculos.CONDUCTOR) & (Conductores.EMPRESA == Vehiculos.EMPRESA)
+      ).join(Propietarios, (Propietarios.CODIGO == Vehiculos.PROPI_IDEN) & (Propietarios.EMPRESA == Vehiculos.EMPRESA)
+      ).join(Centrales, (Centrales.CODIGO == Vehiculos.CENTRAL) & (Centrales.EMPRESA == Vehiculos.EMPRESA)
+      ).join(Estados, (Estados.CODIGO == Vehiculos.ESTADO) & (Estados.EMPRESA == Vehiculos.EMPRESA)
+      ).filter(Vehiculos.EMPRESA == company_code, Vehiculos.NUMERO == vehicle_number
+      ).first()
+    
+    inspections = db.query(Inspecciones).filter(Inspecciones.UNIDAD == vehicle_number, Inspecciones.EMPRESA == company_code).all()
+    
+    if not vehicle:
+       return JSONResponse(content={"message": "Vehicle not found"}, status_code=404)
+
+    info = {
+      'vehicle_number': vehicle.NUMERO,
+      'model': vehicle.NOMMARCA,
+      'plate': vehicle.PLACA,
+      'quota': vehicle.NRO_CUPO,
+      'central': vehicle.central_name,
+      'owner_name': vehicle.owner_name,
+      'nro_delivery': vehicle.NROENTREGA,
+      'daily_quota': vehicle.CUO_DIARIA,
+      'deposit_value': vehicle.VLR_DEPOSI,
+      'state_name': vehicle.state_name,
+      'has_quota': 'Con Cupo' if vehicle.CON_CUPO == '1' else '',
+      'driver_code': vehicle.driver_code,
+      'driver_name': vehicle.driver_name,
+      'driver_id': vehicle.driver_id,
+      'driver_phone': vehicle.driver_phone,
+      'driver_address': vehicle.driver_address,
+      'inspections': len(inspections) if inspections else 0
+    }
+    
+    return JSONResponse(content=jsonable_encoder(info), status_code=200)
+    
+  except Exception as e:
+    return JSONResponse(content={"message": str(e)}, status_code=500)
+  finally:
+    db.close()
+
+#-----------------------------------------------------------------------------------------------
+async def generate_qr(company_code: str, vehicle_number: str):
+  try:
+    full_url = f"{route_api}{qr_path}/{vehicle_number}"
+    with tempfile.NamedTemporaryFile(suffix=".png", delete=False) as tmp_qr:
+      qr = qrcode.make(full_url)
+      qr.save(tmp_qr.name)
+      tmp_qr_path = tmp_qr.name
+
+    with tempfile.NamedTemporaryFile(suffix=".pdf", delete=False) as tmp_pdf:
+      tmp_pdf_path = tmp_pdf.name
+      
+      sticker_width = 50 * mm
+      sticker_height = 30 * mm
+      
+      pdf = canvas.Canvas(tmp_pdf_path, pagesize=(sticker_width, sticker_height))
+
+      qr_size = 24 * mm 
+      x_qr = 2 * mm
+      y_qr = (sticker_height - qr_size) / 2  
+
+      pdf.drawInlineImage(tmp_qr_path, x_qr, y_qr, qr_size, qr_size)
+
+      text_x = x_qr + qr_size + (2 * mm) 
+      
+      pdf.setFont("Helvetica", 6) 
+      pdf.drawString(text_x, (sticker_height / 2) + 2 * mm, "SISTEMAS ALFA")
+      pdf.setFont("Helvetica-Bold", 12) 
+      pdf.drawString(text_x, (sticker_height / 2) - 4 * mm, vehicle_number)
+      pdf.showPage()
+      pdf.save()
+
+    background_tasks = BackgroundTasks()
+    background_tasks.add_task(os.remove, tmp_pdf_path)
+    background_tasks.add_task(os.remove, tmp_qr_path)
+
+    return FileResponse(
+      tmp_pdf_path,
+      media_type='application/pdf',
+      filename='qr_code.pdf',
+      background=background_tasks
+    )
+  except Exception as e:
+    return JSONResponse(content={"message": str(e)}, status_code=500)

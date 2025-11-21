@@ -5,7 +5,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { Observable } from 'rxjs/internal/Observable';
 import { map } from 'rxjs/internal/operators/map';
 import { startWith } from 'rxjs/internal/operators/startWith';
-import { SignaturePadComponent } from 'src/app/modules/shared/components/signature-pad/signature-pad.component';
+import { CameraComponent } from 'src/app/modules/shared/components/camera/camera/camera.component';
 import { ApiService } from 'src/app/services/api.service';
 import { JwtService } from 'src/app/services/jwt.service';
 
@@ -14,7 +14,7 @@ interface vehicle {
   placa: string;
 }
 
-interface vehicleSignatureInfo {
+interface vehiclePhotoInfo {
   vehicle_number: string;
   model: string;
   plate: string;
@@ -37,13 +37,13 @@ interface vehicleSignatureInfo {
 }
 
 @Component({
-  selector: 'app-take-signature',
-  templateUrl: './take-signature.component.html',
-  styleUrls: ['./take-signature.component.css'],
+  selector: 'app-take-vehicle-photo',
+  templateUrl: './take-vehicle-photo.component.html',
+  styleUrls: ['./take-vehicle-photo.component.css']
 })
-export class TakeSignatureComponent implements OnInit {
-  @ViewChild(SignaturePadComponent)
-  signaturePadComponent!: SignaturePadComponent;
+export class TakeVehiclePhotoComponent implements OnInit {
+  @ViewChild(CameraComponent)
+  cameraComponent!: CameraComponent;
 
   vehicles = new FormControl('');
   drivers = new FormControl({ value: '', disabled: true });
@@ -51,11 +51,11 @@ export class TakeSignatureComponent implements OnInit {
   filteredOptions!: Observable<vehicle[]>;
 
   isLoadingVehicles = true;
-  isLoadingvehicleSignatureInfo = false;
+  isLoadingvehiclePhotoInfo = false;
   selectedVehicle: boolean = false;
-  signatureDriver = false;
+  photoDriver = false;
 
-  vehicleSignatureInfo: vehicleSignatureInfo = {
+  vehiclePhotoInfo: vehiclePhotoInfo = {
     vehicle_number: '',
     model: '',
     plate: '',
@@ -81,7 +81,7 @@ export class TakeSignatureComponent implements OnInit {
     private apiService: ApiService,
     private jwtService: JwtService,
     private snackBar: MatSnackBar,
-    private dialogRef: MatDialogRef<TakeSignatureComponent>
+    private dialogRef: MatDialogRef<TakeVehiclePhotoComponent>
   ) {}
 
   ngOnInit() {
@@ -124,7 +124,7 @@ export class TakeSignatureComponent implements OnInit {
 
   resetInfo() {
     this.selectedVehicle = false;
-    this.vehicleSignatureInfo = {
+    this.vehiclePhotoInfo = {
       vehicle_number: '',
       model: '',
       plate: '',
@@ -143,7 +143,7 @@ export class TakeSignatureComponent implements OnInit {
       driver_address: '',
       has_signature: 0,
       has_picture: 0,
-      has_vehicle_photo: 0,
+      has_vehicle_photo: 0
     };
     this.drivers.setValue('');
   }
@@ -160,7 +160,7 @@ export class TakeSignatureComponent implements OnInit {
     );
   }
 
-  getVehicleSignatureInfo(event: any) {
+  getVehiclePhotoInfo(event: any) {
     if (event.option.value === undefined) {
       this.resetInfo();
       this.resetVehicleAutocomplete();
@@ -170,24 +170,24 @@ export class TakeSignatureComponent implements OnInit {
     if (event && event.option.value !== undefined) {
       const selectedVehicle = event.option.value;
       const company = this.getCompany();
-      this.isLoadingvehicleSignatureInfo = true;
+      this.isLoadingvehiclePhotoInfo = true;
       this.resetInfo();
 
       this.apiService
         .getData('driver/vehicle-data/' + company + '/' + selectedVehicle)
         .subscribe(
-          (response: vehicleSignatureInfo) => {
-            this.isLoadingvehicleSignatureInfo = false;
-            this.vehicleSignatureInfo = response;
+          (response: vehiclePhotoInfo) => {
+            this.isLoadingvehiclePhotoInfo = false;
+            this.vehiclePhotoInfo = response;
             this.drivers.setValue(response.driver_code);
             this.selectedVehicle = true;
           },
           (error) => {
-            console.error('Error fetching contract info:', error);
+            console.error('Error fetching vehicle info:', error);
             this.openSnackbar(
               'Error al obtener la información. Inténtalo de nuevo con otra unidad.'
             );
-            this.isLoadingvehicleSignatureInfo = false;
+            this.isLoadingvehiclePhotoInfo = false;
             this.resetInfo();
             this.resetVehicleAutocomplete();
           }
@@ -205,37 +205,38 @@ export class TakeSignatureComponent implements OnInit {
     );
   }
 
-  viewSignaturePad() {
-    this.signatureDriver = true;
+  viewCamera() {
+    this.photoDriver = true;
   }
 
-  saveSignature(signatureBase64: string) {
-    if(this.selectedVehicle && signatureBase64) {
+  savePhoto(photosBase64: string[]) {
+    if (this.selectedVehicle && photosBase64.length > 0) {
       const data = {
         company_code: this.getCompany(),
-        vehicle_number: this.vehicleSignatureInfo.vehicle_number,
-        base64: signatureBase64,
-      }
+        vehicle_number: this.vehiclePhotoInfo.vehicle_number,
+        base64: photosBase64[0], // Solo tomar la primera foto
+      };
 
       this.isLoadingVehicles = true;
 
-      this.apiService.postData('driver/upload-signature', data).subscribe(
+      this.apiService.postData('driver/upload-vehicle-photo', data).subscribe(
         (response: any) => {
-          this.openSnackbar('Firma guardada exitosamente.');
+          this.openSnackbar('Foto guardada exitosamente.');
           this.closeDialog();
         },
         (error) => {
-          console.error('Error saving signature:', error);
-          this.openSnackbar('Error al guardar la firma. Inténtalo de nuevo.');
+          console.error('Error saving photo:', error);
+          this.openSnackbar('Error al guardar la foto. Inténtalo de nuevo.');
           this.closeDialog();
         }
       );
     }
   }
 
-  triggerSaveSignature() {
-    if (this.signaturePadComponent) {
-      this.signaturePadComponent.saveSignature();
+  triggerSavePhoto() {
+    if (this.cameraComponent) {
+      const photos = this.cameraComponent.getPhotosBase64();
+      this.savePhoto(photos);
     }
   }
 

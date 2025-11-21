@@ -121,7 +121,7 @@
     <mat-divider></mat-divider>
 
     <div class="date-message">
-      <p class="message" *ngIf="vehiclePhotoInfo.has_picture === 1">
+      <p class="message" *ngIf="vehiclePhotoInfo.has_vehicle_photo === 1">
         <strong class="message-strong-alert">ALERTA:</strong>
         El conductor ya tiene su foto registrada en el sistema.
       </p>
@@ -133,12 +133,12 @@
       <p
         class="message"
         *ngIf="
-          vehiclePhotoInfo.has_picture === 0 &&
+          vehiclePhotoInfo.has_vehicle_photo === 0 &&
           vehiclePhotoInfo.driver_code !== ''
         "
       >
         <strong class="message-strong-green">PERMITIDO:</strong>
-        El conductor no tiene su foto registrada en el sistema. Puede dar click
+        El vehículo no tiene su foto registrada en el sistema. Puede dar click
         en siguiente para registrar la foto.
       </p>
     </div>

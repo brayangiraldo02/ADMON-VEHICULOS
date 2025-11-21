@@ -235,8 +235,10 @@ export class FeespaidComponent implements OnInit {
       estados: this.estadosSeleccionados
     };
 
+    const endpoint = 'informe-cuotas-pagas/'+this.getCompany();
+
     // Guardar endpoint y data en LocalStorage
-    localStorage.setItem('pdfEndpoint', 'informe-cuotas-pagas');
+    localStorage.setItem('pdfEndpoint', endpoint);
     localStorage.setItem('pdfData', JSON.stringify(info));
 
     // Navegar al componente PdfViewerComponent

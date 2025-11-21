@@ -13,6 +13,9 @@ import { InspectionsAddDialogComponent } from '../inspections-add-dialog/inspect
 import { InspectionFinishImagesDialogComponent } from '../inspection-finish-images-dialog/inspection-finish-images-dialog.component';
 import { TakePhotosVehicleComponent } from '../take-photos-vehicle/take-photos-vehicle.component';
 import { InspectionInfoDialogComponent } from '../inspection-info-dialog/inspection-info-dialog.component';
+import { ActivatedRoute } from '@angular/router';
+import { InspectionsGenerateQrDialogComponent } from '../inspections-generate-qr-dialog/inspections-generate-qr-dialog.component';
+import { InspectionsVehicleInfoComponent } from '../inspections-vehicle-info/inspections-vehicle-info.component';
 
 export interface owners {
   id: string;
@@ -78,6 +81,7 @@ export interface apiResponse {
 })
 export class InspectionsTableComponent implements OnInit, AfterViewInit {
   inspectionForm!: FormGroup;
+  idVehicleNumber!: string;
   owners: owners[] = [];
   drivers: drivers[] = [];
   vehicles: vehicles[] = [];
@@ -116,7 +120,8 @@ export class InspectionsTableComponent implements OnInit, AfterViewInit {
     private jwtService: JwtService,
     private snackBar: MatSnackBar,
     private dialog: MatDialog,
-    private breakpointObserver: BreakpointObserver
+    private breakpointObserver: BreakpointObserver,
+    private route: ActivatedRoute
   ) {
     this.dataSource = new MatTableDataSource<InspectionsInfoData>([]);
   }
@@ -130,16 +135,51 @@ export class InspectionsTableComponent implements OnInit, AfterViewInit {
       fechaFinal: ['', Validators.required],
     });
 
-    this.getDataAutoCompletes();
-    this.getMaxDate();
-    this.setupOwnerListener();
-    this.setupDriverListener();
-    this.getTableInitialData();
+    this.route.paramMap.subscribe((params) => {
+      const id = params.get('id');
+      this.isLoadingData = true;
+
+      if (id) {
+        this.idVehicleNumber = id;
+
+        // Eliminar validadores de fecha solo para este caso
+        this.inspectionForm.get('fechaInicial')?.clearValidators();
+        this.inspectionForm.get('fechaInicial')?.updateValueAndValidity();
+        this.inspectionForm.get('fechaFinal')?.clearValidators();
+        this.inspectionForm.get('fechaFinal')?.updateValueAndValidity();
+
+        this.getMaxDate();
+        this.setupOwnerListener();
+        this.setupDriverListener();
+      } else {
+        this.getTableInitialData();
+
+        this.getMaxDate();
+        this.setupOwnerListener();
+        this.setupDriverListener();
+      }
+
+      this.getDataAutoCompletes();
+    });
   }
 
   ngAfterViewInit() {
     if (this.paginator && this.sort) {
       this.dataSource.paginator = this.paginator;
+      this.dataSource.sort = this.sort;
+
+      this.dataSource.sortingDataAccessor = (item, property) => {
+        if (property === 'Fecha') {
+          const [datePart, timePart] = item.Fecha.split(' ');
+          const [day, month, year] = datePart.split('-');
+          const dateTimeString = `${year}-${month}-${day}T${timePart}:00`;
+          return new Date(dateTimeString).getTime();
+        }
+        return (item as any)[property];
+      };
+
+      this.sort.active = 'Fecha';
+      this.sort.direction = 'desc';
       this.dataSource.sort = this.sort;
     }
   }
@@ -408,6 +448,17 @@ export class InspectionsTableComponent implements OnInit, AfterViewInit {
             startWith(''),
             map((value) => this._filterVehicles(value || ''))
           );
+
+        if (this.idVehicleNumber) {
+          const foundVehicle = this.allVehicles.find(
+            (v) => v.numero_unidad === this.idVehicleNumber
+          );
+
+          if (foundVehicle) {
+            this.inspectionForm.patchValue({ vehiculo: foundVehicle });
+            this.getTableData();
+          }
+        }
       });
   }
 
@@ -569,7 +620,8 @@ export class InspectionsTableComponent implements OnInit, AfterViewInit {
   }
 
   getPdfData() {
-    if (this.inspectionForm.invalid) {
+    if (this.inspectionForm.invalid && !this.idVehicleNumber) {
+      this.openSnackbar('Por favor, complete las fechas requeridas.');
       this.inspectionForm.markAllAsTouched();
       return;
     }
@@ -754,5 +806,35 @@ export class InspectionsTableComponent implements OnInit, AfterViewInit {
     localStorage.setItem('pdfEndpoint', endpoint);
     localStorage.setItem('pdfData', JSON.stringify(data));
     window.open(`/pdf`, '_blank');
+  }
+
+  openGenerateQRDialog() {
+    const isSmallScreen = this.breakpointObserver.isMatched(Breakpoints.XSmall);
+    const dialogWidth = isSmallScreen ? '90vw' : '60%';
+
+    const dialogRef = this.dialog.open(InspectionsGenerateQrDialogComponent, {
+      width: dialogWidth,
+      disableClose: false,
+    });
+  }
+
+  openInfoVehicle() {
+    if (!this.idVehicleNumber) {
+      this.openSnackbar('No hay vehículo seleccionado.');
+      return;
+    }
+
+    const isSmallScreen = this.breakpointObserver.isMatched(Breakpoints.XSmall);
+    const dialogWidth = isSmallScreen ? '90vw' : '40%';
+
+    const data = {
+      driverCode: '',
+      vehicleNumber: this.idVehicleNumber,
+    }
+
+    const dialogRef = this.dialog.open(InspectionsVehicleInfoComponent, {
+      width: dialogWidth,
+      data: data,
+    });
   }
 }

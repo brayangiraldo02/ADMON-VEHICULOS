@@ -1,6 +1,7 @@
 import { Component, ViewChild } from '@angular/core';
 import { TakeSignatureComponent } from '../take-signature/take-signature.component';
 import { TakePhotoComponent } from '../take-photo/take-photo.component';
+import { TakeVehiclePhotoComponent } from '../take-vehicle-photo/take-vehicle-photo.component';
 
 @Component({
   selector: 'app-take-signature-photo',
@@ -14,8 +15,12 @@ export class TakeSignaturePhotoComponent {
   @ViewChild(TakePhotoComponent)
   takePhotoComponent!: TakePhotoComponent;
 
+  @ViewChild(TakeVehiclePhotoComponent)
+  takeVehiclePhotoComponent!: TakeVehiclePhotoComponent;
+
   takeSignature: boolean = false;
   takePhoto: boolean = false;
+  takeVehicle: boolean = false;
   isSignaturePadVisible: boolean = false;
   isCameraVisible: boolean = false;
 
@@ -25,12 +30,20 @@ export class TakeSignaturePhotoComponent {
     if (option === 'signature') {
       this.takeSignature = true;
       this.takePhoto = false;
+      this.takeVehicle = false;
     } else if (option === 'photo') {
       this.takeSignature = false;
       this.takePhoto = true;
-    } else if (option === 'close') {
+      this.takeVehicle = false;
+    } else if (option === 'vehicle') {
       this.takeSignature = false;
       this.takePhoto = false;
+      this.takeVehicle = true;
+    }
+     else if (option === 'close') {
+      this.takeSignature = false;
+      this.takePhoto = false;
+      this.takeVehicle = false;
     }
   }
 
@@ -56,6 +69,17 @@ export class TakeSignaturePhotoComponent {
     }
   }
 
+  nextStepVehiclePhoto() {
+    if (this.takeVehiclePhotoComponent) {
+      if (!this.isCameraVisible) {
+        this.takeVehiclePhotoComponent.viewCamera();
+        this.isCameraVisible = true;
+      } else {
+        this.takeVehiclePhotoComponent.triggerSavePhoto();
+      }
+    }
+  }
+
   isButtonDisabled(): boolean {
     if (!this.takeSignatureComponent) {
       return true;
@@ -65,7 +89,6 @@ export class TakeSignaturePhotoComponent {
 
     return (
       info.driver_code === '' ||
-      info.has_signature === 1 ||
       !this.takeSignatureComponent.selectedVehicle
     );
   }
@@ -79,8 +102,20 @@ export class TakeSignaturePhotoComponent {
 
     return (
       info.driver_code === '' ||
-      info.has_picture === 1 ||
       !this.takePhotoComponent.selectedVehicle
+    );
+  }
+
+  isVehiclePhotoButtonDisabled(): boolean {
+    if (!this.takeVehiclePhotoComponent) {
+      return true;
+    }
+
+    const info = this.takeVehiclePhotoComponent.vehiclePhotoInfo;
+
+    return (
+      info.driver_code === '' ||
+      !this.takeVehiclePhotoComponent.selectedVehicle
     );
   }
 }
