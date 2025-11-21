@@ -1,7 +1,9 @@
 <div class="main-container">
   <div class="title-container">
     <h1 class="title" *ngIf="!idVehicleNumber">Inspecciones</h1>
-    <h1 class="title" *ngIf="idVehicleNumber">Inspecciones de {{ idVehicleNumber }}</h1>
+    <h1 class="title" *ngIf="idVehicleNumber">
+      Inspecciones de {{ idVehicleNumber }}
+    </h1>
   </div>
 
   <form [formGroup]="inspectionForm" *ngIf="!isLoadingData">
@@ -139,10 +141,15 @@
         >
           Buscar
         </button>
-        <button mat-raised-button class="button" *ngIf="idVehicleNumber">
+        <button mat-raised-button class="button" (click)="openInfoVehicle()" *ngIf="idVehicleNumber">
           Información
         </button>
-        <button mat-raised-button class="button" (click)="getPdfData()" *ngIf="idVehicleNumber">
+        <button
+          mat-raised-button
+          class="button"
+          (click)="getPdfData()"
+          *ngIf="idVehicleNumber"
+        >
           Reporte
         </button>
         <ng-container *ngIf="!idVehicleNumber">
@@ -163,6 +170,7 @@
         <button
           mat-raised-button
           class="button"
+          [disabled]="idVehicleNumber"
           (click)="openDialogInspectionAdd()"
         >
           Nueva

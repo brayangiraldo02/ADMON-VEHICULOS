@@ -15,6 +15,7 @@ import { TakePhotosVehicleComponent } from '../take-photos-vehicle/take-photos-v
 import { InspectionInfoDialogComponent } from '../inspection-info-dialog/inspection-info-dialog.component';
 import { ActivatedRoute } from '@angular/router';
 import { InspectionsGenerateQrDialogComponent } from '../inspections-generate-qr-dialog/inspections-generate-qr-dialog.component';
+import { InspectionsVehicleInfoComponent } from '../inspections-vehicle-info/inspections-vehicle-info.component';
 
 export interface owners {
   id: string;
@@ -814,6 +815,26 @@ export class InspectionsTableComponent implements OnInit, AfterViewInit {
     const dialogRef = this.dialog.open(InspectionsGenerateQrDialogComponent, {
       width: dialogWidth,
       disableClose: false,
+    });
+  }
+
+  openInfoVehicle() {
+    if (!this.idVehicleNumber) {
+      this.openSnackbar('No hay vehículo seleccionado.');
+      return;
+    }
+
+    const isSmallScreen = this.breakpointObserver.isMatched(Breakpoints.XSmall);
+    const dialogWidth = isSmallScreen ? '90vw' : '40%';
+
+    const data = {
+      driverCode: '',
+      vehicleNumber: this.idVehicleNumber,
+    }
+
+    const dialogRef = this.dialog.open(InspectionsVehicleInfoComponent, {
+      width: dialogWidth,
+      data: data,
     });
   }
 }
