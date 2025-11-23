@@ -36,6 +36,7 @@ load_dotenv()
 
 upload_directory = os.getenv('DIRECTORY_IMG')
 route_api = os.getenv('ROUTE_API')
+route_app = os.getenv('ROUTE_APP')
 path_10  = os.getenv('DROPBOX_INTEGRATION_PATH_10')
 path_58  = os.getenv('DROPBOX_INTEGRATION_PATH_58')
 qr_path = 'inspections'
@@ -1188,7 +1189,7 @@ async def vehicle_info(company_code: str, vehicle_number: str):
 #-----------------------------------------------------------------------------------------------
 async def generate_qr(company_code: str, vehicle_number: str):
   try:
-    full_url = f"{route_api}{qr_path}/{vehicle_number}"
+    full_url = f"{route_app}{qr_path}/{vehicle_number}"
     with tempfile.NamedTemporaryFile(suffix=".png", delete=False) as tmp_qr:
       qr = qrcode.make(full_url)
       qr.save(tmp_qr.name)
