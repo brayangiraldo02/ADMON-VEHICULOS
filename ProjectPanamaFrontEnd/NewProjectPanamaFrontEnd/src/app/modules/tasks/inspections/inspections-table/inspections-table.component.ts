@@ -13,7 +13,7 @@ import { InspectionsAddDialogComponent } from '../inspections-add-dialog/inspect
 import { InspectionFinishImagesDialogComponent } from '../inspection-finish-images-dialog/inspection-finish-images-dialog.component';
 import { TakePhotosVehicleComponent } from '../take-photos-vehicle/take-photos-vehicle.component';
 import { InspectionInfoDialogComponent } from '../inspection-info-dialog/inspection-info-dialog.component';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { InspectionsGenerateQrDialogComponent } from '../inspections-generate-qr-dialog/inspections-generate-qr-dialog.component';
 import { InspectionsVehicleInfoComponent } from '../inspections-vehicle-info/inspections-vehicle-info.component';
 
@@ -121,7 +121,8 @@ export class InspectionsTableComponent implements OnInit, AfterViewInit {
     private snackBar: MatSnackBar,
     private dialog: MatDialog,
     private breakpointObserver: BreakpointObserver,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private router: Router
   ) {
     this.dataSource = new MatTableDataSource<InspectionsInfoData>([]);
   }
@@ -457,6 +458,11 @@ export class InspectionsTableComponent implements OnInit, AfterViewInit {
           if (foundVehicle) {
             this.inspectionForm.patchValue({ vehiculo: foundVehicle });
             this.getTableData();
+          } else {
+            this.openSnackbar(
+              'El vehículo seleccionado no existe o no está asignado a su empresa.'
+            );
+            this.router.navigate(['/inspections']);
           }
         }
       });
@@ -667,9 +673,14 @@ export class InspectionsTableComponent implements OnInit, AfterViewInit {
     const isSmallScreen = this.breakpointObserver.isMatched(Breakpoints.XSmall);
     const dialogWidth = isSmallScreen ? '90vw' : '60%';
 
+    const dialogData = this.idVehicleNumber
+      ? { vehicleNumber: this.idVehicleNumber }
+      : undefined;
+
     const dialogRef = this.dialog.open(InspectionsAddDialogComponent, {
       width: dialogWidth,
       disableClose: true,
+      data: dialogData,
     });
 
     dialogRef.afterClosed().subscribe((result) => {

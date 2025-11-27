@@ -50,7 +50,7 @@
               matInput
               formControlName="vehiculo"
               [matAutocomplete]="auto3"
-              [readonly]="isEditMode"
+              [readonly]="isEditMode || preselectedVehicleNumber !== ''"
             />
             <mat-autocomplete
               #auto3="matAutocomplete"

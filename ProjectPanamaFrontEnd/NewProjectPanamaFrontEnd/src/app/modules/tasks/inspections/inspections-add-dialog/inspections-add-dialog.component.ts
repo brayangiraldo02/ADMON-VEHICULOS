@@ -114,6 +114,8 @@ export class InspectionsAddDialogComponent implements OnInit {
   showSignaturePad: boolean = false;
   signatureBase64: string = '';
 
+  preselectedVehicleNumber: string = '';
+
   constructor(
     private apiService: ApiService,
     private jwtService: JwtService,
@@ -121,7 +123,7 @@ export class InspectionsAddDialogComponent implements OnInit {
     private snackBar: MatSnackBar,
     private dialogRef: MatDialogRef<InspectionsAddDialogComponent>,
     @Inject(MAT_DIALOG_DATA)
-    public data: { idInspection: string; idTypeInspection: string }
+    public data: { idInspection: string; idTypeInspection: string; vehicleNumber: string }
   ) {}
 
   ngOnInit(): void {
@@ -140,6 +142,9 @@ export class InspectionsAddDialogComponent implements OnInit {
       this.loadInspectionData(this.data.idInspection);
     } else {
       // Modo creación
+      if (this.data && this.data.vehicleNumber) {
+        this.preselectedVehicleNumber = this.data.vehicleNumber;
+      }
       this.getInputsData();
       this.resetVehicleInfo();
       this.initForms();
@@ -371,6 +376,18 @@ export class InspectionsAddDialogComponent implements OnInit {
             startWith(''),
             map((value) => this._filterVehicles(value || ''))
           );
+        
+        // Si hay un vehículo preseleccionado, buscarlo y cargarlo automáticamente
+        if (this.preselectedVehicleNumber) {
+          const foundVehicle = this.vehicles.find(
+            (v) => v.numero_unidad === this.preselectedVehicleNumber
+          );
+          if (foundVehicle) {
+            this.inspectionInfoForm.patchValue({ vehiculo: foundVehicle });
+            this.getVehicleInfo(foundVehicle.numero_unidad);
+          }
+        }
+        
         this.isLoading = false;
       });
   }
