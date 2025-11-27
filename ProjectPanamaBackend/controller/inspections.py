@@ -484,7 +484,7 @@ async def report_inspections(data, company_code: str):
         "unidad": inspection.UNIDAD,
         "placa": inspection.PLACA,
         "kilometraje": inspection.KILOMETRAJ if inspection.KILOMETRAJ else "",
-        "nombre_usuario": inspection.USUARIO if inspection.USUARIO else "",
+        "nombre_usuario": inspection.NOMUSUARIO if inspection.NOMUSUARIO else "",
         "propietario": inspection.PROPI_IDEN,
         "estado_inspeccion": "FINALIZADA" if inspection.ESTADO == "FIN" else ("PENDIENTE" if inspection.ESTADO == "PEN" else ("SUSPENDIDA" if inspection.ESTADO == "SUS" else inspection.ESTADO)),
         "acciones": ""
