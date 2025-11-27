@@ -44,6 +44,11 @@
   width: 100%;
 }
 
+/* Ocultar botones superiores en desktop */
+.action-buttons-top {
+  display: none;
+}
+
 form {
   padding-bottom: 20px;
 }
@@ -120,6 +125,26 @@ td:first-child {
 @media (max-width: 768px) {
   .main-container {
     padding: 2vh 20px;
+  }
+
+  /* Mostrar botones superiores en mobile */
+  .action-buttons-top {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+  }
+
+  .action-buttons-top button {
+    width: 100%;
+    height: 46px;
+    margin-bottom: 10px;
+  }
+
+  /* Ocultar botones Nueva y Opciones del contenedor inferior en mobile */
+  .buttons-container .btn-nueva-desktop,
+  .buttons-container .btn-opciones-desktop {
+    display: none;
   }
 
   .inputs-container {
