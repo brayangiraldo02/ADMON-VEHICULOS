@@ -23,16 +23,20 @@ from utils.pdf import html2pdf
 
 vehicles_router = APIRouter()
 
-@vehicles_router.get("/vehicles/{company_code}", tags=["Vehicles"])
+@vehicles_router.get("/vehicles/{company_code}/", tags=["Vehicles"])
 async def get_vehicles(company_code: str):
   db = session()
   try:
-    vehicles = db.query(Vehiculos.NUMERO, Vehiculos.PLACA).filter(Vehiculos.EMPRESA == company_code).all()
+    vehicles = db.query(Vehiculos.NUMERO, Vehiculos.PLACA, Vehiculos.PROPI_IDEN, Vehiculos.NRO_CUPO).filter(Vehiculos.EMPRESA == company_code).all()
+    owners = db.query(Propietarios.CODIGO, Propietarios.NOMBRE).filter(Propietarios.EMPRESA == company_code).all()
+    owners_dict = {owner.CODIGO: owner.NOMBRE for owner in owners}
 
     vehicles_list = [
       {
         'unidad': vehicle.NUMERO,
         'placa': vehicle.PLACA,
+        'propietario': owners_dict.get(vehicle.PROPI_IDEN, "") + ' (' + vehicle.PROPI_IDEN + ')',
+        'nro_cupo': vehicle.NRO_CUPO
       }
       for vehicle in vehicles
     ]
