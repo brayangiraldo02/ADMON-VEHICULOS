@@ -31,6 +31,9 @@ from dotenv import load_dotenv
 import qrcode
 from reportlab.pdfgen import canvas
 from reportlab.lib.units import mm
+from reportlab.platypus import Frame, Paragraph
+from reportlab.lib.styles import ParagraphStyle
+from reportlab.lib.enums import TA_LEFT
 
 load_dotenv()
 
@@ -1188,7 +1191,15 @@ async def vehicle_info(company_code: str, vehicle_number: str):
 
 #-----------------------------------------------------------------------------------------------
 async def generate_qr(company_code: str, vehicle_number: str):
+  db = session()
   try:
+    vehicle = db.query(Vehiculos).filter(Vehiculos.NUMERO == vehicle_number, Vehiculos.EMPRESA == company_code).first()
+    if not vehicle:
+      return JSONResponse(content={"message": "Vehicle not found"}, status_code=404)
+    
+    owner = db.query(Propietarios).filter(Propietarios.CODIGO == vehicle.PROPI_IDEN, Propietarios.EMPRESA == company_code).first()
+    owner_name = owner.NOMBRE if owner else ''
+
     full_url = f"{route_app}{qr_path}/{vehicle_number}"
     with tempfile.NamedTemporaryFile(suffix=".png", delete=False) as tmp_qr:
       qr = qrcode.make(full_url)
@@ -1210,11 +1221,30 @@ async def generate_qr(company_code: str, vehicle_number: str):
       pdf.drawInlineImage(tmp_qr_path, x_qr, y_qr, qr_size, qr_size)
 
       text_x = x_qr + qr_size + (2 * mm) 
-      
-      pdf.setFont("Helvetica", 6) 
-      pdf.drawString(text_x, (sticker_height / 2) + 2 * mm, "SISTEMAS ALFA")
-      pdf.setFont("Helvetica-Bold", 12) 
-      pdf.drawString(text_x, (sticker_height / 2) - 4 * mm, vehicle_number)
+      text_width = sticker_width - text_x - 2 * mm
+      text_height = sticker_height - 4 * mm
+
+      frame = Frame(text_x, 2 * mm, text_width, text_height, showBoundary=0)
+
+      owner_style = ParagraphStyle(
+        'owner_style',
+        fontName='Helvetica',
+        fontSize=6,
+        leading=7,
+        alignment=TA_LEFT
+      )
+      owner_p = Paragraph(owner_name, owner_style)
+
+      vehicle_style = ParagraphStyle(
+        'vehicle_style',
+        fontName='Helvetica-Bold',
+        fontSize=12,
+        leading=14,
+        alignment=TA_LEFT
+      )
+      vehicle_p = Paragraph(vehicle_number, vehicle_style)
+
+      frame.addFromList([owner_p, vehicle_p], pdf)
       pdf.showPage()
       pdf.save()
 
