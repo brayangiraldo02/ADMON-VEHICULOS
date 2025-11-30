@@ -1222,16 +1222,21 @@ async def generate_qr(company_code: str, vehicle_number: str):
 
       text_x = x_qr + qr_size + (2 * mm) 
       text_width = sticker_width - text_x - 2 * mm
-      text_height = sticker_height - 4 * mm
-
-      frame = Frame(text_x, 2 * mm, text_width, text_height, showBoundary=0)
+      text_height = 20 * mm
+      vertical_offset = 3 * mm
+      text_y = (sticker_height - text_height) / 2 - vertical_offset
+      
+      frame = Frame(text_x, text_y, text_width, text_height, 
+                    topPadding=0, bottomPadding=0, leftPadding=0, rightPadding=0,
+                    showBoundary=0)
 
       owner_style = ParagraphStyle(
         'owner_style',
         fontName='Helvetica',
         fontSize=6,
         leading=7,
-        alignment=TA_LEFT
+        alignment=TA_LEFT,
+        spaceAfter=3
       )
       owner_p = Paragraph(owner_name, owner_style)
 
