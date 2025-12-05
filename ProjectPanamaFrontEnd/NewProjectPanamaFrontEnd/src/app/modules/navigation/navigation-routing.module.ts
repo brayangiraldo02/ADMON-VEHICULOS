@@ -54,9 +54,9 @@ import { OwnersAddnewComponent } from '../tasks/owners/owners-addnew/owners-addn
 import { DriversTableComponent } from '../tasks/drivers/drivers-table/drivers-table.component';
 import { DriversResumeComponent } from '../tasks/drivers/drivers-resume/drivers-resume.component';
 import { DriversAddnewComponent } from '../tasks/drivers/drivers-addnew/drivers-addnew.component';
-import { VehiclesTableComponent } from '../tasks/vehicles/vehicles-table/vehicles-table.component';
-import { VehiclesResumeComponent } from '../tasks/vehicles/vehicles-resume/vehicles-resume.component';
-import { VehiclesAddnewComponent } from '../tasks/vehicles/vehicles-addnew/vehicles-addnew.component';
+import { VehiclesTableComponent } from '../tasks/vehicles-old/vehicles-table/vehicles-table.component';
+import { VehiclesResumeComponent } from '../tasks/vehicles-old/vehicles-resume/vehicles-resume.component';
+import { VehiclesAddnewComponent } from '../tasks/vehicles-old/vehicles-addnew/vehicles-addnew.component';
 import { InspectionsTableComponent } from '../tasks/inspections/inspections-table/inspections-table.component';
 import { inspectionsGuard } from 'src/app/guards/inspections.guard';
 // VehiclesDocumentationComponent y DriversDocumentationComponent no estaban en tu app-routing, si las necesitas, impórtalas.
@@ -73,7 +73,7 @@ const routes: Routes = [
         loadChildren: () => import('../home/home.module').then(m => m.HomeModule),
       },
       { path: 'statevehiclefleet', component: StatevehiclefleetComponent },
-      { path: 'vehicles', component: VehiclesTableComponent },
+      // { path: 'vehicles', component: VehiclesTableComponent },
       { path: 'vehicle/:code', component: VehiclesResumeComponent },
       { path: 'new-vehicle', component: VehiclesAddnewComponent },
       { path: 'feespaid', component: FeespaidComponent },
@@ -108,6 +108,10 @@ const routes: Routes = [
         path: 'inspections/:id',
         component: InspectionsTableComponent,
         canActivate: [inspectionsGuard],
+      },
+      {
+        path: 'vehicles',
+        loadChildren: () => import('../tasks/vehicles/vehicles.module').then(m => m.VehiclesModule),
       }
       // Las rutas 'pdf' y 'login' NO se definen aquí.
       // La ruta 'prueba' ya no es necesaria como tal, ya que su funcionalidad (cargar NavigationModule)

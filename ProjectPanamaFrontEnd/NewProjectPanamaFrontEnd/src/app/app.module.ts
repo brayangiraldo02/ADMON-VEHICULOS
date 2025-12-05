@@ -31,11 +31,11 @@ import { DriversTableComponent } from './modules/tasks/drivers/drivers-table/dri
 import { DriversResumeComponent } from './modules/tasks/drivers/drivers-resume/drivers-resume.component';
 import { DriversDeleteComponent } from './modules/tasks/drivers/drivers-delete/drivers-delete.component';
 import { DriversAddnewComponent } from './modules/tasks/drivers/drivers-addnew/drivers-addnew.component';
-import { VehiclesTableComponent } from './modules/tasks/vehicles/vehicles-table/vehicles-table.component';
-import { VehiclesResumeComponent } from './modules/tasks/vehicles/vehicles-resume/vehicles-resume.component';
-import { VehiclesDeleteComponent } from './modules/tasks/vehicles/vehicles-delete/vehicles-delete.component';
-import { VehiclesAddnewComponent } from './modules/tasks/vehicles/vehicles-addnew/vehicles-addnew.component';
-import { VehiclesDocumentationComponent } from './modules/tasks/vehicles/vehicles-documentation/vehicles-documentation.component';
+import { VehiclesTableComponent } from './modules/tasks/vehicles-old/vehicles-table/vehicles-table.component';
+import { VehiclesResumeComponent } from './modules/tasks/vehicles-old/vehicles-resume/vehicles-resume.component';
+import { VehiclesDeleteComponent } from './modules/tasks/vehicles-old/vehicles-delete/vehicles-delete.component';
+import { VehiclesAddnewComponent } from './modules/tasks/vehicles-old/vehicles-addnew/vehicles-addnew.component';
+import { VehiclesDocumentationComponent } from './modules/tasks/vehicles-old/vehicles-documentation/vehicles-documentation.component';
 import { DriversDocumentationComponent } from './modules/tasks/drivers/drivers-documentation/drivers-documentation.component';
 import { OperacionesEntregaVehiculoConductorComponent } from './modules/options/users/operaciones/operaciones-entrega-vehiculo-conductor/operaciones-entrega-vehiculo-conductor.component';
 import { SharedModule } from './modules/shared/shared.module';
