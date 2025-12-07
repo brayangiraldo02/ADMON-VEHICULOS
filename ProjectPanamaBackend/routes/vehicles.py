@@ -20,6 +20,7 @@ from fastapi.templating import Jinja2Templates
 from fastapi.responses import FileResponse
 import jinja2
 from utils.pdf import html2pdf
+from sqlalchemy import func
 
 vehicles_router = APIRouter()
 
@@ -840,5 +841,23 @@ async def get_vehicles_by_state(company_code: str, state_code: str):
         return JSONResponse(content=jsonable_encoder(response), status_code=200)
     except Exception as e:
         return JSONResponse(content={"error": str(e)}, status_code=500)
+    finally:
+        db.close()
+
+#-------------------------------------------------------------------------------------------
+
+@vehicles_router.get("/vehicles-count/{company_code}/", tags=["Vehicles"])
+async def get_vehicles_count(company_code: str):
+    db = session()
+    try:
+        vehicle_count = db.query(func.count(Vehiculos.NUMERO)).filter(
+            Vehiculos.EMPRESA == company_code,
+            Vehiculos.NUMERO != None,
+            Vehiculos.NUMERO != ''
+        ).scalar()
+
+        return JSONResponse(content={"vehicle_count": vehicle_count}, status_code=200)
+    except Exception as e:
+        return JSONResponse(content={"message": str(e)}, status_code=500)
     finally:
         db.close()
