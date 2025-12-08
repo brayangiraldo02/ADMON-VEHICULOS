@@ -11,6 +11,7 @@ from models.propietarios import Propietarios
 from models.cajarecaudoscontado import CajasRecaudosContado
 from models.cartera import Cartera
 from models.movienca import Movienca
+from models.permisosusuario import PermisosUsuario
 from utils.reports import *
 from fastapi.encoders import jsonable_encoder
 from datetime import datetime
@@ -140,8 +141,8 @@ async def get_vehicles(company_code: str):
 
 #-------------------------------------------------------------------------------------------
 
-@vehicles_router.get('/directorio-vehiculos/{company_code}/', tags=["Vehicles"]) 
-async def get_vehiculos_detalles(company_code: str):
+@vehicles_router.get('/directorio-vehiculos/{company_code}/{user_code}', tags=["Vehicles"]) 
+async def get_vehiculos_detalles(company_code: str, user_code: str):
     db = session()
     try:
         vehiculos_detalles = db.query(
@@ -169,6 +170,9 @@ async def get_vehiculos_detalles(company_code: str):
         ).filter(Propietarios.EMPRESA == company_code).all()
 
         propietarios_dict = {prop.CODIGO: prop.NOMBRE for prop in propietarios}
+
+        user = db.query(PermisosUsuario).filter(PermisosUsuario.CODIGO == user_code).first()
+        user = user.NOMBRE if user else ""
         
         vehiculos_detalles_list = []  
         for resultado in vehiculos_detalles:
@@ -199,7 +203,7 @@ async def get_vehiculos_detalles(company_code: str):
             # Formatea la fecha y la hora según lo requerido
             fecha = now_in_panama.strftime("%d/%m/%Y")
             hora_actual = now_in_panama.strftime("%I:%M:%S %p")
-            usuario = "admin"
+            #usuario = "admin"
             titulo = 'Directorio Vehiculos'
 
             def formatear_fecha(fecha_hora_str):
@@ -244,7 +248,7 @@ async def get_vehiculos_detalles(company_code: str):
                           # Agregar el vehículo a la lista de vehículos del estado
                           data_view[estado]["vehiculos"].append(vehiculo)
 
-            data_view["usuario"] = usuario
+            data_view["usuario"] = user
 
             headers = {
               "Content-Disposition": "attachment; detalles-vehiculos.pdf"
