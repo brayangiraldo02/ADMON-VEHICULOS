@@ -856,8 +856,8 @@ async def get_vehicles_count(company_code: str):
     try:
         vehicle_count = db.query(func.count(Vehiculos.NUMERO)).filter(
             Vehiculos.EMPRESA == company_code,
-            Vehiculos.NUMERO != None,
-            Vehiculos.NUMERO != ''
+            Vehiculos.PLACA != '',
+            Vehiculos.PLACA.isnot(None)
         ).scalar()
 
         return JSONResponse(content={"vehicle_count": vehicle_count}, status_code=200)
