@@ -2,7 +2,7 @@
   <div class="title-container">
     <h1 class="title">Vehículos</h1>
     <p class="subtitle" *ngIf="!isLoading">
-      Total Registros: {{ dataSource.filteredData.length }}
+      Total de Vehículos: {{ totalVehicles }}
     </p>
   </div>
 
@@ -14,14 +14,23 @@
         <mat-label>Buscar</mat-label>
         <input
           matInput
-          (keyup)="applyFilter($event)"
+          [formControl]="searchControl"
           placeholder="Buscar..."
           #input
         />
+        <button
+          mat-icon-button
+          matSuffix
+          aria-label="Clear"
+          (click)="searchControl.setValue('')"
+          *ngIf="input.value"
+        >
+          <mat-icon>close</mat-icon>
+        </button>
       </mat-form-field>
 
       <mat-form-field class="field-input filter-field">
-        <mat-label>Manera de Listar</mat-label>
+        <mat-label>Filtro</mat-label>
         <mat-select (selectionChange)="listData($event)">
           <mat-option value="">Todos</mat-option>
           <mat-option value="1">Activos</mat-option>
