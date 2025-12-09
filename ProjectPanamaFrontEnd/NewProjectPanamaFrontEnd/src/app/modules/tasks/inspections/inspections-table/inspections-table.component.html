@@ -6,6 +6,32 @@
     </h1>
   </div>
 
+  <!-- Botones de acción principales (visible en mobile arriba) -->
+  <div class="action-buttons-top" *ngIf="!isLoadingData">
+    <button
+      mat-raised-button
+      class="button btn-nueva"
+      (click)="openDialogInspectionAdd()"
+    >
+      Nueva
+    </button>
+    <ng-container *ngIf="!idVehicleNumber">
+      <button mat-raised-button [matMenuTriggerFor]="menuTop" class="button btn-opciones">
+        Opciones
+      </button>
+      <mat-menu #menuTop="matMenu">
+        <button mat-menu-item (click)="openGenerateQRDialog()">
+          <mat-icon>qr_code_2</mat-icon>
+          <span>Generar QR</span>
+        </button>
+        <button mat-menu-item (click)="getPdfData()">
+          <mat-icon>article</mat-icon>
+          <span>Reporte</span>
+        </button>
+      </mat-menu>
+    </ng-container>
+  </div>
+
   <form [formGroup]="inspectionForm" *ngIf="!isLoadingData">
     <div class="inputs-container" *ngIf="!idVehicleNumber">
       <mat-form-field class="field-input">
@@ -135,28 +161,29 @@
       <div class="field-input buttons-container">
         <button
           mat-raised-button
-          class="button"
+          class="button btn-buscar"
           (click)="getTableData()"
           *ngIf="!idVehicleNumber"
         >
           Buscar
         </button>
-        <button mat-raised-button class="button" (click)="openInfoVehicle()" *ngIf="idVehicleNumber">
+        <button mat-raised-button class="button btn-info" (click)="openInfoVehicle()" *ngIf="idVehicleNumber">
           Información
         </button>
         <button
           mat-raised-button
-          class="button"
+          class="button btn-reporte"
           (click)="getPdfData()"
           *ngIf="idVehicleNumber"
         >
           Reporte
         </button>
+        <!-- Botones duplicados para desktop (se ocultan en mobile) -->
         <ng-container *ngIf="!idVehicleNumber">
-          <button mat-raised-button [matMenuTriggerFor]="menu" class="button">
+          <button mat-raised-button [matMenuTriggerFor]="menuBottom" class="button btn-opciones-desktop">
             Opciones
           </button>
-          <mat-menu #menu="matMenu">
+          <mat-menu #menuBottom="matMenu">
             <button mat-menu-item (click)="openGenerateQRDialog()">
               <mat-icon>qr_code_2</mat-icon>
               <span>Generar QR</span>
@@ -169,8 +196,7 @@
         </ng-container>
         <button
           mat-raised-button
-          class="button"
-          [disabled]="idVehicleNumber"
+          class="button btn-nueva-desktop"
           (click)="openDialogInspectionAdd()"
         >
           Nueva

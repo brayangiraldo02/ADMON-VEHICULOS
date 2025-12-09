@@ -11,6 +11,7 @@ from models.propietarios import Propietarios
 from models.cajarecaudoscontado import CajasRecaudosContado
 from models.cartera import Cartera
 from models.movienca import Movienca
+from models.permisosusuario import PermisosUsuario
 from utils.reports import *
 from fastapi.encoders import jsonable_encoder
 from datetime import datetime
@@ -20,19 +21,24 @@ from fastapi.templating import Jinja2Templates
 from fastapi.responses import FileResponse
 import jinja2
 from utils.pdf import html2pdf
+from sqlalchemy import func
 
 vehicles_router = APIRouter()
 
-@vehicles_router.get("/vehicles/{company_code}", tags=["Vehicles"])
+@vehicles_router.get("/vehicles/{company_code}/", tags=["Vehicles"])
 async def get_vehicles(company_code: str):
   db = session()
   try:
-    vehicles = db.query(Vehiculos.NUMERO, Vehiculos.PLACA).filter(Vehiculos.EMPRESA == company_code).all()
+    vehicles = db.query(Vehiculos.NUMERO, Vehiculos.PLACA, Vehiculos.PROPI_IDEN, Vehiculos.NRO_CUPO).filter(Vehiculos.EMPRESA == company_code).all()
+    owners = db.query(Propietarios.CODIGO, Propietarios.NOMBRE).filter(Propietarios.EMPRESA == company_code).all()
+    owners_dict = {owner.CODIGO: owner.NOMBRE for owner in owners}
 
     vehicles_list = [
       {
         'unidad': vehicle.NUMERO,
         'placa': vehicle.PLACA,
+        'propietario': owners_dict.get(vehicle.PROPI_IDEN, "") + ' (' + vehicle.PROPI_IDEN + ')',
+        'nro_cupo': vehicle.NRO_CUPO
       }
       for vehicle in vehicles
     ]
@@ -135,8 +141,8 @@ async def get_vehicles(company_code: str):
 
 #-------------------------------------------------------------------------------------------
 
-@vehicles_router.get('/directorio-vehiculos/{company_code}/', tags=["Vehicles"]) 
-async def get_vehiculos_detalles(company_code: str):
+@vehicles_router.get('/directorio-vehiculos/{company_code}/{user_code}', tags=["Vehicles"]) 
+async def get_vehiculos_detalles(company_code: str, user_code: str):
     db = session()
     try:
         vehiculos_detalles = db.query(
@@ -164,6 +170,9 @@ async def get_vehiculos_detalles(company_code: str):
         ).filter(Propietarios.EMPRESA == company_code).all()
 
         propietarios_dict = {prop.CODIGO: prop.NOMBRE for prop in propietarios}
+
+        user = db.query(PermisosUsuario).filter(PermisosUsuario.CODIGO == user_code).first()
+        user = user.NOMBRE if user else ""
         
         vehiculos_detalles_list = []  
         for resultado in vehiculos_detalles:
@@ -194,7 +203,7 @@ async def get_vehiculos_detalles(company_code: str):
             # Formatea la fecha y la hora según lo requerido
             fecha = now_in_panama.strftime("%d/%m/%Y")
             hora_actual = now_in_panama.strftime("%I:%M:%S %p")
-            usuario = "admin"
+            #usuario = "admin"
             titulo = 'Directorio Vehiculos'
 
             def formatear_fecha(fecha_hora_str):
@@ -239,7 +248,7 @@ async def get_vehiculos_detalles(company_code: str):
                           # Agregar el vehículo a la lista de vehículos del estado
                           data_view[estado]["vehiculos"].append(vehiculo)
 
-            data_view["usuario"] = usuario
+            data_view["usuario"] = user
 
             headers = {
               "Content-Disposition": "attachment; detalles-vehiculos.pdf"
@@ -836,5 +845,23 @@ async def get_vehicles_by_state(company_code: str, state_code: str):
         return JSONResponse(content=jsonable_encoder(response), status_code=200)
     except Exception as e:
         return JSONResponse(content={"error": str(e)}, status_code=500)
+    finally:
+        db.close()
+
+#-------------------------------------------------------------------------------------------
+
+@vehicles_router.get("/vehicles-count/{company_code}/", tags=["Vehicles"])
+async def get_vehicles_count(company_code: str):
+    db = session()
+    try:
+        vehicle_count = db.query(func.count(Vehiculos.NUMERO)).filter(
+            Vehiculos.EMPRESA == company_code,
+            Vehiculos.NUMERO != None,
+            Vehiculos.NUMERO != ''
+        ).scalar()
+
+        return JSONResponse(content={"vehicle_count": vehicle_count}, status_code=200)
+    except Exception as e:
+        return JSONResponse(content={"message": str(e)}, status_code=500)
     finally:
         db.close()

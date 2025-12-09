@@ -26,7 +26,8 @@
             *ngFor="let option of filteredOptions | async"
             [value]="option.unidad"
           >
-            {{ option.unidad }} - {{ option.placa }}
+            {{ option.unidad }} - {{ option.placa }} - {{ option.nro_cupo }} -
+            {{ option.propietario }}
           </mat-option>
         </mat-autocomplete>
       </mat-form-field>
@@ -87,10 +88,7 @@
 
     <mat-divider class="mobile"></mat-divider>
 
-    <div
-      class="driver-info"
-      *ngIf="!isLoadingvehicleQRInfo && selectedVehicle"
-    >
+    <div class="driver-info" *ngIf="!isLoadingvehicleQRInfo && selectedVehicle">
       <mat-form-field class="form-field">
         <mat-label>Conductor</mat-label>
         <input type="text" matInput [formControl]="drivers" />
@@ -128,12 +126,7 @@
           <strong class="message-strong">ALERTA: </strong>
           El vehículo no tiene inspecciones.
         </p>
-        <p
-          class="message"
-          *ngIf="
-            vehicleQRInfo.inspections > 0
-          "
-        >
+        <p class="message" *ngIf="vehicleQRInfo.inspections > 0">
           <strong class="message-strong-green">ALERTA: </strong>
           El vehículo tiene {{ vehicleQRInfo.inspections }} inspecciones.
         </p>
@@ -142,6 +135,12 @@
   </div>
 </mat-dialog-content>
 <mat-dialog-actions align="end">
-  <button mat-button [disabled]="vehicleQRInfo.vehicle_number === ''" (click)="generateQR()">Generar QR</button>
+  <button
+    mat-button
+    [disabled]="vehicleQRInfo.vehicle_number === ''"
+    (click)="generateQR()"
+  >
+    Generar QR
+  </button>
   <button mat-button mat-dialog-close cdkFocusInitial>Cerrar</button>
 </mat-dialog-actions>

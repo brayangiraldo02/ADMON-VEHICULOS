@@ -31,11 +31,15 @@ from dotenv import load_dotenv
 import qrcode
 from reportlab.pdfgen import canvas
 from reportlab.lib.units import mm
+from reportlab.platypus import Frame, Paragraph
+from reportlab.lib.styles import ParagraphStyle
+from reportlab.lib.enums import TA_LEFT
 
 load_dotenv()
 
 upload_directory = os.getenv('DIRECTORY_IMG')
 route_api = os.getenv('ROUTE_API')
+route_app = os.getenv('ROUTE_APP')
 path_10  = os.getenv('DROPBOX_INTEGRATION_PATH_10')
 path_58  = os.getenv('DROPBOX_INTEGRATION_PATH_58')
 qr_path = 'inspections'
@@ -480,7 +484,7 @@ async def report_inspections(data, company_code: str):
         "unidad": inspection.UNIDAD,
         "placa": inspection.PLACA,
         "kilometraje": inspection.KILOMETRAJ if inspection.KILOMETRAJ else "",
-        "nombre_usuario": inspection.USUARIO if inspection.USUARIO else "",
+        "nombre_usuario": inspection.NOMUSUARIO if inspection.NOMUSUARIO else "",
         "propietario": inspection.PROPI_IDEN,
         "estado_inspeccion": "FINALIZADA" if inspection.ESTADO == "FIN" else ("PENDIENTE" if inspection.ESTADO == "PEN" else ("SUSPENDIDA" if inspection.ESTADO == "SUS" else inspection.ESTADO)),
         "acciones": ""
@@ -1187,8 +1191,16 @@ async def vehicle_info(company_code: str, vehicle_number: str):
 
 #-----------------------------------------------------------------------------------------------
 async def generate_qr(company_code: str, vehicle_number: str):
+  db = session()
   try:
-    full_url = f"{route_api}{qr_path}/{vehicle_number}"
+    vehicle = db.query(Vehiculos).filter(Vehiculos.NUMERO == vehicle_number, Vehiculos.EMPRESA == company_code).first()
+    if not vehicle:
+      return JSONResponse(content={"message": "Vehicle not found"}, status_code=404)
+    
+    owner = db.query(Propietarios).filter(Propietarios.CODIGO == vehicle.PROPI_IDEN, Propietarios.EMPRESA == company_code).first()
+    owner_name = owner.NOMBRE if owner else ''
+
+    full_url = f"{route_app}{qr_path}/{vehicle_number}"
     with tempfile.NamedTemporaryFile(suffix=".png", delete=False) as tmp_qr:
       qr = qrcode.make(full_url)
       qr.save(tmp_qr.name)
@@ -1209,11 +1221,35 @@ async def generate_qr(company_code: str, vehicle_number: str):
       pdf.drawInlineImage(tmp_qr_path, x_qr, y_qr, qr_size, qr_size)
 
       text_x = x_qr + qr_size + (2 * mm) 
+      text_width = sticker_width - text_x - 2 * mm
+      text_height = 20 * mm
+      vertical_offset = 3 * mm
+      text_y = (sticker_height - text_height) / 2 - vertical_offset
       
-      pdf.setFont("Helvetica", 6) 
-      pdf.drawString(text_x, (sticker_height / 2) + 2 * mm, "SISTEMAS ALFA")
-      pdf.setFont("Helvetica-Bold", 12) 
-      pdf.drawString(text_x, (sticker_height / 2) - 4 * mm, vehicle_number)
+      frame = Frame(text_x, text_y, text_width, text_height, 
+                    topPadding=0, bottomPadding=0, leftPadding=0, rightPadding=0,
+                    showBoundary=0)
+
+      owner_style = ParagraphStyle(
+        'owner_style',
+        fontName='Helvetica',
+        fontSize=6,
+        leading=7,
+        alignment=TA_LEFT,
+        spaceAfter=3
+      )
+      owner_p = Paragraph(owner_name, owner_style)
+
+      vehicle_style = ParagraphStyle(
+        'vehicle_style',
+        fontName='Helvetica-Bold',
+        fontSize=12,
+        leading=14,
+        alignment=TA_LEFT
+      )
+      vehicle_p = Paragraph(vehicle_number, vehicle_style)
+
+      frame.addFromList([owner_p, vehicle_p], pdf)
       pdf.showPage()
       pdf.save()
 

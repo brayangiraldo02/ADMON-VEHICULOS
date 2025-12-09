@@ -4,10 +4,7 @@
     *ngIf="isLoadingVehicles"
   ></mat-progress-bar>
 </div>
-<div
-  class="scrollable-content"
-  *ngIf="!isLoadingVehicles && !photoDriver"
->
+<div class="scrollable-content" *ngIf="!isLoadingVehicles && !photoDriver">
   <div class="vehicle-info">
     <mat-form-field class="form-field">
       <mat-label>Vehículo</mat-label>
@@ -27,7 +24,8 @@
           *ngFor="let option of filteredOptions | async"
           [value]="option.unidad"
         >
-          {{ option.unidad }} - {{ option.placa }}
+          {{ option.unidad }} - {{ option.placa }} - {{ option.nro_cupo }} -
+          {{ option.propietario }}
         </mat-option>
       </mat-autocomplete>
     </mat-form-field>

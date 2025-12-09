@@ -17,6 +17,8 @@ import { JwtService } from 'src/app/services/jwt.service';
 interface vehicle {
   unidad: string;
   placa: string;
+  propietario: string;
+  nro_cupo: string;
 }
 
 interface vehicleLoan {
@@ -194,7 +196,7 @@ export class OperacionesPrestamoVehiculoConductorComponent {
     return this.optionsVehicleLoan.filter(
       (option) =>
         option.vehicle_plate.toLowerCase().includes(filterValue) ||
-        option.vehicle_number.toLowerCase().includes(filterValue)
+        option.vehicle_number.toLowerCase().includes(filterValue) 
     );
   }
 
@@ -250,7 +252,9 @@ export class OperacionesPrestamoVehiculoConductorComponent {
     return this.options.filter(
       (option) =>
         option.placa.toLowerCase().includes(filterValue) ||
-        option.unidad.toLowerCase().includes(filterValue)
+        option.unidad.toLowerCase().includes(filterValue) ||
+        option.propietario.toLowerCase().includes(filterValue) ||
+        option.nro_cupo.toLowerCase().includes(filterValue)
     );
   }
 
