@@ -66,6 +66,7 @@ export class VehiclesTableComponent
 
   dataSource: MatTableDataSource<VehicleData>;
   searchControl = new FormControl('');
+  filterControl = new FormControl('');
   isLoading: boolean = true;
   originalData: VehicleData[] = [];
   totalVehicles: number = 0;

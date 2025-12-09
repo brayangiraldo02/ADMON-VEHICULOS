@@ -31,7 +31,7 @@
 
       <mat-form-field class="field-input filter-field">
         <mat-label>Filtro</mat-label>
-        <mat-select (selectionChange)="listData($event)">
+        <mat-select [formControl]="filterControl" (selectionChange)="listData($event)">
           <mat-option value="">Todos</mat-option>
           <mat-option value="1">Activos</mat-option>
           <mat-option value="2">Retirados</mat-option>
@@ -49,12 +49,6 @@
         </button>
       </div>
     </div>
-
-    <!-- Title for total records was requested to be removed or adjusted? User said "only title and loader". 
-         I will keep the total count in the title or under it if needed, but for now strict compliance with "centered title" 
-         The user didn't explicitly say remove the total count, but "centered and bold like inspections". Inspections doesn't show total count in header.
-         I'll remove the total count paragraph to match the clean look of inspections.
-    -->
 
     <div class="mat-elevation-z8">
       <div class="table-scroll-container">
