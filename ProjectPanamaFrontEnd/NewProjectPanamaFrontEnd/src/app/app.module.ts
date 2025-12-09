@@ -5,7 +5,7 @@ import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { LoginComponent } from './modules/users/login/login.component';
 import { HttpClientModule } from '@angular/common/http';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormsModule } from '@angular/forms';
 import { StatevehiclefleetComponent } from './modules/tasks/statevehiclefleet/statevehiclefleet.component';
 import { PdfViewerComponent } from './modules/others/pdf-viewer/pdf-viewer.component';
 import { FeespaidComponent } from './modules/tasks/feespaid/feespaid.component';
@@ -136,7 +136,6 @@ import { InspectionsVehicleInfoComponent } from './modules/tasks/inspections/ins
     BrowserAnimationsModule,
     HttpClientModule,
     FormsModule,
-    ReactiveFormsModule,
     SharedModule,
     MaterialModule
   ],
