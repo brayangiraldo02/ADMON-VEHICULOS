@@ -8,14 +8,38 @@
 
   <!-- Botones de acción principales (visible en mobile arriba) -->
   <div class="action-buttons-top" *ngIf="!isLoadingData">
-    <button
-      mat-raised-button
-      class="button btn-nueva"
-      (click)="openDialogInspectionAdd()"
-    >
-      Nueva
-    </button>
+    <!-- Botones cuando hay idVehicleNumber -->
+    <ng-container *ngIf="idVehicleNumber">
+      <button mat-raised-button class="button btn-regresar" routerLink="/inspections">
+        Regresar
+      </button>
+      <button
+        mat-raised-button
+        class="button btn-nueva"
+        (click)="openDialogInspectionAdd()"
+      >
+        Nueva
+      </button>
+      <button mat-raised-button class="button btn-info" (click)="openInfoVehicle()">
+        Información
+      </button>
+      <button
+        mat-raised-button
+        class="button btn-reporte"
+        (click)="getPdfData()"
+      >
+        Reporte
+      </button>
+    </ng-container>
+    <!-- Botones cuando NO hay idVehicleNumber -->
     <ng-container *ngIf="!idVehicleNumber">
+      <button
+        mat-raised-button
+        class="button btn-nueva"
+        (click)="openDialogInspectionAdd()"
+      >
+        Nueva
+      </button>
       <button mat-raised-button [matMenuTriggerFor]="menuTop" class="button btn-opciones">
         Opciones
       </button>
@@ -158,7 +182,7 @@
         </mat-error>
       </mat-form-field>
 
-      <div class="field-input buttons-container">
+      <div class="field-input buttons-container" [class.vehicle-mode]="idVehicleNumber">
         <button
           mat-raised-button
           class="button btn-buscar"
@@ -166,6 +190,9 @@
           *ngIf="!idVehicleNumber"
         >
           Buscar
+        </button>
+        <button mat-raised-button class="button btn-regresar" routerLink="/inspections" *ngIf="idVehicleNumber">
+          Regresar
         </button>
         <button mat-raised-button class="button btn-info" (click)="openInfoVehicle()" *ngIf="idVehicleNumber">
           Información
