@@ -93,32 +93,32 @@
           <ng-container matColumnDef="VlrCuota">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>VLR. CUOTA</th>
             <td mat-cell *matCellDef="let row">
-              {{ row.vlr_cuota }}
+              {{ row.cuota_diaria }}
             </td>
           </ng-container>
 
           <!-- Nro.Cuotas Column -->
           <ng-container matColumnDef="NroCuotas">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>N° CUOTAS</th>
-            <td mat-cell *matCellDef="let row">{{ row.nro_ctas }}</td>
+            <td mat-cell *matCellDef="let row">{{ row.nro_entrega }}</td>
           </ng-container>
 
           <!-- Pagas Column -->
           <ng-container matColumnDef="NroPagas">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>PAGAS</th>
-            <td mat-cell *matCellDef="let row">{{ row.pagas }}</td>
+            <td mat-cell *matCellDef="let row">{{ row.nro_pago }}</td>
           </ng-container>
 
           <!-- Pendientes Column -->
           <ng-container matColumnDef="Pendientes">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>PENDIENTES</th>
-            <td mat-cell *matCellDef="let row">{{ row.pendientes }}</td>
+            <td mat-cell *matCellDef="let row">{{ row.nro_saldo }}</td>
           </ng-container>
 
           <!-- Vence.Licencia Column -->
           <ng-container matColumnDef="VenceLicencia">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>VENCE LICENCIA</th>
-            <td mat-cell *matCellDef="let row">{{ row.vence_licencia }}</td>
+            <td mat-cell *matCellDef="let row">{{ row.vce_licen }}</td>
           </ng-container>
 
           <!-- Contactos Column -->
