@@ -179,3 +179,10 @@ class VehicleCreate(BaseModel):
     vehiculo_fec_estad4: Optional[str] = Field(default="")
     vehiculo_fec_compra: Optional[str] = Field(default="")
     vehiculo_fec_poliza: Optional[str] = Field(default="")
+
+#-------------------------------------------------------------------------------------------
+
+class VehiclePagination(BaseModel):
+    page_number: int
+    page_size: int
+    index: Optional[str] = None
