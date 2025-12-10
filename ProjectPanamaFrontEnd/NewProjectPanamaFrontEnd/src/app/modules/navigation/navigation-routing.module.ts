@@ -51,15 +51,14 @@ import { OpcionesAlmacenComponent } from '../options/users/almacen/opciones-alma
 import { OwnersTableComponent } from '../tasks/owners/owners-table/owners-table.component';
 import { OwnersResumeComponent } from '../tasks/owners/owners-resume/owners-resume.component';
 import { OwnersAddnewComponent } from '../tasks/owners/owners-addnew/owners-addnew.component';
-import { DriversTableComponent } from '../tasks/drivers/drivers-table/drivers-table.component';
-import { DriversResumeComponent } from '../tasks/drivers/drivers-resume/drivers-resume.component';
-import { DriversAddnewComponent } from '../tasks/drivers/drivers-addnew/drivers-addnew.component';
+import { DriversTableComponent } from '../tasks/drivers-old/drivers-table/drivers-table.component';
+import { DriversResumeComponent } from '../tasks/drivers-old/drivers-resume/drivers-resume.component';
+import { DriversAddnewComponent } from '../tasks/drivers-old/drivers-addnew/drivers-addnew.component';
 import { VehiclesTableComponent } from '../tasks/vehicles-old/vehicles-table/vehicles-table.component';
 import { VehiclesResumeComponent } from '../tasks/vehicles-old/vehicles-resume/vehicles-resume.component';
 import { VehiclesAddnewComponent } from '../tasks/vehicles-old/vehicles-addnew/vehicles-addnew.component';
 import { InspectionsTableComponent } from '../tasks/inspections/inspections-table/inspections-table.component';
 import { inspectionsGuard } from 'src/app/guards/inspections.guard';
-// VehiclesDocumentationComponent y DriversDocumentationComponent no estaban en tu app-routing, si las necesitas, impórtalas.
 
 const routes: Routes = [
   {
@@ -80,7 +79,7 @@ const routes: Routes = [
       { path: 'owners', component: OwnersTableComponent },
       { path: 'owner/:code', component: OwnersResumeComponent },
       { path: 'new-owner', component: OwnersAddnewComponent },
-      { path: 'drivers', component: DriversTableComponent },
+      // { path: 'drivers', component: DriversTableComponent },
       { path: 'driver/:code', component: DriversResumeComponent },
       { path: 'new-driver', component: DriversAddnewComponent },
       { path: 'operations', component: OpcionesOperacionesComponent },
@@ -112,10 +111,11 @@ const routes: Routes = [
       {
         path: 'vehicles',
         loadChildren: () => import('../tasks/vehicles/vehicles.module').then(m => m.VehiclesModule),
+      },
+      {
+        path: 'drivers',
+        loadChildren: () => import('../tasks/drivers/drivers.module').then(m => m.DriversModule),
       }
-      // Las rutas 'pdf' y 'login' NO se definen aquí.
-      // La ruta 'prueba' ya no es necesaria como tal, ya que su funcionalidad (cargar NavigationModule)
-      // ahora la tiene el path: '' en app-routing.module.ts.
     ]
   }
 ];
