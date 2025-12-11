@@ -665,3 +665,21 @@ async def get_vehicles_owners(owner: Owner):
     return JSONResponse(content={"error": str(e)}, status_code=500)
   finally:
     db.close()
+
+# ---------------------------------------------------------------------------------------------------------------
+
+@owners_router.get("/owners-count/{company_code}/", tags=["Owners"])
+async def get_owners_count(company_code: str):
+  db = session()
+  try:
+    count = db.query(Propietarios).filter(
+      Propietarios.EMPRESA == company_code,
+      Propietarios.CODIGO != '',
+      Propietarios.CODIGO != None
+    ).count()
+
+    return JSONResponse(content={"owners_count": count}, status_code=200)
+  except Exception as e:
+    return JSONResponse(content={"message": str(e)}, status_code=500)
+  finally:
+    db.close()
