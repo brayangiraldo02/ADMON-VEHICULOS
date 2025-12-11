@@ -46,3 +46,7 @@ async def get_owner_codes():
 @drivers_router.post("/drivers/", response_model=ConductorCreate, tags=["Drivers"])
 async def create_driver(driver: ConductorCreate):
   return await create_driver_info(driver)
+
+@drivers_router.get("/drivers-count/{company_code}/", tags=["Drivers"])
+async def get_drivers_count(company_code: str):
+  return await drivers_count(company_code)

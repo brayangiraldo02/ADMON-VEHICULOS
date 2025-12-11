@@ -500,3 +500,20 @@ async def create_driver_info(driver: ConductorCreate):
     return JSONResponse(content={"message": str(e)})
   finally:
     db.close()
+
+#-----------------------------------------------------------------------------------------------
+
+async def drivers_count(company_code: str):
+  db = session()
+  try:
+    drivers_count = db.query(Conductores).filter(
+      Conductores.EMPRESA == company_code,
+      Conductores.CODIGO != '',
+      Conductores.CODIGO != None
+    ).count()
+    
+    return JSONResponse(content={"drivers_count": drivers_count}, status_code=200)
+  except Exception as e:
+    return JSONResponse(content={"message": str(e)}, status_code=500)
+  finally:
+    db.close()
