@@ -5,6 +5,7 @@ from config.dbconnection import session
 from models.propietarios import Propietarios
 from models.vehiculos import Vehiculos
 from models.estados import Estados
+from models.permisosusuario import PermisosUsuario
 from schemas.reports import *
 from fastapi.encoders import jsonable_encoder
 from utils.reports import *
@@ -22,8 +23,8 @@ templateJinja = Jinja2Templates(directory="templates")
 
 ownersReports_router = APIRouter()
 
-@ownersReports_router.get('/directorio-propietarios/')
-async def get_propietarios_detalles():
+@ownersReports_router.get('/directorio-propietarios/{company_code}/{user_code}/')
+async def get_propietarios_detalles(company_code: str, user_code: str):
     db = session()
     try:
         propietarios_detalles = db.query(
@@ -35,7 +36,9 @@ async def get_propietarios_detalles():
             Propietarios.TELEFONO.label('propietario_telefono'),
             Propietarios.CELULAR.label('propietario_celular'),
             Propietarios.CORREO.label('propietario_correo'),
-        )  .all()
+        ).filter(
+            Propietarios.EMPRESA == company_code
+        ).all()
         
         # Convertir los resultados en un formato JSON
         propietarios_detalles_list = []
@@ -54,6 +57,9 @@ async def get_propietarios_detalles():
     
         data = agrupar_empresas_por_estado(propietarios_detalles_list)
 
+        user = db.query(PermisosUsuario).filter(PermisosUsuario.CODIGO == user_code).first()
+        user = user.NOMBRE if user else ""
+
         # Datos de la fecha y hora actual
         # Define la zona horaria de Ciudad de Panamá
         panama_timezone = pytz.timezone('America/Panama')
@@ -62,7 +68,6 @@ async def get_propietarios_detalles():
         # Formatea la fecha y la hora según lo requerido
         fecha = now_in_panama.strftime("%d/%m/%Y")
         hora_actual = now_in_panama.strftime("%I:%M:%S %p")
-        usuario = "admin" 
         titulo = 'Directorio Propietarios'
 
         # Inicializar el diccionario data_view con información común
@@ -91,7 +96,7 @@ async def get_propietarios_detalles():
                         }
                         data_view[estado]["empresas"].append(empresa)
         
-        data_view["usuario"] = usuario
+        data_view["usuario"] = user
 
         headers = {
             "Content-Disposition": "attachment; directorio-propietarios.pdf"
