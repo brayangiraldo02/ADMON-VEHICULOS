@@ -4,7 +4,7 @@ from config.dbconnection import session
 from models.vehiculos import Vehiculos
 from models.estados import Estados
 from models.conductores import Conductores
-from schemas.vehicles import VehicleUpdate, VehicleCreate
+from schemas.vehicles import VehicleUpdate, VehicleCreate, VehiclePagination
 from models.centrales import Centrales
 from models.cajarecaudos import CajaRecaudos
 from models.propietarios import Propietarios
@@ -21,7 +21,7 @@ from fastapi.templating import Jinja2Templates
 from fastapi.responses import FileResponse
 import jinja2
 from utils.pdf import html2pdf
-from sqlalchemy import func
+from sqlalchemy import func, or_, cast, String
 
 vehicles_router = APIRouter()
 
@@ -856,11 +856,131 @@ async def get_vehicles_count(company_code: str):
     try:
         vehicle_count = db.query(func.count(Vehiculos.NUMERO)).filter(
             Vehiculos.EMPRESA == company_code,
-            Vehiculos.NUMERO != None,
-            Vehiculos.NUMERO != ''
+            Vehiculos.PLACA != '',
+            Vehiculos.PLACA.isnot(None)
         ).scalar()
 
         return JSONResponse(content={"vehicle_count": vehicle_count}, status_code=200)
+    except Exception as e:
+        return JSONResponse(content={"message": str(e)}, status_code=500)
+    finally:
+        db.close()
+
+#-------------------------------------------------------------------------------------------
+
+@vehicles_router.post("/vehicles-pagination/{company_code}", tags=["Vehicles"])
+async def post_vehicles_pagination(company_code: str, pagination: VehiclePagination):
+    db = session()
+    try:
+        if pagination.page_number < 1 or pagination.page_size < 1:
+            return JSONResponse(content={"message": "Invalid page number or page size"}, status_code=400)
+        
+        offset = (pagination.page_number - 1) * pagination.page_size
+
+
+        vehicles = db.query(
+        Vehiculos.NUMERO.label('vehicle_number'),
+        Vehiculos.CONSECUTIV.label('vehicle_consecutive'),
+        Vehiculos.PLACA.label('vehicle_plate'),
+        Vehiculos.MODELO.label('vehicle_model'),
+        Vehiculos.NRO_CUPO.label('vehicle_nro_cupo'),
+        Vehiculos.PERMISONRO.label('vehicle_permit_nro'),
+        Vehiculos.MOTORNRO.label('vehicle_motor'),
+        Vehiculos.CHASISNRO.label('vehicle_chassis'),
+        Vehiculos.FEC_MATRIC.label('vehicle_fec_registration'),
+        Vehiculos.PROPI_IDEN.label('vehicle_owner_code'),
+        Vehiculos.CENTRAL.label('vehicle_central_code'),
+        Vehiculos.NRO_LLAVES.label('vehicle_nro_keys'),
+        Vehiculos.ESTADO.label('vehicle_state_code'),
+        Vehiculos.CONDUCTOR.label('vehicle_driver_code'),
+        Vehiculos.CUO_DIARIA.label('vehicle_daily_fee'),
+        Vehiculos.NROENTREGA.label('vehicle_nro_Ctas'),
+        Vehiculos.PANAPASSNU.label('vehicle_panapass'),
+        Vehiculos.PANAPASSPW.label('vehicle_panapass_pwd'),
+        Vehiculos.SDO_PANAPA.label('vehicle_panapass_balance'),
+        ).filter(Vehiculos.EMPRESA == company_code,
+            Vehiculos.PLACA != '',
+            Vehiculos.PLACA.isnot(None)
+        ).all()
+
+        drivers = db.query(
+            Conductores.CODIGO,
+            Conductores.NOMBRE
+        ).filter(Conductores.EMPRESA == company_code).all()
+
+        drivers_dict = {driver.CODIGO: driver.NOMBRE for driver in drivers}
+
+        states = db.query(
+            Estados.CODIGO,
+            Estados.NOMBRE,
+            Estados.SUMAR
+        ).filter(Estados.EMPRESA == company_code).all()
+
+        states_dict = {state.CODIGO: {'nombre': state.NOMBRE, 'sumar': state.SUMAR} for state in states}
+
+        centrals = db.query(
+            Centrales.CODIGO,
+            Centrales.NOMBRE
+        ).filter(Centrales.EMPRESA == company_code).all()
+
+        centrals_dict = {central.CODIGO: central.NOMBRE for central in centrals}
+
+        owners = db.query(
+            Propietarios.CODIGO,
+            Propietarios.NOMBRE
+        ).filter(Propietarios.EMPRESA == company_code).all()
+
+        owners_dict = {owner.CODIGO: owner.NOMBRE for owner in owners}
+
+        vehicles_list = [
+            {
+                'unidad': vehicle.vehicle_number,
+                'consecutivo': vehicle.vehicle_consecutive,
+                'placa': vehicle.vehicle_plate,
+                'modelo': vehicle.vehicle_model,
+                'nro_cupo': vehicle.vehicle_nro_cupo,
+                'permiso': vehicle.vehicle_permit_nro,
+                'motor': vehicle.vehicle_motor,
+                'chasis': vehicle.vehicle_chassis,
+                'matricula': vehicle.vehicle_fec_registration,
+                'empresa': owners_dict.get(vehicle.vehicle_owner_code, ''),
+                'central': centrals_dict.get(vehicle.vehicle_central_code, ''),
+                'conductor': drivers_dict.get(vehicle.vehicle_driver_code, ''),
+                'estado': states_dict.get(vehicle.vehicle_state_code, {}).get('sumar', ''),
+                'nombre_estado': states_dict.get(vehicle.vehicle_state_code, {}).get('nombre', ''),
+                'vlr_cta': vehicle.vehicle_daily_fee,
+                'nro_ctas': vehicle.vehicle_nro_Ctas,
+                'panapass': vehicle.vehicle_panapass,
+                'clave': vehicle.vehicle_panapass_pwd,
+                'saldo': vehicle.vehicle_panapass_balance,
+                'nro_llaves': vehicle.vehicle_nro_keys
+            }
+            for vehicle in vehicles
+        ]
+
+        if pagination.index:
+            term = pagination.index.lower()
+            def matches(vehicle):
+                for key, value in vehicle.items():
+                    if value is None:
+                        continue
+                    if term in str(value).lower():
+                        return True
+                return False
+            vehicles_list = [v for v in vehicles_list if matches(v)]
+        
+        total_vehicles = len(vehicles_list)
+        vehicles_list = vehicles_list[offset:offset + pagination.page_size]
+        total_pages = (total_vehicles + pagination.page_size - 1) // pagination.page_size
+
+        response = {
+            'page_number': pagination.page_number,
+            'total_vehicles': total_vehicles,
+            'total_pages': total_pages,
+            'data': vehicles_list
+        }
+
+        return JSONResponse(content=jsonable_encoder(response), status_code=200)
     except Exception as e:
         return JSONResponse(content={"message": str(e)}, status_code=500)
     finally:

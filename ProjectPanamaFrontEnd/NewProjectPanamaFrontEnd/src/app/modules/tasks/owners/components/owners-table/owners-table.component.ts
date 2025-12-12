@@ -1,10 +1,4 @@
-import {
-  AfterViewInit,
-  Component,
-  OnDestroy,
-  OnInit,
-  ViewChild,
-} from '@angular/core';
+import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
@@ -14,62 +8,46 @@ import { debounceTime, distinctUntilChanged, Subscription } from 'rxjs';
 import { ApiService } from 'src/app/services/api.service';
 import { JwtService } from 'src/app/services/jwt.service';
 
-export interface VehicleData {
-  unidad: string;
-  placa: string;
-  modelo: string;
-  nro_cupo: string;
-  motor: string;
-  chasis: string;
-  matricula: string;
+export interface OwnerData {
+  codigo: string;
+  nombre_propietario: string;
+  ruc: string;
+  telefono: string;
+  celular: string;
+  representante: string;
   central: string;
-  empresa: string;
-  conductor: string;
-  nombre_estado: string;
-  vlr_cta: string;
-  nro_ctas: string;
-  panapass: string;
-  nro_llaves: string;
-  consecutivo: string;
-  estado?: string;
-  saldo?: number;
-  clave?: string;
-  permiso?: string;
+  auditor: string;
+  cnt: string;
+  dcto: number;
+  estado: string;
 }
 
 @Component({
-  selector: 'app-vehicles-table',
-  templateUrl: './vehicles-table.component.html',
-  styleUrls: ['./vehicles-table.component.css'],
+  selector: 'app-owners-table',
+  templateUrl: './owners-table.component.html',
+  styleUrls: ['./owners-table.component.css'],
 })
-export class VehiclesTableComponent
-  implements OnInit, AfterViewInit, OnDestroy
-{
+export class OwnersTableComponent implements OnInit, AfterViewInit, OnDestroy {
   subscriptions$: Subscription[] = [];
   displayedColumns: string[] = [
-    'Unidad',
-    'Placa',
-    'Año',
-    'Cupo',
-    'Motor',
-    'Chasis',
-    'Matricula',
+    'Codigo',
+    'NombrePropietario',
+    'RUC',
+    'Telefono',
+    'Representante',
     'Central',
-    'Empresa',
-    'Conductor',
+    'Auditor',
+    'CNT',
+    'DCTO',
     'Estado',
-    'Vlr.Cta',
-    'N° Ctas',
-    'Panapass',
-    'Llavero',
   ];
 
-  dataSource: MatTableDataSource<VehicleData>;
+  dataSource: MatTableDataSource<OwnerData>;
   searchControl = new FormControl('');
   filterControl = new FormControl('');
   isLoading: boolean = true;
-  originalData: VehicleData[] = [];
-  totalVehicles: number = 0;
+  originalData: OwnerData[] = [];
+  totalOwners: number = 0;
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
@@ -79,13 +57,12 @@ export class VehiclesTableComponent
     private router: Router,
     private jwtService: JwtService
   ) {
-    this.dataSource = new MatTableDataSource<VehicleData>([]);
+    this.dataSource = new MatTableDataSource<OwnerData>([]);
   }
 
   ngOnInit(): void {
     this.fetchData();
-    this.getUser();
-    this.getTotalVehicles();
+    this.getTotalOwners();
     this.setupSearchListener();
   }
 
@@ -115,16 +92,16 @@ export class VehiclesTableComponent
     return userData ? userData.empresa : '';
   }
 
-  getTotalVehicles() {
+  getTotalOwners() {
     const company = this.getCompany();
     this.subscriptions$ = [
       ...this.subscriptions$,
-      this.apiService.getData('vehicles-count/' + company).subscribe(
+      this.apiService.getData('owners-count/' + company).subscribe(
         (response) => {
-          this.totalVehicles = response.vehicle_count;
+          this.totalOwners = response.owners_count;
         },
         (error) => {
-          console.error('Error fetching total vehicles:', error);
+          console.error('Error fetching total owners:', error);
         }
       ),
     ];
@@ -135,11 +112,11 @@ export class VehiclesTableComponent
     const company = this.getCompany();
     this.subscriptions$ = [
       ...this.subscriptions$,
-      this.apiService.getData('vehicles/all/' + company).subscribe(
+      this.apiService.getData('owners/all/' + company).subscribe(
         (response) => {
-          let filteredResponse = response.filter((data: any) => data.unidad);
-          filteredResponse.sort((a: VehicleData, b: VehicleData) =>
-            a.unidad.localeCompare(b.unidad)
+          let filteredResponse = response.filter((data: any) => data.codigo);
+          filteredResponse.sort((a: OwnerData, b: OwnerData) =>
+            a.nombre_propietario.localeCompare(b.nombre_propietario)
           );
           this.originalData = filteredResponse;
           this.dataSource.data = filteredResponse;
@@ -161,45 +138,18 @@ export class VehiclesTableComponent
     }
   }
 
-  listData(event: any) {
-    const selectedValue = event.value;
-
-    if (!selectedValue) {
-      this.dataSource.data = this.originalData;
-    } else {
-      this.dataSource.data = this.originalData.filter((item) =>
-        item.estado
-          ? item.estado.toString().toLowerCase().includes(selectedValue)
-          : false
-      );
-    }
-
-    if (this.dataSource.paginator) {
-      this.dataSource.paginator.firstPage();
-    }
-  }
-
-  formatDate(dateString: string): string {
-    if (!dateString || dateString == '0000-00-00 00:00:00') {
-      return '-';
-    }
-    return dateString.split('T')[0];
-  }
-
-  goToVehicleResume(codigo: string) {
-    this.router.navigate(['/vehicle', codigo]);
+  goToOwnerResume(codigo: string) {
+    this.router.navigate(['/owner', codigo]);
   }
 
   openExternalLink(): void {
     this.isLoading = true;
-
-    localStorage.setItem(
-      'pdfEndpoint',
-      'directorio-vehiculos/' + this.getCompany() + '/' + this.getUser()
-    );
+    const company = this.getCompany();
+    const user = this.getUser();
+    const endpoint = 'directorio-propietarios/' + company + '/' + user;
+    localStorage.setItem('pdfEndpoint', endpoint);
     localStorage.setItem('pdfData', '0');
     window.open(`/pdf`, '_blank');
-    this.isLoading = false;
   }
 
   ngOnDestroy(): void {

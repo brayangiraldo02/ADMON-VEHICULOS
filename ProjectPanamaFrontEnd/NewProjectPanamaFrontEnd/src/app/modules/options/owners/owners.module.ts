@@ -7,7 +7,6 @@ import { OwnersPurchasevalueandpiqueraComponent } from './components/owners-purc
 import { OwnersRelationshiprevenuesComponent } from './components/owners-relationshiprevenues/owners-relationshiprevenues.component';
 import { OwnersStatusfleetdetailComponent } from './components/owners-statusfleetdetail/owners-statusfleetdetail.component';
 import { OwnersStatusfleetsummaryComponent } from './components/owners-statusfleetsummary/owners-statusfleetsummary.component';
-import { ReactiveFormsModule } from '@angular/forms';
 import { OwnersRelationshiprevenuesgeneralComponent } from './components/owners-relationshiprevenuesgeneral/owners-relationshiprevenuesgeneral.component';
 import { OwnersPandgstatusOptionsDialogComponent } from './components/pandgstatus/owners-pandgstatus-options-dialog/owners-pandgstatus-options-dialog.component';
 import { MaterialModule } from '../../shared/material/material.module';
@@ -26,7 +25,7 @@ import { OwnersPandgstatusGeneralComponent } from './components/pandgstatus/owne
     OwnersPandgstatusOptionsDialogComponent,
     OwnersPandgstatusGeneralComponent,
   ],
-  imports: [CommonModule, ReactiveFormsModule, MaterialModule],
+  imports: [CommonModule, MaterialModule],
   exports: [
     OwnersFeespaidComponent,
     OwnersPandgstatusUnitsComponent,

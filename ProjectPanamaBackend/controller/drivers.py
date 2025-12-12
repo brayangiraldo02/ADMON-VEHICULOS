@@ -8,6 +8,7 @@ from models.cajarecaudos import CajaRecaudos
 from models.cajarecaudoscontado import CajasRecaudosContado
 from models.cartera import Cartera
 from models.movienca import Movienca
+from models.permisosusuario import PermisosUsuario
 from schemas.drivers import *
 from middlewares.JWTBearer import JWTBearer
 from fastapi.encoders import jsonable_encoder
@@ -93,7 +94,7 @@ async def drivers_all(company_code: str):
 
 #-----------------------------------------------------------------------------------------------
 
-async def conductores_detalles():
+async def conductores_detalles(company_code: str, user_code: str):
   db = session()
   try:
     conductores_detalles = db.query(
@@ -106,8 +107,10 @@ async def conductores_detalles():
       Conductores.TELEFONO.label('conductor_telefono'),
       Conductores.UND_NRO.label('conductor_und'),
       Conductores.UND_PRE.label('conductor_und_pre'),
-    ).join(Ciudades, Conductores.CIUDAD == Ciudades.CODIGO) \
-      .all()
+    ).join(Ciudades, Conductores.CIUDAD == Ciudades.CODIGO
+    ).filter(
+      Conductores.EMPRESA == company_code
+    ).all()
     
     # Convertir los resultados en un formato JSON
     conductores_detalles_list = []
@@ -127,10 +130,12 @@ async def conductores_detalles():
 
     data = agrupar_conductores_por_estado(conductores_detalles_list)
 
+    user = db.query(PermisosUsuario).filter(PermisosUsuario.CODIGO == user_code).first()
+    user = user.NOMBRE if user else ""
+
     # Datos de la fecha y hora actual
     fecha = datetime.now().strftime("%Y-%m-%d")
     hora_actual = datetime.now().strftime("%H:%M:%S")
-    usuario = "admin"
     titulo = 'Directorio Conductores'
 
     # Inicializar el diccionario data_view con información común
@@ -159,7 +164,7 @@ async def conductores_detalles():
             }
             data_view[estado]["conductores"].append(conductor)
 
-    data_view["usuario"] = usuario
+    data_view["usuario"] = user
 
     headers = {
       "Content-Disposition": "attachment; detalles-conductores.pdf"
@@ -498,5 +503,22 @@ async def create_driver_info(driver: ConductorCreate):
   except Exception as e:
     db.rollback()
     return JSONResponse(content={"message": str(e)})
+  finally:
+    db.close()
+
+#-----------------------------------------------------------------------------------------------
+
+async def drivers_count(company_code: str):
+  db = session()
+  try:
+    drivers_count = db.query(Conductores).filter(
+      Conductores.EMPRESA == company_code,
+      Conductores.CODIGO != '',
+      Conductores.CODIGO != None
+    ).count()
+    
+    return JSONResponse(content={"drivers_count": drivers_count}, status_code=200)
+  except Exception as e:
+    return JSONResponse(content={"message": str(e)}, status_code=500)
   finally:
     db.close()

@@ -357,6 +357,8 @@ export class InspectionsAddDialogComponent implements OnInit {
     this.mainInspectionForm = this.formBuilder.group({
       inspectionInfo: this.inspectionInfoForm,
     });
+
+    this.inspectionInfoForm.get('tipo_inspeccion')?.markAsTouched();
   }
 
   getCompany() {

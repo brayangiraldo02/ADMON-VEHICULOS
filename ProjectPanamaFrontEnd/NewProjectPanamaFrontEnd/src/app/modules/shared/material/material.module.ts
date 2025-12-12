@@ -23,6 +23,7 @@ import { MatRadioModule } from '@angular/material/radio';
 import { MatCardModule } from '@angular/material/card';
 import {MatTooltipModule} from '@angular/material/tooltip';
 import { MatChipsModule} from '@angular/material/chips';
+import { ReactiveFormsModule } from '@angular/forms';
 
 const materialModules = [
   MatFormFieldModule, 
@@ -48,7 +49,8 @@ const materialModules = [
   MatRadioModule,
   MatCardModule,
   MatTooltipModule,
-  MatChipsModule
+  MatChipsModule,
+  ReactiveFormsModule
 ]
 
 @NgModule({
