@@ -70,7 +70,6 @@ export class VehiclesTableComponent
   isLoading: boolean = true;
   originalData: VehicleData[] = [];
   totalVehicles: number = 0;
-  user: string = '';
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
@@ -106,11 +105,12 @@ export class VehiclesTableComponent
     this.dataSource.sort = this.sort;
   }
 
-  getUser() {
-    this.user = this.jwtService.getUserData()?.nombre || '';
+  private getUser() {
+    const userData = this.jwtService.getUserData();
+    return userData ? userData.id : '';
   }
 
-  getCompany() {
+  private getCompany() {
     const userData = this.jwtService.getUserData();
     return userData ? userData.empresa : '';
   }
@@ -193,11 +193,9 @@ export class VehiclesTableComponent
   openExternalLink(): void {
     this.isLoading = true;
 
-    const data = { user: this.user };
-
     localStorage.setItem(
       'pdfEndpoint',
-      'directorio-vehiculos/' + this.getCompany()
+      'directorio-vehiculos/' + this.getCompany() + '/' + this.getUser()
     );
     localStorage.setItem('pdfData', '0');
     window.open(`/pdf`, '_blank');
