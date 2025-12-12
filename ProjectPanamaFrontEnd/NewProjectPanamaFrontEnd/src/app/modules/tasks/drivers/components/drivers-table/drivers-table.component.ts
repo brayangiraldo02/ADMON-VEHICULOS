@@ -94,7 +94,7 @@ export class DriversTableComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private getUser() {
     const userData = this.jwtService.getUserData();
-    return userData ? userData.nombre : '';
+    return userData ? userData.id : '';
   }
 
   private getCompany() {
@@ -171,7 +171,10 @@ export class DriversTableComponent implements OnInit, AfterViewInit, OnDestroy {
   openExternalLink(): void {
     this.isLoading = true;
     const data = { user: this.getUser() };
-    localStorage.setItem('pdfEndpoint', 'directorio-conductores');
+    localStorage.setItem(
+      'pdfEndpoint',
+      'directorio-vehiculos/' + this.getCompany() + '/' + this.getUser()
+    );
     localStorage.setItem('pdfData', '0');
     window.open(`/pdf`, '_blank');
   }
