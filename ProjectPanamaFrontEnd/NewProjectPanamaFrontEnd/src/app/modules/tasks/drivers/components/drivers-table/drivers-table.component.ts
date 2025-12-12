@@ -102,20 +102,19 @@ export class DriversTableComponent implements OnInit, AfterViewInit, OnDestroy {
     return userData ? userData.empresa : '';
   }
 
-  // TODO: Implementar cuando haya endpoint
   getTotalDrivers() {
-    // const company = this.getCompany();
-    // this.subscriptions$ = [
-    //   ...this.subscriptions$,
-    //   this.apiService.getData('vehicles-count/' + company).subscribe(
-    //     (response) => {
-    //       this.totalVehicles = response.vehicle_count;
-    //     },
-    //     (error) => {
-    //       console.error('Error fetching total vehicles:', error);
-    //     }
-    //   ),
-    // ];
+    const company = this.getCompany();
+    this.subscriptions$ = [
+      ...this.subscriptions$,
+      this.apiService.getData('drivers-count/' + company).subscribe(
+        (response) => {
+          this.totalDrivers = response.drivers_count;
+        },
+        (error) => {
+          console.error('Error fetching total drivers:', error);
+        }
+      ),
+    ];
   }
 
   fetchData() {
