@@ -19,8 +19,11 @@ import jinja2
 from utils.pdf import html2pdf
 import tempfile
 import os
+import asyncio
+from concurrent.futures import ThreadPoolExecutor
 
 templateJinja = Jinja2Templates(directory="templates")
+PDF_THREAD_POOL = ThreadPoolExecutor(max_workers=2)
 
 ownersReports_router = APIRouter()
 
@@ -128,7 +131,16 @@ async def get_propietarios_detalles(company_code: str, user_code: str):
             footer_file.write(output_footer)
         pdf_path = tempfile.NamedTemporaryFile(delete=False, suffix=".pdf").name
 
-        html2pdf(titulo, html_path, pdf_path, header_path=header_path, footer_path=footer_path)
+        loop = asyncio.get_event_loop()
+        await loop.run_in_executor(
+            PDF_THREAD_POOL,
+            html2pdf,
+            titulo,
+            html_path, 
+            pdf_path,
+            header_path,
+            footer_path
+        )
 
         background_tasks = BackgroundTasks()
         background_tasks.add_task(os.remove, html_path)
