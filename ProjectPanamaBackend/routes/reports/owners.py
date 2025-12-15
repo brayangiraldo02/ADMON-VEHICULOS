@@ -317,7 +317,8 @@ async def get_vehiculos_detalles(company_code: str, infoReports: infoReports):
             pdf_path, 
             media_type='application/pdf', 
             filename='valor-compra-vehiculos.pdf', 
-            headers=headers
+            headers=headers,
+            background=background_tasks
         )
 
         return response
