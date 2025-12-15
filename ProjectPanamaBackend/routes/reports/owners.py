@@ -6,6 +6,7 @@ from models.propietarios import Propietarios
 from models.vehiculos import Vehiculos
 from models.estados import Estados
 from models.permisosusuario import PermisosUsuario
+from models.ciudades import Ciudades
 from schemas.reports import *
 from fastapi.encoders import jsonable_encoder
 from utils.reports import *
@@ -39,6 +40,8 @@ async def get_propietarios_detalles(company_code: str, user_code: str):
         ).filter(
             Propietarios.EMPRESA == company_code
         ).all()
+
+        ciudades = {ciudad.CODIGO: ciudad.NOMBRE for ciudad in db.query(Ciudades).filter(Ciudades.EMPRESA == company_code).all()}
         
         # Convertir los resultados en un formato JSON
         propietarios_detalles_list = []
@@ -47,7 +50,7 @@ async def get_propietarios_detalles(company_code: str, user_code: str):
                 'propietario_estado': resultado.propietario_estado,
                 'propietario_codigo': resultado.propietario_codigo,
                 'propietario_nombre': resultado.propietario_nombre,
-                'propietario_ciudad': resultado.propietario_ciudad,
+                'propietario_ciudad': ciudades.get(resultado.propietario_ciudad, resultado.propietario_ciudad),
                 'propietario_direccion': resultado.propietario_direccion,
                 'propietario_telefono': resultado.propietario_telefono,
                 'propietario_celular': resultado.propietario_celular,
