@@ -117,22 +117,30 @@ async def get_propietarios_detalles(company_code: str, user_code: str):
         output_header = header.render(data_view=data_view)
         output_footer = footer.render(data_view=data_view)
 
-        html_path = f'./templates/renderDirectorioPropietarios.html'
-        header_path = f'./templates/renderheader.html'
-        footer_path = f'./templates/renderfooter.html'
-        html_file = open(html_path, 'w')
-        header_file = open(header_path, 'w')
-        html_footer = open(footer_path, 'w') 
-        html_file.write(output_text)
-        header_file.write(output_header)
-        html_footer.write(output_footer) 
-        html_file.close()
-        header_file.close()
-        html_footer.close()
-        pdf_path = 'propietarios-detalles.pdf'
+        with tempfile.NamedTemporaryFile(delete=False, suffix=".html", mode="w") as html_file:
+            html_path = html_file.name
+            html_file.write(output_text)
+        with tempfile.NamedTemporaryFile(delete=False, suffix=".html", mode="w") as header_file:
+            header_path = header_file.name
+            header_file.write(output_header)
+        with tempfile.NamedTemporaryFile(delete=False, suffix=".html", mode="w") as footer_file:
+            footer_path = footer_file.name
+            footer_file.write(output_footer)
+        pdf_path = tempfile.NamedTemporaryFile(delete=False, suffix=".pdf").name
+
         html2pdf(titulo, html_path, pdf_path, header_path=header_path, footer_path=footer_path)
 
-        response = FileResponse(pdf_path, media_type='application/pdf', filename='templates/propietarios-detalles.pdf', headers=headers)
+        background_tasks = BackgroundTasks()
+        background_tasks.add_task(os.remove, html_path)
+        background_tasks.add_task(os.remove, header_path)
+        background_tasks.add_task(os.remove, footer_path)
+        background_tasks.add_task(os.remove, pdf_path)
+
+        response = FileResponse(
+            pdf_path, media_type='application/pdf', 
+            filename='propietarios-detalles.pdf', 
+            headers=headers,
+            background=background_tasks)
         
         return response
 
