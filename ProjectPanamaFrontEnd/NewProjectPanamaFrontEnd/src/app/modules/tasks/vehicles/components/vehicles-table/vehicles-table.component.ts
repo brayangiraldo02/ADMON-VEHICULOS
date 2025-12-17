@@ -191,15 +191,12 @@ export class VehiclesTableComponent
   }
 
   openExternalLink(): void {
-    this.isLoading = true;
-
     localStorage.setItem(
       'pdfEndpoint',
       'directorio-vehiculos/' + this.getCompany() + '/' + this.getUser()
     );
     localStorage.setItem('pdfData', '0');
     window.open(`/pdf`, '_blank');
-    this.isLoading = false;
   }
 
   ngOnDestroy(): void {

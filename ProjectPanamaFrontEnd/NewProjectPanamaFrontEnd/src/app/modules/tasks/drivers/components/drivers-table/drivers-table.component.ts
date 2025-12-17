@@ -169,11 +169,9 @@ export class DriversTableComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   openExternalLink(): void {
-    this.isLoading = true;
-    const data = { user: this.getUser() };
     localStorage.setItem(
       'pdfEndpoint',
-      'directorio-vehiculos/' + this.getCompany() + '/' + this.getUser()
+      'directorio-conductores/' + this.getCompany() + '/' + this.getUser()
     );
     localStorage.setItem('pdfData', '0');
     window.open(`/pdf`, '_blank');
