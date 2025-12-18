@@ -116,7 +116,9 @@ async def conductores_detalles(company_code: str, user_code: str):
       Conductores.UND_PRE.label('conductor_und_pre'),
     ).join(Ciudades, Conductores.CIUDAD == Ciudades.CODIGO
     ).filter(
-      Conductores.EMPRESA == company_code
+      Conductores.EMPRESA == company_code,
+      Conductores.UND_NRO != '',
+      Conductores.UND_NRO != None
     ).all()
     
     # Convertir los resultados en un formato JSON
