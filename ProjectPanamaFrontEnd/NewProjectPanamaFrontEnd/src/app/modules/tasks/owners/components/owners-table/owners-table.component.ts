@@ -143,11 +143,7 @@ export class OwnersTableComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   openExternalLink(): void {
-    this.isLoading = true;
-    const company = this.getCompany();
-    const user = this.getUser();
-    const endpoint = 'directorio-propietarios/' + company + '/' + user;
-    localStorage.setItem('pdfEndpoint', endpoint);
+    localStorage.setItem('pdfEndpoint', 'directorio-propietarios/' + this.getCompany() + '/' + this.getUser());
     localStorage.setItem('pdfData', '0');
     window.open(`/pdf`, '_blank');
   }

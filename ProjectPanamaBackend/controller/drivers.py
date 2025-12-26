@@ -1,3 +1,4 @@
+from fastapi import BackgroundTasks
 from fastapi.responses import JSONResponse
 from config.dbconnection import session
 from sqlalchemy.orm import aliased
@@ -20,6 +21,12 @@ from fastapi.templating import Jinja2Templates
 from fastapi.responses import FileResponse
 import jinja2
 from utils.pdf import html2pdf
+import tempfile
+import os
+import asyncio
+from concurrent.futures import ThreadPoolExecutor
+
+PDF_THREAD_POOL = ThreadPoolExecutor(max_workers=2)
 
 async def drivers(company_code: str):
   db = session()
@@ -109,7 +116,9 @@ async def conductores_detalles(company_code: str, user_code: str):
       Conductores.UND_PRE.label('conductor_und_pre'),
     ).join(Ciudades, Conductores.CIUDAD == Ciudades.CODIGO
     ).filter(
-      Conductores.EMPRESA == company_code
+      Conductores.EMPRESA == company_code,
+      Conductores.UND_NRO != '',
+      Conductores.UND_NRO != None
     ).all()
     
     # Convertir los resultados en un formato JSON
@@ -182,22 +191,40 @@ async def conductores_detalles(company_code: str, user_code: str):
     output_header = header.render(data_view=data_view)
     output_footer = footer.render(data_view=data_view)
 
-    html_path = f'./templates/renderDirectorioConductores.html'
-    header_path = f'./templates/renderheader.html'
-    footer_path = f'./templates/renderfooter.html'
-    html_file = open(html_path, 'w')
-    header_file = open(header_path, 'w')
-    html_footer = open(footer_path, 'w') 
-    html_file.write(output_text)
-    header_file.write(output_header)
-    html_footer.write(output_footer) 
-    html_file.close()
-    header_file.close()
-    html_footer.close()
-    pdf_path = 'Conductores-detalles.pdf'
-    html2pdf(titulo, html_path, pdf_path, header_path=header_path, footer_path=footer_path)
+    with tempfile.NamedTemporaryFile(delete=False, suffix=".html", mode="w") as html_file:
+      html_path = html_file.name
+      html_file.write(output_text)
+    with tempfile.NamedTemporaryFile(delete=False, suffix=".html", mode="w") as header_file:
+      header_path = header_file.name
+      header_file.write(output_header)
+    with tempfile.NamedTemporaryFile(delete=False, suffix=".html", mode="w") as footer_file:
+      footer_path = footer_file.name
+      footer_file.write(output_footer)
+    pdf_path = tempfile.NamedTemporaryFile(delete=False, suffix=".pdf").name
 
-    response = FileResponse(pdf_path, media_type='application/pdf', filename='templates/Conductores-detalles.pdf', headers=headers)
+    loop = asyncio.get_event_loop()
+    await loop.run_in_executor(
+      PDF_THREAD_POOL,
+      html2pdf,
+      titulo,
+      html_path, 
+      pdf_path,
+      header_path,
+      footer_path
+    )
+
+    background_tasks = BackgroundTasks()
+    background_tasks.add_task(os.remove, html_path)
+    background_tasks.add_task(os.remove, header_path)
+    background_tasks.add_task(os.remove, footer_path)
+    background_tasks.add_task(os.remove, pdf_path)
+
+    response = FileResponse(
+      pdf_path, media_type='application/pdf',
+      filename='templates/Conductores-detalles.pdf',
+      headers=headers,
+      background=background_tasks
+    )
     
     return response
   except Exception as e:

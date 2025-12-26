@@ -6,6 +6,7 @@ from models.propietarios import Propietarios
 from models.vehiculos import Vehiculos
 from models.estados import Estados
 from models.permisosusuario import PermisosUsuario
+from models.ciudades import Ciudades
 from schemas.reports import *
 from fastapi.encoders import jsonable_encoder
 from utils.reports import *
@@ -18,8 +19,11 @@ import jinja2
 from utils.pdf import html2pdf
 import tempfile
 import os
+import asyncio
+from concurrent.futures import ThreadPoolExecutor
 
 templateJinja = Jinja2Templates(directory="templates")
+PDF_THREAD_POOL = ThreadPoolExecutor(max_workers=2)
 
 ownersReports_router = APIRouter()
 
@@ -39,6 +43,8 @@ async def get_propietarios_detalles(company_code: str, user_code: str):
         ).filter(
             Propietarios.EMPRESA == company_code
         ).all()
+
+        ciudades = {ciudad.CODIGO: ciudad.NOMBRE for ciudad in db.query(Ciudades).filter(Ciudades.EMPRESA == company_code).all()}
         
         # Convertir los resultados en un formato JSON
         propietarios_detalles_list = []
@@ -47,7 +53,7 @@ async def get_propietarios_detalles(company_code: str, user_code: str):
                 'propietario_estado': resultado.propietario_estado,
                 'propietario_codigo': resultado.propietario_codigo,
                 'propietario_nombre': resultado.propietario_nombre,
-                'propietario_ciudad': resultado.propietario_ciudad,
+                'propietario_ciudad': ciudades.get(resultado.propietario_ciudad, resultado.propietario_ciudad),
                 'propietario_direccion': resultado.propietario_direccion,
                 'propietario_telefono': resultado.propietario_telefono,
                 'propietario_celular': resultado.propietario_celular,
@@ -114,22 +120,39 @@ async def get_propietarios_detalles(company_code: str, user_code: str):
         output_header = header.render(data_view=data_view)
         output_footer = footer.render(data_view=data_view)
 
-        html_path = f'./templates/renderDirectorioPropietarios.html'
-        header_path = f'./templates/renderheader.html'
-        footer_path = f'./templates/renderfooter.html'
-        html_file = open(html_path, 'w')
-        header_file = open(header_path, 'w')
-        html_footer = open(footer_path, 'w') 
-        html_file.write(output_text)
-        header_file.write(output_header)
-        html_footer.write(output_footer) 
-        html_file.close()
-        header_file.close()
-        html_footer.close()
-        pdf_path = 'propietarios-detalles.pdf'
-        html2pdf(titulo, html_path, pdf_path, header_path=header_path, footer_path=footer_path)
+        with tempfile.NamedTemporaryFile(delete=False, suffix=".html", mode="w") as html_file:
+            html_path = html_file.name
+            html_file.write(output_text)
+        with tempfile.NamedTemporaryFile(delete=False, suffix=".html", mode="w") as header_file:
+            header_path = header_file.name
+            header_file.write(output_header)
+        with tempfile.NamedTemporaryFile(delete=False, suffix=".html", mode="w") as footer_file:
+            footer_path = footer_file.name
+            footer_file.write(output_footer)
+        pdf_path = tempfile.NamedTemporaryFile(delete=False, suffix=".pdf").name
 
-        response = FileResponse(pdf_path, media_type='application/pdf', filename='templates/propietarios-detalles.pdf', headers=headers)
+        loop = asyncio.get_event_loop()
+        await loop.run_in_executor(
+            PDF_THREAD_POOL,
+            html2pdf,
+            titulo,
+            html_path, 
+            pdf_path,
+            header_path,
+            footer_path
+        )
+
+        background_tasks = BackgroundTasks()
+        background_tasks.add_task(os.remove, html_path)
+        background_tasks.add_task(os.remove, header_path)
+        background_tasks.add_task(os.remove, footer_path)
+        background_tasks.add_task(os.remove, pdf_path)
+
+        response = FileResponse(
+            pdf_path, media_type='application/pdf', 
+            filename='propietarios-detalles.pdf', 
+            headers=headers,
+            background=background_tasks)
         
         return response
 
@@ -306,7 +329,8 @@ async def get_vehiculos_detalles(company_code: str, infoReports: infoReports):
             pdf_path, 
             media_type='application/pdf', 
             filename='valor-compra-vehiculos.pdf', 
-            headers=headers
+            headers=headers,
+            background=background_tasks
         )
 
         return response
