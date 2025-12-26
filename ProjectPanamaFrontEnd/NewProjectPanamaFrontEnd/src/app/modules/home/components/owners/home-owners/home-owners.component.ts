@@ -1,7 +1,7 @@
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { Component, effect, ElementRef, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { OwnersPandgstatusOptionsDialogComponent } from 'src/app/modules/options/owners/components/pandgstatus/owners-pandgstatus-options-dialog/owners-pandgstatus-options-dialog.component';
+import { OwnersPandgstatusOptionsDialogComponent } from 'src/app/modules/options/owners/components/owners-pandgstatus/owners-pandgstatus-options-dialog/owners-pandgstatus-options-dialog.component';
 import { JwtService } from 'src/app/services/jwt.service';
 import { GlobalStatesService } from 'src/app/states/global-states.service';
 
@@ -241,6 +241,9 @@ export class HomeOwnersComponent {
         this.showModalOwnersPandgstatusGeneral();
       }
     });
+  }
+
+  openStatusFleetOptionsDialog() {
   }
 
   hideModal() {
