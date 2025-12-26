@@ -46,18 +46,14 @@ export class OwnersStatusfleetsummaryComponent implements OnInit {
 
   listOwners(): void {
     const userData = this.jwtService.getUserData();
-    console.log(userData);
     const owner = {
       propietario: userData ? userData.id : null,
     };
-
-    console.log(owner);
 
     this.apiService.postData('companies_owners', owner).subscribe(
       (response) => {
         this.owners = response.filter((owner: any) => owner.id);
         this.owners.sort((a, b) => a.name.localeCompare(b.name));
-        console.log(this.owners);
         this.isLoading = false;
       },
       (error) => {
@@ -77,7 +73,6 @@ export class OwnersStatusfleetsummaryComponent implements OnInit {
 
   onSubmit(): void {
     if (this.infoForm.valid) {
-      console.log(this.infoForm.value);
       this.openExternalLink();
     }
   }
@@ -90,7 +85,6 @@ export class OwnersStatusfleetsummaryComponent implements OnInit {
     endpoint += `/${company}`;
     if (endpoint) {
       const data = { user: this.user };
-      console.log(data);
       localStorage.setItem('pdfEndpoint', endpoint);
       localStorage.setItem('pdfData', JSON.stringify(data));
       window.open(`/pdf`, '_blank');

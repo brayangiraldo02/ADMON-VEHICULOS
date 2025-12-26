@@ -5,12 +5,13 @@ import { OwnersPandgstatusUnitsComponent } from './components/owners-pandgstatus
 import { OwnersPartsrelationshipComponent } from './components/owners-partsrelationship/owners-partsrelationship.component';
 import { OwnersPurchasevalueandpiqueraComponent } from './components/owners-purchasevalueandpiquera/owners-purchasevalueandpiquera.component';
 import { OwnersRelationshiprevenuesComponent } from './components/owners-relationshiprevenues/owners-relationshiprevenues.component';
-import { OwnersStatusfleetdetailComponent } from './components/owners-statusfleetdetail/owners-statusfleetdetail.component';
-import { OwnersStatusfleetsummaryComponent } from './components/owners-statusfleetsummary/owners-statusfleetsummary.component';
+import { OwnersStatusfleetdetailComponent } from './components/owners-statusfleet/owners-statusfleetdetail/owners-statusfleetdetail.component';
+import { OwnersStatusfleetsummaryComponent } from './components/owners-statusfleet/owners-statusfleetsummary/owners-statusfleetsummary.component';
 import { OwnersRelationshiprevenuesgeneralComponent } from './components/owners-relationshiprevenuesgeneral/owners-relationshiprevenuesgeneral.component';
 import { OwnersPandgstatusOptionsDialogComponent } from './components/owners-pandgstatus/owners-pandgstatus-options-dialog/owners-pandgstatus-options-dialog.component';
 import { MaterialModule } from '../../shared/material/material.module';
 import { OwnersPandgstatusGeneralComponent } from './components/owners-pandgstatus/owners-pandgstatus-general/owners-pandgstatus-general.component';
+import { OwnersStatusfleetOptionsComponent } from './components/owners-statusfleet/owners-statusfleet-options/owners-statusfleet-options.component';
 
 @NgModule({
   declarations: [
@@ -24,6 +25,7 @@ import { OwnersPandgstatusGeneralComponent } from './components/owners-pandgstat
     OwnersRelationshiprevenuesgeneralComponent,
     OwnersPandgstatusOptionsDialogComponent,
     OwnersPandgstatusGeneralComponent,
+    OwnersStatusfleetOptionsComponent,
   ],
   imports: [CommonModule, MaterialModule],
   exports: [
