@@ -79,7 +79,7 @@ async def drivers_all(company_code: str):
       {
         'codigo': driver.CODIGO,
         'unidad': driver.UND_NRO + ' - ' + driver.UND_PRE,
-        'nombre': driver.NOMBRE,
+        'nombre': (driver.NOMBRE or '' ).title(),
         'cedula': driver.CEDULA,
         'telefono': driver.TELEFONO,
         'fecha_ingreso': driver.FEC_INGRES,
@@ -88,8 +88,8 @@ async def drivers_all(company_code: str):
         'nro_pago': driver.NROENTPAGO,
         'nro_saldo': driver.NROENTSDO,
         'vce_licen': driver.LICEN_VCE,
-        'contacto': driver.CONTACTO + ' - ' + driver.TEL_CONTAC + ' - ' + driver.PAR_CONTAC,
-        'contacto1': driver.CONTACTO1 + ' - ' + driver.TEL_CONTA1 + ' - ' + driver.PAR_CONTA1
+        'contacto': (driver.CONTACTO + ' - ' + driver.TEL_CONTAC + ' - ' + driver.PAR_CONTAC).title(),
+        'contacto1': (driver.CONTACTO1 + ' - ' + driver.TEL_CONTA1 + ' - ' + driver.PAR_CONTA1).title()
       }
       for driver in drivers
     ]

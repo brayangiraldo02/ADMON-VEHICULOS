@@ -77,13 +77,13 @@ async def get_all_owners(company_code: str):
 
       owner_list = {
         'codigo': owner.codigo,
-        'nombre_propietario': owner.nombre_propietario,
+        'nombre_propietario': (owner.nombre_propietario or '').title(),
         'ruc': owner.ruc,
         'telefono': owner.telefono,
         'celular': owner.celular,
-        'representante': owner.representante,
-        'central': owner.central,
-        'auditor': owner.auditor,
+        'representante': (owner.representante or '').title(),
+        'central': (owner.central or '').title(),
+        'auditor': (owner.auditor or '').title(),
         'cnt': owner.cnt,
         'dcto': owner.dcto,
         'estado': estado
