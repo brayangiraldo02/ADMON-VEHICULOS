@@ -4,7 +4,7 @@ from config.dbconnection import session
 from models.vehiculos import Vehiculos
 from models.estados import Estados
 from models.conductores import Conductores
-from schemas.vehicles import VehicleUpdate, VehicleCreate, VehiclePagination
+from schemas.vehicles import VehicleUpdate, VehicleCreate, VehiclePagination, VehicleDirectory
 from models.centrales import Centrales
 from models.cajarecaudos import CajaRecaudos
 from models.propietarios import Propietarios
@@ -146,11 +146,11 @@ async def get_vehicles(company_code: str):
 
 #-------------------------------------------------------------------------------------------
 
-@vehicles_router.get('/directorio-vehiculos/{company_code}/{user_code}', tags=["Vehicles"]) 
-async def get_vehiculos_detalles(company_code: str, user_code: str):
+@vehicles_router.post('/directorio-vehiculos/', tags=["Vehicles"]) 
+async def get_vehiculos_detalles(data: VehicleDirectory):
     db = session()
     try:
-        vehiculos_detalles = db.query(
+        base_query = (db.query(
             Estados.NOMBRE.label('vehiculo_estado_nombre'),
             Vehiculos.PLACA.label('vehiculo_placa'),
             Vehiculos.NUMERO.label('vehiculo_unidad'),
@@ -166,17 +166,22 @@ async def get_vehiculos_detalles(company_code: str, user_code: str):
             Centrales.NOMBRE.label('vehiculo_central'),
         )   .join(Estados, Estados.CODIGO == Vehiculos.ESTADO) \
             .join(Centrales, Centrales.CODIGO == Vehiculos.CENTRAL) \
-            .filter(Vehiculos.EMPRESA == company_code) \
-            .all()
+            .filter(Vehiculos.EMPRESA == data.company_code)
+        )
+
+        if data.states:
+            base_query = base_query.filter(Vehiculos.ESTADO.in_(data.states))
+
+        vehiculos_detalles = base_query.all()
         
         propietarios = db.query(
             Propietarios.CODIGO,
             Propietarios.NOMBRE
-        ).filter(Propietarios.EMPRESA == company_code).all()
+        ).filter(Propietarios.EMPRESA == data.company_code).all()
 
         propietarios_dict = {prop.CODIGO: prop.NOMBRE for prop in propietarios}
 
-        user = db.query(PermisosUsuario).filter(PermisosUsuario.CODIGO == user_code).first()
+        user = db.query(PermisosUsuario).filter(PermisosUsuario.CODIGO == data.user_code).first()
         user = user.NOMBRE if user else ""
         
         vehiculos_detalles_list = []  
@@ -198,68 +203,68 @@ async def get_vehiculos_detalles(company_code: str, user_code: str):
             }
             vehiculos_detalles_list.append(vehiculo_detalle)
 
-            data = agrupar_vehiculos_por_estado(vehiculos_detalles_list)
-            
-            # Datos de la fecha y hora actual
-            # Define la zona horaria de Ciudad de Panamá
-            panama_timezone = pytz.timezone('America/Panama')
-            # Obtén la hora actual en la zona horaria de Ciudad de Panamá
-            now_in_panama = datetime.now(panama_timezone)
-            # Formatea la fecha y la hora según lo requerido
-            fecha = now_in_panama.strftime("%d/%m/%Y")
-            hora_actual = now_in_panama.strftime("%I:%M:%S %p")
-            #usuario = "admin"
-            titulo = 'Directorio Vehiculos'
+        vehicle_data = agrupar_vehiculos_por_estado(vehiculos_detalles_list)
+        
+        # Datos de la fecha y hora actual
+        # Define la zona horaria de Ciudad de Panamá
+        panama_timezone = pytz.timezone('America/Panama')
+        # Obtén la hora actual en la zona horaria de Ciudad de Panamá
+        now_in_panama = datetime.now(panama_timezone)
+        # Formatea la fecha y la hora según lo requerido
+        fecha = now_in_panama.strftime("%d/%m/%Y")
+        hora_actual = now_in_panama.strftime("%I:%M:%S %p")
+        #usuario = "admin"
+        titulo = 'Directorio Vehiculos'
 
-            def formatear_fecha(fecha_hora_str):
-              # Verificar si la fecha es una cadena
-              if isinstance(fecha_hora_str, str) and len(fecha_hora_str) >= 10:
-                  # Tomar solo los primeros 10 caracteres que corresponden a la fecha
-                  return fecha_hora_str[:10]
-              else:
-                  # En otros casos, devolver la cadena tal cual
-                  return fecha_hora_str
+        def formatear_fecha(fecha_hora_str):
+            # Verificar si la fecha es una cadena
+            if isinstance(fecha_hora_str, str) and len(fecha_hora_str) >= 10:
+                # Tomar solo los primeros 10 caracteres que corresponden a la fecha
+                return fecha_hora_str[:10]
+            else:
+                # En otros casos, devolver la cadena tal cual
+                return fecha_hora_str
 
-            # Inicializar el diccionario data_view con información común
-            data_view = {
-                "fecha": fecha,
-                "hora": hora_actual
-            }
+        # Inicializar el diccionario data_view con información común
+        data_view = {
+            "fecha": fecha,
+            "hora": hora_actual
+        }
 
-            for estado, info in data.items():
-              if estado:  # Asegurarse de ignorar el estado vacío (estado "")
-                  # Inicializar el diccionario para este estado
-                  data_view[estado] = {
-                      "nombre_estado": estado,
-                      "vehiculos": []
-                  }
-                  for vehiculo_placa, vehiculo_info in info.items():
-                      if isinstance(vehiculo_info, dict):
-                          # Crear el diccionario del vehículo con la información relevante
-                          vehiculo = {  
-                              "unidad": vehiculo_info.get("vehiculo_unidad", ""),
-                              "placa": vehiculo_info.get("vehiculo_placa", ""),
-                              "nro_cupo": vehiculo_info.get("vehiculo_nro_cupo", ""),
-                              "permiso": vehiculo_info.get("vehiculo_permiso_nro", ""),
-                              "marca": vehiculo_info.get("vehiculo_marca", ""),
-                              "linea": vehiculo_info.get("vehiculo_linea", ""),
-                              "año": vehiculo_info.get("vehiculo_año", ""),
-                              "motor": vehiculo_info.get("vehiculo_motor", ""),
-                              "chasis": vehiculo_info.get("vehiculo_chasis", ""),
-                              "fec_matricula": formatear_fecha(vehiculo_info.get("vehiculo_fec_matricula", "")),
-                              "empresa": vehiculo_info.get("vehiculo_empresa", ""),
-                              "central": vehiculo_info.get("vehiculo_central", ""),
-                          }
-                          # Agregar el vehículo a la lista de vehículos del estado
-                          data_view[estado]["vehiculos"].append(vehiculo)
+        for estado, info in vehicle_data.items():
+            if estado:  # Asegurarse de ignorar el estado vacío (estado "")
+                # Inicializar el diccionario para este estado
+                data_view[estado] = {
+                    "nombre_estado": estado,
+                    "vehiculos": []
+                }
+                for vehiculo_placa, vehiculo_info in info.items():
+                    if isinstance(vehiculo_info, dict):
+                        # Crear el diccionario del vehículo con la información relevante
+                        vehiculo = {  
+                            "unidad": vehiculo_info.get("vehiculo_unidad", ""),
+                            "placa": vehiculo_info.get("vehiculo_placa", ""),
+                            "nro_cupo": vehiculo_info.get("vehiculo_nro_cupo", ""),
+                            "permiso": vehiculo_info.get("vehiculo_permiso_nro", ""),
+                            "marca": vehiculo_info.get("vehiculo_marca", ""),
+                            "linea": vehiculo_info.get("vehiculo_linea", ""),
+                            "año": vehiculo_info.get("vehiculo_año", ""),
+                            "motor": vehiculo_info.get("vehiculo_motor", ""),
+                            "chasis": vehiculo_info.get("vehiculo_chasis", ""),
+                            "fec_matricula": formatear_fecha(vehiculo_info.get("vehiculo_fec_matricula", "")),
+                            "empresa": vehiculo_info.get("vehiculo_empresa", ""),
+                            "central": vehiculo_info.get("vehiculo_central", ""),
+                        }
+                        # Agregar el vehículo a la lista de vehículos del estado
+                        data_view[estado]["vehiculos"].append(vehiculo)
 
-            data_view["usuario"] = user
+        data_view["usuario"] = user
 
-            headers = {
-              "Content-Disposition": "attachment; detalles-vehiculos.pdf"
-            }  
+        headers = {
+            "Content-Disposition": "attachment; detalles-vehiculos.pdf"
+        }  
 
-            template_loader = jinja2.FileSystemLoader(searchpath="./templates")
+        template_loader = jinja2.FileSystemLoader(searchpath="./templates")
         template_env = jinja2.Environment(loader=template_loader)
         template_file = "DirectorioVehiculos.html"
         header_file = "header.html"
