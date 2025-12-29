@@ -1,3 +1,4 @@
+import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import {
   AfterViewInit,
   Component,
@@ -13,6 +14,8 @@ import { Router } from '@angular/router';
 import { debounceTime, distinctUntilChanged, Subscription } from 'rxjs';
 import { ApiService } from 'src/app/services/api.service';
 import { JwtService } from 'src/app/services/jwt.service';
+import { VehiclesDirectoryDialogComponent } from '../dialogs/vehicles-directory-dialog/vehicles-directory-dialog.component';
+import { MatDialog } from '@angular/material/dialog';
 
 export interface VehicleData {
   unidad: string;
@@ -77,7 +80,9 @@ export class VehiclesTableComponent
   constructor(
     private apiService: ApiService,
     private router: Router,
-    private jwtService: JwtService
+    private jwtService: JwtService,
+    private breakpointObserver: BreakpointObserver,
+    private dialog: MatDialog
   ) {
     this.dataSource = new MatTableDataSource<VehicleData>([]);
   }
@@ -190,13 +195,15 @@ export class VehiclesTableComponent
     this.router.navigate(['/vehicle', codigo]);
   }
 
-  openExternalLink(): void {
-    localStorage.setItem(
-      'pdfEndpoint',
-      'directorio-vehiculos/' + this.getCompany() + '/' + this.getUser()
-    );
-    localStorage.setItem('pdfData', '0');
-    window.open(`/pdf`, '_blank');
+  openVehiclesDirectoryDialog(): void {
+    const isSmallScreen = this.breakpointObserver.isMatched(Breakpoints.XSmall);
+    const dialogWidth = isSmallScreen ? '90vw' : '60%';
+
+    const dialogRef = this.dialog.open(VehiclesDirectoryDialogComponent, {
+      minWidth: 'min(600px, 90vw)',
+      maxHeight: '100vh',
+      disableClose: true,
+    });
   }
 
   ngOnDestroy(): void {
