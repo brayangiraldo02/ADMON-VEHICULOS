@@ -177,7 +177,6 @@ export class OperacionesCorregirKilometrajeActualComponent {
   vehicleSearch(vehicleValue: string) {
     this.resetInfo();
     this.selectedVehicle = false;
-    console.log('Vehicle selected:', vehicleValue);
     if (vehicleValue !== '') {
       this.isLoadingVehicleInfo = true;
       this.apiService
@@ -185,7 +184,6 @@ export class OperacionesCorregirKilometrajeActualComponent {
         .subscribe({
           next: (data: vehicleInfo) => {
             this.vehicleData = data;
-            console.log(this.vehicleData);
             this.getCurrentMileage();
             this.drivers.setValue(this.vehicleData.conductor);
             this.driverSearch(this.vehicleData.conductor);
@@ -212,7 +210,6 @@ export class OperacionesCorregirKilometrajeActualComponent {
         .subscribe({
           next: (data: driverInfo) => {
             this.driverData = data;
-            console.log(this.driverData);
             this.isLoadingVehicleInfo = false;
             this.selectedVehicle = true;
           },

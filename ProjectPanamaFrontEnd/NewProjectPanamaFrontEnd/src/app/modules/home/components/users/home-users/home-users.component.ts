@@ -61,7 +61,6 @@ export class HomeUsersComponent {
   obtenerUsuario() {
     this.permisos = this.jwtService.getUserData();
     this.isAdmin = this.jwtService.isAdmin();
-    // console.log(this.permisos);
 
     this.convertirValoresBooleanos(this.permisos);
 

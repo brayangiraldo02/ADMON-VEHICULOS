@@ -75,13 +75,12 @@ export class VehiclesResumeComponent {
         this.data.vehiculo_fec_vencimiento_matricula = this.changeDate(this.data.vehiculo_fec_vencimiento_matricula);
         this.data.vehiculo_fec_matricula = this.changeDate(this.data.vehiculo_fec_matricula);
         this.dataOriginal = { ...this.data };
-        console.log(this.data);
         this.isLoading = false;
         this.checkBrand();
         // this.checkExpenseAccount();
       },
       (error) => {
-        console.log(error);
+        console.error(error);
         
       }
     );
@@ -130,8 +129,6 @@ export class VehiclesResumeComponent {
             break; 
           }
         }
-        console.log('Has Permission:', this.hasPermission);
-        console.log('Granted Permission:', this.grantedPermission);
       },
       (error) => {
       }
@@ -145,7 +142,7 @@ export class VehiclesResumeComponent {
         this.checkBrand();
       },
       (error) => {
-        console.log(error);
+        console.error(error);
       }
     );
   }
@@ -169,7 +166,7 @@ export class VehiclesResumeComponent {
         this.checkModality();
       },
       (error) => {
-        console.log(error);
+        console.error(error);
       }
     );
   }
@@ -194,7 +191,7 @@ export class VehiclesResumeComponent {
         this.checkOwner();
       },
       (error) => {
-        console.log(error);
+        console.error(error);
       }
     );
   }
@@ -218,7 +215,7 @@ export class VehiclesResumeComponent {
         this.checkCentral();
       },
       (error) => {
-        console.log(error);
+        console.error(error);
       }
     );
   }
@@ -242,7 +239,7 @@ export class VehiclesResumeComponent {
         // this.checkExpenseAccount();
       },
       (error) => {
-        console.log(error);
+        console.error(error);
       }
     );
   }
@@ -288,7 +285,6 @@ export class VehiclesResumeComponent {
         if(key == 'estado'){
           this.stateEdited = true;
         }
-        console.log(`Difference found at key: ${key}, data: ${this.data[key]}, dataOriginal: ${this.dataOriginal[key]}`);
         return true;
       }
     }
@@ -298,8 +294,6 @@ export class VehiclesResumeComponent {
   saveData() {
 
     const modifiedData = this.checkModifiedData();
-
-    // console.log(modifiedData)
 
     if (!modifiedData) {
       window.alert('No se ha modificado ningún dato.');
@@ -313,18 +307,15 @@ export class VehiclesResumeComponent {
     this.data.vehiculo_fec_importacion = this.finalDate(this.data.vehiculo_fec_importacion);
     this.data.vehiculo_fec_vencimiento_matricula = this.finalDate(this.data.vehiculo_fec_vencimiento_matricula);
     this.data.vehiculo_fec_matricula = this.finalDate(this.data.vehiculo_fec_matricula);
-
-    console.log('Data to save:', this.data);
   
     this.apiService.updateData(`vehicle/${this.code}`, this.data).subscribe(
       (response) => {
         window.alert('Datos actualizados correctamente');
         this.disableInputs();
-        // console.log(response);
         location.reload();
       },
       (error) => {
-        console.log(error);
+        console.error(error);
       }
     );
   }
@@ -335,23 +326,18 @@ export class VehiclesResumeComponent {
         this.vehicles = response
           .filter((vehicles: any) => vehicles.vehiculo_numero)  // Filtramos los drivers con número
           .sort((a: any, b: any) => a.vehiculo_consecutivo - b.vehiculo_consecutivo);  // Ordenamos los drivers por consecutivo
-        
-        // console.log(this.vehicles); 
       },
       (error) => {
-        console.log(error);
+        console.error(error);
       }
     );
   }
   
 
   nextVehicle() {
-    // console.log(this.data.vehiculo_consecutivo)
     const currentIndex = this.vehicles.findIndex((vehicle: any) => vehicle.vehiculo_consecutivo === this.data.vehiculo_consecutivo);
-    // console.log(currentIndex)
     if (currentIndex !== -1 && currentIndex < this.vehicles.length - 1) {
       const nextVehicleId = this.vehicles[currentIndex + 1].vehiculo_consecutivo
-      // console.log(nextVehicleId)
       this.router.navigate(['/vehicle/' + nextVehicleId]).then(() => {
         window.location.reload();
       });

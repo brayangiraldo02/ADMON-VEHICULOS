@@ -52,7 +52,7 @@ export class FeespaidComponent implements OnInit {
         this.owners.sort((a, b) => a.name.localeCompare(b.name));
       },
       (error) => {
-        console.log(error);
+        console.error(error);
       }
     );
   }
@@ -77,7 +77,7 @@ export class FeespaidComponent implements OnInit {
         });
       },
       (error) => {
-        console.log(error);
+        console.error(error);
       }
     );
   }

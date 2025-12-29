@@ -58,12 +58,11 @@ export class DriversResumeComponent implements OnInit {
         this.data = response;
         this.dataOriginal = { ...this.data };
         this.stateEdited = false;
-        console.log(this.data);
         this.isLoading = false;
         this.checkCity();
       },
       (error) => {
-        console.log(error);
+        console.error(error);
         
       }
     );
@@ -76,7 +75,7 @@ export class DriversResumeComponent implements OnInit {
         this.checkCity();
       },
       (error) => {
-        console.log(error);
+        console.error(error);
       }
     );
   }
@@ -139,12 +138,10 @@ export class DriversResumeComponent implements OnInit {
       //     this.data[key] = '0000-00-00';
       //   }
       // }
-      // console.log(`Key: ${key}, data: ${this.data[key]}, dataOriginal: ${this.dataOriginal[key]}`)
       if (this.data[key] !== this.dataOriginal[key]) {
         if(key == 'estado'){
           this.stateEdited = true;
         }
-        // console.log(`Difference found at key: ${key}, data: ${this.data[key]}, dataOriginal: ${this.dataOriginal[key]}`);
         return true;
       }
     }
@@ -155,8 +152,6 @@ export class DriversResumeComponent implements OnInit {
 
     const modifiedData = this.checkModifiedData();
 
-    console.log(modifiedData)
-
     if (!modifiedData) {
       window.alert('No se ha modificado ningún dato.');
       this.disableInputs();
@@ -164,18 +159,15 @@ export class DriversResumeComponent implements OnInit {
     }
 
     this.data['stateEdited'] = this.stateEdited;
-
-    console.log('Data to save:', this.data);
   
     this.apiService.updateData(`driver/${this.code}`, this.data).subscribe(
       (response) => {
         window.alert('Datos actualizados correctamente');
         this.disableInputs();
-        // console.log(response);
         location.reload();
       },
       (error) => {
-        console.log(error);
+        console.error(error);
       }
     );
   }
@@ -186,11 +178,9 @@ export class DriversResumeComponent implements OnInit {
         this.drivers = response
           .filter((drivers: any) => drivers.codigo)  // Filtramos los drivers con código
           .sort((a: any, b: any) => a.codigo - b.codigo); // Ordenamos ascendente por código
-        
-        // console.log(this.drivers); 
       },
       (error) => {
-        console.log(error);
+        console.error(error);
       }
     );
   }

@@ -39,10 +39,9 @@ export class VehiclesTableComponent {
         this.data.sort((a, b) => a.unidad.localeCompare(b.unidad));
         this.filteredData = [...this.data];
         this.isLoading = false;
-        console.log(this.data);
       },
       (error) => {
-        console.log(error);
+        console.error(error);
         this.isLoading = false;
       }
     );

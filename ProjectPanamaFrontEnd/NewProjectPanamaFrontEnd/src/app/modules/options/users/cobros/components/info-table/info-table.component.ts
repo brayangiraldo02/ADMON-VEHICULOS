@@ -200,7 +200,6 @@ export class InfoTableComponent implements AfterViewInit, OnDestroy {
       const selectedOwners = this.globalStates.getSelectedOwners();
 
       if (selectedOwners.owners.length > 0) {
-        console.log('Selected owners in info table components: ', selectedOwners);
         this.getTableData(selectedOwners);
 
         // TODO: Limpiar info guardada en los estados globales una vez se deja de utilizar
@@ -260,7 +259,6 @@ export class InfoTableComponent implements AfterViewInit, OnDestroy {
 
   onDebtSelectionChange(event: any) {
     this.selectedDebtLevel = event.value;
-    console.log('Selected debt level:', this.selectedDebtLevel);
     this.filterByDebtLevel(this.selectedDebtLevel);
   }
   
@@ -303,7 +301,6 @@ export class InfoTableComponent implements AfterViewInit, OnDestroy {
   getTableData(selectedOwners: Owners) {
     this.apiService.postData('collection-accounts', selectedOwners).subscribe({
       next: (response) => {
-        console.log('Data fetched successfully:', response);
         const mappedData: VehicleInfoData[] = response.map(
           (item: apiResponse) => {
             return {
@@ -409,7 +406,6 @@ export class InfoTableComponent implements AfterViewInit, OnDestroy {
       'reporte_cuentas_cobro.xlsx'
     ).subscribe({
       next: () => {
-        console.log('Download started successfully');
       },
       error: (error) => {
         console.error('Download failed:', error);
@@ -446,7 +442,6 @@ export class InfoTableComponent implements AfterViewInit, OnDestroy {
       'reporte_cuentas_cobro.pdf'
     ).subscribe({
       next: () => {
-        console.log('Download started successfully');
       },
       error: (error) => {
         console.error('Download failed:', error);

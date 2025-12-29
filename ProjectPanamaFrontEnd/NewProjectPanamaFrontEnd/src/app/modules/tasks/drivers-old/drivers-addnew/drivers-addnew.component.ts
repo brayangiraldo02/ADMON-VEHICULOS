@@ -93,7 +93,7 @@ export class DriversAddnewComponent {
         this.data = response;
       },
       (error) => {
-        console.log(error);
+        console.error(error);
         
       }
     );
@@ -106,7 +106,7 @@ export class DriversAddnewComponent {
         this.checkCity();
       },
       (error) => {
-        console.log(error);
+        console.error(error);
       }
     );
   }
@@ -177,7 +177,7 @@ export class DriversAddnewComponent {
         this.asignCode();
       },
       (error) => {
-        console.log(error);
+        console.error(error);
       }
     );
   }
@@ -209,7 +209,6 @@ export class DriversAddnewComponent {
         this.addDateFields();
         const formData = this.driverForm.value;
         formData['codigo'] = this.driverForm.get('codigo')?.value;
-        console.log(formData);
         this.apiService.postData('drivers', formData).subscribe(
           (response) => {
             window.alert('Propietario creado exitosamente.');
@@ -217,7 +216,7 @@ export class DriversAddnewComponent {
             this.router.navigate(['/driver/'+this.code]);
           },
           (error) => {
-            console.log(error);
+            console.error(error);
           }
         );
       }

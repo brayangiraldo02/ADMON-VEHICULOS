@@ -57,7 +57,7 @@ export class OwnersStatusfleetdetailComponent implements OnInit {
         this.isLoading = false;
       },
       (error) => {
-        console.log(error);
+        console.error(error);
       }
     );
   }

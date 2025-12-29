@@ -55,7 +55,6 @@ export class DriversDeleteComponent {
     this.apiService.getData("verify-driver-delete/"+this.driver).subscribe(
       (response) => {
         this.permissionsDelete = response;
-        console.log(this.permissionsDelete)
 
         for (const [key, value] of Object.entries(response)) {
           if (value === true) {
@@ -64,8 +63,6 @@ export class DriversDeleteComponent {
             break; 
           }
         }
-        console.log('Has Permission:', this.hasPermission);
-        console.log('Granted Permission:', this.grantedPermission);
         this.isLoading = false;
       },
       (error) => {

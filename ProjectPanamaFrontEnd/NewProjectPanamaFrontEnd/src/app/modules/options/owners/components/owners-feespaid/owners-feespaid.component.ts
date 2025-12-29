@@ -68,7 +68,7 @@ export class OwnersFeespaidComponent  implements OnInit {
         });
       },
       (error) => {
-        console.log(error);
+        console.error(error);
       }
     );
   }
@@ -86,7 +86,7 @@ export class OwnersFeespaidComponent  implements OnInit {
         this.isLoading = false;
       },
       (error) => {
-        console.log(error);
+        console.error(error);
       }
     );
   }
