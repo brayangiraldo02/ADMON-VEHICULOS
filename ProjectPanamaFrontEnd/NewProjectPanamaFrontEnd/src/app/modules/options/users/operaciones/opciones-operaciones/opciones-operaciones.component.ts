@@ -8,6 +8,7 @@ import { OperacionesCambiarPatioVehiculoComponent } from '../operaciones-cambiar
 import { OperacionesCorregirKilometrajeActualComponent } from '../operaciones-corregir-kilometraje-actual/operaciones-corregir-kilometraje-actual.component';
 import { OperacionesPrestamoVehiculoConductorComponent } from '../operaciones-prestamo-vehiculo-conductor/operaciones-prestamo-vehiculo-conductor.component';
 import { OperacionesDevolucionVehiculoPrestadoComponent } from '../operaciones-devolucion-vehiculo-prestado/operaciones-devolucion-vehiculo-prestado.component';
+import { OperacionesBajarConductorVehiculoComponent } from '../operaciones-bajar-conductor-vehiculo/operaciones-bajar-conductor-vehiculo.component';
 
 @Component({
   selector: 'app-opciones-operaciones',
@@ -23,7 +24,7 @@ export class OpcionesOperacionesComponent {
     { name: 'Cambiar de Patio a un Vehículo', icon: 'info', url: 'CambiarPatioVehiculo', disabled: false },
     { name: 'Prestamo de Vehículo al Conductor', icon: 'info', url: 'PrestamoVehiculoConductor', disabled: false },
     { name: 'Devolución de Vehículos Prestados', icon: 'info', url: 'DevolucionVehiculoPrestado', disabled: false },
-    { name: 'Bajar Conductor del Vehículo (Culminación del Contrato)', icon: 'info', url: 'hoalalalal', disabled: true },
+    { name: 'Bajar Conductor del Vehículo (Culminación del Contrato)', icon: 'info', url: 'BajarConductorVehiculo', disabled: false },
     { name: 'Corregir Kilometraje Actual al Vehículo', icon: 'info', url: 'CorregirKilometrajeActualVehiculo', disabled: false },
     { name: 'Apertura de Cuenta por Cobrar a un Conductor', icon: 'info', url: 'hoalalalal', disabled: true },
   ];
@@ -94,7 +95,12 @@ export class OpcionesOperacionesComponent {
           }
         )
         break;
-      case 'Bajar Conductor del Vehículo (Culminación del Contrato)':
+      case 'BajarConductorVehiculo':
+        this.dialog.open(OperacionesBajarConductorVehiculoComponent,
+          {
+            width: dialogWidth,
+          }
+        );
         break;
       case 'CorregirKilometrajeActualVehiculo':
         this.dialog.open(OperacionesCorregirKilometrajeActualComponent,
