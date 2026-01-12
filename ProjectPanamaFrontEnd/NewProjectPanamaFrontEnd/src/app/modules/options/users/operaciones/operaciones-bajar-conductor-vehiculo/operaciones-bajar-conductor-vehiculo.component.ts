@@ -1,20 +1,14 @@
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
-import {
-  AbstractControl,
-  FormBuilder,
-  FormControl,
-  FormGroup,
-  ValidationErrors,
-  Validators,
-} from '@angular/forms';
+import { FormControl, Validators } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { map, Observable, startWith } from 'rxjs';
 import { ConfirmActionDialogComponent } from 'src/app/modules/shared/components/confirm-action-dialog/confirm-action-dialog.component';
 import { ApiService } from 'src/app/services/api.service';
 import { JwtService } from 'src/app/services/jwt.service';
+import { OperacionesLiquidacionCuentaComponent } from './operaciones-liquidacion-cuenta/operaciones-liquidacion-cuenta.component';
 
 interface vehicle {
   unidad: string;
@@ -49,27 +43,23 @@ interface driverInfo {
   estado: string;
 }
 
-interface vehicleMileageResponse {
-  mileage: number;
-}
-
 @Component({
-  selector: 'app-operaciones-corregir-kilometraje-actual',
-  templateUrl: './operaciones-corregir-kilometraje-actual.component.html',
-  styleUrls: ['./operaciones-corregir-kilometraje-actual.component.css'],
+  selector: 'app-operaciones-bajar-conductor-vehiculo',
+  templateUrl: './operaciones-bajar-conductor-vehiculo.component.html',
+  styleUrls: ['./operaciones-bajar-conductor-vehiculo.component.css'],
 })
-export class OperacionesCorregirKilometrajeActualComponent {
+export class OperacionesBajarConductorVehiculoComponent implements OnInit {
   vehicles = new FormControl('');
   drivers = new FormControl({ value: '', disabled: true });
+  description = new FormControl({ value: '', disabled: true });
+  reason = new FormControl('', [Validators.required]);
   options: vehicle[] = [];
   filteredOptions!: Observable<vehicle[]>;
 
   isLoadingVehicles: boolean = true;
   isLoadingVehicleInfo: boolean = false;
   selectedVehicle: boolean = false;
-  isLoadingChange: boolean = false;
-
-  infoChangeMileage!: FormGroup;
+  isLoadingCreate: boolean = false;
 
   vehicleData: vehicleInfo = {
     numero: '',
@@ -98,47 +88,26 @@ export class OperacionesCorregirKilometrajeActualComponent {
   };
 
   constructor(
-    private formBuilder: FormBuilder,
     private jwtService: JwtService,
     private apiService: ApiService,
     private snackBar: MatSnackBar,
-    private dialogRef: MatDialogRef<OperacionesCorregirKilometrajeActualComponent>,
-    private breakpointObserver: BreakpointObserver,
-    private dialog: MatDialog
+    private dialogRef: MatDialogRef<OperacionesBajarConductorVehiculoComponent>,
+    private dialog: MatDialog,
+    private breakpointObserver: BreakpointObserver
   ) {}
 
   ngOnInit() {
-    this.formBuild();
     this.getVehicles();
-    this.getCurrentMileage();
-  }
-
-  formBuild() {
-    this.infoChangeMileage = this.formBuilder.group(
-      {
-        oldMileage: new FormControl(''),
-        newMileage: new FormControl('', Validators.required),
-      },
-      {
-        validators: this.mileageValidator,
-      }
-    );
-  }
-
-  mileageValidator(control: AbstractControl): ValidationErrors | null {
-    const oldMileage = control.get('oldMileage')?.value;
-    const newMileage = control.get('newMileage')?.value;
-
-    if (newMileage !== '' && Number(oldMileage) === Number(newMileage)) {
-      return { sameAsOld: true };
-    }
-
-    return null;
   }
 
   getCompany() {
     const userData = this.jwtService.getUserData();
     return userData ? userData.empresa : '';
+  }
+
+  getUser() {
+    const userData = this.jwtService.getUserData();
+    return userData ? userData.nombre : '';
   }
 
   getVehicles() {
@@ -153,7 +122,6 @@ export class OperacionesCorregirKilometrajeActualComponent {
         this.isLoadingVehicles = false;
       },
       (error) => {
-        console.error('Error fetching vehicles:', error);
         this.openSnackbar(
           'Error al obtener las unidades. Inténtalo de nuevo más tarde.'
         );
@@ -169,8 +137,8 @@ export class OperacionesCorregirKilometrajeActualComponent {
       (option) =>
         option.placa.toLowerCase().includes(filterValue) ||
         option.unidad.toLowerCase().includes(filterValue) ||
-        option.propietario.toLowerCase().includes(filterValue) ||
-        option.nro_cupo.toLowerCase().includes(filterValue)
+        option.nro_cupo.toLowerCase().includes(filterValue) ||
+        option.propietario.toLowerCase().includes(filterValue)
     );
   }
 
@@ -184,7 +152,6 @@ export class OperacionesCorregirKilometrajeActualComponent {
         .subscribe({
           next: (data: vehicleInfo) => {
             this.vehicleData = data;
-            this.getCurrentMileage();
             this.drivers.setValue(this.vehicleData.conductor);
             this.driverSearch(this.vehicleData.conductor);
           },
@@ -209,13 +176,11 @@ export class OperacionesCorregirKilometrajeActualComponent {
         .getData(`operations/deliveryvehicledriver/driver/${driverValue}`)
         .subscribe({
           next: (data: driverInfo) => {
-            this.driverData = data;
             this.isLoadingVehicleInfo = false;
             this.selectedVehicle = true;
+            this.driverData = data;
           },
           error: (error: HttpErrorResponse) => {
-            this.isLoadingVehicleInfo = false;
-            this.selectedVehicle = true;
             if (error.status === 404) {
               this.openSnackbar(
                 'No se encontró el conductor para esta unidad.'
@@ -229,41 +194,6 @@ export class OperacionesCorregirKilometrajeActualComponent {
         });
       return;
     }
-    this.isLoadingVehicleInfo = false;
-    this.selectedVehicle = true;
-  }
-
-  getCurrentMileage() {
-    if (this.vehicleData.numero) {
-      const company = this.getCompany();
-
-      this.apiService
-        .getData(
-          `operations/vehicle-mileage/${company}/${this.vehicleData.numero}`
-        )
-        .subscribe({
-          next: (data: vehicleMileageResponse) => {
-            this.infoChangeMileage.patchValue({
-              oldMileage: data.mileage,
-            });
-          },
-          error: (error: HttpErrorResponse) => {
-            console.error('Error fetching current mileage:', error);
-            this.openSnackbar(
-              'Error al obtener el kilometraje actual. Inténtalo de nuevo más tarde.'
-            );
-            this.closeDialog();
-          },
-        });
-    }
-  }
-
-  onlyNumbers(event: KeyboardEvent): boolean {
-    const charCode = event.which ? event.which : event.keyCode;
-    if (charCode > 31 && (charCode < 48 || charCode > 57)) {
-      return false;
-    }
-    return true;
   }
 
   resetInfo() {
@@ -292,78 +222,6 @@ export class OperacionesCorregirKilometrajeActualComponent {
       vehiculo: '',
       estado: '',
     };
-    this.infoChangeMileage.reset();
-  }
-
-  openConfirmationDialog() {
-    if (this.infoChangeMileage.invalid || !this.selectedVehicle) {
-      this.openSnackbar('Por favor, completa todos los campos obligatorios.');
-      this.infoChangeMileage.markAllAsTouched();
-      return;
-    }
-
-    const oldMileage = this.infoChangeMileage.get('oldMileage')?.value;
-
-    if (oldMileage !== '') {
-      var message = `¿Estás seguro de que deseas cambiar el kilometraje del vehículo ${
-        this.vehicleData.numero
-      } - ${this.vehicleData.placa} de ${this.infoChangeMileage.get('oldMileage')?.value} a ${
-        this.infoChangeMileage.get('newMileage')?.value
-      }?`;
-    } else {
-      var message = `¿Estás seguro de que deseas cambiar el kilometraje del vehículo ${
-        this.vehicleData.numero
-      } - ${this.vehicleData.placa} a ${
-        this.infoChangeMileage.get('newMileage')?.value
-      }?`;
-    }
-
-    const isSmallScreen = this.breakpointObserver.isMatched(Breakpoints.Small);
-    const isXsmallScreen = this.breakpointObserver.isMatched(
-      Breakpoints.XSmall
-    );
-    const dialogWidth = isSmallScreen || isXsmallScreen ? '90vw' : '60%';
-
-    const dialogRef = this.dialog.open(ConfirmActionDialogComponent, {
-      data: {
-        documentName: 'Corregir Kilometraje Actual al Vehículo',
-        message: message,
-      },
-      width: dialogWidth,
-    });
-
-    dialogRef.afterClosed().subscribe((confirmation: boolean) => {
-      if (confirmation) {
-        this.isLoadingChange = true;
-        this.changeMileageVehicle();
-      } else {
-        this.openSnackbar('Operación cancelada.');
-      }
-    });
-  }
-
-  changeMileageVehicle() {
-    const company = this.getCompany();
-
-    const valuesSave = {
-      company_code: company,
-      vehicle_number: this.vehicleData.numero,
-      mileage: this.infoChangeMileage.get('newMileage')?.value
-    }
-
-    this.apiService.postData('operations/update-vehicle-mileage', valuesSave).subscribe({
-      next: (response) => {
-        this.openSnackbar('Kilometraje actualizado correctamente.');
-        this.closeDialog();
-      }
-      ,
-      error: (error: HttpErrorResponse) => {
-        this.isLoadingChange = false;
-        this.openSnackbar(
-          'Error al actualizar el kilometraje. Inténtalo de nuevo más tarde.'
-        );
-      }
-    });
   }
 
   resetAutocomplete() {
@@ -376,6 +234,22 @@ export class OperacionesCorregirKilometrajeActualComponent {
       horizontalPosition: 'center',
       verticalPosition: 'top',
     });
+  }
+
+  openSettlementOfAccountDialog() {
+    const isSmallScreen = this.breakpointObserver.isMatched(Breakpoints.Small);
+    const isXsmallScreen = this.breakpointObserver.isMatched(Breakpoints.XSmall);
+    const dialogWidth = isSmallScreen || isXsmallScreen ? '90vw' : '60%';
+
+    const dialogRef = this.dialog.open(OperacionesLiquidacionCuentaComponent, {
+      width: dialogWidth,
+    });
+  }
+
+  createDailyAccount() {
+    const company = this.getCompany();
+    const user = this.getUser();
+
   }
 
   closeDialog() {

@@ -74,7 +74,6 @@ export class OwnersPartsrelationshipComponent implements OnInit {
       (response) => {
         this.date = response;
         this.isLoadingValues = false;
-        console.log(this.date);
       },
       (error) => {
         error.log(error);
@@ -95,34 +94,27 @@ export class OwnersPartsrelationshipComponent implements OnInit {
 
   listVehiclesPerOwners(): void {
     const userData = this.jwtService.getUserData();
-    console.log(userData);
     const vehicle = {
       propietario: userData ? userData.id : null,
     };
-
-    console.log(vehicle);
 
     this.apiService.postData('vehicles_per_owners', vehicle).subscribe(
       (response) => {
         this.vehicles_per = response; // vehicles ahora es un objeto
         // Extraer las llaves (nombres de empresa)
         this.companiesKeys = Object.keys(response);
-        console.log(response);
       },
       (error) => {
-        error.log(error);
+        console.error(error);
       }
     );
   }
 
   listVehicles(): void {
     const userData = this.jwtService.getUserData();
-    console.log(userData);
     const vehicle = {
       propietario: userData ? userData.id : null,
     };
-
-    console.log(vehicle);
 
     this.apiService.postData('vehicles_owners', vehicle).subscribe(
       (response) => {
@@ -137,10 +129,9 @@ export class OwnersPartsrelationshipComponent implements OnInit {
           };
           this.vehicles = [defaultVehicle, ...this.vehicles];
         }
-        console.log(this.vehicles);
       },
       (error) => {
-        error.log(error);
+        console.error(error);
       }
     );
   }
@@ -153,14 +144,12 @@ export class OwnersPartsrelationshipComponent implements OnInit {
 
   getCompanies() {
     const userData = this.jwtService.getUserData();
-    console.log(userData);
     const owner = {
       propietario: userData ? userData.id : null,
     };
     this.apiService.postData('companies_owners', owner).subscribe(
       (response: any[]) => {
         this.companiesOwners = response.map((item) => item.id);
-        console.log(this.companiesOwners); // Will show: ['50', '51', '57', '60', '63']
       },
       (error) => {
         console.error(error);
@@ -170,7 +159,6 @@ export class OwnersPartsrelationshipComponent implements OnInit {
 
   onSubmit(): void {
     if (this.infoForm.valid) {
-      console.log(this.infoForm.value);
       this.openExternalLink();
     }
   }
@@ -188,7 +176,6 @@ export class OwnersPartsrelationshipComponent implements OnInit {
         unidad: this.infoForm.value.vehicle,
         empresa: companyId,
       };
-      console.log(data);
       localStorage.setItem('pdfEndpoint', endpoint);
       localStorage.setItem('pdfData', JSON.stringify(data));
       window.open(`/pdf`, '_blank');

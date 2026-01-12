@@ -111,7 +111,7 @@ export class VehiclesAddnewComponent {
         this.brands = response;
       },
       (error) => {
-        console.log(error);
+        console.error(error);
       }
     );
   }
@@ -122,7 +122,7 @@ export class VehiclesAddnewComponent {
         this.modalities = response;
       },
       (error) => {
-        console.log(error);
+        console.error(error);
       }
     );
   }
@@ -134,7 +134,7 @@ export class VehiclesAddnewComponent {
         this.owners = response;
       },
       (error) => {
-        console.log(error);
+        console.error(error);
       }
     );
   }
@@ -145,7 +145,7 @@ export class VehiclesAddnewComponent {
         this.central = response;
       },
       (error) => {
-        console.log(error);
+        console.error(error);
       }
     );
   }
@@ -156,7 +156,7 @@ export class VehiclesAddnewComponent {
         this.expenseAccounts = response;
       },
       (error) => {
-        console.log(error);
+        console.error(error);
       }
     );
   }
@@ -178,10 +178,9 @@ export class VehiclesAddnewComponent {
         this.vehicles = response
           .sort((a: any, b: any) => a.vehiculo_consecutivo - b.vehiculo_consecutivo);  // Ordenamos los drivers por código
         
-        console.log(this.vehicles); 
       },
       (error) => {
-        console.log(error);
+        console.error(error);
       }
     );
   }
@@ -196,8 +195,6 @@ export class VehiclesAddnewComponent {
 
     const formValues = this.vehicleForm.value;
 
-    // console.log(modifiedData)
-
     // this.data['stateEdited'] = this.stateEdited;
 
     formValues.vehiculo_licencia_fec = this.finalDate(formValues.vehiculo_licencia_fec);
@@ -207,18 +204,15 @@ export class VehiclesAddnewComponent {
 
     formValues.vehiculo_consecutivo = Number(this.vehicles[this.vehicles.length - 1].vehiculo_consecutivo) + 1;
 
-    console.log('Data to save:', formValues);
-
     this.isLoading = false;
   
     this.apiService.postData(`vehicles`, formValues).subscribe(
       (response) => {
         window.alert('Vehículo creado correctamente');
-        // console.log(response);
         this.router.navigate(['/vehicle/'+formValues.vehiculo_consecutivo]);
       },
       (error) => {
-        console.log(error);
+        console.error(error);
       }
     );
   }

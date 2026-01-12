@@ -192,7 +192,6 @@ export class OperacionesContratoDeclaracionJuradaComponent implements OnInit {
 
     if (event && event.option.value !== undefined) {
       const selectedVehicle = event.option.value;
-      console.log('Selected Vehicle:', selectedVehicle);
       this.isLoadingContractInfo = true;
       this.resetInfo();
 
@@ -200,7 +199,6 @@ export class OperacionesContratoDeclaracionJuradaComponent implements OnInit {
         .getData('operations/generate-contract/info/' + selectedVehicle)
         .subscribe(
           (response: contractInfo) => {
-            console.log('Contract Info:', response);
 
             this.isLoadingContractInfo = false;
             this.contractInfo = response;

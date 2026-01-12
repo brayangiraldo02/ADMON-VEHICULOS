@@ -55,7 +55,6 @@ export class OwnersDeleteComponent implements OnInit, OnChanges {
     this.apiService.getData("verify-owner-delete/"+this.owner).subscribe(
       (response) => {
         this.permissionsDelete = response;
-        console.log(this.permissionsDelete)
 
         for (const [key, value] of Object.entries(response)) {
           if (value === true) {
@@ -64,8 +63,6 @@ export class OwnersDeleteComponent implements OnInit, OnChanges {
             break; 
           }
         }
-        console.log('Has Permission:', this.hasPermission);
-        console.log('Granted Permission:', this.grantedPermission);
         this.isLoading = false;
       },
       (error) => {

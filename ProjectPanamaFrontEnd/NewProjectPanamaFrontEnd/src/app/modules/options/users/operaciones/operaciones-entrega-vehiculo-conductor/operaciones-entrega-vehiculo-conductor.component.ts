@@ -99,7 +99,7 @@ export class OperacionesEntregaVehiculoConductorComponent {
         this.dayBackup = JSON.parse(JSON.stringify(data));
       },
       error: (error: HttpErrorResponse) => {
-        console.log('Error al obtener el día de Panamá');
+        console.error('Error al obtener el día de Panamá', error);
       }
     });
   }
@@ -129,7 +129,6 @@ export class OperacionesEntregaVehiculoConductorComponent {
     this.apiService.getData(`operations/deliveryvehicledriver/vehicle/${vehicleValue}`).subscribe({
       next: (data: vehicleInfo) => {
         this.vehicleData = data;
-        console.log(this.vehicleData);
         this.vehicleValidations();
       },
       error: (error: HttpErrorResponse) => {
@@ -180,7 +179,6 @@ export class OperacionesEntregaVehiculoConductorComponent {
     this.apiService.getData(`operations/deliveryvehicledriver/driver/${driverValue}`).subscribe({
       next: (data: driverInfo) => {
         this.driverData = data;
-        console.log(this.driverData);
         if (validations !== false) {
           this.driverValidations();
           this.deliveryVehicleDriverValidations();

@@ -61,7 +61,6 @@ export class OwnersReportsComponent implements OnInit {
       (response) => {
         this.owners = response.filter((owner: any) => owner.id);
         this.owners.sort((a, b) => a.name.localeCompare(b.name));
-        console.log(this.owners)
       },
       (error) => {
       }
@@ -88,7 +87,7 @@ export class OwnersReportsComponent implements OnInit {
         });
       },
       (error) => {
-        console.log(error);
+        console.error(error);
       }
     );
   }
@@ -107,7 +106,6 @@ export class OwnersReportsComponent implements OnInit {
   onCompanyChange(event: Event): void {
     const selectElement = event.target as HTMLSelectElement;
     this.selectedCompany = selectElement.value;
-    console.log(this.selectedCompany)
     this.openExternalLink()
   }
 
@@ -150,7 +148,6 @@ export class OwnersReportsComponent implements OnInit {
   onEmpresaSeleccionar() {
     this.empresasSeleccionadas.sort((a, b) => parseInt(a) - parseInt(b));
     this.statesDisplay = true;
-    console.log('Empresas seleccionadas:', this.empresasSeleccionadas);
   }
 
   onCheckboxEstadoChange(opcionId: string, event: any) {
@@ -176,7 +173,6 @@ export class OwnersReportsComponent implements OnInit {
 
   onEstadoSeleccionar() {
     this.estadosSeleccionados.sort((a, b) => parseInt(a) - parseInt(b));
-    console.log('Estados seleccionadas:', this.estadosSeleccionados);
     this.generarInforme();
   }
 

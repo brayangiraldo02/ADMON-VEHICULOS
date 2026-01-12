@@ -46,7 +46,6 @@ export class SidenavComponent implements OnInit {
     this.convertirValoresBooleanos(this.permisos);
     this.getInfoCompany();
     // this.subscribirEventosDeRuta();
-    // console.log(this.permisos);
   }
 
   logout(): void {

@@ -200,7 +200,6 @@ export class InspectionsAddDialogComponent implements OnInit {
   }
 
   populateFormWithInspectionData(data: any) {
-    console.log(data);
     // Precargar información del vehículo
     this.vehicleInfo = {
       numero: data.unidad,

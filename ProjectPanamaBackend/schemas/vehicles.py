@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field
-from typing import Optional
+from typing import Optional, List
 
 class VehicleUpdate(BaseModel):
     stateEdited: bool = Field(default=False)
@@ -186,3 +186,8 @@ class VehiclePagination(BaseModel):
     page_number: int
     page_size: int
     index: Optional[str] = None
+
+class VehicleDirectory(BaseModel):
+    company_code: str
+    user_code: str
+    states: Optional[List[str]] = []

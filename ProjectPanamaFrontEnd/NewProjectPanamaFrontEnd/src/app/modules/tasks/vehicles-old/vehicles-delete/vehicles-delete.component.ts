@@ -56,7 +56,6 @@ export class VehiclesDeleteComponent {
     this.apiService.getData("verify-vehicle-delete/"+this.vehicle).subscribe(
       (response) => {
         this.permissionsDelete = response;
-        console.log(this.permissionsDelete)
 
         for (const [key, value] of Object.entries(response)) {
           if (value === true) {
@@ -65,8 +64,6 @@ export class VehiclesDeleteComponent {
             break; 
           }
         }
-        console.log('Has Permission:', this.hasPermission);
-        console.log('Granted Permission:', this.grantedPermission);
         this.isLoading = false;
       },
       (error) => {

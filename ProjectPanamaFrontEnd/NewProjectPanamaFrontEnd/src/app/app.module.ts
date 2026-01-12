@@ -66,6 +66,8 @@ import { TakePhotoComponent } from './modules/tasks/take-signature-photo/take-ph
 import { TakeVehiclePhotoComponent } from './modules/tasks/take-signature-photo/take-vehicle-photo/take-vehicle-photo.component';
 import { InspectionsGenerateQrDialogComponent } from './modules/tasks/inspections/inspections-generate-qr-dialog/inspections-generate-qr-dialog.component';
 import { InspectionsVehicleInfoComponent } from './modules/tasks/inspections/inspections-vehicle-info/inspections-vehicle-info.component';
+import { OperacionesBajarConductorVehiculoComponent } from './modules/options/users/operaciones/operaciones-bajar-conductor-vehiculo/operaciones-bajar-conductor-vehiculo.component';
+import { OperacionesLiquidacionCuentaComponent } from './modules/options/users/operaciones/operaciones-bajar-conductor-vehiculo/operaciones-liquidacion-cuenta/operaciones-liquidacion-cuenta.component';
 
 @NgModule({
   declarations: [
@@ -129,6 +131,8 @@ import { InspectionsVehicleInfoComponent } from './modules/tasks/inspections/ins
     TakeVehiclePhotoComponent,
     InspectionsGenerateQrDialogComponent,
     InspectionsVehicleInfoComponent,
+    OperacionesBajarConductorVehiculoComponent,
+    OperacionesLiquidacionCuentaComponent,
   ],
   imports: [
     BrowserModule,

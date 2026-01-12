@@ -1,0 +1,127 @@
+h2 { margin-bottom: 0; }
+
+.scrollable-content {
+  display: flex;
+  overflow-y: auto;
+  padding: 20px 14px;
+  gap: 40px;
+}
+
+.info-section, .summary-section {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* --- TABLA --- */
+.info-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.info-table td {
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.info-header {
+  font-weight: 500;
+  color: rgba(0, 0, 0, 0.6);
+  text-align: left;
+}
+
+.info-data {
+  color: rgba(0, 0, 0, 0.87);
+  text-align: right;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.section-header {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  padding-top: 15px;
+  padding-bottom: 5px;
+  border-bottom: none !important;
+  text-transform: uppercase;
+}
+
+/* Header ajuste superior */
+.first-header { padding-top: 0 !important; }
+
+/* Filas Totales */
+.total-row td {
+  border-top: 2px solid rgba(0, 0, 0, 0.12);
+  border-bottom: none;
+  padding-top: 10px;
+  padding-bottom: 0;
+  font-weight: 700;
+}
+
+.spacer-row td { border: none; padding: 5px; }
+
+.text-green { color: #2e7d32; }
+.text-red { color: #c62828; }
+
+/* --- BLOQUES DERECHA (ESTANDARIZADOS) --- */
+
+/* Clase para los recuadros grises */
+.summary-card {
+  background-color: #fafafa;
+  border: 1px solid #eeeeee;
+  padding: 16px; /* Padding interno */
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Alineación específica para el input con botón */
+.action-field-container {
+  display: flex;
+  gap: 12px;
+  align-items: center; /* Centrado verticalmente */
+}
+
+/* Input Styles */
+.full-width { width: 100%; }
+.currency-prefix { padding-right: 8px; font-weight: 500; color: rgba(0,0,0,0.6); }
+
+.action-button {
+  background-color: white; /* Botón blanco resalta sobre el fondo gris */
+  color: #3f51b5;
+  box-shadow: 0px 2px 4px -1px rgba(0,0,0,0.2); /* Sutil sombra */
+}
+
+/* Resultados Inputs */
+.result-field input {
+  font-size: 18px; 
+  font-weight: 700;
+}
+
+.green-theme ::ng-deep .mdc-text-field__input { color: #2e7d32 !important; }
+.red-theme ::ng-deep .mdc-text-field__input { color: #c62828 !important; }
+
+/* --- DIVIDER --- */
+.spacer-divider { 
+  margin: 20px 0;
+  border-top-color: rgba(0,0,0,0.08); /* Color más suave */
+}
+
+/* --- UTILIDADES --- */
+
+/* Hack para quitar el espacio reservado para hint/error de Material */
+::ng-deep .no-subscript .mat-mdc-form-field-subscript-wrapper {
+  display: none !important;
+}
+.form-field { margin-bottom: 0; } 
+
+/* Responsive */
+.mobile { display: none; }
+
+@media (max-width: 599px) {
+  .scrollable-content { flex-direction: column; gap: 20px; }
+  .mobile { display: block; margin: 10px 0; }
+  .info-data { text-align: left; }
+}

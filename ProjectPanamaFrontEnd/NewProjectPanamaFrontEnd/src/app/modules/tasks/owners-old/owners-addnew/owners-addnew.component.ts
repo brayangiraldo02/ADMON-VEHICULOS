@@ -70,7 +70,7 @@ export class OwnersAddnewComponent implements OnInit {
         this.cities = response;
       },
       (error) => {
-        console.log(error);
+        console.error(error);
       }
     );
   }
@@ -81,7 +81,7 @@ export class OwnersAddnewComponent implements OnInit {
         this.users = response.filter((users: any) => users.codigo);
       },
       (error) => {
-        console.log(error);
+        console.error(error);
       }
     );
   }
@@ -92,7 +92,7 @@ export class OwnersAddnewComponent implements OnInit {
         this.central = response.filter((central: any) => central.codigo);
       },
       (error) => {
-        console.log(error);
+        console.error(error);
       }
     );
   }
@@ -103,7 +103,7 @@ export class OwnersAddnewComponent implements OnInit {
         this.owners = response.filter((owners: any) => owners);
       },
       (error) => {
-        console.log(error);
+        console.error(error);
       }
     );
   }
@@ -140,7 +140,6 @@ export class OwnersAddnewComponent implements OnInit {
     if (this.ownerForm.valid) {
       if (this.checkCode()){
         const formData = this.ownerForm.value;
-        console.log(formData);
         this.apiService.postData('owners', formData).subscribe(
           (response) => {
             window.alert('Propietario creado exitosamente.');
@@ -148,7 +147,7 @@ export class OwnersAddnewComponent implements OnInit {
             this.router.navigate(['/owners']);
           },
           (error) => {
-            console.log(error);
+            console.error(error);
           }
         );
       }

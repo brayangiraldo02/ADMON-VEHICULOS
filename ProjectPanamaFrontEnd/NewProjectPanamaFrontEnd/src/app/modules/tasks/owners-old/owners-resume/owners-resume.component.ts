@@ -57,11 +57,10 @@ export class OwnersResumeComponent implements OnInit {
         this.dataOriginal = { ...this.data };
         this.stateEdited = false;
         this.checkDate();
-        // console.log('Fetch Data:', this.data);
         this.checkCity();
       },
       (error) => {
-        console.log(error);
+        console.error(error);
         
       }
     );
@@ -83,7 +82,7 @@ export class OwnersResumeComponent implements OnInit {
         this.checkCity();
       },
       (error) => {
-        console.log(error);
+        console.error(error);
       }
     );
   }
@@ -108,7 +107,7 @@ export class OwnersResumeComponent implements OnInit {
         this.isLoading = false;
       },
       (error) => {
-        console.log(error);
+        console.error(error);
         this.isLoading = false;
       }
     );
@@ -133,7 +132,7 @@ export class OwnersResumeComponent implements OnInit {
         this.checkUsers();
       },
       (error) => {
-        console.log(error);
+        console.error(error);
       }
     );
   }
@@ -183,7 +182,7 @@ export class OwnersResumeComponent implements OnInit {
         );
       },
       (error) => {
-        console.log(error);
+        console.error(error);
       }
     );
   }
@@ -193,10 +192,9 @@ export class OwnersResumeComponent implements OnInit {
     this.apiService.getData('owners').subscribe(
       (response) => {
         this.owners = response.filter((owners: any) => owners.id);
-        // console.log(this.owners)
       },
       (error) => {
-        console.log(error);
+        console.error(error);
       }
     );
   }
@@ -296,7 +294,6 @@ export class OwnersResumeComponent implements OnInit {
         if(key == 'estado'){
           this.stateEdited = true;
         }
-        // console.log(`Difference found at key: ${key}, data: ${this.data[key]}, dataOriginal: ${this.dataOriginal[key]}`);
         return true;
       }
     }
@@ -307,8 +304,6 @@ export class OwnersResumeComponent implements OnInit {
 
     const modifiedData = this.checkModifiedData();
 
-    // console.log(modifiedData)
-
     if (!modifiedData) {
       window.alert('No se ha modificado ningún dato.');
       this.disableInputs();
@@ -316,8 +311,6 @@ export class OwnersResumeComponent implements OnInit {
     }
 
     this.data['stateEdited'] = this.stateEdited;
-
-    // console.log('Data to save:', this.data);
   
     this.apiService.updateData(`owner/${this.code}`, this.data).subscribe(
       (response) => {
@@ -326,7 +319,7 @@ export class OwnersResumeComponent implements OnInit {
         location.reload();
       },
       (error) => {
-        console.log(error);
+        console.error(error);
       }
     );
   }
