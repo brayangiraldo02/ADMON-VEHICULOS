@@ -1,0 +1,99 @@
+<h2 mat-dialog-title>Liquidación de Cuenta</h2>
+<mat-divider></mat-divider>
+
+<mat-dialog-content *ngIf="isLoading">
+  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+</mat-dialog-content>
+
+<mat-dialog-content class="scrollable-content" *ngIf="!isLoading">
+  
+  <div class="info-section">
+    <table class="info-table">
+      <tbody>
+        <tr>
+          <td colspan="2" class="section-header text-green first-header">FONDOS</td>
+        </tr>
+        <tr>
+          <td class="info-header">Inscripción</td>
+          <td class="info-data">$ {{ data.inscripcion | number:'1.2-2' }}</td>
+        </tr>
+        <tr class="total-row">
+          <td class="info-header">Total Fondos</td>
+          <td class="info-data text-green">$ {{ data.inscripcion | number:'1.2-2' }}</td>
+        </tr>
+
+        <tr class="spacer-row"><td colspan="2"></td></tr>
+
+        <tr>
+          <td colspan="2" class="section-header text-red">DEUDAS</td>
+        </tr>
+        <tr>
+          <td class="info-header">Renta Diaria</td>
+          <td class="info-data">$ {{ data.rentaDiaria | number:'1.2-2' }}</td>
+        </tr>
+        <tr>
+          <td class="info-header">Otras Deudas</td>
+          <td class="info-data">$ {{ data.otrasDeudas | number:'1.2-2' }}</td>
+        </tr>
+        <tr>
+          <td class="info-header">Panapass</td>
+          <td class="info-data">$ {{ data.panapass | number:'1.2-2' }}</td>
+        </tr>
+        <tr class="total-row">
+          <td class="info-header">Total Deudas</td>
+          <td class="info-data text-red">$ {{ data.totalDeudas | number:'1.2-2' }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <mat-divider class="mobile"></mat-divider>
+
+  <div class="summary-section">
+    
+    <div class="summary-card top-card">
+      <div class="action-field-container">
+        <mat-form-field class="full-width no-subscript">
+          <mat-label>Otros Gastos</mat-label>
+          <span matPrefix class="currency-prefix">$</span>
+          <input matInput [value]="data.otrosGastos | number:'1.2-2'" readonly>
+        </mat-form-field>
+        
+        <button
+          mat-mini-fab
+          class="action-button"
+          aria-label="Ver Otros Gastos"
+          matTooltip="Detalle de Otros Gastos"
+          (click)="openOtrosGastos()"
+        >
+          <mat-icon>request_quote</mat-icon>
+        </button>
+      </div>
+    </div>
+
+    <mat-divider class="spacer-divider"></mat-divider>
+
+    <div class="summary-card">
+      <mat-form-field class="form-field full-width result-field green-theme no-subscript">
+        <mat-label>Monto a Devolver</mat-label>
+        <span matPrefix class="currency-prefix">$</span>
+        <input matInput [value]="data.montoDevolver | number:'1.2-2'" readonly>
+      </mat-form-field>
+
+      <mat-form-field class="form-field full-width result-field red-theme no-subscript">
+        <mat-label>Monto a Deudar</mat-label>
+        <span matPrefix class="currency-prefix">$</span>
+        <input matInput [value]="data.montoDeudar | number:'1.2-2'" readonly>
+      </mat-form-field>
+    </div>
+
+  </div>
+
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="imprimir()">
+    <mat-icon>print</mat-icon> Imprimir
+  </button>
+  <button mat-button cdkFocusInitial (click)="aceptar()">Aceptar</button>
+</mat-dialog-actions>

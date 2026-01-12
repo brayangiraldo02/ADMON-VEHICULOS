@@ -8,6 +8,7 @@ import { map, Observable, startWith } from 'rxjs';
 import { ConfirmActionDialogComponent } from 'src/app/modules/shared/components/confirm-action-dialog/confirm-action-dialog.component';
 import { ApiService } from 'src/app/services/api.service';
 import { JwtService } from 'src/app/services/jwt.service';
+import { OperacionesLiquidacionCuentaComponent } from './operaciones-liquidacion-cuenta/operaciones-liquidacion-cuenta.component';
 
 interface vehicle {
   unidad: string;
@@ -232,6 +233,16 @@ export class OperacionesBajarConductorVehiculoComponent implements OnInit {
       duration: 3500,
       horizontalPosition: 'center',
       verticalPosition: 'top',
+    });
+  }
+
+  openSettlementOfAccountDialog() {
+    const isSmallScreen = this.breakpointObserver.isMatched(Breakpoints.Small);
+    const isXsmallScreen = this.breakpointObserver.isMatched(Breakpoints.XSmall);
+    const dialogWidth = isSmallScreen || isXsmallScreen ? '90vw' : '60%';
+
+    const dialogRef = this.dialog.open(OperacionesLiquidacionCuentaComponent, {
+      width: dialogWidth,
     });
   }
 
