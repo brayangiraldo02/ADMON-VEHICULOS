@@ -67,3 +67,7 @@ async def post_return_vehicle(data: ReturnVehicle):
 @operations_router.get("/operations/remove-driver/{company_code}/{vehicle_number}/{driver_number}/", tags=["Operations"])
 async def get_remove_driver(company_code: str, vehicle_number: str, driver_number: str):
   return await remove_driver(company_code, vehicle_number, driver_number)
+
+@operations_router.get("/operations/items-cxp/{company_code}/", tags=["Operations"])
+async def get_items_cxp(company_code: str):
+  return await items_cxp(company_code)

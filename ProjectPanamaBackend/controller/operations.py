@@ -9,6 +9,7 @@ from models.centrales import Centrales
 from models.estadocivil import EstadoCivil
 from models.cartera import Cartera
 from models.patios import Patios
+from models.itemscxp import ItemsCXP
 from schemas.operations import *
 from fastapi.encoders import jsonable_encoder
 from utils.reports import *
@@ -1209,6 +1210,34 @@ async def remove_driver(company_code: str, vehicle_number: str, driver_number: s
     }
 
     return JSONResponse(content=jsonable_encoder(response), status_code=200)
+  except Exception as e:
+    db.rollback()
+    return JSONResponse(content={"message": str(e)}, status_code=500)
+  finally:
+    db.close()
+
+#-----------------------------------------------------------------------------------------------
+
+async def items_cxp(company_code: str):
+  db = session()
+  try:
+    items = db.query(
+                ItemsCXP.CODIGO,
+                ItemsCXP.NOMBRE
+            ).filter(
+                ItemsCXP.EMPRESA == company_code,
+                ItemsCXP.CODIGO is not None,
+                ItemsCXP.NOMBRE is not None,
+                ItemsCXP.CODIGO != '',
+                ItemsCXP.NOMBRE != ''
+            ).order_by(
+                ItemsCXP.CODIGO
+            ).all()
+    
+    response = [{"code": item.CODIGO, "name": item.NOMBRE} for item in items]
+
+    return JSONResponse(content=jsonable_encoder(response), status_code=200)
+
   except Exception as e:
     db.rollback()
     return JSONResponse(content={"message": str(e)}, status_code=500)
