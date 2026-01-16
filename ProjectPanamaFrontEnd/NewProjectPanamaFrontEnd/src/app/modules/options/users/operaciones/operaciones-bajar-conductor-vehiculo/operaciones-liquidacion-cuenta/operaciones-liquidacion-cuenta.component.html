@@ -68,7 +68,7 @@
           class="action-button"
           aria-label="Ver Otros Gastos"
           matTooltip="Detalle de Otros Gastos"
-          (click)="openOtrosGastos()"
+          (click)="openOtherExpenses()"
         >
           <mat-icon>request_quote</mat-icon>
         </button>
@@ -99,5 +99,5 @@
   <button mat-button (click)="imprimir()">
     <mat-icon>print</mat-icon> Imprimir
   </button>
-  <button mat-button cdkFocusInitial (click)="aceptar()">Aceptar</button>
+  <button mat-button cdkFocusInitial (click)="accept()">Aceptar</button>
 </mat-dialog-actions>

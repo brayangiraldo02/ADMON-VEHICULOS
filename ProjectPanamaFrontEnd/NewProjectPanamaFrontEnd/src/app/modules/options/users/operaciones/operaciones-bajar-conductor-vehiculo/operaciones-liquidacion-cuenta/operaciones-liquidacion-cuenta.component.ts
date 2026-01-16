@@ -6,7 +6,8 @@ import {
 } from '@angular/material/dialog';
 import {
   OperacionesLiquidacionOtrosGastosComponent,
-  OtrosGastosResult,
+  OtherExpensesItem,
+  OtherExpensesResult,
 } from '../operaciones-otros-gastos/operaciones-liquidacion-otros-gastos/operaciones-liquidacion-otros-gastos.component';
 import { ApiService } from 'src/app/services/api.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -38,8 +39,7 @@ interface dialogData {
 export class OperacionesLiquidacionCuentaComponent implements OnInit {
   isLoading: boolean = true;
 
-  // TODO: Modificar interface en any.
-  otrosGastosItems: any[] = [];
+  otherExpensesItems: OtherExpensesItem[] = [];
 
   data: LiquidationDetail = {
     registration: 0,
@@ -55,7 +55,7 @@ export class OperacionesLiquidacionCuentaComponent implements OnInit {
 
   constructor(
     public dialogRef: MatDialogRef<OperacionesLiquidacionCuentaComponent>,
-    @Inject(MAT_DIALOG_DATA) public incomingData: dialogData, 
+    @Inject(MAT_DIALOG_DATA) public incomingData: dialogData,
     private dialog: MatDialog,
     private apiService: ApiService,
     private snackBar: MatSnackBar
@@ -68,83 +68,117 @@ export class OperacionesLiquidacionCuentaComponent implements OnInit {
   getLiquidationData(): void {
     this.isLoading = true;
 
-    if(this.incomingData.companyCode === '' || this.incomingData.vehicleNumber === '' || this.incomingData.driverNumber === '') {
+    if (
+      this.incomingData.companyCode === '' ||
+      this.incomingData.vehicleNumber === '' ||
+      this.incomingData.driverNumber === ''
+    ) {
       this.isLoading = false;
       this.openSnackbar('Error al obtener la información de la liquidación.');
       return;
     }
 
-    this.apiService.getData(`operations/remove-driver/${this.incomingData.companyCode}/${this.incomingData.vehicleNumber}/${this.incomingData.driverNumber}`).subscribe({
-      next: (data: LiquidationDetail) => {
-        this.data = data;
-        this.isLoading = false;
-      },
-      error: (error: HttpErrorResponse) => {
-        this.isLoading = false;
-        this.openSnackbar('Error al obtener la información de la liquidación.');
-      },
+    this.apiService
+      .getData(
+        `operations/remove-driver/${this.incomingData.companyCode}/${this.incomingData.vehicleNumber}/${this.incomingData.driverNumber}`
+      )
+      .subscribe({
+        next: (data: LiquidationDetail) => {
+          this.data = data;
+          this.getItemsCxP();
+          this.isLoading = false;
+        },
+        error: (error: HttpErrorResponse) => {
+          this.isLoading = false;
+          this.openSnackbar(
+            'Error al obtener la información de la liquidación.'
+          );
+          this.close();
+        },
+      });
+  }
+
+  transformBackendExpenses(
+    backendItems: { code: string; name: string }[]
+  ): OtherExpensesItem[] {
+    return backendItems.map((item) => ({
+      code: item.code,
+      name: item.name,
+      explanation: '',
+      value: 0,
+    }));
+  }
+
+  getItemsCxP() {
+    this.apiService
+      .getData(`operations/items-cxp/${this.incomingData.companyCode}`)
+      .subscribe({
+        next: (data: OtherExpensesItem[]) => {
+          this.otherExpensesItems = this.transformBackendExpenses(data);
+        },
+        error: (error: HttpErrorResponse) => {
+          this.openSnackbar('Error al obtener los items de CXP.');
+        },
+      });
+  }
+
+  openOtherExpenses(): void {
+    const dialogRef = this.dialog.open(
+      OperacionesLiquidacionOtrosGastosComponent,
+      {
+        width: '850px',
+        maxWidth: '95vw',
+        maxHeight: '85vh',
+        data: {
+          otherExpensesItems: this.otherExpensesItems,
+        },
+      }
+    );
+
+    dialogRef.afterClosed().subscribe((result: OtherExpensesResult | null) => {
+      if (result) {
+        this.otherExpensesItems = result.items;
+        this.data.other_expenses = result.totalOtherExpenses;
+        this.recalculateAmounts();
+      }
     });
   }
 
-  // Acción para el botón del "ojo" o "más" en Otros Gastos
-  openOtrosGastos(): void {
-    // const dialogRef = this.dialog.open(
-    //   OperacionesLiquidacionOtrosGastosComponent,
-    //   {
-    //     width: '850px',
-    //     maxWidth: '95vw',
-    //     maxHeight: '85vh',
-    //     data: {
-    //       gastosItems: this.otrosGastosItems, // Pasar los items guardados para persistir
-    //     },
-    //   }
-    // );
+  private recalculateAmounts(): void {
+    const totalFunds = this.data.registration;
+    const totalDebts = this.data.total_debt + this.data.other_expenses;
 
-    // dialogRef.afterClosed().subscribe((result: OtrosGastosResult | null) => {
-    //   if (result) {
-    //     // Guardar los items modificados
-    //     this.otrosGastosItems = result.items;
-
-    //     // Actualizar el valor de otros gastos
-    //     this.data.otrosGastos = result.totalOtrosGastos;
-
-    //     // Recalcular los montos
-    //     this.recalcularMontos();
-
-    //     console.log('Otros gastos actualizados:', result);
-    //   }
-    // });
+    if (totalFunds >= totalDebts) {
+      this.data.owed_to_driver = totalFunds - totalDebts;
+      this.data.owed_by_driver = 0;
+    } else {
+      this.data.owed_to_driver = 0;
+      this.data.owed_by_driver = totalDebts - totalFunds;
+    }
   }
 
-  // Recalcula los montos después de actualizar otros gastos
-  private recalcularMontos(): void {
-    // const totalFondos = this.data.inscripcion;
-    // const totalDeudas = this.data.totalDeudas + this.data.otrosGastos;
-
-    // if (totalFondos >= totalDeudas) {
-    //   this.data.montoDevolver = totalFondos - totalDeudas;
-    //   this.data.montoDeudar = 0;
-    // } else {
-    //   this.data.montoDevolver = 0;
-    //   this.data.montoDeudar = totalDeudas - totalFondos;
-    // }
-  }
-
-  // Acción de Imprimir
+  // TODO: Implementar la funcionalidad de imprimir
   imprimir(): void {
     console.log('Imprimiendo liquidación...');
     window.print(); // Funcionalidad nativa básica del navegador
   }
 
-  // Acción de Confirmar/Aceptar
-  aceptar(): void {
-    console.log('Liquidación aceptada');
-    // Retornamos la data incluyendo los otros gastos modificados
+  get itemsModified(): OtherExpensesItem[] {
+    return this.otherExpensesItems.filter(
+      (item) => item.value > 0 || item.explanation.trim() !== ''
+    );
+  }
+
+  accept(): void {
     this.dialogRef.close({
       accepted: true,
       data: this.data,
-      otrosGastosItems: this.otrosGastosItems,
+      otherExpensesItems: this.itemsModified,
     });
+  }
+
+  close(): void {
+    this.dialogRef.close();
   }
 
   openSnackbar(message: string) {
@@ -152,6 +186,6 @@ export class OperacionesLiquidacionCuentaComponent implements OnInit {
       duration: 3000,
       horizontalPosition: 'center',
       verticalPosition: 'top',
-    })
+    });
   }
 }

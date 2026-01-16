@@ -41,6 +41,27 @@ interface driverInfo {
   estado: string;
 }
 
+interface dialogResult {
+  accepted: boolean;
+  data: {
+    registration: number;
+    daily_rent: number;
+    accidents: number;
+    other_debts: number;
+    panapass: number;
+    total_debt: number;
+    owed_to_driver: number;
+    owed_by_driver: number;
+    other_expenses: number;
+  };
+  otherExpensesItems: {
+    code: string;
+    name: string;
+    explanation: string;
+    value: number;
+  }[];
+}
+
 @Component({
   selector: 'app-operaciones-bajar-conductor-vehiculo',
   templateUrl: './operaciones-bajar-conductor-vehiculo.component.html',
@@ -256,13 +277,28 @@ export class OperacionesBajarConductorVehiculoComponent implements OnInit {
       disableClose: true,
     });
 
-    dialogRef.afterClosed().subscribe((result: any) => {
+    dialogRef.afterClosed().subscribe((result: dialogResult) => {
       if (result) {
+        const detailText = this.formatOtherExpensesDescription(
+          result.otherExpensesItems
+        );
+        this.description.setValue(detailText);
         this.openSnackbar(
           'Para guardar la liquidación y bajar al conductor, debes confirmar.'
         );
       }
     });
+  }
+
+  formatOtherExpensesDescription(
+    items: { code: string; name: string; explanation: string; value: number }[]
+  ): string {
+    if (!items || items.length === 0) {
+      return '';
+    }
+    return items
+      .map((item) => `${item.explanation} ${item.value}`)
+      .join(' // ');
   }
 
   createDailyAccount() {

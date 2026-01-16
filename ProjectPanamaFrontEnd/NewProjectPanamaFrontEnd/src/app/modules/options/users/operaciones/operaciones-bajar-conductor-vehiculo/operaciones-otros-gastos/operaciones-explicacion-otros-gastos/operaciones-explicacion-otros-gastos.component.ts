@@ -1,16 +1,16 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
-export interface ExplicacionDialogData {
-  codigo: string;
-  nombre: string;
-  explicacion: string;
-  valor: number;
+export interface ExplanationDialogData {
+  code: string;
+  name: string;
+  explanation: string;
+  value: number;
 }
 
-export interface ExplicacionDialogResult {
-  explicacion: string;
-  valor: number;
+export interface ExplanationDialogResult {
+  explanation: string;
+  value: number;
 }
 
 @Component({
@@ -19,27 +19,24 @@ export interface ExplicacionDialogResult {
   styleUrls: ['./operaciones-explicacion-otros-gastos.component.css'],
 })
 export class OperacionesExplicacionOtrosGastosComponent implements OnInit {
-  explicacion: string = '';
-  valorDisplay: string = ''; // Para mostrar con formato
-  valor: number = 0; // Valor numérico real
+  explanation: string = '';
+  valueDisplay: string = '';
+  value: number = 0;
 
   constructor(
     public dialogRef: MatDialogRef<OperacionesExplicacionOtrosGastosComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: ExplicacionDialogData
+    @Inject(MAT_DIALOG_DATA) public data: ExplanationDialogData
   ) {}
 
   ngOnInit(): void {
-    // Inicializar con los valores recibidos
-    this.explicacion = this.data.explicacion || '';
-    this.valor = this.data.valor || 0;
+    this.explanation = this.data.explanation || '';
+    this.value = this.data.value || 0;
 
-    // Si ya hay un valor, mostrarlo formateado
-    if (this.valor > 0) {
-      this.valorDisplay = this.formatNumber(this.valor);
+    if (this.value > 0) {
+      this.valueDisplay = this.formatNumber(this.value);
     }
   }
 
-  // Formatea un número a string con separadores de miles
   formatNumber(num: number): string {
     return num.toLocaleString('en-US', {
       minimumFractionDigits: 2,
@@ -47,60 +44,50 @@ export class OperacionesExplicacionOtrosGastosComponent implements OnInit {
     });
   }
 
-  // Parsea un string formateado a número
   parseFormattedNumber(formatted: string): number {
-    // Remover comas y convertir a número
     const cleaned = formatted.replace(/,/g, '');
     const num = parseFloat(cleaned);
     return isNaN(num) ? 0 : num;
   }
 
-  // Maneja el input del valor
-  onValorInput(event: Event): void {
+  onValueInput(event: Event): void {
     const input = event.target as HTMLInputElement;
-    let value = input.value;
+    let inputValue = input.value;
 
-    // Remover caracteres no válidos (solo permitir números, punto y coma)
-    value = value.replace(/[^0-9.,]/g, '');
+    inputValue = inputValue.replace(/[^0-9.,]/g, '');
 
-    // Guardar el valor numérico
-    this.valor = this.parseFormattedNumber(value);
-    this.valorDisplay = value;
+    this.value = this.parseFormattedNumber(inputValue);
+    this.valueDisplay = inputValue;
   }
 
-  // Formatea el valor cuando el input pierde el foco
-  onValorBlur(): void {
-    if (this.valor > 0) {
-      this.valorDisplay = this.formatNumber(this.valor);
+  onValueBlur(): void {
+    if (this.value > 0) {
+      this.valueDisplay = this.formatNumber(this.value);
     } else {
-      this.valorDisplay = '';
+      this.valueDisplay = '';
     }
   }
 
-  // Limpia el cero inicial cuando el usuario hace foco
-  onValorFocus(): void {
-    if (this.valor === 0) {
-      this.valorDisplay = '';
+  onValueFocus(): void {
+    if (this.value === 0) {
+      this.valueDisplay = '';
     }
   }
 
-  // Aceptar y retornar los datos ingresados
-  aceptar(): void {
-    const result: ExplicacionDialogResult = {
-      explicacion: this.explicacion.trim(),
-      valor: this.valor,
+  accept(): void {
+    const result: ExplanationDialogResult = {
+      explanation: this.explanation.trim(),
+      value: this.value,
     };
     this.dialogRef.close(result);
   }
 
-  // Limpia el valor del input
-  limpiarValor(): void {
-    this.valor = 0;
-    this.valorDisplay = '';
+  clearValue(): void {
+    this.value = 0;
+    this.valueDisplay = '';
   }
 
-  // Cancelar y cerrar sin guardar
-  cancelar(): void {
+  cancel(): void {
     this.dialogRef.close(null);
   }
 }
