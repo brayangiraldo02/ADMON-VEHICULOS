@@ -11,10 +11,8 @@ import { JwtService } from 'src/app/services/jwt.service';
 import { OperacionesLiquidacionCuentaComponent } from './operaciones-liquidacion-cuenta/operaciones-liquidacion-cuenta.component';
 
 interface vehicle {
-  unidad: string;
-  placa: string;
-  propietario: string;
-  nro_cupo: string;
+  vehicle_number: string;
+  vehicle_plate: string;
 }
 
 interface vehicleInfo {
@@ -41,6 +39,27 @@ interface driverInfo {
   licencia_vencimiento: string;
   vehiculo: string;
   estado: string;
+}
+
+interface dialogResult {
+  accepted: boolean;
+  data: {
+    registration: number;
+    daily_rent: number;
+    accidents: number;
+    other_debts: number;
+    panapass: number;
+    total_debt: number;
+    owed_to_driver: number;
+    owed_by_driver: number;
+    other_expenses: number;
+  };
+  otherExpensesItems: {
+    code: string;
+    name: string;
+    explanation: string;
+    value: number;
+  }[];
 }
 
 @Component({
@@ -112,7 +131,7 @@ export class OperacionesBajarConductorVehiculoComponent implements OnInit {
 
   getVehicles() {
     const company = this.getCompany();
-    this.apiService.getData('vehicles/' + company).subscribe(
+    this.apiService.getData('vehicles-by-state/' + company + '/01').subscribe(
       (response: vehicle[]) => {
         this.options = response;
         this.filteredOptions = this.vehicles.valueChanges.pipe(
@@ -135,10 +154,8 @@ export class OperacionesBajarConductorVehiculoComponent implements OnInit {
 
     return this.options.filter(
       (option) =>
-        option.placa.toLowerCase().includes(filterValue) ||
-        option.unidad.toLowerCase().includes(filterValue) ||
-        option.nro_cupo.toLowerCase().includes(filterValue) ||
-        option.propietario.toLowerCase().includes(filterValue)
+        option.vehicle_plate.toLowerCase().includes(filterValue) ||
+        option.vehicle_number.toLowerCase().includes(filterValue)
     );
   }
 
@@ -222,6 +239,9 @@ export class OperacionesBajarConductorVehiculoComponent implements OnInit {
       vehiculo: '',
       estado: '',
     };
+    this.reason.setValue('');
+    this.description.setValue('');
+    this.drivers.setValue('');
   }
 
   resetAutocomplete() {
@@ -230,26 +250,60 @@ export class OperacionesBajarConductorVehiculoComponent implements OnInit {
 
   openSnackbar(message: string) {
     this.snackBar.open(message, 'Cerrar', {
-      duration: 3500,
+      duration: 5000,
       horizontalPosition: 'center',
       verticalPosition: 'top',
     });
   }
 
   openSettlementOfAccountDialog() {
+    if (this.reason.value === '' || this.reason.value === null) {
+      this.openSnackbar('Debes ingresar un motivo para continuar.');
+      this.reason.markAsTouched();
+      return;
+    }
+
     const isSmallScreen = this.breakpointObserver.isMatched(Breakpoints.Small);
     const isXsmallScreen = this.breakpointObserver.isMatched(Breakpoints.XSmall);
     const dialogWidth = isSmallScreen || isXsmallScreen ? '90vw' : '60%';
 
     const dialogRef = this.dialog.open(OperacionesLiquidacionCuentaComponent, {
       width: dialogWidth,
+      data: {
+        companyCode: this.getCompany(),
+        vehicleNumber: this.vehicleData.numero,
+        driverNumber: this.vehicleData.conductor,
+      },
+      disableClose: true,
     });
+
+    dialogRef.afterClosed().subscribe((result: dialogResult) => {
+      if (result) {
+        const detailText = this.formatOtherExpensesDescription(
+          result.otherExpensesItems
+        );
+        this.description.setValue(detailText);
+        this.openSnackbar(
+          'Para guardar la liquidación y bajar al conductor, debes confirmar.'
+        );
+      }
+    });
+  }
+
+  formatOtherExpensesDescription(
+    items: { code: string; name: string; explanation: string; value: number }[]
+  ): string {
+    if (!items || items.length === 0) {
+      return '';
+    }
+    return items
+      .map((item) => `${item.explanation} ${item.value}`)
+      .join(' // ');
   }
 
   createDailyAccount() {
     const company = this.getCompany();
     const user = this.getUser();
-
   }
 
   closeDialog() {

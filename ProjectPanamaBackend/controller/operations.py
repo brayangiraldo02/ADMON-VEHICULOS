@@ -9,6 +9,7 @@ from models.centrales import Centrales
 from models.estadocivil import EstadoCivil
 from models.cartera import Cartera
 from models.patios import Patios
+from models.itemscxp import ItemsCXP
 from schemas.operations import *
 from fastapi.encoders import jsonable_encoder
 from utils.reports import *
@@ -23,6 +24,7 @@ from docx.shared import Inches
 import pytz
 from num2words import num2words
 import locale
+from decimal import Decimal
 
 #! Verificar si las importaciones son necesarias
 from sqlalchemy.orm import aliased
@@ -33,6 +35,7 @@ from fastapi.responses import FileResponse
 import jinja2
 from utils.pdf import html2pdf
 from utils.text import clean_text
+from utils.panapass import get_txt_file, search_value_in_txt
 from sqlalchemy import func
 from dotenv import load_dotenv
 import shutil
@@ -1150,6 +1153,91 @@ async def return_vehicle(data: ReturnVehicle):
         file.write(f"{original_vehicle.NUMERO},{return_vehicle.NUMERO},,,,,{clean_text(data.reason)},,{now_in_panama.strftime('%Y-%m-%d')},{clean_text(data.user)}")
 
     return JSONResponse(content={"message": "Devolución de vehículo realizada con éxito"}, status_code=200)
+  except Exception as e:
+    db.rollback()
+    return JSONResponse(content={"message": str(e)}, status_code=500)
+  finally:
+    db.close()
+
+#-----------------------------------------------------------------------------------------------
+
+async def remove_driver(company_code: str, vehicle_number: str, driver_number: str):
+  db = session()
+  try:
+    debts = (db.query(Cartera.TIPO, func.sum(Cartera.SALDO).label('total_saldo')).filter(
+                Cartera.EMPRESA == company_code,
+                Cartera.UNIDAD == vehicle_number,
+                Cartera.CLIENTE == driver_number,
+                Cartera.TIPO.in_(['01', '10', '11', '12'])
+              ).group_by(Cartera.TIPO).all())
+    
+    debt_map = {debt.TIPO: debt.total_saldo for debt in debts}
+
+    registration = debt_map.get('01', 0)
+    daily_rent = debt_map.get('10', 0)
+    accidents = debt_map.get('11', 0)
+    other_debts = debt_map.get('12', 0)
+
+    txt_file_path = get_txt_file(company_code)
+    if txt_file_path:
+      panapass_value = Decimal(search_value_in_txt('Unidad', vehicle_number, 'Saldo Cuenta PanaPass', txt_file_path))
+    else:
+      panapass_value = 0
+
+    panapass_debt = abs(panapass_value) if panapass_value < 0 else 0
+    
+    total_debt = daily_rent + accidents + other_debts + panapass_debt
+
+    balance = registration - total_debt
+
+    owed_to_driver = 0
+    owed_by_driver = 0
+
+    if balance > 0:
+      owed_to_driver = balance
+    else:
+      owed_by_driver = abs(balance)
+
+    response = {
+      "registration": registration,
+      "daily_rent": daily_rent,
+      "accidents": accidents,
+      "other_debts": other_debts,
+      "panapass": panapass_debt,
+      "total_debt": total_debt,
+      "owed_to_driver": owed_to_driver,
+      "owed_by_driver": owed_by_driver
+    }
+
+    return JSONResponse(content=jsonable_encoder(response), status_code=200)
+  except Exception as e:
+    db.rollback()
+    return JSONResponse(content={"message": str(e)}, status_code=500)
+  finally:
+    db.close()
+
+#-----------------------------------------------------------------------------------------------
+
+async def items_cxp(company_code: str):
+  db = session()
+  try:
+    items = db.query(
+                ItemsCXP.CODIGO,
+                ItemsCXP.NOMBRE
+            ).filter(
+                ItemsCXP.EMPRESA == company_code,
+                ItemsCXP.CODIGO is not None,
+                ItemsCXP.NOMBRE is not None,
+                ItemsCXP.CODIGO != '',
+                ItemsCXP.NOMBRE != ''
+            ).order_by(
+                ItemsCXP.CODIGO
+            ).all()
+    
+    response = [{"code": item.CODIGO, "name": item.NOMBRE} for item in items]
+
+    return JSONResponse(content=jsonable_encoder(response), status_code=200)
+
   except Exception as e:
     db.rollback()
     return JSONResponse(content={"message": str(e)}, status_code=500)

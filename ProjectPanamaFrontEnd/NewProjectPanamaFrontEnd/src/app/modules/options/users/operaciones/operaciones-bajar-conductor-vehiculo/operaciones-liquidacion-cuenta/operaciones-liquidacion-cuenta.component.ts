@@ -1,15 +1,34 @@
 import { Component, OnInit, Inject } from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import {
+  MatDialog,
+  MatDialogRef,
+  MAT_DIALOG_DATA,
+} from '@angular/material/dialog';
+import {
+  OperacionesLiquidacionOtrosGastosComponent,
+  OtherExpensesItem,
+  OtherExpensesResult,
+} from '../operaciones-otros-gastos/operaciones-liquidacion-otros-gastos/operaciones-liquidacion-otros-gastos.component';
+import { ApiService } from 'src/app/services/api.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { HttpErrorResponse } from '@angular/common/http';
 
 export interface LiquidationDetail {
-  inscripcion: number;
-  rentaDiaria: number;
-  otrasDeudas: number;
+  registration: number;
+  daily_rent: number;
+  accidents: number;
+  other_debts: number;
   panapass: number;
-  totalDeudas: number;
-  otrosGastos: number;
-  montoDevolver: number;
-  montoDeudar: number;
+  total_debt: number;
+  other_expenses: number;
+  owed_to_driver: number;
+  owed_by_driver: number;
+}
+
+interface dialogData {
+  companyCode: string;
+  vehicleNumber: string;
+  driverNumber: string;
 }
 
 @Component({
@@ -18,74 +37,155 @@ export interface LiquidationDetail {
   styleUrls: ['./operaciones-liquidacion-cuenta.component.css'],
 })
 export class OperacionesLiquidacionCuentaComponent implements OnInit {
-  // Variables de estado
   isLoading: boolean = true;
 
-  // Inicializamos la data en null o con valores en 0 para evitar errores en template antes de cargar
+  otherExpensesItems: OtherExpensesItem[] = [];
+
   data: LiquidationDetail = {
-    inscripcion: 0,
-    rentaDiaria: 0,
-    otrasDeudas: 0,
+    registration: 0,
+    daily_rent: 0,
+    other_debts: 0,
     panapass: 0,
-    totalDeudas: 0,
-    otrosGastos: 0,
-    montoDevolver: 0,
-    montoDeudar: 0,
+    total_debt: 0,
+    accidents: 0,
+    other_expenses: 0,
+    owed_to_driver: 0,
+    owed_by_driver: 0,
   };
 
   constructor(
     public dialogRef: MatDialogRef<OperacionesLiquidacionCuentaComponent>,
-    @Inject(MAT_DIALOG_DATA) public incomingData: any // Por si pasas ID de conductor, etc.
+    @Inject(MAT_DIALOG_DATA) public incomingData: dialogData,
+    private dialog: MatDialog,
+    private apiService: ApiService,
+    private snackBar: MatSnackBar
   ) {}
 
   ngOnInit(): void {
     this.getLiquidationData();
   }
 
-  // Simulación de petición al Backend
   getLiquidationData(): void {
     this.isLoading = true;
 
-    // Simulamos un delay de 1.5 segundos
-    setTimeout(() => {
-      // AQUÍ ESTÁN TUS DATOS QUEMADOS
-      // Estos valores coinciden con la lógica: Fondos - Deudas = Devolver
-      this.data = {
-        inscripcion: 200.0, // Fondo
-        rentaDiaria: 72.0, // Deuda
-        otrasDeudas: 10.5, // Deuda
-        panapass: 5.5, // Deuda
-
-        // Totales calculados (simulados)
-        totalDeudas: 88.0, // 72 + 10.50 + 5.50
-        otrosGastos: 0.0, // Input disabled
-
-        // Resultados
-        montoDevolver: 112.0, // 200 - 88
-        montoDeudar: 0.0,
-      };
-
+    if (
+      this.incomingData.companyCode === '' ||
+      this.incomingData.vehicleNumber === '' ||
+      this.incomingData.driverNumber === ''
+    ) {
       this.isLoading = false;
-    }, 1500);
+      this.openSnackbar('Error al obtener la información de la liquidación.');
+      return;
+    }
+
+    this.apiService
+      .getData(
+        `operations/remove-driver/${this.incomingData.companyCode}/${this.incomingData.vehicleNumber}/${this.incomingData.driverNumber}`
+      )
+      .subscribe({
+        next: (data: LiquidationDetail) => {
+          this.data = data;
+          this.getItemsCxP();
+          this.isLoading = false;
+        },
+        error: (error: HttpErrorResponse) => {
+          this.isLoading = false;
+          this.openSnackbar(
+            'Error al obtener la información de la liquidación.'
+          );
+          this.close();
+        },
+      });
   }
 
-  // Acción para el botón del "ojo" o "más" en Otros Gastos
-  openOtrosGastos(): void {
-    console.log('Abriendo detalle de otros gastos...');
-    // Aquí abrirías otro dialog o mostrarías un tooltip extendido
-    // si el backend te enviara un array de "otros gastos".
+  transformBackendExpenses(
+    backendItems: { code: string; name: string }[]
+  ): OtherExpensesItem[] {
+    return backendItems.map((item) => ({
+      code: item.code,
+      name: item.name,
+      explanation: '',
+      value: 0,
+    }));
   }
 
-  // Acción de Imprimir
+  getItemsCxP() {
+    this.apiService
+      .getData(`operations/items-cxp/${this.incomingData.companyCode}`)
+      .subscribe({
+        next: (data: OtherExpensesItem[]) => {
+          this.otherExpensesItems = this.transformBackendExpenses(data);
+        },
+        error: (error: HttpErrorResponse) => {
+          this.openSnackbar('Error al obtener los items de CXP.');
+        },
+      });
+  }
+
+  openOtherExpenses(): void {
+    const dialogRef = this.dialog.open(
+      OperacionesLiquidacionOtrosGastosComponent,
+      {
+        width: '850px',
+        maxWidth: '95vw',
+        maxHeight: '85vh',
+        data: {
+          otherExpensesItems: this.otherExpensesItems,
+        },
+      }
+    );
+
+    dialogRef.afterClosed().subscribe((result: OtherExpensesResult | null) => {
+      if (result) {
+        this.otherExpensesItems = result.items;
+        this.data.other_expenses = result.totalOtherExpenses;
+        this.recalculateAmounts();
+      }
+    });
+  }
+
+  private recalculateAmounts(): void {
+    const totalFunds = this.data.registration;
+    const totalDebts = this.data.total_debt + this.data.other_expenses;
+
+    if (totalFunds >= totalDebts) {
+      this.data.owed_to_driver = totalFunds - totalDebts;
+      this.data.owed_by_driver = 0;
+    } else {
+      this.data.owed_to_driver = 0;
+      this.data.owed_by_driver = totalDebts - totalFunds;
+    }
+  }
+
+  // TODO: Implementar la funcionalidad de imprimir
   imprimir(): void {
     console.log('Imprimiendo liquidación...');
     window.print(); // Funcionalidad nativa básica del navegador
   }
 
-  // Acción de Confirmar/Aceptar
-  aceptar(): void {
-    console.log('Liquidación aceptada');
-    // Retornamos true o la data para indicar que se cerró con éxito
-    this.dialogRef.close(true);
+  get itemsModified(): OtherExpensesItem[] {
+    return this.otherExpensesItems.filter(
+      (item) => item.value > 0 || item.explanation.trim() !== ''
+    );
+  }
+
+  accept(): void {
+    this.dialogRef.close({
+      accepted: true,
+      data: this.data,
+      otherExpensesItems: this.itemsModified,
+    });
+  }
+
+  close(): void {
+    this.dialogRef.close();
+  }
+
+  openSnackbar(message: string) {
+    this.snackBar.open(message, 'Cerrar', {
+      duration: 3000,
+      horizontalPosition: 'center',
+      verticalPosition: 'top',
+    });
   }
 }
