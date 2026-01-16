@@ -24,10 +24,9 @@
       >
         <mat-option
           *ngFor="let option of filteredOptions | async"
-          [value]="option.unidad"
+          [value]="option.vehicle_number"
         >
-          {{ option.unidad }} - {{ option.placa }} - {{ option.nro_cupo }} -
-          {{ option.propietario }}
+          {{ option.vehicle_number }} - {{ option.vehicle_plate }}
         </mat-option>
       </mat-autocomplete>
     </mat-form-field>
@@ -122,12 +121,7 @@
         <mat-form-field class="full-width">
           <mat-label>Motivo</mat-label>
           <input matInput [formControl]="reason" required />
-          <mat-error
-            *ngIf="
-              reason.invalid &&
-              reason.touched
-            "
-          >
+          <mat-error *ngIf="reason.hasError('required')">
             Este campo es obligatorio.
           </mat-error>
         </mat-form-field>
