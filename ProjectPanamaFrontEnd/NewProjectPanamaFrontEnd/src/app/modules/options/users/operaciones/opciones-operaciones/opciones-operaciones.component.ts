@@ -57,6 +57,7 @@ export class OpcionesOperacionesComponent {
         this.dialog.open(OperacionesContratoDeclaracionJuradaComponent,
           {
             width: dialogWidth,
+            disableClose: true,
           }
         );
         break;
@@ -64,6 +65,7 @@ export class OpcionesOperacionesComponent {
         this.dialog.open(OperacionesCrearCuentaDiarioConductorComponent,
           {
             width: dialogWidth,
+            disableClose: true,
           }
         );
         break;
@@ -71,6 +73,7 @@ export class OpcionesOperacionesComponent {
         this.dialog.open(OperacionesCambiarEstadoVehiculoComponent,
           {
             width: dialogWidth,
+            disableClose: true,
           }
         );
         break;
@@ -78,13 +81,15 @@ export class OpcionesOperacionesComponent {
         this.dialog.open(OperacionesCambiarPatioVehiculoComponent,
           {
             width: dialogWidth,
+            disableClose: true,
           }
         );
         break;
       case 'PrestamoVehiculoConductor':
         this.dialog.open(OperacionesPrestamoVehiculoConductorComponent,
           {
-            width: dialogWidth
+            width: dialogWidth,
+            disableClose: true,
           }
         )
         break;
@@ -92,6 +97,7 @@ export class OpcionesOperacionesComponent {
         this.dialog.open(OperacionesDevolucionVehiculoPrestadoComponent,
           {
             width: dialogWidth,
+            disableClose: true,
           }
         )
         break;
@@ -99,6 +105,7 @@ export class OpcionesOperacionesComponent {
         this.dialog.open(OperacionesBajarConductorVehiculoComponent,
           {
             width: dialogWidth,
+            disableClose: true,
           }
         );
         break;
@@ -106,6 +113,7 @@ export class OpcionesOperacionesComponent {
         this.dialog.open(OperacionesCorregirKilometrajeActualComponent,
           {
             width: dialogWidth,
+            disableClose: true,
           }
         );
         break;
