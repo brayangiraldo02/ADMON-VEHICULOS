@@ -1,5 +1,13 @@
 import { Component, OnInit, Inject } from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import {
+  MatDialog,
+  MatDialogRef,
+  MAT_DIALOG_DATA,
+} from '@angular/material/dialog';
+import {
+  OperacionesLiquidacionOtrosGastosComponent,
+  OtrosGastosResult,
+} from '../operaciones-otros-gastos/operaciones-liquidacion-otros-gastos/operaciones-liquidacion-otros-gastos.component';
 
 export interface LiquidationDetail {
   inscripcion: number;
@@ -7,6 +15,7 @@ export interface LiquidationDetail {
   otrasDeudas: number;
   panapass: number;
   totalDeudas: number;
+  siniestros: number;
   otrosGastos: number;
   montoDevolver: number;
   montoDeudar: number;
@@ -21,6 +30,9 @@ export class OperacionesLiquidacionCuentaComponent implements OnInit {
   // Variables de estado
   isLoading: boolean = true;
 
+  // Almacenar los items de otros gastos modificados
+  otrosGastosItems: any[] = [];
+
   // Inicializamos la data en null o con valores en 0 para evitar errores en template antes de cargar
   data: LiquidationDetail = {
     inscripcion: 0,
@@ -28,6 +40,7 @@ export class OperacionesLiquidacionCuentaComponent implements OnInit {
     otrasDeudas: 0,
     panapass: 0,
     totalDeudas: 0,
+    siniestros: 0,
     otrosGastos: 0,
     montoDevolver: 0,
     montoDeudar: 0,
@@ -35,7 +48,8 @@ export class OperacionesLiquidacionCuentaComponent implements OnInit {
 
   constructor(
     public dialogRef: MatDialogRef<OperacionesLiquidacionCuentaComponent>,
-    @Inject(MAT_DIALOG_DATA) public incomingData: any // Por si pasas ID de conductor, etc.
+    @Inject(MAT_DIALOG_DATA) public incomingData: any, // Por si pasas ID de conductor, etc.
+    private dialog: MatDialog
   ) {}
 
   ngOnInit(): void {
@@ -55,7 +69,7 @@ export class OperacionesLiquidacionCuentaComponent implements OnInit {
         rentaDiaria: 72.0, // Deuda
         otrasDeudas: 10.5, // Deuda
         panapass: 5.5, // Deuda
-
+        siniestros: 20.0, // Deuda
         // Totales calculados (simulados)
         totalDeudas: 88.0, // 72 + 10.50 + 5.50
         otrosGastos: 0.0, // Input disabled
@@ -71,9 +85,46 @@ export class OperacionesLiquidacionCuentaComponent implements OnInit {
 
   // Acción para el botón del "ojo" o "más" en Otros Gastos
   openOtrosGastos(): void {
-    console.log('Abriendo detalle de otros gastos...');
-    // Aquí abrirías otro dialog o mostrarías un tooltip extendido
-    // si el backend te enviara un array de "otros gastos".
+    const dialogRef = this.dialog.open(
+      OperacionesLiquidacionOtrosGastosComponent,
+      {
+        width: '850px',
+        maxWidth: '95vw',
+        maxHeight: '85vh',
+        data: {
+          gastosItems: this.otrosGastosItems, // Pasar los items guardados para persistir
+        },
+      }
+    );
+
+    dialogRef.afterClosed().subscribe((result: OtrosGastosResult | null) => {
+      if (result) {
+        // Guardar los items modificados
+        this.otrosGastosItems = result.items;
+
+        // Actualizar el valor de otros gastos
+        this.data.otrosGastos = result.totalOtrosGastos;
+
+        // Recalcular los montos
+        this.recalcularMontos();
+
+        console.log('Otros gastos actualizados:', result);
+      }
+    });
+  }
+
+  // Recalcula los montos después de actualizar otros gastos
+  private recalcularMontos(): void {
+    const totalFondos = this.data.inscripcion;
+    const totalDeudas = this.data.totalDeudas + this.data.otrosGastos;
+
+    if (totalFondos >= totalDeudas) {
+      this.data.montoDevolver = totalFondos - totalDeudas;
+      this.data.montoDeudar = 0;
+    } else {
+      this.data.montoDevolver = 0;
+      this.data.montoDeudar = totalDeudas - totalFondos;
+    }
   }
 
   // Acción de Imprimir
@@ -85,7 +136,11 @@ export class OperacionesLiquidacionCuentaComponent implements OnInit {
   // Acción de Confirmar/Aceptar
   aceptar(): void {
     console.log('Liquidación aceptada');
-    // Retornamos true o la data para indicar que se cerró con éxito
-    this.dialogRef.close(true);
+    // Retornamos la data incluyendo los otros gastos modificados
+    this.dialogRef.close({
+      accepted: true,
+      data: this.data,
+      otrosGastosItems: this.otrosGastosItems,
+    });
   }
 }

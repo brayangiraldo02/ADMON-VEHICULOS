@@ -69,6 +69,9 @@ import { InspectionsVehicleInfoComponent } from './modules/tasks/inspections/ins
 import { OperacionesBajarConductorVehiculoComponent } from './modules/options/users/operaciones/operaciones-bajar-conductor-vehiculo/operaciones-bajar-conductor-vehiculo.component';
 import { OperacionesLiquidacionCuentaComponent } from './modules/options/users/operaciones/operaciones-bajar-conductor-vehiculo/operaciones-liquidacion-cuenta/operaciones-liquidacion-cuenta.component';
 
+import { OperacionesExplicacionOtrosGastosComponent } from './modules/options/users/operaciones/operaciones-bajar-conductor-vehiculo/operaciones-otros-gastos/operaciones-explicacion-otros-gastos/operaciones-explicacion-otros-gastos.component';
+import { OperacionesLiquidacionOtrosGastosComponent } from './modules/options/users/operaciones/operaciones-bajar-conductor-vehiculo/operaciones-otros-gastos/operaciones-liquidacion-otros-gastos/operaciones-liquidacion-otros-gastos.component';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -133,6 +136,8 @@ import { OperacionesLiquidacionCuentaComponent } from './modules/options/users/o
     InspectionsVehicleInfoComponent,
     OperacionesBajarConductorVehiculoComponent,
     OperacionesLiquidacionCuentaComponent,
+    OperacionesLiquidacionOtrosGastosComponent,
+    OperacionesExplicacionOtrosGastosComponent,
   ],
   imports: [
     BrowserModule,

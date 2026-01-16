@@ -1,0 +1,64 @@
+<h2 mat-dialog-title>Explicación y Valor</h2>
+<mat-divider></mat-divider>
+
+<mat-dialog-content class="dialog-content">
+  <!-- Info del gasto seleccionado -->
+  <div class="gasto-info">
+    <div class="info-item">
+      <span class="label">Código:</span>
+      <span class="value">{{ data.codigo }}</span>
+    </div>
+    <div class="info-item">
+      <span class="label">Nombre:</span>
+      <span class="value">{{ data.nombre }}</span>
+    </div>
+  </div>
+
+  <mat-divider class="divider-spacing"></mat-divider>
+
+  <!-- Campos editables -->
+  <div class="form-section">
+    <mat-form-field class="full-width" appearance="outline">
+      <mat-label>Explicación</mat-label>
+      <textarea
+        matInput
+        [(ngModel)]="explicacion"
+        rows="3"
+        placeholder="Ingrese una explicación para este gasto..."
+      ></textarea>
+    </mat-form-field>
+
+    <mat-form-field class="full-width" appearance="outline">
+      <mat-label>Valor</mat-label>
+      <span matPrefix class="currency-prefix">$ </span>
+      <input
+        matInput
+        type="text"
+        [(ngModel)]="valorDisplay"
+        (input)="onValorInput($event)"
+        (blur)="onValorBlur()"
+        (focus)="onValorFocus()"
+        placeholder="0.00"
+      />
+      <button
+        *ngIf="valor > 0"
+        matSuffix
+        mat-icon-button
+        aria-label="Limpiar valor"
+        (click)="limpiarValor()"
+        type="button"
+      >
+        <mat-icon>close</mat-icon>
+      </button>
+    </mat-form-field>
+  </div>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="cancelar()">
+    <mat-icon>close</mat-icon> Cancelar
+  </button>
+  <button mat-button (click)="aceptar()">
+    <mat-icon>check</mat-icon> Aceptar
+  </button>
+</mat-dialog-actions>
