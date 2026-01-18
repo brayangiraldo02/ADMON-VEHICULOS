@@ -864,10 +864,20 @@ async def get_vehicles_by_state(company_code: str, state_code: str):
             Vehiculos.ESTADO == state_code
         ).all()
 
+        owners = db.query(Propietarios.CODIGO, Propietarios.NOMBRE).filter(Propietarios.EMPRESA == company_code).all()
+        owners_dict = {owner.CODIGO: owner.NOMBRE for owner in owners}
+
         if not vehicles:
             return JSONResponse(content={"message": "No hay vehículos disponibles para la empresa y estado dados"}, status_code=404)
 
-        response = [{'vehicle_number': vehicle.NUMERO, 'vehicle_plate': vehicle.PLACA} for vehicle in vehicles]
+        response = [
+            {
+              'vehicle_number': vehicle.NUMERO, 
+              'vehicle_plate': vehicle.PLACA,
+              'owner': owners_dict.get(vehicle.PROPI_IDEN, "") + ' (' + vehicle.PROPI_IDEN + ')',
+              'quota_number': vehicle.NRO_CUPO
+            } for vehicle in vehicles
+        ]
 
         return JSONResponse(content=jsonable_encoder(response), status_code=200)
     except Exception as e:
