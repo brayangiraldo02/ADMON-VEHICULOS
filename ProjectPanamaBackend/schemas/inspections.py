@@ -16,6 +16,7 @@ class NewInspection(BaseModel):
   user: str
   company_code: str
   vehicle_number: str
+  mechanic_code: str
   mileage: int
   inspection_type: str
   inspection_date: str

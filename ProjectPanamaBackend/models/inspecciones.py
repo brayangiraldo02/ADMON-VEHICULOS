@@ -15,6 +15,8 @@ class Inspecciones(Base):
     NOMCONDU = Column(CHAR(40), default="")
     TIPO_INSPEC = Column(CHAR(2), default="")
     NOMINSPEC = Column(CHAR(40), default="")
+    MECANICO = Column(CHAR(2), default="")
+    NOM_MECANICO = Column(CHAR(100), default="")
     KILOMETRAJ = Column(Integer, default=0)
     DESCRIPCION = Column(Text, default="")
     OBSERVA = Column(Text, default="")
