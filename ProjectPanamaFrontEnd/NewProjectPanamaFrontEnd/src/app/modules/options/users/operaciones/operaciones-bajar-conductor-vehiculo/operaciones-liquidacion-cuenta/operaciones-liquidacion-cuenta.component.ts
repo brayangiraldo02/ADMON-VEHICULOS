@@ -30,6 +30,8 @@ interface dialogData {
   companyCode: string;
   vehicleNumber: string;
   driverNumber: string;
+  savedLiquidationData?: LiquidationDetail | null;
+  savedOtherExpensesItems?: OtherExpensesItem[] | null;
 }
 
 @Component({
@@ -68,6 +70,12 @@ export class OperacionesLiquidacionCuentaComponent implements OnInit {
   }
 
   getLiquidationData(): void {
+    if (this.incomingData.savedLiquidationData) {
+      this.data = { ...this.incomingData.savedLiquidationData };
+      this.loadOtherExpensesItems();
+      return;
+    }
+
     this.isLoading = true;
 
     if (
@@ -87,7 +95,7 @@ export class OperacionesLiquidacionCuentaComponent implements OnInit {
       .subscribe({
         next: (data: LiquidationDetail) => {
           this.data = data;
-          this.getItemsCxP();
+          this.loadOtherExpensesItems();
           this.isLoading = false;
         },
         error: (error: HttpErrorResponse) => {
@@ -98,6 +106,18 @@ export class OperacionesLiquidacionCuentaComponent implements OnInit {
           this.close();
         },
       });
+  }
+
+  loadOtherExpensesItems(): void {
+    if (
+      this.incomingData.savedOtherExpensesItems &&
+      this.incomingData.savedOtherExpensesItems.length > 0
+    ) {
+      this.otherExpensesItems = [...this.incomingData.savedOtherExpensesItems];
+      this.isLoading = false;
+    } else {
+      this.getItemsCxP();
+    }
   }
 
   transformBackendExpenses(
@@ -196,7 +216,7 @@ export class OperacionesLiquidacionCuentaComponent implements OnInit {
     this.dialogRef.close({
       accepted: true,
       data: this.data,
-      otherExpensesItems: this.itemsModified,
+      otherExpensesItems: this.otherExpensesItems,
     });
   }
 

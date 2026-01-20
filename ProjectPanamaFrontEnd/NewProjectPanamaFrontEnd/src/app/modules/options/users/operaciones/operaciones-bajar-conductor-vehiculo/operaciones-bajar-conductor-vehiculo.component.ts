@@ -41,25 +41,29 @@ interface driverInfo {
   estado: string;
 }
 
+interface LiquidationData {
+  registration: number;
+  daily_rent: number;
+  accidents: number;
+  other_debts: number;
+  panapass: number;
+  total_debt: number;
+  owed_to_driver: number;
+  owed_by_driver: number;
+  other_expenses: number;
+}
+
+interface OtherExpensesItem {
+  code: string;
+  name: string;
+  explanation: string;
+  value: number;
+}
+
 interface dialogResult {
   accepted: boolean;
-  data: {
-    registration: number;
-    daily_rent: number;
-    accidents: number;
-    other_debts: number;
-    panapass: number;
-    total_debt: number;
-    owed_to_driver: number;
-    owed_by_driver: number;
-    other_expenses: number;
-  };
-  otherExpensesItems: {
-    code: string;
-    name: string;
-    explanation: string;
-    value: number;
-  }[];
+  data: LiquidationData;
+  otherExpensesItems: OtherExpensesItem[];
 }
 
 @Component({
@@ -79,6 +83,9 @@ export class OperacionesBajarConductorVehiculoComponent implements OnInit {
   isLoadingVehicleInfo: boolean = false;
   selectedVehicle: boolean = false;
   isLoadingCreate: boolean = false;
+
+  savedLiquidationData: LiquidationData | null = null;
+  savedOtherExpensesItems: OtherExpensesItem[] = [];
 
   vehicleData: vehicleInfo = {
     numero: '',
@@ -242,6 +249,8 @@ export class OperacionesBajarConductorVehiculoComponent implements OnInit {
     this.reason.setValue('');
     this.description.setValue('');
     this.drivers.setValue('');
+    this.savedLiquidationData = null;
+    this.savedOtherExpensesItems = [];
   }
 
   resetAutocomplete() {
@@ -275,12 +284,17 @@ export class OperacionesBajarConductorVehiculoComponent implements OnInit {
         companyCode: this.getCompany(),
         vehicleNumber: this.vehicleData.numero,
         driverNumber: this.vehicleData.conductor,
+        savedLiquidationData: this.savedLiquidationData,
+        savedOtherExpensesItems: this.savedOtherExpensesItems,
       },
       disableClose: true,
     });
 
     dialogRef.afterClosed().subscribe((result: dialogResult) => {
       if (result) {
+        this.savedLiquidationData = result.data;
+        this.savedOtherExpensesItems = result.otherExpensesItems;
+
         const detailText = this.formatOtherExpensesDescription(
           result.otherExpensesItems,
         );
@@ -298,7 +312,13 @@ export class OperacionesBajarConductorVehiculoComponent implements OnInit {
     if (!items || items.length === 0) {
       return '';
     }
-    return items
+    const modifiedItems = items.filter(
+      (item) => item.value > 0 || item.explanation.trim() !== '',
+    );
+    if (modifiedItems.length === 0) {
+      return '';
+    }
+    return modifiedItems
       .map((item) => `${item.name} ${item.explanation} ${item.value}`)
       .join(' // ');
   }
