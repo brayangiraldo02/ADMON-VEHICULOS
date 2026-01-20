@@ -14,6 +14,7 @@ from models.estados import Estados
 from models.permisosusuario import PermisosUsuario
 from models.infoempresas import InfoEmpresas
 from models.centrales import Centrales
+from models.mecanicos import Mecanicos
 from schemas.inspections import *
 from fastapi.encoders import jsonable_encoder
 from fastapi import UploadFile, File, BackgroundTasks
@@ -701,6 +702,10 @@ async def create_inspection(data: NewInspection):
     if not inspection_type:
       return JSONResponse(content={"message": "Tipo de inspección no encontrado"}, status_code=404)
     
+    mechanic = db.query(Mecanicos).filter(Mecanicos.CODIGO == data.mechanic_code, Mecanicos.EMPRESA == data.company_code).first()
+    if not mechanic:
+      return JSONResponse(content={"message": "Mecánico no encontrado"}, status_code=404)
+    
     user = db.query(PermisosUsuario).filter(PermisosUsuario.CODIGO == data.user, PermisosUsuario.EMPRESA == data.company_code).first()
     
     panama_timezone = pytz.timezone('America/Panama')
@@ -720,6 +725,8 @@ async def create_inspection(data: NewInspection):
       NOMCONDU=driver.NOMBRE,
       TIPO_INSPEC=inspection_type.CODIGO,
       NOMINSPEC=inspection_type.NOMBRE,
+      MECANICO=mechanic.CODIGO,
+      NOM_MECANICO=mechanic.NOMBRE,
       KILOMETRAJ=data.mileage,
       DESCRIPCION=data.description,
       OBSERVA=data.nota,

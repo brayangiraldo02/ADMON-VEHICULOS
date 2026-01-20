@@ -27,6 +27,7 @@ from routes.inspections import inspections_router
 from routes.documents import documents_router
 from routes.yards import yards_router
 from routes.driver_data import driver_data_router
+from routes.mechanics import mechanics_router
 import os
 
 load_dotenv()
@@ -69,6 +70,7 @@ app.include_router(inspections_router)
 app.include_router(documents_router)
 app.include_router(yards_router)
 app.include_router(driver_data_router)
+app.include_router(mechanics_router)
 
 app.mount("/assets", StaticFiles(directory="assets"), name="assets")
 

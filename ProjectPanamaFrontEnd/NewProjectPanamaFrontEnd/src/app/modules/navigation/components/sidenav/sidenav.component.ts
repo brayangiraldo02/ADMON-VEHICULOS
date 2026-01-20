@@ -82,6 +82,12 @@ export class SidenavComponent implements OnInit {
         conditions: this.permisos.tarea03
       },
       {
+        icon: 'car_rental', 
+        label: 'Vehículos a Reparar', 
+        route: '',
+        conditions: true
+      },
+      {
         icon: 'garage', 
         label: 'Estado de Flota', 
         route: '/statevehiclefleet',

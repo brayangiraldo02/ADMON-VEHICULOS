@@ -13,6 +13,8 @@ import { OperacionesLiquidacionCuentaComponent } from './operaciones-liquidacion
 interface vehicle {
   vehicle_number: string;
   vehicle_plate: string;
+  owner: string;
+  quota_number: string;
 }
 
 interface vehicleInfo {
@@ -41,25 +43,29 @@ interface driverInfo {
   estado: string;
 }
 
+interface LiquidationData {
+  registration: number;
+  daily_rent: number;
+  accidents: number;
+  other_debts: number;
+  panapass: number;
+  total_debt: number;
+  owed_to_driver: number;
+  owed_by_driver: number;
+  other_expenses: number;
+}
+
+interface OtherExpensesItem {
+  code: string;
+  name: string;
+  explanation: string;
+  value: number;
+}
+
 interface dialogResult {
   accepted: boolean;
-  data: {
-    registration: number;
-    daily_rent: number;
-    accidents: number;
-    other_debts: number;
-    panapass: number;
-    total_debt: number;
-    owed_to_driver: number;
-    owed_by_driver: number;
-    other_expenses: number;
-  };
-  otherExpensesItems: {
-    code: string;
-    name: string;
-    explanation: string;
-    value: number;
-  }[];
+  data: LiquidationData;
+  otherExpensesItems: OtherExpensesItem[];
 }
 
 @Component({
@@ -79,6 +85,9 @@ export class OperacionesBajarConductorVehiculoComponent implements OnInit {
   isLoadingVehicleInfo: boolean = false;
   selectedVehicle: boolean = false;
   isLoadingCreate: boolean = false;
+
+  savedLiquidationData: LiquidationData | null = null;
+  savedOtherExpensesItems: OtherExpensesItem[] = [];
 
   vehicleData: vehicleInfo = {
     numero: '',
@@ -112,7 +121,7 @@ export class OperacionesBajarConductorVehiculoComponent implements OnInit {
     private snackBar: MatSnackBar,
     private dialogRef: MatDialogRef<OperacionesBajarConductorVehiculoComponent>,
     private dialog: MatDialog,
-    private breakpointObserver: BreakpointObserver
+    private breakpointObserver: BreakpointObserver,
   ) {}
 
   ngOnInit() {
@@ -136,16 +145,16 @@ export class OperacionesBajarConductorVehiculoComponent implements OnInit {
         this.options = response;
         this.filteredOptions = this.vehicles.valueChanges.pipe(
           startWith(''),
-          map((value) => this._filter(value || ''))
+          map((value) => this._filter(value || '')),
         );
         this.isLoadingVehicles = false;
       },
       (error) => {
         this.openSnackbar(
-          'Error al obtener las unidades. Inténtalo de nuevo más tarde.'
+          'Error al obtener las unidades. Inténtalo de nuevo más tarde.',
         );
         this.closeDialog();
-      }
+      },
     );
   }
 
@@ -155,7 +164,9 @@ export class OperacionesBajarConductorVehiculoComponent implements OnInit {
     return this.options.filter(
       (option) =>
         option.vehicle_plate.toLowerCase().includes(filterValue) ||
-        option.vehicle_number.toLowerCase().includes(filterValue)
+        option.vehicle_number.toLowerCase().includes(filterValue) ||
+        option.owner.toLowerCase().includes(filterValue) ||
+        option.quota_number.toLowerCase().includes(filterValue),
     );
   }
 
@@ -179,7 +190,7 @@ export class OperacionesBajarConductorVehiculoComponent implements OnInit {
               this.openSnackbar('Vehículo no encontrado. Intenta con otro.');
             } else {
               this.openSnackbar(
-                'Error al obtener la información del vehículo. Inténtalo de nuevo más tarde.'
+                'Error al obtener la información del vehículo. Inténtalo de nuevo más tarde.',
               );
             }
           },
@@ -200,11 +211,11 @@ export class OperacionesBajarConductorVehiculoComponent implements OnInit {
           error: (error: HttpErrorResponse) => {
             if (error.status === 404) {
               this.openSnackbar(
-                'No se encontró el conductor para esta unidad.'
+                'No se encontró el conductor para esta unidad.',
               );
             } else {
               this.openSnackbar(
-                'Error al obtener la información del conductor. Inténtalo de nuevo más tarde.'
+                'Error al obtener la información del conductor. Inténtalo de nuevo más tarde.',
               );
             }
           },
@@ -242,6 +253,8 @@ export class OperacionesBajarConductorVehiculoComponent implements OnInit {
     this.reason.setValue('');
     this.description.setValue('');
     this.drivers.setValue('');
+    this.savedLiquidationData = null;
+    this.savedOtherExpensesItems = [];
   }
 
   resetAutocomplete() {
@@ -264,7 +277,9 @@ export class OperacionesBajarConductorVehiculoComponent implements OnInit {
     }
 
     const isSmallScreen = this.breakpointObserver.isMatched(Breakpoints.Small);
-    const isXsmallScreen = this.breakpointObserver.isMatched(Breakpoints.XSmall);
+    const isXsmallScreen = this.breakpointObserver.isMatched(
+      Breakpoints.XSmall,
+    );
     const dialogWidth = isSmallScreen || isXsmallScreen ? '90vw' : '60%';
 
     const dialogRef = this.dialog.open(OperacionesLiquidacionCuentaComponent, {
@@ -273,31 +288,42 @@ export class OperacionesBajarConductorVehiculoComponent implements OnInit {
         companyCode: this.getCompany(),
         vehicleNumber: this.vehicleData.numero,
         driverNumber: this.vehicleData.conductor,
+        savedLiquidationData: this.savedLiquidationData,
+        savedOtherExpensesItems: this.savedOtherExpensesItems,
       },
       disableClose: true,
     });
 
     dialogRef.afterClosed().subscribe((result: dialogResult) => {
       if (result) {
+        this.savedLiquidationData = result.data;
+        this.savedOtherExpensesItems = result.otherExpensesItems;
+
         const detailText = this.formatOtherExpensesDescription(
-          result.otherExpensesItems
+          result.otherExpensesItems,
         );
         this.description.setValue(detailText);
         this.openSnackbar(
-          'Para guardar la liquidación y bajar al conductor, debes confirmar.'
+          'Para guardar la liquidación y bajar al conductor, debes confirmar.',
         );
       }
     });
   }
 
   formatOtherExpensesDescription(
-    items: { code: string; name: string; explanation: string; value: number }[]
+    items: { code: string; name: string; explanation: string; value: number }[],
   ): string {
     if (!items || items.length === 0) {
       return '';
     }
-    return items
-      .map((item) => `${item.explanation} ${item.value}`)
+    const modifiedItems = items.filter(
+      (item) => item.value > 0 || item.explanation.trim() !== '',
+    );
+    if (modifiedItems.length === 0) {
+      return '';
+    }
+    return modifiedItems
+      .map((item) => `${item.name} ${item.explanation} ${item.value}`)
       .join(' // ');
   }
 

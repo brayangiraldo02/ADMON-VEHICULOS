@@ -10,6 +10,7 @@ from models.estadocivil import EstadoCivil
 from models.cartera import Cartera
 from models.patios import Patios
 from models.itemscxp import ItemsCXP
+from models.permisosusuario import PermisosUsuario
 from schemas.operations import *
 from fastapi.encoders import jsonable_encoder
 from utils.reports import *
@@ -40,12 +41,15 @@ from sqlalchemy import func
 from dotenv import load_dotenv
 import shutil
 import base64
+import asyncio
+from concurrent.futures import ThreadPoolExecutor
 
 load_dotenv()
 
 driver_documents_path = os.getenv('DRIVER_DOCS_PATH')
 path_10  = os.getenv('DROPBOX_INTEGRATION_PATH_10')
 path_58  = os.getenv('DROPBOX_INTEGRATION_PATH_58')
+PDF_THREAD_POOL = ThreadPoolExecutor(max_workers=2)
 
 async def get_vehicle_operation(vehicle_number: str):
   db = session()
@@ -1238,6 +1242,110 @@ async def items_cxp(company_code: str):
 
     return JSONResponse(content=jsonable_encoder(response), status_code=200)
 
+  except Exception as e:
+    db.rollback()
+    return JSONResponse(content={"message": str(e)}, status_code=500)
+  finally:
+    db.close()
+
+#-----------------------------------------------------------------------------------------------
+
+async def driver_settlement(data: DriverSettlement):
+  db = session()
+  try:
+
+    driver = db.query(Conductores).filter(Conductores.EMPRESA == data.company_code, Conductores.CODIGO == data.driver_number).first()
+
+    user = db.query(PermisosUsuario).filter(PermisosUsuario.CODIGO == data.user).first()
+    user = user.NOMBRE if user else ""
+
+    panama_timezone = pytz.timezone('America/Panama')
+    now_in_panama = datetime.now(panama_timezone)
+    date = now_in_panama.strftime("%d/%m/%Y")
+    current_time = now_in_panama.strftime("%I:%M:%S %p")
+
+    title = 'Liquidación de Cuenta'
+
+    return_by_registration = data.registration - data.total_debt
+    
+    data_view = {
+      'fecha': date,
+      'hora': current_time,
+      'company_code': data.company_code,
+      'vehicle_number': data.vehicle_number,
+      'usuario': user,
+      'registration': f"{data.registration:.2f}",
+      'daily_rent': f"{data.daily_rent:.2f}",
+      'accidents': f"{data.accidents:.2f}",
+      'other_debts': f"{data.other_debts:.2f}",
+      'panapass': f"{data.panapass:.2f}",
+      'total_debt': f"{data.total_debt:.2f}",
+      'return_by_registration': f"{return_by_registration:.2f}",
+      'other_expenses': f"{data.other_expenses:.2f}",
+      'owed_to_driver': f"{data.owed_to_driver:.2f}",
+      'owed_by_driver': f"{data.owed_by_driver:.2f}",
+      'details': data.details if data.details else '',
+      'driver': {
+        'code': driver.CODIGO,
+        'name': driver.NOMBRE,
+        'cc': driver.CEDULA,
+        'cellphone': driver.CELULAR,
+        'address': driver.DIRECCION
+      } if driver else {},
+      'title': title
+    }
+
+    headers = {
+      "Content-Disposition": f"attachment; filename=BajarConductor_{data.driver_number}.pdf"
+    }
+
+    template_loader = jinja2.FileSystemLoader(searchpath="./templates")
+    template_env = jinja2.Environment(loader=template_loader)
+    template = template_env.get_template("LiquidacionConductor.html")
+    header = template_env.get_template("header.html")
+    footer = template_env.get_template("footer.html")
+    output_text = template.render(data_view=data_view)
+    output_header = header.render(data_view=data_view)
+    output_footer = footer.render(data_view=data_view)
+
+    with tempfile.NamedTemporaryFile(delete=False, suffix='.html', mode='w') as html_file:
+      html_path = html_file.name
+      html_file.write(output_text)
+    with tempfile.NamedTemporaryFile(delete=False, suffix='.html', mode='w') as header_file:
+      header_path = header_file.name
+      header_file.write(output_header)
+    with tempfile.NamedTemporaryFile(delete=False, suffix='.html', mode='w') as footer_file:
+      footer_path = footer_file.name
+      footer_file.write(output_footer)
+    pdf_path = tempfile.NamedTemporaryFile(delete=False, suffix='.pdf').name
+
+    # Ejecutar la conversión PDF en un thread separado para no bloquear el event loop
+    loop = asyncio.get_event_loop()
+    await loop.run_in_executor(
+      PDF_THREAD_POOL,
+      html2pdf,
+      title,
+      html_path,
+      pdf_path,
+      header_path,
+      footer_path
+    )
+
+    background_tasks = BackgroundTasks()
+    background_tasks.add_task(os.remove, html_path)
+    background_tasks.add_task(os.remove, header_path)
+    background_tasks.add_task(os.remove, footer_path)
+    background_tasks.add_task(os.remove, pdf_path)
+
+    response = FileResponse(
+      pdf_path, 
+      media_type='application/pdf', 
+      filename=f'BajarConductor_{data.driver_number}.pdf', 
+      headers=headers,
+      background=background_tasks
+    )
+
+    return response
   except Exception as e:
     db.rollback()
     return JSONResponse(content={"message": str(e)}, status_code=500)

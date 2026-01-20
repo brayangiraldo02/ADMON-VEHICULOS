@@ -71,3 +71,7 @@ async def get_remove_driver(company_code: str, vehicle_number: str, driver_numbe
 @operations_router.get("/operations/items-cxp/{company_code}/", tags=["Operations"])
 async def get_items_cxp(company_code: str):
   return await items_cxp(company_code)
+
+@operations_router.post("/operations/driver-settlement/", tags=["Operations"])
+async def post_driver_settlement(data: DriverSettlement):
+  return await driver_settlement(data)
