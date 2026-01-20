@@ -13,6 +13,8 @@ import { OperacionesLiquidacionCuentaComponent } from './operaciones-liquidacion
 interface vehicle {
   vehicle_number: string;
   vehicle_plate: string;
+  owner: string;
+  quota_number: string;
 }
 
 interface vehicleInfo {
@@ -162,7 +164,9 @@ export class OperacionesBajarConductorVehiculoComponent implements OnInit {
     return this.options.filter(
       (option) =>
         option.vehicle_plate.toLowerCase().includes(filterValue) ||
-        option.vehicle_number.toLowerCase().includes(filterValue),
+        option.vehicle_number.toLowerCase().includes(filterValue) ||
+        option.owner.toLowerCase().includes(filterValue) ||
+        option.quota_number.toLowerCase().includes(filterValue),
     );
   }
 
