@@ -809,7 +809,13 @@ async def update_inspection(data: UpdateInspection):
     if inspection.USUARIO != data.user:
       return JSONResponse(content={"message": "No tienes permiso para editar esta inspección"}, status_code=403)
     
+    mechanic = db.query(Mecanicos).filter(Mecanicos.CODIGO == data.mechanic_code, Mecanicos.EMPRESA == inspection.EMPRESA).first()
+    if not mechanic:
+      return JSONResponse(content={"message": "Mecánico no encontrado"}, status_code=404)
+    
     # Actualizar los campos de la inspección
+    inspection.MECANICO = mechanic.CODIGO
+    inspection.NOM_MECANICO = mechanic.NOMBRE
     inspection.KILOMETRAJ = data.mileage
     inspection.TIPO_INSPEC = data.inspection_type
     inspection.ALFOMBRA = bool(data.alfombra)
