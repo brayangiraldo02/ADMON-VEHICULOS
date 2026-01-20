@@ -287,7 +287,7 @@ export class OperacionesCambiarEstadoVehiculoComponent {
     const company = this.getCompany();
 
     this.apiService
-      .getData(`yards/${company}/vehicle/${this.vehicleData.numero}`)
+      .getData(`yards/vehicle/${company}/${this.vehicleData.numero}`)
       .subscribe(
         (response: any) => {
           if (response && response.id && response.name) {
