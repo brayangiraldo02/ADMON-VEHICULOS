@@ -1031,6 +1031,7 @@ async def generate_inspection_pdf(data: ReportInspection, company_code: str):
       "unidad": inspection.UNIDAD,
       "placa": inspection.PLACA,
       "cupo": vehicle.NRO_CUPO if vehicle and vehicle.NRO_CUPO else "",
+      "mecanico": inspection.NOM_MECANICO if inspection.NOM_MECANICO else "",
       "kilometraje": inspection.KILOMETRAJ if inspection.KILOMETRAJ else "",
       "combustible": inspection.COMBUSTIBLE if inspection.COMBUSTIBLE else "",
       "panapass": inspection.PANAPASS if inspection.PANAPASS else "",
