@@ -859,16 +859,25 @@ async def get_vehicle_codes():
 async def get_vehicles_by_state(company_code: str, state_code: str):
     db = session()
     try:
-        vehicles = db.query(Vehiculos).filter(
-            Vehiculos.EMPRESA == company_code,
-            Vehiculos.ESTADO == state_code
-        ).all()
+        if state_code == '1':
+           state_list = db.query(Estados.CODIGO).filter(Estados.EMPRESA == company_code, Estados.SUMAR == 1).all()
+           state_codes = [state.CODIGO for state in state_list]
 
-        owners = db.query(Propietarios.CODIGO, Propietarios.NOMBRE).filter(Propietarios.EMPRESA == company_code).all()
-        owners_dict = {owner.CODIGO: owner.NOMBRE for owner in owners}
+           vehicles = db.query(Vehiculos).filter(
+              Vehiculos.EMPRESA == company_code,
+              Vehiculos.ESTADO.in_(state_codes)
+           ).all()
+        else:
+            vehicles = db.query(Vehiculos).filter(
+                Vehiculos.EMPRESA == company_code,
+                Vehiculos.ESTADO == state_code
+            ).all()
 
         if not vehicles:
             return JSONResponse(content={"message": "No hay vehículos disponibles para la empresa y estado dados"}, status_code=404)
+        
+        owners = db.query(Propietarios.CODIGO, Propietarios.NOMBRE).filter(Propietarios.EMPRESA == company_code).all()
+        owners_dict = {owner.CODIGO: owner.NOMBRE for owner in owners}
 
         response = [
             {
