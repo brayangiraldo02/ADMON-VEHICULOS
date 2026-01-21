@@ -176,6 +176,7 @@ export class InspectionsAddDialogComponent implements OnInit {
       inspectionData: this.apiService.getData(
         'inspections/inspection_details/' + inspectionId,
       ),
+      mechanics: this.apiService.getData('mechanics/' + company),
     }).subscribe(
       (results: any) => {
         // Guardar vehículos
@@ -194,7 +195,10 @@ export class InspectionsAddDialogComponent implements OnInit {
         this.inspectionData = results.inspectionData;
 
         // Ahora sí, poblar el formulario con los datos
-        this.populateFormWithInspectionData(results.inspectionData);
+        this.populateFormWithInspectionData(
+          results.inspectionData,
+          results.mechanics,
+        );
 
         this.isLoading = false;
       },
@@ -207,7 +211,10 @@ export class InspectionsAddDialogComponent implements OnInit {
     );
   }
 
-  populateFormWithInspectionData(data: any) {
+  populateFormWithInspectionData(
+    data: any,
+    mechanics: { code: string; name: string }[] = [],
+  ) {
     // Precargar información del vehículo
     this.vehicleInfo = {
       numero: data.unidad,
@@ -250,6 +257,15 @@ export class InspectionsAddDialogComponent implements OnInit {
       this.inspectionType = inspectionTypeMatch.tipo;
     }
 
+    let mechanicMatch: { code: string; name: string } | undefined;
+    if (data.mecanico && mechanics.length > 0) {
+      const mechanicParts = data.mecanico.split(' - ');
+      if (mechanicParts.length >= 2) {
+        const mechanicCode = mechanicParts[0].trim();
+        mechanicMatch = mechanics.find((m) => m.code === mechanicCode);
+      }
+    }
+
     // Activar vista compacta
     this.showCompactView = true;
 
@@ -266,6 +282,13 @@ export class InspectionsAddDialogComponent implements OnInit {
           descripcion: data.descripcion,
           nota: data.observaciones,
         });
+
+        // Precargar el mecánico si se encontró
+        if (mechanicMatch) {
+          vehicleStateForm?.patchValue({
+            mecanico: mechanicMatch,
+          });
+        }
 
         // Precargar checklist items
         const checklistArray = vehicleStateForm?.get('checklistItems') as any;

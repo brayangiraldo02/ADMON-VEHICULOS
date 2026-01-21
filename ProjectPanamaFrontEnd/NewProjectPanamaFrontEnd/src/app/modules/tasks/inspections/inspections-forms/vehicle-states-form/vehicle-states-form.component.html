@@ -42,12 +42,13 @@
     <mat-divider></mat-divider>
 
     <div class="additional-fields">
-      <mat-form-field class="full-width">
+      <mat-form-field class="full-width" (click)="vehicleForm.get('mecanico')?.setValue('')">
         <mat-label>Mecánico</mat-label>
         <input
           matInput
           formControlName="mecanico"
           [matAutocomplete]="autoMechanic"
+          (click)="vehicleForm.get('mecanico')?.setValue('')"
         />
         <mat-autocomplete
           #autoMechanic="matAutocomplete"
