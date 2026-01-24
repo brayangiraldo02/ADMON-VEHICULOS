@@ -1351,3 +1351,50 @@ async def driver_settlement(data: DriverSettlement):
     return JSONResponse(content={"message": str(e)}, status_code=500)
   finally:
     db.close()
+
+#-----------------------------------------------------------------------------------------------
+
+async def save_remove_driver(data: RemoveDriver):
+  db = session()
+  try:
+    panama_timezone = pytz.timezone('America/Panama')
+    now_in_panama = datetime.now(panama_timezone)
+    date = now_in_panama.strftime("%Y-%m-%d")
+    current_time = now_in_panama.strftime("%I:%M:%S %p")
+
+    vehicle = db.query(Vehiculos).filter(Vehiculos.EMPRESA == data.company_code, Vehiculos.NUMERO == data.vehicle_number).first()
+    if not vehicle:
+      return JSONResponse(content={"message": "Vehículo no encontrado"}, status_code=404)
+    
+    driver = db.query(Conductores).filter(Conductores.EMPRESA == data.company_code, Conductores.CODIGO == data.driver_number).first()
+    if not driver:
+      return JSONResponse(content={"message": "Conductor no encontrado"}, status_code=404)
+    
+    wallet_records = db.query(Cartera).filter(
+                        Cartera.EMPRESA == data.company_code,
+                        Cartera.UNIDAD == data.vehicle_number,
+                        Cartera.CLIENTE == data.driver_number,
+                        Cartera.TIPO.in_(['01', '10', '11', '12'])
+                      ).all()
+    
+    vehicle.ESTADO = '06'
+    vehicle.CONDUCTOR = ''
+    driver.ESTADO = '4'
+    driver.UND_NRO = ''
+    
+    for record in wallet_records:
+      # record.SALDO = record.VALOR - record.ABONOS + record.N_DEB - record.N_CRE
+      
+      record.N_CRE = record.N_CRE + record.SALDO
+      record.CAN_NCRE = record.CAN_NCRE + 1
+      record.FEC_NCRE = date
+      record.SALDO = 0
+
+    db.commit()
+
+    return JSONResponse(content={"message": "Conductor removido y cartera actualizada correctamente"}, status_code=200)
+  except Exception as e:
+    db.rollback()
+    return JSONResponse(content={"message": str(e)}, status_code=500)
+  finally:
+    db.close()

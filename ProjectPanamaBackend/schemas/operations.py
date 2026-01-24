@@ -75,3 +75,8 @@ class DriverSettlement(BaseModel):
   owed_to_driver: Optional[float] = 0.0
   owed_by_driver: Optional[float] = 0.0
   details: Optional[str] = ''
+
+class RemoveDriver(BaseModel):
+  company_code: str
+  vehicle_number: str
+  driver_number: str
