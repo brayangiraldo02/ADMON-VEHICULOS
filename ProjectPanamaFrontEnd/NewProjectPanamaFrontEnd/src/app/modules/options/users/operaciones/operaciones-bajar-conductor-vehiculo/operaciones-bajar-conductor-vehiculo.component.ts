@@ -140,7 +140,7 @@ export class OperacionesBajarConductorVehiculoComponent implements OnInit {
 
   getVehicles() {
     const company = this.getCompany();
-    this.apiService.getData('vehicles-by-state/' + company + '/01').subscribe(
+    this.apiService.getData('vehicles-by-state/' + company + '/1').subscribe(
       (response: vehicle[]) => {
         this.options = response;
         this.filteredOptions = this.vehicles.valueChanges.pipe(
@@ -327,9 +327,47 @@ export class OperacionesBajarConductorVehiculoComponent implements OnInit {
       .join(' // ');
   }
 
-  createDailyAccount() {
-    const company = this.getCompany();
-    const user = this.getUser();
+  confirm() {
+    const body = {
+      company_code: this.getCompany(),
+      vehicle_number: this.vehicleData.numero,
+      driver_number: this.vehicleData.conductor,
+    };
+
+    const dialogRef = this.dialog.open(ConfirmActionDialogComponent, {
+      width: '400px',
+      data: {
+        documentName: 'Confirmar Baja de Conductor',
+        message:
+          '¿Estás seguro de que deseas guardar la liquidación del vehículo y bajar el conductor ' +
+          this.driverData.nombre +
+          ' del vehículo ' +
+          this.vehicleData.numero +
+          ' (culminación de contrato)?',
+      },
+      disableClose: true,
+    });
+
+    dialogRef.afterClosed().subscribe((result: dialogResult) => {
+      if (result) {
+        this.isLoadingCreate = true;
+
+        this.apiService
+          .postData('operations/save-remove-driver', body)
+          .subscribe({
+            next: (response: any) => {
+              this.openSnackbar('Conductor bajado exitosamente.');
+              this.closeDialog();
+            },
+            error: (error: HttpErrorResponse) => {
+              this.isLoadingCreate = false;
+              this.openSnackbar(
+                'Error al bajar el conductor. Inténtalo de nuevo más tarde.',
+              );
+            },
+          });
+      }
+    });
   }
 
   closeDialog() {
