@@ -1379,16 +1379,21 @@ async def save_remove_driver(data: RemoveDriver):
     
     vehicle.ESTADO = '06'
     vehicle.CONDUCTOR = ''
-    driver.ESTADO = '4'
+    driver.ESTADO = '3'
     driver.UND_NRO = ''
+    driver.FEC_RETIRO = date
+    driver.FEC_ESTADO = date
     
     for record in wallet_records:
-      # record.SALDO = record.VALOR - record.ABONOS + record.N_DEB - record.N_CRE
-      
       record.N_CRE = record.N_CRE + record.SALDO
       record.CAN_NCRE = record.CAN_NCRE + 1
       record.FEC_NCRE = date
-      record.SALDO = 0
+
+      new_saldo = record.VALOR - record.ABONOS + record.N_DEB - record.N_CRE
+      if new_saldo == 0:
+        record.SALDO = 0
+      else:
+        return JSONResponse(content={"message": "Hay un descuadre en la cartera"}, status_code=400)
 
     db.commit()
 
