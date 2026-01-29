@@ -88,6 +88,7 @@ export class OperacionesBajarConductorVehiculoComponent implements OnInit {
 
   savedLiquidationData: LiquidationData | null = null;
   savedOtherExpensesItems: OtherExpensesItem[] = [];
+  hasAcceptedLiquidation: boolean = false;
 
   vehicleData: vehicleInfo = {
     numero: '',
@@ -255,6 +256,7 @@ export class OperacionesBajarConductorVehiculoComponent implements OnInit {
     this.drivers.setValue('');
     this.savedLiquidationData = null;
     this.savedOtherExpensesItems = [];
+    this.hasAcceptedLiquidation = false;
   }
 
   resetAutocomplete() {
@@ -298,6 +300,7 @@ export class OperacionesBajarConductorVehiculoComponent implements OnInit {
       if (result) {
         this.savedLiquidationData = result.data;
         this.savedOtherExpensesItems = result.otherExpensesItems;
+        this.hasAcceptedLiquidation = true;
 
         const detailText = this.formatOtherExpensesDescription(
           result.otherExpensesItems,
@@ -328,6 +331,13 @@ export class OperacionesBajarConductorVehiculoComponent implements OnInit {
   }
 
   confirm() {
+    if (!this.hasAcceptedLiquidation) {
+      this.openSnackbar(
+        'Para continuar, primero debes aceptar la liquidación de cuenta.',
+      );
+      return;
+    }
+
     const body = {
       company_code: this.getCompany(),
       vehicle_number: this.vehicleData.numero,
