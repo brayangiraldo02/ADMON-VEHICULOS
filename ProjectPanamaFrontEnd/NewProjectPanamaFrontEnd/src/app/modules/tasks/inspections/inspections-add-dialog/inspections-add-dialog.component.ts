@@ -684,7 +684,7 @@ export class InspectionsAddDialogComponent implements OnInit {
         user: this.jwtService.getUserData()?.id,
         company_code: this.getCompany(),
         vehicle_number: this.vehicleInfo.numero,
-        mechanic_code: this.mainInspectionForm.value.vehicleState.mecanico.code,
+        mechanic_code: this.mainInspectionForm.value.vehicleState.mecanico.code || '',
         mileage: this.mainInspectionForm.value.vehicleState.kilometraje || 0,
         inspection_type:
           this.mainInspectionForm.value.inspectionInfo.tipo_inspeccion.id,
