@@ -84,7 +84,7 @@ export class SidenavComponent implements OnInit {
       {
         icon: 'car_rental', 
         label: 'Vehículos a Reparar', 
-        route: '',
+        route: '/vehicle-repair',
         conditions: true
       },
       {
