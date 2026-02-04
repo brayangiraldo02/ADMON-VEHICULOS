@@ -6,6 +6,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { MatDialog } from '@angular/material/dialog';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { InfoVehicleRepairDialogComponent } from '../dialogs/info-vehicle-repair-dialog/info-vehicle-repair-dialog.component';
+import { AddVehicleRepairDialogComponent } from '../dialogs/add-vehicle-repair-dialog/add-vehicle-repair-dialog.component';
 
 export interface VehicleRepairData {
   id: number;
@@ -242,6 +243,43 @@ export class TableVehicleRepairComponent implements OnInit, AfterViewInit {
       if (result === 'viewPhotos' || result === 'viewQR') {
         // TODO: Handle photo/QR viewing in future implementation
         console.log('Action requested:', result);
+      }
+    });
+  }
+
+  openAddVehicleRepairDialog(): void {
+    const isSmallScreen = this.breakpointObserver.isMatched(Breakpoints.XSmall);
+    const dialogWidth = isSmallScreen ? '95vw' : '70%';
+
+    const dialogRef = this.dialog.open(AddVehicleRepairDialogComponent, {
+      width: dialogWidth,
+      maxWidth: '900px',
+      disableClose: true,
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result === 'refresh') {
+        // TODO: Refresh table data
+        console.log('Refreshing table data...');
+      }
+    });
+  }
+
+  openEditVehicleRepairDialog(vehicleRepairId: number): void {
+    const isSmallScreen = this.breakpointObserver.isMatched(Breakpoints.XSmall);
+    const dialogWidth = isSmallScreen ? '95vw' : '70%';
+
+    const dialogRef = this.dialog.open(AddVehicleRepairDialogComponent, {
+      width: dialogWidth,
+      maxWidth: '900px',
+      data: { idVehicleRepair: vehicleRepairId.toString() },
+      disableClose: true,
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result === 'refresh') {
+        // TODO: Refresh table data
+        console.log('Refreshing table data...');
       }
     });
   }

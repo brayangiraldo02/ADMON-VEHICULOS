@@ -5,7 +5,13 @@
 
   <!-- Botones de acción principales (visible en mobile arriba) -->
   <div class="action-buttons-top" *ngIf="!isLoadingData">
-    <button mat-raised-button class="button btn-nueva">Nueva</button>
+    <button
+      mat-raised-button
+      class="button btn-nueva"
+      (click)="openAddVehicleRepairDialog()"
+    >
+      Nueva
+    </button>
     <button mat-raised-button class="button btn-reporte">Reporte</button>
   </div>
 
@@ -114,7 +120,11 @@
         <button mat-raised-button class="button btn-reporte-desktop">
           Reporte
         </button>
-        <button mat-raised-button class="button btn-nueva-desktop">
+        <button
+          mat-raised-button
+          class="button btn-nueva-desktop"
+          (click)="openAddVehicleRepairDialog()"
+        >
           Nueva
         </button>
       </div>
@@ -190,8 +200,9 @@
               <button
                 mat-icon-button
                 color="primary"
-                matTooltip="Editar"
+                matTooltip="Editar registro"
                 *ngIf="row.PuedeEditar === 1"
+                (click)="openEditVehicleRepairDialog(row.id)"
               >
                 <mat-icon>edit</mat-icon>
               </button>
