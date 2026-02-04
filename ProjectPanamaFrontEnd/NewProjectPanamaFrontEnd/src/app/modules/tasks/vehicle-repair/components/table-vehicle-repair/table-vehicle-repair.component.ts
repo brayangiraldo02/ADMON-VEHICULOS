@@ -3,8 +3,12 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
+import { MatDialog } from '@angular/material/dialog';
+import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
+import { InfoVehicleRepairDialogComponent } from '../dialogs/info-vehicle-repair-dialog/info-vehicle-repair-dialog.component';
 
 export interface VehicleRepairData {
+  id: number;
   Fecha: string;
   Descripcion: string;
   Unidad: string;
@@ -19,6 +23,7 @@ export interface VehicleRepairData {
 // Datos mockup para la tabla
 const MOCK_DATA: VehicleRepairData[] = [
   {
+    id: 1,
     Fecha: '26-01-2026 18:05',
     Descripcion: 'a',
     Unidad: 'TT232',
@@ -30,6 +35,7 @@ const MOCK_DATA: VehicleRepairData[] = [
     PuedeEditar: 0,
   },
   {
+    id: 2,
     Fecha: '21-01-2026 16:43',
     Descripcion: 'A',
     Unidad: 'TT232',
@@ -41,6 +47,7 @@ const MOCK_DATA: VehicleRepairData[] = [
     PuedeEditar: 1,
   },
   {
+    id: 3,
     Fecha: '20-01-2026 15:44',
     Descripcion: 'a',
     Unidad: 'TT232',
@@ -52,6 +59,7 @@ const MOCK_DATA: VehicleRepairData[] = [
     PuedeEditar: 0,
   },
   {
+    id: 4,
     Fecha: '19-01-2026 19:47',
     Descripcion: 'A',
     Unidad: 'TT232',
@@ -63,6 +71,7 @@ const MOCK_DATA: VehicleRepairData[] = [
     PuedeEditar: 0,
   },
   {
+    id: 5,
     Fecha: '19-01-2026 18:32',
     Descripcion: 'PRUEBA',
     Unidad: 'TT232',
@@ -74,6 +83,7 @@ const MOCK_DATA: VehicleRepairData[] = [
     PuedeEditar: 0,
   },
   {
+    id: 6,
     Fecha: '26-11-2025 21:26',
     Descripcion: 'PRUEBA',
     Unidad: '0340',
@@ -85,6 +95,7 @@ const MOCK_DATA: VehicleRepairData[] = [
     PuedeEditar: 0,
   },
   {
+    id: 7,
     Fecha: '26-11-2025 21:25',
     Descripcion: 'PRUEBA',
     Unidad: 'TT232',
@@ -96,6 +107,7 @@ const MOCK_DATA: VehicleRepairData[] = [
     PuedeEditar: 0,
   },
   {
+    id: 8,
     Fecha: '08-11-2025 11:37',
     Descripcion: 'prueba desarrollo',
     Unidad: 'TT232',
@@ -176,7 +188,11 @@ export class TableVehicleRepairComponent implements OnInit, AfterViewInit {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
-  constructor(private fb: FormBuilder) {
+  constructor(
+    private fb: FormBuilder,
+    private dialog: MatDialog,
+    private breakpointObserver: BreakpointObserver,
+  ) {
     this.vehicleRepairForm = this.fb.group({
       propietario: [''],
       vehiculo: [''],
@@ -210,5 +226,23 @@ export class TableVehicleRepairComponent implements OnInit, AfterViewInit {
       default:
         return 'DESCONOCIDO';
     }
+  }
+
+  openInfoVehicleRepairDialog(vehicleRepairId: number): void {
+    const isSmallScreen = this.breakpointObserver.isMatched(Breakpoints.XSmall);
+    const dialogWidth = isSmallScreen ? '90vw' : '60%';
+
+    const dialogRef = this.dialog.open(InfoVehicleRepairDialogComponent, {
+      width: dialogWidth,
+      data: { vehicleRepairId },
+      disableClose: true,
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result === 'viewPhotos' || result === 'viewQR') {
+        // TODO: Handle photo/QR viewing in future implementation
+        console.log('Action requested:', result);
+      }
+    });
   }
 }

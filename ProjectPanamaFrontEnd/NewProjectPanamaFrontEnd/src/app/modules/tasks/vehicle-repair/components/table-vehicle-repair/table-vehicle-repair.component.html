@@ -196,7 +196,12 @@
                 <mat-icon>edit</mat-icon>
               </button>
 
-              <button mat-icon-button color="warn" matTooltip="Ver formulario">
+              <button
+                mat-icon-button
+                color="warn"
+                matTooltip="Ver formulario"
+                (click)="openInfoVehicleRepairDialog(row.id)"
+              >
                 <mat-icon>assignment</mat-icon>
               </button>
 
